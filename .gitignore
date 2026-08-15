@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# PDF files (too large for GitHub, kept locally only)
+*.pdf
