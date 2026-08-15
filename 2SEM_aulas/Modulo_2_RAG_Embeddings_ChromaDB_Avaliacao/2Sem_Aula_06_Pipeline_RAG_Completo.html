@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 06 — Pipeline RAG completo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(61,156,204,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:42px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:800px}
+  .cover-subtitle{font-size:18px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(61,156,204,.1);border:1px solid rgba(61,156,204,.25);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-blue);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:28px;font-weight:800;color:var(--fiap-white);margin-bottom:32px;padding-bottom:12px;border-bottom:2px solid var(--fiap-blue);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:20px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:12px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-blue);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:12px 18px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-blue);border-radius:0 10px 10px 0;padding:20px 24px;margin:20px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-blue);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-pink{border-left-color:var(--fiap-pink)}.callout-pink .callout-title{color:var(--fiap-pink)}
+  .callout-purple{border-left-color:var(--fiap-purple)}.callout-purple .callout-title{color:var(--fiap-purple)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:20px 0}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
+  .agenda-item{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:10px}
+  .agenda-num{width:32px;height:32px;background:rgba(61,156,204,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--fiap-blue);flex-shrink:0}
+  .agenda-text{font-size:14px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:12px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:4px 10px;border-radius:6px}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:20px;font-size:13px;line-height:1.9}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .exercise{background:linear-gradient(135deg,rgba(61,156,204,.06),rgba(41,175,140,.06));border:1px solid rgba(61,156,204,.2);border-radius:14px;padding:28px;margin:20px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-blue);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:16px}
+  .exercise-steps{padding-left:20px;margin-bottom:16px}
+  .exercise-steps li{color:var(--fiap-text);font-size:14px;margin-bottom:8px;line-height:1.6}
+  /* pipeline flow */
+  .pipe-flow{display:flex;align-items:center;gap:0;margin:20px 0;flex-wrap:wrap}
+  .pipe-step{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px 16px;text-align:center;flex:1;min-width:100px}
+  .pipe-step-num{font-size:10px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .pipe-step-label{font-size:13px;font-weight:700;color:var(--fiap-white)}
+  .pipe-step-sub{font-size:10px;color:var(--fiap-muted);margin-top:4px}
+  .pipe-arrow{font-size:20px;color:var(--fiap-blue);padding:0 6px;flex-shrink:0}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Pipeline RAG completo</div>
+  <div class="cover-subtitle">Aula 06/14 — Módulo 2: RAG · load → split → embed → retrieve → generate</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">⏱️ 1h40min</div>
+    <div class="cover-meta-item">📄 PyMuPDF · RecursiveCharacterTextSplitter</div>
+    <div class="cover-meta-item">🔁 Andaime 50%</div>
+  </div>
+  <div class="slide-number">01 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">O que é RAG — por que o LLM não precisa saber tudo se consegue buscar</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">Etapas 1–3 — carregar PDFs (PyMuPDF), dividir em chunks, gerar embeddings</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">Etapas 4–6 — armazenar no ChromaDB, recuperar top-k, gerar com citação de fonte</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">Chain RAG em LCEL — <code style="font-family:'JetBrains Mono',monospace;font-size:13px">retriever | prompt | llm | parser</code> em 50 linhas</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">🚀 Demo — RAG sobre 3 PDFs: modelo sem RAG (alucina) vs. com RAG (cita fonte)</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">💻 Lab — RAG sobre PDFs do domínio do grupo (50% lacunas)</div><div class="agenda-time">20 min</div></div>
+  <div class="callout" style="margin-top:12px">
+    <div class="callout-title">🎯 Objetivo da aula</div>
+    <div class="callout-body">Construir um pipeline RAG completo funcional em ~50 linhas. O LLM responde sobre documentos reais que nunca estiveram no treinamento — com citação de página e trecho. Essa é a fundação do CKP02.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">RAG <span class="gl-pron">/ér.ei.dji/</span></div>
+      <div class="gl-def">Retrieval-Augmented Generation — técnica que busca trechos relevantes em uma base de documentos e injeta no contexto do LLM antes de gerar a resposta.</div>
+      <div class="gl-analogy">Analogia: prova de consulta em vez de prova de memorização — o modelo pode "abrir o livro" antes de responder.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Chunk / Chunking</div>
+      <div class="gl-def">Divisão de um documento longo em pedaços menores antes de gerar embeddings — melhora a precisão da busca por similaridade.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">chunk_overlap</div>
+      <div class="gl-def">Quantidade de caracteres repetidos entre um chunk e o próximo, para não perder uma informação que ficaria cortada exatamente na fronteira entre dois chunks.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">Grounding</div>
+      <div class="gl-def">Ancorar a resposta do modelo em uma fonte verificável — o prompt instrui o LLM a responder somente com base no contexto recuperado e citar a fonte.</div>
+      <div class="gl-analogy">Analogia: responder citando a página do livro, em vez de "confiar na memória".</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">PyMuPDF</div>
+      <div class="gl-def">Biblioteca Python (módulo <code>fitz</code>) para extrair texto de PDFs preservando número de página — essencial para citar a fonte da resposta.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">Retriever (top-k)</div>
+      <div class="gl-def">Componente que recebe uma pergunta, converte em embedding e devolve os k chunks mais similares do vector store — a peça que conecta o ChromaDB à chain RAG.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">RunnablePassthrough</div>
+      <div class="gl-def">Runnable do LangChain que encaminha o input sem transformação — usado quando um valor (como a pergunta original) deve chegar intacto a uma etapa seguinte da chain.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">RunnableLambda</div>
+      <div class="gl-def">Runnable que envolve qualquer função Python, tornando-a composável com o operador <code>|</code> dentro de uma chain LCEL.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">O que é RAG</div>
+  <div class="section-desc">Retrieval-Augmented Generation — o LLM não precisa memorizar tudo. Ele busca o que precisa, injeta no contexto e gera a resposta fundamentada na fonte.</div>
+  <div class="slide-number">04 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O problema que RAG resolve</h2>
+  <p>LLMs têm dois problemas fundamentais para uso em produção com documentos específicos:</p>
+  <div class="two-col">
+    <div>
+      <div style="padding:16px;background:rgba(201,73,44,.05);border:1px solid rgba(201,73,44,.2);border-radius:10px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;margin-bottom:8px">❌ Problema 1 — Alucinação</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">
+          <strong>Pergunta:</strong> "Qual é a cláusula 7.3 do contrato da empresa X?"<br><br>
+          <strong>Modelo sem RAG:</strong> "A cláusula 7.3 estabelece que o prazo de entrega é de 30 dias..."<br><br>
+          <em style="color:var(--fiap-red)">O modelo inventou — o contrato não estava no treinamento.</em>
+        </div>
+      </div>
+      <div style="padding:16px;background:rgba(201,73,44,.05);border:1px solid rgba(201,73,44,.2);border-radius:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;margin-bottom:8px">❌ Problema 2 — Desatualização</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">
+          O treinamento tem data de corte. Regulamentos, manuais, preços, documentos internos — tudo que surgiu depois do corte é invisível para o modelo.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="padding:16px;background:rgba(41,175,140,.05);border:1px solid rgba(41,175,140,.2);border-radius:10px;height:100%">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;margin-bottom:8px">✅ Solução — RAG</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">
+          <strong>Pergunta:</strong> "Qual é a cláusula 7.3 do contrato?"<br><br>
+          <strong>RAG busca</strong> no ChromaDB → recupera o trecho do contrato → injeta no contexto.<br><br>
+          <strong>Modelo com RAG:</strong> "Conforme o documento fornecido, a cláusula 7.3 (página 12) estabelece que..."<br><br>
+          <em style="color:var(--fiap-green)">Resposta fundamentada na fonte real, com citação.</em>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>As 6 etapas do pipeline RAG</h2>
+  <p>O pipeline tem duas fases: <strong>indexação</strong> (feita uma vez) e <strong>inferência</strong> (a cada pergunta do usuário):</p>
+  <div style="margin:16px 0">
+    <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">FASE 1 — Indexação (executa uma vez)</div>
+    <div class="pipe-flow">
+      <div class="pipe-step" style="border-color:rgba(61,156,204,.3)"><div class="pipe-step-num">Etapa 1</div><div class="pipe-step-label">📄 Load</div><div class="pipe-step-sub">PyMuPDF<br>ler PDFs</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-color:rgba(61,156,204,.3)"><div class="pipe-step-num">Etapa 2</div><div class="pipe-step-label">✂️ Split</div><div class="pipe-step-sub">RecursiveChar<br>TextSplitter</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-color:rgba(61,156,204,.3)"><div class="pipe-step-num">Etapa 3</div><div class="pipe-step-label">🔢 Embed</div><div class="pipe-step-sub">nomic-embed-text<br>vetorizar chunks</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-color:rgba(61,156,204,.3)"><div class="pipe-step-num">Etapa 4</div><div class="pipe-step-label">🗃️ Store</div><div class="pipe-step-sub">ChromaDB<br>persistir</div></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px">FASE 2 — Inferência (a cada pergunta)</div>
+    <div class="pipe-flow">
+      <div class="pipe-step" style="border-color:rgba(41,175,140,.3)"><div class="pipe-step-num">Pergunta</div><div class="pipe-step-label">💬 Input</div><div class="pipe-step-sub">usuário digita</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-color:rgba(41,175,140,.3)"><div class="pipe-step-num">Etapa 5</div><div class="pipe-step-label">🔍 Retrieve</div><div class="pipe-step-sub">top-k chunks<br>por similaridade</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-color:rgba(41,175,140,.3)"><div class="pipe-step-num">Etapa 6</div><div class="pipe-step-label">✨ Generate</div><div class="pipe-step-sub">LLM gera resposta<br>com fonte citada</div></div>
+    </div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">💡 RAG = memória externa sob demanda</div>
+    <div class="callout-body">O contexto do LLM é o "RAM" — rápido mas finito. O ChromaDB é o "HD" — ilimitado mas precisa de busca. RAG recupera só o trecho relevante do HD e coloca na RAM apenas quando necessário. É por isso que funciona com documentos maiores que a janela de contexto.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">Etapas 1–3<br>Load · Split · Embed</div>
+  <div class="section-desc">Carregar PDFs com PyMuPDF, dividir em chunks com RecursiveCharacterTextSplitter, vetorizar com nomic-embed-text. A fase de indexação.</div>
+  <div class="slide-number">07 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Etapa 1 — carregar PDFs com PyMuPDF</h2>
+  <p><strong>PyMuPDF</strong> (alias <code style="font-family:'JetBrains Mono',monospace;font-size:13px">fitz</code>) é a biblioteca mais robusta para extração de texto de PDFs — mantém números de página e funciona com PDFs com layout complexo:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">etapa1_load.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-community pymupdf langchain-ollama chromadb <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_community.document_loaders</span> <span class="kw">import</span> <span class="va">PyMuPDFLoader</span>
+<span class="kw">from</span> <span class="va">pathlib</span> <span class="kw">import</span> <span class="va">Path</span>
+
+<span class="cm"># Fazer upload do PDF no Colab</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">files</span>
+<span class="va">uploaded</span> <span class="op">=</span> <span class="va">files</span><span class="op">.</span><span class="fn">upload</span><span class="op">()</span>  <span class="cm"># abre o seletor de arquivos</span>
+<span class="va">pdf_path</span> <span class="op">=</span> <span class="nb">list</span><span class="op">(</span><span class="va">uploaded</span><span class="op">.</span><span class="fn">keys</span><span class="op">())[</span><span class="num">0</span><span class="op">]</span>
+
+<span class="cm"># Carregar — cada página vira um Document</span>
+<span class="va">loader</span> <span class="op">=</span> <span class="va">PyMuPDFLoader</span><span class="op">(</span><span class="va">pdf_path</span><span class="op">)</span>
+<span class="va">paginas</span> <span class="op">=</span> <span class="va">loader</span><span class="op">.</span><span class="fn">load</span><span class="op">()</span>
+
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Páginas carregadas: {len(paginas)}"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Metadados da pág. 1: {paginas[0].metadata}"</span><span class="op">)</span>
+<span class="cm"># → {'source': 'manual.pdf', 'page': 0, 'total_pages': 24, ...}</span>
+
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Trecho da pág. 1:\n{paginas[0].page_content[:300]}"</span><span class="op">)</span>
+
+<span class="cm"># Carregar múltiplos PDFs de uma vez</span>
+<span class="va">pdfs</span> <span class="op">= [</span><span class="st">"manual_1.pdf"</span><span class="op">,</span> <span class="st">"manual_2.pdf"</span><span class="op">,</span> <span class="st">"regulamento.pdf"</span><span class="op">]</span>
+<span class="va">todas_paginas</span> <span class="op">= []</span>
+<span class="kw">for</span> <span class="va">pdf</span> <span class="kw">in</span> <span class="va">pdfs</span><span class="op">:</span>
+    <span class="va">todas_paginas</span><span class="op">.</span><span class="fn">extend</span><span class="op">(</span><span class="va">PyMuPDFLoader</span><span class="op">(</span><span class="va">pdf</span><span class="op">).</span><span class="fn">load</span><span class="op">())</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Total de páginas: {len(todas_paginas)}"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">✅ Por que PyMuPDF e não PyPDF2?</div>
+    <div class="callout-body">PyMuPDF mantém metadados de página numerada automaticamente (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">metadata["page"]</code>), lida melhor com PDFs escaneados e layouts de duas colunas, e é 3–5× mais rápido. Para citar a fonte da resposta ("página 12"), o metadado de página é essencial.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Etapa 2 — dividir em chunks com RecursiveCharacterTextSplitter</h2>
+  <p>Páginas inteiras são grandes demais para um embedding preciso. Dividir em <strong>chunks</strong> menores melhora a precisão da recuperação:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">etapa2_split.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_text_splitters</span> <span class="kw">import</span> <span class="va">RecursiveCharacterTextSplitter</span>
+
+<span class="va">splitter</span> <span class="op">=</span> <span class="va">RecursiveCharacterTextSplitter</span><span class="op">(</span>
+    <span class="va">chunk_size</span><span class="op">=</span><span class="num">800</span><span class="op">,</span>      <span class="cm"># ~600–1000 chars por chunk (boa prática para RAG)</span>
+    <span class="va">chunk_overlap</span><span class="op">=</span><span class="num">100</span><span class="op">,</span>  <span class="cm"># sobreposição para não quebrar frases no limite</span>
+    <span class="va">separators</span><span class="op">=[</span><span class="st">"\n\n"</span><span class="op">,</span> <span class="st">"\n"</span><span class="op">,</span> <span class="st">". "</span><span class="op">,</span> <span class="st">" "</span><span class="op">,</span> <span class="st">""</span><span class="op">],</span>  <span class="cm"># ordem de preferência</span>
+<span class="op">)</span>
+
+<span class="cm"># Dividir as páginas em chunks menores</span>
+<span class="va">chunks</span> <span class="op">=</span> <span class="va">splitter</span><span class="op">.</span><span class="fn">split_documents</span><span class="op">(</span><span class="va">paginas</span><span class="op">)</span>
+
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Páginas originais: {len(paginas)}"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Chunks gerados:    {len(chunks)}"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Exemplo de chunk:\n{chunks[0].page_content}"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Metadados: {chunks[0].metadata}"</span><span class="op">)</span>
+<span class="cm"># → {'source': 'manual.pdf', 'page': 0} — página preservada!</span>
+
+<span class="cm"># Ver distribuição de tamanhos dos chunks</span>
+<span class="va">tamanhos</span> <span class="op">= [</span><span class="nb">len</span><span class="op">(</span><span class="va">c</span><span class="op">.</span><span class="va">page_content</span><span class="op">)</span> <span class="kw">for</span> <span class="va">c</span> <span class="kw">in</span> <span class="va">chunks</span><span class="op">]</span>
+<span class="kw">import</span> <span class="va">statistics</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Tamanho médio: {statistics.mean(tamanhos):.0f} chars"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Tamanho mín/máx: {min(tamanhos)} / {max(tamanhos)} chars"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚙️ Por que chunk_size=800 e chunk_overlap=100?</div>
+    <div class="callout-body">800 chars (~150–200 palavras) é o sweet spot para o nomic-embed-text — captura contexto suficiente sem diluir o significado. Overlap de 100 chars evita que uma informação no final de um chunk e início do próximo seja perdida na busca. Na Aula 07 (RAG avançado) você vai experimentar outros tamanhos e medir o impacto no RAGAS.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Etapas 3 e 4 — embed e store no ChromaDB</h2>
+  <p>Vetorizar os chunks e armazenar no ChromaDB em uma única chamada com <code style="font-family:'JetBrains Mono',monospace;font-size:13px">Chroma.from_documents()</code>:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">etapa3_4_embed_store.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="va">Chroma</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">OllamaEmbeddings</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">)</span>
+
+<span class="cm"># Etapas 3 + 4 em uma linha: embed todos os chunks e salva no ChromaDB</span>
+<span class="va">db</span> <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span>
+    <span class="va">documents</span><span class="op">=</span><span class="va">chunks</span><span class="op">,</span>                        <span class="cm"># lista de chunks (Document)</span>
+    <span class="va">embedding</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>                    <span class="cm"># modelo de embedding</span>
+    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/rag_ckp02"</span><span class="op">,</span>  <span class="cm"># salva no disco</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Chunks indexados: {db._collection.count()}"</span><span class="op">)</span>
+
+<span class="cm"># Retriever: interface de busca para a chain LCEL</span>
+<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span>
+    <span class="va">search_type</span><span class="op">=</span><span class="st">"similarity"</span><span class="op">,</span>
+    <span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span> <span class="num">3</span><span class="op">},</span>  <span class="cm"># recuperar os 3 chunks mais similares</span>
+<span class="op">)</span>
+
+<span class="cm"># Testar o retriever isolado</span>
+<span class="va">docs_recuperados</span> <span class="op">=</span> <span class="va">retriever</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="st">"qual é o prazo de entrega?"</span><span class="op">)</span>
+<span class="kw">for</span> <span class="va">d</span> <span class="kw">in</span> <span class="va">docs_recuperados</span><span class="op">:</span>
+    <span class="va">pg</span> <span class="op">=</span> <span class="va">d</span><span class="op">.</span><span class="va">metadata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"page"</span><span class="op">,</span> <span class="st">"?"</span><span class="op">)</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Pág. {pg}: {d.page_content[:120]}..."</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-blue" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Por que ChromaDB aqui, e quando trocar</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026, seção 6.1) propõe um framework de decisão em 4 passos para escolher vector database: (1) é protótipo/pipeline offline ou aplicação viva com usuários? Se offline, uma biblioteca vetorial ou store embarcado como Chroma já resolve; (2) os embeddings precisam conviver com dados de negócio já existentes? Nesse caso PostgreSQL/pgvector ou MongoDB fazem mais sentido; (3) o sistema vai crescer para milhões de vetores com necessidade de filtragem e latência previsível? Aí entram Weaviate, Qdrant ou Pinecone; (4) validar contra restrições práticas (compliance, operação já existente, busca híbrida). O ChromaDB usado neste pipeline se encaixa exatamente no caso 1 — "instant setup, funciona bem para notebooks e protótipos, API Python-first" — mas o autor é direto sobre o trade-off: Chroma "não é production grade" e tem "escalabilidade e durabilidade limitadas". A boa notícia para quem precisar migrar depois: trocar de vector store normalmente não exige regenerar os embeddings (a parte cara computacionalmente) — só reconstruir o índice.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">10 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">Chain RAG em LCEL</div>
+  <div class="section-desc"><code style="font-family:'JetBrains Mono',monospace;font-size:22px">retriever | prompt | llm | parser</code> — conectar as peças em ~10 linhas.</div>
+  <div class="slide-number">11 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O prompt de RAG — grounding e citação de fonte</h2>
+  <p>O prompt de um sistema RAG tem uma responsabilidade extra: instruir o modelo a usar <strong>somente</strong> o contexto fornecido e citar a fonte:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">prompt_rag.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+
+<span class="va">PROMPT_RAG</span> <span class="op">=</span> <span class="st">"""&lt;persona&gt;
+Você é um assistente especializado em responder perguntas
+com base EXCLUSIVAMENTE nos documentos fornecidos.
+&lt;/persona&gt;
+
+&lt;instrucoes&gt;
+- Responda SOMENTE com informações do contexto abaixo.
+- Sempre cite a fonte: (fonte: {nome_doc}, página X).
+- Se a resposta não estiver no contexto, diga:
+  "Não encontrei essa informação nos documentos fornecidos."
+- Nunca invente, extrapole ou use conhecimento externo.
+&lt;/instrucoes&gt;
+
+&lt;contexto&gt;
+{contexto}
+&lt;/contexto&gt;
+
+&lt;pergunta&gt;
+{pergunta}
+&lt;/pergunta&gt;"""</span>
+
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="va">PROMPT_RAG</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">🎯 Grounding — a propriedade mais importante do RAG</div>
+    <div class="callout-body"><strong>Grounding</strong> é ancorar a resposta em uma fonte verificável. O prompt acima tem três mecanismos de grounding: (1) "EXCLUSIVAMENTE nos documentos"; (2) citação de fonte obrigatória; (3) resposta padrão quando a informação não está no contexto — em vez de alucinar. Sem grounding explícito no prompt, o modelo ainda pode alucinar mesmo com RAG.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Chain RAG completa — ~50 linhas, pipeline funcional</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">chain_rag_completa.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnablePassthrough</span><span class="op">,</span> <span class="va">RunnableLambda</span>
+
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>  <span class="cm"># temp=0 para RAG (menos variação)</span>
+
+<span class="kw">def</span> <span class="fn">formatar_contexto</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="st">"""Formata os docs recuperados com número de página para citação."""</span>
+    <span class="va">partes</span> <span class="op">= []</span>
+    <span class="kw">for</span> <span class="va">i</span><span class="op">,</span> <span class="va">doc</span> <span class="kw">in</span> <span class="nb">enumerate</span><span class="op">(</span><span class="va">docs</span><span class="op">,</span> <span class="num">1</span><span class="op">):</span>
+        <span class="va">fonte</span> <span class="op">=</span> <span class="va">doc</span><span class="op">.</span><span class="va">metadata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"source"</span><span class="op">,</span> <span class="st">"doc"</span><span class="op">)</span>
+        <span class="va">pg</span>    <span class="op">=</span> <span class="va">doc</span><span class="op">.</span><span class="va">metadata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"page"</span><span class="op">,</span> <span class="st">"?"</span><span class="op">)</span>
+        <span class="va">partes</span><span class="op">.</span><span class="fn">append</span><span class="op">(</span><span class="st">f"[Trecho {i} — {fonte}, pág. {pg+1}]\n{doc.page_content}"</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="st">"\n\n---\n\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span><span class="va">partes</span><span class="op">)</span>
+
+<span class="cm"># Chain LCEL completa — a magic pipe</span>
+<span class="va">chain_rag</span> <span class="op">=</span> <span class="op">(</span>
+    <span class="op">{</span>
+        <span class="st">"contexto"</span><span class="op">:</span>   <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">formatar_contexto</span><span class="op">),</span>
+        <span class="st">"pergunta"</span><span class="op">:</span>   <span class="va">RunnablePassthrough</span><span class="op">(),</span>  <span class="cm"># pergunta passa direto</span>
+        <span class="st">"nome_doc"</span><span class="op">:</span>   <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span> <span class="va">pdf_path</span><span class="op">),</span>
+    <span class="op">}</span>
+    <span class="op">|</span> <span class="va">prompt</span>
+    <span class="op">|</span> <span class="va">llm</span>
+    <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+<span class="op">)</span>
+
+<span class="cm"># Usar a chain</span>
+<span class="va">resposta</span> <span class="op">=</span> <span class="va">chain_rag</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="st">"Qual é o prazo de entrega do produto?"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resposta</span><span class="op">)</span>
+<span class="cm"># → "Conforme o documento manual.pdf, página 8, o prazo de entrega é..."</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">13 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">50% de lacunas — pipeline RAG completo sobre os PDFs do domínio do grupo. Ao final: chain funcionando, respondendo com citação de página.</div>
+  <div class="slide-number">14 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 50% de lacunas</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_06_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-community langchain-ollama pymupdf chromadb langchain-text-splitters <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_community.document_loaders</span> <span class="kw">import</span> <span class="va">PyMuPDFLoader</span>
+<span class="kw">from</span> <span class="va">langchain_text_splitters</span> <span class="kw">import</span> <span class="va">RecursiveCharacterTextSplitter</span>
+<span class="kw">from</span> <span class="va">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="va">Chroma</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">OllamaEmbeddings</span><span class="op">,</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnablePassthrough</span><span class="op">,</span> <span class="va">RunnableLambda</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span><span class="op">,</span> <span class="va">files</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: faça upload e carregue os PDFs do domínio</span>
+<span class="va">uploaded</span>  <span class="op">=</span> <span class="va">files</span><span class="op">.</span><span class="fn">upload</span><span class="op">()</span>
+<span class="va">pdf_paths</span> <span class="op">= [</span><span class="gap">___</span><span class="op">]</span>  <span class="cm"># lista de caminhos dos PDFs enviados</span>
+<span class="va">paginas</span>   <span class="op">= []</span>
+<span class="kw">for</span> <span class="va">p</span> <span class="kw">in</span> <span class="va">pdf_paths</span><span class="op">:</span>
+    <span class="va">paginas</span><span class="op">.</span><span class="fn">extend</span><span class="op">(</span><span class="va">PyMuPDFLoader</span><span class="op">(</span><span class="gap">___</span><span class="op">).</span><span class="fn">load</span><span class="op">())</span>
+
+<span class="cm"># 👉 LACUNA 2: crie o splitter e divida as páginas em chunks</span>
+<span class="va">splitter</span> <span class="op">=</span> <span class="va">RecursiveCharacterTextSplitter</span><span class="op">(</span>
+    <span class="va">chunk_size</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>     <span class="cm"># 800 é um bom ponto de partida</span>
+    <span class="va">chunk_overlap</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>  <span class="cm"># 100 para não perder contexto nas bordas</span>
+<span class="op">)</span>
+<span class="va">chunks</span> <span class="op">=</span> <span class="va">splitter</span><span class="op">.</span><span class="fn">split_documents</span><span class="op">(</span><span class="gap">___</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Chunks: {len(chunks)}"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 3: crie o vector store com nomic-embed-text</span>
+<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+<span class="va">db</span> <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="va">embedding</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/ckp02"</span><span class="op">)</span>
+<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span><span class="num">3</span><span class="op">})</span>
+
+<span class="cm"># 👉 LACUNA 4: monte e invoque a chain RAG com grounding e citação</span>
+<span class="va">chain_rag</span> <span class="op">=</span> <span class="op">(</span>
+    <span class="op">{</span><span class="st">"contexto"</span><span class="op">:</span> <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">formatar_contexto</span><span class="op">),</span>
+     <span class="st">"pergunta"</span><span class="op">:</span> <span class="gap">___</span><span class="op">,</span>
+     <span class="st">"nome_doc"</span><span class="op">:</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span> <span class="st">"PDFs do domínio"</span><span class="op">)}</span>
+    <span class="op">|</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">chain_rag</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="gap">___</span><span class="op">))</span>  <span class="cm"># sua pergunta sobre o domínio</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Decisões de chunking — o que afeta a qualidade do RAG</h2>
+  <p>O tamanho e a estratégia de chunking é uma das principais alavancas de qualidade de um sistema RAG:</p>
+  <table class="data-table">
+    <thead><tr><th>Parâmetro</th><th>Valor pequeno</th><th>Valor grande</th><th>Recomendação</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>chunk_size</strong></td>
+        <td>200–400 chars<br><em style="color:var(--fiap-muted);font-size:11px">Precisão alta, contexto pobre</em></td>
+        <td>1500–2000 chars<br><em style="color:var(--fiap-muted);font-size:11px">Contexto rico, precisão diluída</em></td>
+        <td><strong>600–1000 chars</strong><br><em style="color:var(--fiap-muted);font-size:11px">sweet spot para nomic</em></td>
+      </tr>
+      <tr>
+        <td><strong>chunk_overlap</strong></td>
+        <td>0 (sem overlap)<br><em style="color:var(--fiap-muted);font-size:11px">Pode perder informação na borda</em></td>
+        <td>50%+ do chunk<br><em style="color:var(--fiap-muted);font-size:11px">Redundância excessiva, mais custo</em></td>
+        <td><strong>10–15% do chunk_size</strong><br><em style="color:var(--fiap-muted);font-size:11px">~100 para chunk de 800</em></td>
+      </tr>
+      <tr>
+        <td><strong>separators</strong></td>
+        <td>[""] — split por char<br><em style="color:var(--fiap-muted);font-size:11px">Quebra no meio de palavras</em></td>
+        <td>["\n\n"] só<br><em style="color:var(--fiap-muted);font-size:11px">Chunks muito irregulares</em></td>
+        <td><strong>["\n\n", "\n", ". ", " ", ""]</strong><br><em style="color:var(--fiap-muted);font-size:11px">hierárquico — parágrafo primeiro</em></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Por que a ordem dos separators importa</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) explica o mecanismo por trás do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RecursiveCharacterTextSplitter</code>: ele tenta os separadores da lista na ordem, do mais estrutural para o mais granular — primeiro quebra em parágrafo (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">\n\n</code>), só recorre a linha, depois frase, e usa espaço ou caractere como último recurso, quando o chunk ainda excede o tamanho máximo. É por isso que a lista recomendada nesta tabela é hierárquica e não arbitrária: cada separador é uma tentativa de preservar a estrutura que um humano usaria para organizar o texto, antes de partir para uma quebra puramente mecânica.</div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">🔜 Aula 07 — RAG avançado</div>
+    <div class="callout-body">Na Aula 07 você vai experimentar diferentes valores de chunk_size e medir o impacto com RAGAS (faithfulness e answer relevancy). Guarde os resultados da chain de hoje como baseline para comparação.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Pipeline completo em bloco único (~50 linhas)</h2>
+  <p>Visão consolidada do pipeline inteiro para referência rápida:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">rag_pipeline_completo.py</span></div>
+    <div class="code-body"><pre><span class="cm"># ── 1. SETUP ────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># ── 2. INDEXAÇÃO (uma vez) ───────────────────────────────────</span>
+<span class="va">paginas</span>  <span class="op">=</span> <span class="va">PyMuPDFLoader</span><span class="op">(</span><span class="st">"documento.pdf"</span><span class="op">).</span><span class="fn">load</span><span class="op">()</span>
+<span class="va">chunks</span>   <span class="op">=</span> <span class="va">RecursiveCharacterTextSplitter</span><span class="op">(</span><span class="num">800</span><span class="op">,</span> <span class="num">100</span><span class="op">).</span><span class="fn">split_documents</span><span class="op">(</span><span class="va">paginas</span><span class="op">)</span>
+<span class="va">db</span>       <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span><span class="va">chunks</span><span class="op">,</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">),</span>
+                               <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/rag"</span><span class="op">)</span>
+<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span><span class="num">3</span><span class="op">})</span>
+
+<span class="cm"># ── 3. CHAIN LCEL ───────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">fmt</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="st">"\n\n---\n\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span>
+        <span class="st">f"[{d.metadata.get('source','?')}, pág.{d.metadata.get('page',0)+1}]\n{d.page_content}"</span>
+        <span class="kw">for</span> <span class="va">d</span> <span class="kw">in</span> <span class="va">docs</span>
+    <span class="op">)</span>
+
+<span class="va">chain</span> <span class="op">=</span> <span class="op">(</span>
+    <span class="op">{</span><span class="st">"contexto"</span><span class="op">:</span> <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">fmt</span><span class="op">),</span>
+     <span class="st">"pergunta"</span><span class="op">:</span> <span class="va">RunnablePassthrough</span><span class="op">(),</span>
+     <span class="st">"nome_doc"</span><span class="op">:</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span><span class="st">"documento.pdf"</span><span class="op">)}</span>
+    <span class="op">|</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+<span class="op">)</span>
+
+<span class="cm"># ── 4. USAR ─────────────────────────────────────────────────</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="st">"Qual é o prazo de garantia?"</span><span class="op">))</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>RunnablePassthrough e RunnableLambda — as peças de cola</h2>
+  <p>A chain RAG usa dois Runnables especiais para montar o dicionário de variáveis do prompt:</p>
+  <div class="two-col">
+    <div class="callout" style="margin:0">
+      <div class="callout-title">⚡ RunnablePassthrough</div>
+      <div class="callout-body"><strong>Passa o input sem transformar.</strong> Quando a chain recebe a string da pergunta, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RunnablePassthrough()</code> encaminha essa mesma string para o slot <code style="font-family:'JetBrains Mono',monospace;font-size:12px">"pergunta"</code> do prompt — sem modificação.<br><br>
+      Equivalente a: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">lambda x: x</code></div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">🔧 RunnableLambda</div>
+      <div class="callout-body"><strong>Envolve qualquer função Python em um Runnable.</strong> Usado para:<br>
+      1. Formatar os docs em string (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">formatar_contexto</code>)<br>
+      2. Injetar valores constantes (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">lambda _: "nome_doc"</code>)<br>
+      3. Qualquer transformação customizada<br><br>
+      Qualquer função <code style="font-family:'JetBrains Mono',monospace;font-size:12px">def f(x): return y</code> vira um Runnable composável com o pipe <code style="font-family:'JetBrains Mono',monospace;font-size:12px">|</code>.</div>
+    </div>
+  </div>
+  <div class="code-block" style="margin-top:16px">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">runnable_anatomia.py</span></div>
+    <div class="code-body"><pre><span class="cm"># O que acontece quando chain.invoke("Qual é o prazo?"):</span>
+<span class="cm">#</span>
+<span class="cm"># Input: "Qual é o prazo?"</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># retriever.invoke("Qual é o prazo?") → [Doc1, Doc2, Doc3]</span>
+<span class="cm"># formatar_contexto([Doc1, Doc2, Doc3]) → "[pág.8]\n...\n---\n[pág.12]\n..."</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># contexto = "[pág.8]\n..."       ← resultado do retriever | lambda</span>
+<span class="cm"># pergunta = "Qual é o prazo?"    ← RunnablePassthrough() — mesma string</span>
+<span class="cm"># nome_doc = "documento.pdf"      ← RunnableLambda(lambda _: "...")</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># prompt.format(contexto=..., pergunta=..., nome_doc=...) → mensagens</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># llm(mensagens) → AIMessage</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># StrOutputParser() → string final com citação de página</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Erros comuns no pipeline RAG</h2>
+  <table class="data-table">
+    <thead><tr><th>Erro</th><th>Causa provável</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ModuleNotFoundError: fitz</code></td>
+        <td>PyMuPDF não instalado</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">!pip install pymupdf</code> — o pacote PyPI chama-se <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pymupdf</code>, mas o import é <code style="font-family:'JetBrains Mono',monospace;font-size:11px">fitz</code></td>
+      </tr>
+      <tr>
+        <td>Resposta vazia ou <em>"Não encontrei"</em> para pergunta que deveria ter resposta</td>
+        <td>chunk_size muito pequeno ou k=1 recuperando poucos chunks</td>
+        <td>Aumentar chunk_size para 1000+ ou k para 5; verificar se o PDF tem texto extraível (não é scaneado)</td>
+      </tr>
+      <tr>
+        <td>LLM ainda alucina mesmo com RAG</td>
+        <td>Prompt sem instrução de grounding explícita; temperature &gt; 0</td>
+        <td>Usar o prompt com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">&lt;instrucoes&gt;</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">temperature=0</code></td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">KeyError: "contexto"</code> na chain</td>
+        <td>Variável no prompt não corresponde à chave no dicionário da chain</td>
+        <td>Verificar que <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{contexto}</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{pergunta}</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{nome_doc}</code> no template correspondem exatamente às chaves do dict da chain</td>
+      </tr>
+      <tr>
+        <td>Chunks com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">page_content</code> vazio</td>
+        <td>PDF é uma imagem escaneada sem OCR</td>
+        <td>Usar OCR antes de indexar — <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pytesseract</code> ou Adobe Acrobat. Para o CKP02, usar PDFs com texto selecionável.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 06</h2>
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>RAG = memória externa sob demanda.</strong> O LLM não alucina sobre documentos que nunca viu — porque o RAG recupera o trecho relevante e injeta no contexto antes de gerar.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>6 etapas:</strong> load (PyMuPDF) → split (RecursiveCharacterTextSplitter) → embed (nomic) → store (ChromaDB) → retrieve (top-k) → generate (LLM com grounding).</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Chain LCEL:</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:12px">{contexto: retriever | lambda, pergunta: passthrough} | prompt | llm | parser</code> — o pipeline inteiro em ~10 linhas de código declarativo.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Grounding:</strong> o prompt instrui o modelo a citar fonte e página, e a responder "não encontrei" quando a informação não está no contexto — eliminando alucinação.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(61,156,204,.05);border:2px solid rgba(61,156,204,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🔜</div>
+      <div style="font-size:14px"><strong>Próximo:</strong> Aula 07 vai medir a qualidade desse pipeline com RAGAS (faithfulness e answer relevancy) e otimizar chunking. O RAG que você construiu hoje é o baseline.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Por que temperature=0 no RAG?"</strong></td><td>RAG é um caso de recuperação de fatos — não queremos criatividade, queremos fidelidade ao documento. Temperature=0 maximiza o greedy decoding: o modelo sempre escolhe o token mais provável, minimizando variações. Para chatbots criativos (Módulo 1) usamos 0.7; para RAG factual, 0 ou 0.1.</td></tr>
+      <tr><td><strong>"O que é k=3 no retriever? Devo aumentar?"</strong></td><td>k=3 significa recuperar os 3 chunks mais similares. Mais k = mais contexto, mas pode introduzir chunks menos relevantes (ruído) e usa mais tokens. Comece com k=3, aumente para k=5 se as respostas parecerem incompletas. Na Aula 07 o RAGAS vai medir empiricamente o impacto de cada valor.</td></tr>
+      <tr><td><strong>"E se o PDF for escaneado (imagem)?"</strong></td><td>PyMuPDF só extrai texto de PDFs com camada de texto. Para PDFs escaneados, precisa de OCR. Para o CKP02, use PDFs com texto selecionável (você consegue copiar texto do PDF). Dica: PDFs gerados por Word, LaTeX ou exportados de browsers costumam ter texto. PDFs escaneados por câmera ou impressora precisam de OCR.</td></tr>
+      <tr><td><strong>"A chain RAG tem memória entre perguntas?"</strong></td><td>Não — a chain RAG desta aula é stateless (sem memória). Cada invoke é independente. Na Aula 08 você vai combinar RAG com RunnableWithMessageHistory para ter um RAG com memória de conversa — o chatbot vai lembrar da pergunta anterior ao responder.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula06_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. extend() — adicionar todos os itens de uma lista em outra</span>
+<span class="va">lista_a</span> <span class="op">= [</span><span class="num">1</span><span class="op">,</span> <span class="num">2</span><span class="op">]</span>
+<span class="va">lista_a</span><span class="op">.</span><span class="fn">extend</span><span class="op">([</span><span class="num">3</span><span class="op">,</span> <span class="num">4</span><span class="op">])</span>  <span class="cm"># [1, 2, 3, 4] — diferente de append([3, 4]) = [1, 2, [3, 4]]</span>
+
+<span class="cm"># 2. enumerate() — iterar com índice</span>
+<span class="kw">for</span> <span class="va">i</span><span class="op">,</span> <span class="va">doc</span> <span class="kw">in</span> <span class="nb">enumerate</span><span class="op">(</span><span class="va">docs</span><span class="op">,</span> <span class="num">1</span><span class="op">):</span>  <span class="cm"># começa em 1 — i=1,2,3...</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Trecho {i}: {doc.page_content}"</span><span class="op">)</span>
+
+<span class="cm"># 3. .get() em dict com valor padrão</span>
+<span class="va">pg</span> <span class="op">=</span> <span class="va">doc</span><span class="op">.</span><span class="va">metadata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"page"</span><span class="op">,</span> <span class="st">"?"</span><span class="op">)</span>  <span class="cm"># retorna "?" se "page" não existir</span>
+
+<span class="cm"># 4. join() com separador multilinha</span>
+<span class="va">separador</span> <span class="op">=</span> <span class="st">"\n\n---\n\n"</span>
+<span class="va">texto</span>     <span class="op">=</span> <span class="va">separador</span><span class="op">.</span><span class="fn">join</span><span class="op">([</span><span class="st">"Trecho A"</span><span class="op">,</span> <span class="st">"Trecho B"</span><span class="op">])</span>
+
+<span class="cm"># 5. RunnablePassthrough e RunnableLambda — LCEL avançado</span>
+<span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnablePassthrough</span><span class="op">,</span> <span class="va">RunnableLambda</span>
+
+<span class="va">passthrough</span> <span class="op">=</span> <span class="va">RunnablePassthrough</span><span class="op">()</span>        <span class="cm"># x → x (identidade)</span>
+<span class="va">constante</span>   <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span> <span class="st">"doc.pdf"</span><span class="op">)</span>  <span class="cm"># ignora input, retorna constante</span>
+<span class="va">transformar</span> <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">minha_funcao</span><span class="op">)</span>    <span class="cm"># qualquer função vira Runnable</span>
+
+<span class="cm"># 6. statistics.mean() — média de uma lista</span>
+<span class="kw">import</span> <span class="va">statistics</span>
+<span class="va">media</span> <span class="op">=</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">([</span><span class="num">100</span><span class="op">,</span> <span class="num">200</span><span class="op">,</span> <span class="num">150</span><span class="op">])</span>  <span class="cm"># 150.0</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>RAG em produção — onde o padrão aparece</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Setor financeiro e jurídico</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Assistente de compliance</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">RAG sobre milhares de páginas de regulamentos e normas internas. Analistas perguntam sobre regras específicas e recebem a resposta com citação exata do parágrafo da norma — o mesmo padrão de grounding construído nesta aula.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Assistentes de código</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Ferramentas de IA para programação indexam o repositório do usuário em embeddings. Ao perguntar "como essa função é usada?", recuperam os arquivos relevantes e respondem com base no código real do projeto — não em conhecimento genérico sobre a linguagem.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Suporte ao cliente</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Base de conhecimento indexada como embeddings. Quando um cliente abre um chamado, o sistema recupera os artigos de suporte mais relevantes e sugere a resolução ao atendente — com link para a fonte.</div>
+    </div>
+  </div>
+  <div class="callout callout-orange" style="margin-top:16px">
+    <div class="callout-title">📌 Padrão de mercado</div>
+    <div class="callout-body">Praticamente todo produto de IA empresarial lançado em 2024–2026 tem RAG por baixo. O diferencial não é ter RAG — é ter RAG com boa qualidade de chunking, retrieval preciso e grounding robusto. Isso é o que a Aula 07 (RAGAS) vai ensinar a medir e otimizar.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 07 — RAG avançado e RAGAS</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-pink">
+        <div class="callout-title">🔮 O que você vai aprender</div>
+        <div class="callout-body">
+          <strong>Chunking estratégico:</strong> como tamanho e overlap afetam a qualidade<br><br>
+          <strong>Reranking:</strong> reordenar os chunks recuperados por relevância antes de gerar<br><br>
+          <strong>RAGAS:</strong> medir a qualidade do RAG com duas métricas objetivas:<br>
+          · <em>faithfulness</em> — a resposta está ancorada no contexto?<br>
+          · <em>answer relevancy</em> — a resposta responde à pergunta?<br><br>
+          <strong>Entrega CKP02</strong> ao final da Aula 07.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-green">
+        <div class="callout-title">🧩 O que guardar para a Aula 07</div>
+        <div class="callout-body">
+          · Notebook da Aula 06 com pipeline RAG funcionando<br>
+          · Os mesmos 3+ PDFs do domínio (para comparar métricas)<br>
+          · 5 pares de (pergunta, resposta esperada) do domínio — serão o dataset de avaliação do RAGAS<br><br>
+          A entrega CKP02 vai incluir as métricas RAGAS documentadas no notebook.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;font-size:13px">
+    <strong>📌 Ação antes da Aula 07:</strong> prepare 5 pares (pergunta, resposta-esperada) sobre os documentos do domínio. Ex: ("Qual é o prazo de entrega?", "30 dias conforme cláusula 7.3"). Esses pares são o dataset de avaliação do RAGAS.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">RAG sobre 3 PDFs reais. A mesma pergunta, o mesmo modelo — sem RAG alucina, com RAG cita a fonte exata.</div>
+  <div class="slide-number">25 / 29</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor roda a mesma pergunta sobre um manual técnico antes e depois de configurar o RAG. Sem RAG, o modelo preenche a lacuna com uma resposta plausível mas inventada. Com RAG, a mesma pergunta retorna a cláusula exata, com página citada.</p>
+  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
+    <div class="callout callout-red" style="margin:0">
+      <div class="callout-title">1. Sem RAG</div>
+      <div class="callout-body">Pergunta: <strong>"Qual o prazo de garantia do produto X?"</strong> — o modelo puro responde "12 meses conforme a legislação brasileira", um número plausível mas inventado, sem qualquer relação com o manual real.</div>
+    </div>
+    <div class="callout" style="margin:0">
+      <div class="callout-title">2. Indexação ao vivo</div>
+      <div class="callout-body">3 PDFs (manual técnico, regulamento, FAQ) são carregados, divididos em chunks e indexados no ChromaDB — o pipeline completo roda em ~2 minutos diante da turma.</div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">3. Com RAG</div>
+      <div class="callout-body">A mesma pergunta agora retorna: <strong>"Conforme o manual, página 15, o prazo de garantia é de 24 meses, cláusula 8.2"</strong> — resposta real, extraída do documento, com fonte citada.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
+    <div class="callout-title">🧱 Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · PyMuPDF · nomic-embed-text · ChromaDB · gpt-oss:120b</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 06 · 2º Semestre</div>
+    <div class="exercise-title">Pipeline RAG completo sobre os PDFs do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab · PDFs do domínio obrigatórios</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 4 lacunas</strong> — caminhos dos PDFs, parâmetros do splitter, criação do vector store, montagem e invocação da chain.</li>
+      <li><strong>Teste com 3 perguntas reais</strong> do domínio — perguntas que teriam respostas concretas nos documentos.</li>
+      <li><strong>Compare sem vs. com RAG:</strong> faça a mesma pergunta ao <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatOllama</code> direto e à <code style="font-family:'JetBrains Mono',monospace;font-size:12px">chain_rag</code>. Documente a diferença.</li>
+      <li><strong>Verifique o grounding:</strong> faça uma pergunta que NÃO está nos documentos. A chain deve responder "Não encontrei essa informação" — não alucinar.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(61,156,204,.06);border-left:3px solid var(--fiap-blue);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12.5px;color:var(--fiap-muted);line-height:1.9">
+        <strong>Lacuna 1:</strong> os caminhos dos arquivos que acabaram de ser enviados pelo upload, usados para carregar cada PDF no loader.<br>
+        <strong>Lacuna 2:</strong> o tamanho de cada chunk e a sobreposição entre eles — os mesmos valores usados na aula (800 e 100) — aplicados sobre a lista de páginas carregadas.<br>
+        <strong>Lacuna 3:</strong> o nome do modelo de embedding do semestre, e os chunks e embeddings passados ao vector store na criação da coleção.<br>
+        <strong>Lacuna 4:</strong> a pergunta repassada sem transformação para o prompt, e a pergunta real do domínio ao invocar a chain.
+      </div>
+    </div>
+    <div style="background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-pink)">
+      🚀 <strong>Desafio:</strong> adicionar <code style="font-family:'JetBrains Mono',monospace;font-size:12px">similarity_search_with_score</code> para mostrar o score de cada chunk recuperado antes de gerar a resposta. Isso vira insumo para o RAGAS da Aula 07.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Paper</span><div class="ref-text"><strong>Lewis, P. et al.</strong> — "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks." NeurIPS, 2020. O paper original que cunhou o termo RAG. <a href="https://arxiv.org/abs/2005.11401" style="color:var(--fiap-blue)">arxiv.org/abs/2005.11401</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — RAG tutorial completo com PyMuPDF, Chroma e LCEL. <a href="https://python.langchain.com/docs/tutorials/rag" style="color:var(--fiap-blue)">python.langchain.com/docs/tutorials/rag</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>PyMuPDF</strong> — Documentação do loader LangChain com PyMuPDF. <a href="https://python.langchain.com/docs/integrations/document_loaders/pymupdf" style="color:var(--fiap-blue)">python.langchain.com/docs/integrations/document_loaders/pymupdf</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>RecursiveCharacterTextSplitter</strong> — Estratégias de chunking, parâmetros e separadores. <a href="https://python.langchain.com/docs/how_to/recursive_text_splitter" style="color:var(--fiap-blue)">python.langchain.com/docs/how_to/recursive_text_splitter</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Goodfellow, I.; Bengio, Y.; Courville, A.</strong> — Deep Learning. Pearson, 2017. Cap. 15 — Representações distribuídas: a base teórica dos embeddings usados no RAG.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">RAG funcional em 50 linhas 📄</div>
+  <div style="font-size:16px;color:var(--fiap-muted);margin-bottom:12px;max-width:540px">O pipeline está rodando. O modelo não alucina sobre os documentos do domínio — cita a fonte e a página. Agora falta medir se a qualidade é boa o suficiente: isso é a Aula 07.</div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:32px;text-align:left;max-width:600px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-blue);margin-bottom:8px">→ Próxima Aula — Aula 07 · 21/09</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">RAG avançado — chunking estratégico, reranking e RAGAS</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">Medir faithfulness e answer relevancy. Otimizar o pipeline. Entregar CKP02.</div>
+  </div>
+  <div style="margin-top:20px;padding:14px 24px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;max-width:540px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">📌 Preparar para a Aula 07</div>
+    <div style="font-size:13px;color:var(--fiap-muted)">5 pares (pergunta, resposta esperada) do domínio. Notebook de hoje salvo e funcionando.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">29 / 29</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

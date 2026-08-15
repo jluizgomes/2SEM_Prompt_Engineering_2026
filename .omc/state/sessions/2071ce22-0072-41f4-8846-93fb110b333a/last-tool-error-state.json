@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"/Users/jluizgomes/Documents/FIAP/2026/aulas_prompt_engineering_ai/aulas_segundo_semestre/2SEM\\\" && echo \\\"=== HTML decks ===\\\" && rtk ls *.html 2>/dev/null && echo \\\"=== dirs ===\\\" &&...",
+  "error": "Exit code 1\n=== HTML decks ===\n2Sem_Aula_01_Revisao_LangChain_LCEL_ChatOllama.html  119.9K\n2Sem_Aula_02_Memoria_Conversacional.html  110.2K\n2Sem_Aula_03_Structured_Output_Pydantic_v2.html  113.2K\n2Sem_Aula_04_Context_Engineering.html  95.1K\n2Sem_Aula_05_Embeddings_Busca_Semantica_ChromaDB.html  107.4K\n2Sem_Aula_06_Pipeline_RAG_Completo.html  104.0K\n2Sem_Aula_07_RAG_Avancado_Chunking_RAGAS.html  108.5K\n2Sem_Aula_08_Interfaces_Gradio_Streamlit_Deploy.html  107.9K\n2Sem_Aula_09_Agentes_ReAct_Tools_F...",
+  "timestamp": "2026-08-14T19:05:44.041Z",
+  "retry_count": 1
+}

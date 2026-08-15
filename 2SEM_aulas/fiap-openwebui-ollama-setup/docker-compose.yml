@@ -1,0 +1,60 @@
+services:
+  ollama:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fiap-ollama-cpu:latest
+    container_name: fiap-ollama
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_MODELS=/root/.ollama/models
+      - OLLAMA_KEEP_ALIVE=${OLLAMA_KEEP_ALIVE:-24h}
+      - CHAT_MODEL=${CHAT_MODEL:-qwen3.5:0.8b}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - fiap-ai-net
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: fiap-open-webui
+    restart: unless-stopped
+    depends_on:
+      ollama:
+        condition: service_healthy
+    ports:
+      - "${WEBUI_PORT:-3000}:8080"
+    volumes:
+      - openwebui_data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-changeme_super_secret}
+      - WEBUI_NAME=${WEBUI_NAME:-FIAP AI Lab}
+      - ENABLE_SIGNUP=${ENABLE_SIGNUP:-true}
+      - DEFAULT_MODELS=${CHAT_MODEL:-qwen3.5:0.8b}
+      - RAG_EMBEDDING_ENGINE=ollama
+      - RAG_EMBEDDING_MODEL=${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+      - RAG_OLLAMA_BASE_URL=http://ollama:11434
+    networks:
+      - fiap-ai-net
+
+volumes:
+  ollama_data:
+    name: fiap_ollama_data
+  openwebui_data:
+    name: fiap_openwebui_data
+
+networks:
+  fiap-ai-net:
+    name: fiap-ai-net
+    driver: bridge

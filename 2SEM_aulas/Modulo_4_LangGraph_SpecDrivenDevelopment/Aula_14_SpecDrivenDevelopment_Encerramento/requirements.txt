@@ -1,0 +1,7 @@
+# Dependências do projeto — Spec-Driven Development e Encerramento
+# Instale com:  pip install -r requirements.txt
+
+langchain-ollama
+langchain-core
+langchain-classic
+python-dotenv

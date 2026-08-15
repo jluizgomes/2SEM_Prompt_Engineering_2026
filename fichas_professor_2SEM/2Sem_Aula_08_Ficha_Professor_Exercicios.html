@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha do Professor — Exercícios 2Sem Aula 08 | FIAP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fa;--card:#ffffff;--code:#1e293b;--bdr:#e2e4ec;--cy:#0891b2;--gn:#16a34a;--pu:#9333ea;--or:#d97706;--pk:#db2777;--yl:#ca8a04;--rd:#dc2626;--bl:#2563eb;--tl:#0d9488;--ag:#f472b6;--t1:#1a1b2f;--t2:#4e4e68;--t3:#6b6b80}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.75;font-size:17px;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ag);border-radius:3px}
+.hero{min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 450px at 20% 25%,rgba(244,114,182,.09),transparent),radial-gradient(ellipse 600px 400px at 80% 75%,rgba(147,51,234,.05),transparent),radial-gradient(ellipse 500px 350px at 50% 50%,rgba(8,145,178,.08),transparent);pointer-events:none}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:6px;text-transform:uppercase;color:var(--ag);margin-bottom:1.5rem;opacity:.7}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,var(--ag),var(--pu),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-family:'Crimson Pro',serif;font-size:clamp(1rem,2vw,1.2rem);font-style:italic;color:var(--t2);max-width:700px;margin-bottom:1.5rem}
+.hero .info{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.hero .info span{font-family:'JetBrains Mono',monospace;font-size:.72rem;background:var(--card);border:1px solid var(--bdr);padding:.3rem .7rem;border-radius:6px;color:var(--t3)}
+nav.toc{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:.65rem 1rem;overflow-x:auto}
+.toc-inner{display:flex;gap:.15rem;max-width:1100px;margin:0 auto;justify-content:center;flex-wrap:nowrap}
+.toc a{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-decoration:none;padding:.3rem .45rem;border-radius:5px;white-space:nowrap;transition:all .2s}
+.toc a:hover{color:var(--ag);background:rgba(219,39,119,.1)}
+.cc{max-width:1060px;margin:0 auto;padding:2rem 1.5rem 6rem}
+.bl{margin-bottom:4rem;scroll-margin-top:58px}
+.bh{display:flex;align-items:center;gap:1rem;margin-bottom:.5rem}
+.bn{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:2px;padding:.22rem .55rem;border-radius:4px;white-space:nowrap}
+.bt{font-size:clamp(1.2rem,2.5vw,1.7rem);font-weight:800;line-height:1.2}
+.btag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;color:var(--t2);margin-bottom:1.5rem;padding-left:.5rem;border-left:3px solid var(--t3)}
+.c--cy .bn{background:rgba(8,145,178,.12);color:var(--cy)}.c--cy .bt{color:var(--cy)}
+.c--gn .bn{background:rgba(22,163,74,.12);color:var(--gn)}.c--gn .bt{color:var(--gn)}
+.c--pu .bn{background:rgba(147,51,234,.12);color:var(--pu)}.c--pu .bt{color:var(--pu)}
+.c--or .bn{background:rgba(217,119,6,.12);color:var(--or)}.c--or .bt{color:var(--or)}
+.c--pk .bn{background:rgba(219,39,119,.12);color:var(--pk)}.c--pk .bt{color:var(--pk)}
+.c--yl .bn{background:rgba(202,138,4,.12);color:var(--yl)}.c--yl .bt{color:var(--yl)}
+.c--rd .bn{background:rgba(220,38,38,.12);color:var(--rd)}.c--rd .bt{color:var(--rd)}
+.c--bl .bn{background:rgba(37,99,235,.12);color:var(--bl)}.c--bl .bt{color:var(--bl)}
+.c--tl .bn{background:rgba(13,148,136,.12);color:var(--tl)}.c--tl .bt{color:var(--tl)}
+.c--ag .bn{background:rgba(244,114,182,.1);color:var(--ag)}.c--ag .bt{color:var(--ag)}
+.tp{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;transition:border-color .3s}
+.tp:hover{border-color:rgba(219,39,119,.25)}
+.tp h3{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;margin-bottom:.8rem}
+.tp p{color:var(--t2);font-size:.92rem;line-height:1.8;margin-bottom:.6rem}
+.tp p:last-child{margin-bottom:0}
+.cb{background:var(--code);border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:.5rem .85rem;background:#0f172a;border-bottom:1px solid #334155}
+.ch span{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase}
+.cd{display:flex;gap:5px}.cd i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cd i:nth-child(1){background:#ff5f57}.cd i:nth-child(2){background:#febc2e}.cd i:nth-child(3){background:#28c840}
+pre{padding:1rem 1.2rem;overflow-x:hidden;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.8;color:#e2e8f0;margin:0;white-space:pre-wrap;word-break:break-all;tab-size:4}
+.cm{color:#94a3b8;font-style:italic}.kw{color:var(--pu)}.st{color:var(--gn)}.fn{color:var(--cy)}.nb{color:var(--or)}.bi{color:var(--yl)}.op{color:var(--pk)}
+.cbox{background:rgba(147,51,234,.08);border-left:3px solid var(--pu);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.cbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--pu);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.cbox p{color:var(--t2);font-size:.92rem}
+.wbox{background:rgba(217,119,6,.08);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.wbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.wbox p{color:var(--t2);font-size:.92rem}
+.tbox{background:rgba(8,145,178,.08);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.tbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cy);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.tbox p{color:var(--t2);font-size:.92rem}
+.pp{display:flex;align-items:center;gap:.35rem;flex-wrap:nowrap;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+.pp .s{padding:.38rem .8rem;background:var(--card);border:1px solid var(--bdr);border-radius:6px;color:var(--ag);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0}
+th{background:rgba(237,20,91,.08);color:var(--pk);padding:.6rem .8rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:1px;text-transform:uppercase}
+td{padding:.6rem .8rem;border-bottom:1px solid var(--bdr);color:var(--t2)}
+tr:last-child td{border-bottom:none}
+.ft{text-align:center;padding:3rem 2rem;border-top:1px solid var(--bdr);color:var(--t3);font-size:.85rem}
+@media(max-width:768px){.cc{padding:1rem}.tp{padding:1.2rem}pre{padding:.8rem;font-size:.74rem}.toc-inner{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-label">Ficha do Professor · 2º Semestre</div>
+  <h1>Aula 08 — Gradio e Deploy<br>Exercícios Práticos</h1>
+  <p class="sub">Guia completo: 3 exercícios com objetivo, passo a passo, código no Colab, gabarito, erros comuns e sugestões de discussão.</p>
+  <div class="info"><span>👨‍🏫 Prof. Jorge Luiz Gomes</span><span>🎓 FIAP · Ciência da Computação</span><span>📅 Módulo 2 — RAG Profissional</span><span>⏱️ 1h40min (100 min)</span></div>
+</section>
+<nav class="toc"><div class="toc-inner"><a href="#crono">Cronograma</a><a href="#ex1">Ex1</a><a href="#ex2">Ex2</a><a href="#ex3">Ex3</a></div></nav>
+<main class="cc">
+<section class="bl c--pk" id="crono">
+  <div class="bh"><span class="bn">CRONOGRAMA</span><h2 class="bt">Planejamento da Aula</h2></div>
+  <p class="btag">Distribuição sugerida dos 100 minutos entre os exercícios.</p>
+  <div class="tp"><table><thead><tr><th>Tempo</th><th>Exercício</th><th>Tipo</th><th>Dinâmica</th></tr></thead>
+  <tbody><tr><td>00-10</td><td>Hoje o notebook vira produto com link público</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Professor</td></tr><tr><td>10-35</td><td>Ex 1 — gr.ChatInterface</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Individual</td></tr><tr><td>35-65</td><td>Ex 2 — gr.Blocks com painel de controle</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Individual</td></tr><tr><td>65-90</td><td>Ex 3 — Chatbot RAG com Gradio</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Individual</td></tr><tr><td>90-100</td><td>Síntese — cada grupo compartilha a URL na turma</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Professor</td></tr></tbody></table></div>
+  <div class="cbox"><h4>⏱️ Turma Compacta — 1h</h4><p>Focar em Ex. 1 (interface básica funcionando com URL pública) — é o que mais importa ver funcionando. Ex. 2 e 3 podem avançar como lição de casa se o tempo apertar.</p></div>
+</section>
+<section class="bl c--cy" id="ex1">
+  <div class="bh"><span class="bn">EXERCÍCIO 01</span><h2 class="bt">gr.ChatInterface ⭐</h2></div>
+  <p class="btag">⭐</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Primeira interface web funcional — transformar o chatbot em algo acessível por link, sem precisar do Colab aberto.</p></div>
+  <div class="tp"><h3>🧩 Conceitos Trabalhados</h3><p><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 gr.ChatInterface</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 share=True</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Função de callback</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Deploy temporário</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Interface conversacional</span></p></div>
+  <div class="tp"><h3>⚙️ Preparação Prévia</h3><p><code>!pip install gradio</code> — já no setup padrão.</p></div>
+  <div class="tp"><h3>📋 Passo a Passo no Colab</h3><div class="pp"><span class="s">1</span><span style="color:var(--t2);font-size:.9rem"><strong>Abrir a URL pública no celular do professor</strong> — Efeito 'uau' real — mostrar o chatbot funcionando fora do notebook.</span></div><div class="pp"><span class="s">2</span><span style="color:var(--t2);font-size:.9rem"><strong>Alunos completam responder_chat()</strong> — A função recebe mensagem + histórico do Gradio e devolve a resposta do LLM.</span></div><div class="pp"><span class="s">3</span><span style="color:var(--t2);font-size:.9rem"><strong>Cada aluno testa a URL pública de um colega</strong> — Reforça que o link realmente funciona fora do ambiente de quem criou.</span></div></div>
+  <div class="tbox"><h4>✅ Gabarito</h4><p><div style="background:rgba(22,163,74,.08);border-radius:6px;padding:.6rem 1rem"><code style="font-size:.82rem">return client.chat(model=MODEL_NAME,messages=msgs,options={'num_predict':300,'temperature':0.5},stream=False)['message']['content'].strip()</code></div></p></div>
+  <div class="tp"><h3>💻 Código Completo no Colab</h3><p>Código que os alunos executarão no Google Colab. Narre cada bloco explicando o propósito de cada trecho.</p><div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>2Sem_08_exercicio_01.py · Google Colab</span></div><pre><span class="kw">import</span> gradio <span class="kw">as</span> gr
+
+SYSTEM=<span class="st">&#x27;Voce e assistente do dominio do grupo.&#x27;</span>
+
+<span class="kw">def</span> responder(mensagem, historico):
+    msgs=[{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;system&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:SYSTEM}]
+    <span class="kw">for</span> u,a <span class="kw">in</span> historico:
+        msgs.extend([{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;user&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:u},{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;assistant&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:a}])
+    msgs.append({<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;user&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:mensagem})
+    <span class="kw">return</span> client.chat(model=MODEL_NAME,messages=msgs,
+        options={<span class="st">&#x27;num_predict&#x27;</span>:<span class="nb">300</span>,<span class="st">&#x27;temperature&#x27;</span>:<span class="nb">0.5</span>},stream=<span class="kw">False</span>)[<span class="st">&#x27;message&#x27;</span>][<span class="st">&#x27;content&#x27;</span>].strip()
+
+demo=gr.ChatInterface(fn=responder,title=<span class="st">&#x27;Seu Assistente&#x27;</span>,examples=[<span class="st">&#x27;O que e RAG?&#x27;</span>,<span class="st">&#x27;Resuma este texto&#x27;</span>])
+demo.launch(share=<span class="kw">True</span>, quiet=<span class="kw">True</span>)
+</pre></div></div>
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4><p><strong>1. Esquecer <code>share=True</code></strong> — sem isso, a interface fica só local, sem URL pública. Solução: sempre incluir <code>share=True</code> no <code>.launch()</code>.</p><p><strong>2. Função não retorna string</strong> — o Gradio espera que a função retorne texto. Se retornar None ou dict, a interface quebra. Solução: garantir que <code>responder()</code> sempre retorne <code>.strip()</code>.</p><p><strong>3. Histórico não é preservado</strong> — se esquecer de usar o parâmetro <code>historico</code> da função, o chatbot não lembra da conversa. Solução: sempre incluir <code>for u,a in historico</code> para reconstruir o histórico.</p></div>
+  <div class="cbox"><h4>💬 Sugestão de Discussão</h4><p><em>Regra de segurança para reforçar: NUNCA expor API key na interface Gradio, nem em texto visível, nem em logs de erro que aparecem na tela.</em></p></div>
+</section>
+<section class="bl c--gn" id="ex2">
+  <div class="bh"><span class="bn">EXERCÍCIO 02</span><h2 class="bt">gr.Blocks com painel de controle ⭐⭐</h2></div>
+  <p class="btag">⭐⭐</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Ir além do ChatInterface pronto — montar um layout customizado com múltiplos componentes (dropdown, slider, botão).</p></div>
+  <div class="tp"><h3>🧩 Conceitos Trabalhados</h3><p><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 gr.Blocks (context manager)</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 gr.Dropdown, gr.Slider, gr.Button</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 btn.click()</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 UI customizada</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Parâmetros ajustáveis em tempo real</span></p></div>
+  <div class="tp"><h3>⚙️ Preparação Prévia</h3><p>Nenhuma dependência nova.</p></div>
+  <div class="tp"><h3>📋 Passo a Passo no Colab</h3><div class="pp"><span class="s">1</span><span style="color:var(--t2);font-size:.9rem"><strong>Comparar ChatInterface (pronto) vs. Blocks (customizável)</strong> — <em>'ChatInterface é rápido, Blocks é flexível — depende do que você precisa controlar.'</em></span></div><div class="pp"><span class="s">2</span><span style="color:var(--t2);font-size:.9rem"><strong>Alunos completam analisar_texto() e o layout</strong> — Conectar cada componente ao <code>btn.click(fn=..., inputs=[...], outputs=[...])</code>.</span></div><div class="pp"><span class="s">3</span><span style="color:var(--t2);font-size:.9rem"><strong>Testar trocando o dropdown e o slider</strong> — Ver a interface reagir aos parâmetros em tempo real.</span></div></div>
+  
+  <div class="tp"><h3>💻 Código Completo no Colab</h3><p>Código que os alunos executarão no Google Colab. Narre cada bloco explicando o propósito de cada trecho.</p><div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>2Sem_08_exercicio_02.py · Google Colab</span></div><pre><span class="kw">import</span> gradio <span class="kw">as</span> gr
+
+<span class="kw">def</span> processar(texto, tarefa, temperatura):
+    prompt=<span class="st">f&#x27;Tarefa: {tarefa}\n\nTexto: {texto}&#x27;</span>
+    <span class="kw">return</span> client.chat(model=MODEL_NAME,messages=[{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;user&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:prompt}],
+        options={<span class="st">&#x27;num_predict&#x27;</span>:<span class="nb">300</span>,<span class="st">&#x27;temperature&#x27;</span>:<span class="fn">float</span>(temperatura)}},stream=<span class="kw">False</span>)[<span class="st">&#x27;message&#x27;</span>][<span class="st">&#x27;content&#x27;</span>].strip()
+
+<span class="kw">with</span> gr.Blocks() <span class="kw">as</span> app:
+    entrada=gr.Textbox(label=<span class="st">&#x27;Entrada&#x27;</span>,lines=<span class="nb">3</span>)
+    tarefa=gr.Dropdown([<span class="st">&#x27;Analisar&#x27;</span>,<span class="st">&#x27;Resumir&#x27;</span>],value=<span class="st">&#x27;Analisar&#x27;</span>,label=<span class="st">&#x27;Tarefa&#x27;</span>)
+    temp=gr.Slider(<span class="nb">0.0</span>,<span class="nb">1.5</span>,value=<span class="nb">0.3</span>,label=<span class="st">&#x27;Temperature&#x27;</span>)
+    btn=gr.Button(<span class="st">&#x27;Processar&#x27;</span>)
+    saida=gr.Textbox(label=<span class="st">&#x27;Resultado&#x27;</span>)
+    btn.click(processar,[entrada,tarefa,temp],[saida])
+app.launch(share=<span class="kw">True</span>, quiet=<span class="kw">True</span>)
+</pre></div></div>
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4><p><strong>1. Componente não conectado ao <code>btn.click()</code></strong> — o componente aparece na tela mas não faz nada porque não está na lista de <code>inputs</code> ou <code>outputs</code>. Solução: verificar se todos os componentes estão na chamada <code>btn.click(fn, [inputs], [outputs])</code>.</p><p><strong>2. Tipo errado no Slider</strong> — se o Slider retornar string em vez de float, a chamada ao LLM falha. Solução: usar <code>float(temperatura)</code> na conversão.</p><p><strong>3. Layout confuso</strong> — colocar muitos componentes sem ordem lógica confunde o usuário. Solução: usar <code>gr.Row()</code> e <code>gr.Column()</code> para organizar.</p></div>
+  <div class="cbox"><h4>💬 Sugestão de Discussão</h4><p><em>Esse painel de controle é o tipo de interface que um usuário não-técnico consegue usar sem saber que existe um LLM por trás — é a diferença entre um script e um produto.</em></p></div>
+</section>
+<section class="bl c--pu" id="ex3">
+  <div class="bh"><span class="bn">EXERCÍCIO 03</span><h2 class="bt">Chatbot RAG com Gradio ⭐⭐⭐</h2></div>
+  <p class="btag">⭐⭐⭐</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Combinar RAG (Aulas 05-07) com interface Gradio — o antecessor direto do que será entregue no CKP03 (Aula 11).</p></div>
+  <div class="tp"><h3>🧩 Conceitos Trabalhados</h3><p><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Estado global (histórico)</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Função de busca de contexto integrada ao callback</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 RAG com interface</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Chatbot com fontes citadas</span></p></div>
+  <div class="tp"><h3>⚙️ Preparação Prévia</h3><p>Nenhuma dependência nova — reaproveita a base ChromaDB das Aulas 05-07.</p></div>
+  <div class="tp"><h3>📋 Passo a Passo no Colab</h3><div class="pp"><span class="s">1</span><span style="color:var(--t2);font-size:.9rem"><strong>Explicar a integração</strong> — A cada mensagem: buscar contexto → montar prompt → chamar LLM → mostrar na interface.</span></div><div class="pp"><span class="s">2</span><span style="color:var(--t2);font-size:.9rem"><strong>Alunos completam chat_rag()</strong> — Atenção ao histórico global — sem ele, o chatbot não lembra da conversa entre mensagens.</span></div><div class="pp"><span class="s">3</span><span style="color:var(--t2);font-size:.9rem"><strong>Testar com pergunta que exige o RAG e uma que não exige</strong> — Ver se a resposta muda de qualidade quando o contexto é relevante vs. irrelevante.</span></div></div>
+  
+  <div class="tp"><h3>💻 Código Completo no Colab</h3><p>Código que os alunos executarão no Google Colab. Narre cada bloco explicando o propósito de cada trecho.</p><div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>2Sem_08_exercicio_03.py · Google Colab</span></div><pre><span class="kw">import</span> gradio <span class="kw">as</span> gr
+
+BASE_DOCS=[<span class="st">&#x27;Doc 1 do dominio.&#x27;</span>,<span class="st">&#x27;Doc 2.&#x27;</span>,<span class="st">&#x27;Doc 3.&#x27;</span>]
+
+<span class="kw">def</span> buscar_docs(consulta,docs):
+    prompt=<span class="st">f&#x27;Indices relevantes para: {consulta}\n&#x27;</span>+<span class="st">&quot;\n&quot;</span>.join(<span class="st">f&#x27;[{i}] {d}&#x27;</span> <span class="kw">for</span> i,d <span class="kw">in</span> <span class="fn">enumerate</span>(docs))+<span class="st">&#x27;\nSo os indices (ex: 0,1)&#x27;</span>
+    resp=client.chat(model=MODEL_NAME,messages=[{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;user&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:prompt}],
+        options={<span class="st">&#x27;num_predict&#x27;</span>:<span class="nb">10</span>,<span class="st">&#x27;temperature&#x27;</span>:<span class="nb">0.0</span>},stream=<span class="kw">False</span>)[<span class="st">&#x27;message&#x27;</span>][<span class="st">&#x27;content&#x27;</span>].strip()
+    <span class="kw">try</span>: <span class="kw">return</span> [docs[<span class="fn">int</span>(x.strip())] <span class="kw">for</span> x <span class="kw">in</span> resp.split(<span class="st">&#x27;,&#x27;</span>) <span class="kw">if</span> x.strip().isdigit() <span class="kw">and</span> <span class="fn">int</span>(x.strip())&lt;<span class="fn">len</span>(docs)]
+    <span class="kw">except</span>: <span class="kw">return</span> docs[:<span class="nb">2</span>]
+
+hist_global=[]
+
+<span class="kw">def</span> chat_rag(mensagem,_):
+    <span class="kw">global</span> hist_global
+    ctx=<span class="st">&#x27;\n&#x27;</span>.join(buscar_docs(mensagem,BASE_DOCS))
+    msgs=[{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;system&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:<span class="st">f&#x27;Contexto:{ctx}&#x27;</span>}]+[m <span class="kw">for</span> u,a <span class="kw">in</span> hist_global[-<span class="nb">3</span>:] <span class="kw">for</span> m <span class="kw">in</span> [{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;user&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:u},{<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;assistant&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:a}]]
+    msgs.append({<span class="st">&#x27;role&#x27;</span>:<span class="st">&#x27;user&#x27;</span>,<span class="st">&#x27;content&#x27;</span>:mensagem})
+    resp=client.chat(model=MODEL_NAME,messages=msgs,
+        options={<span class="st">&#x27;num_predict&#x27;</span>:<span class="nb">300</span>,<span class="st">&#x27;temperature&#x27;</span>:<span class="nb">0.3</span>},stream=<span class="kw">False</span>)[<span class="st">&#x27;message&#x27;</span>][<span class="st">&#x27;content&#x27;</span>].strip()
+    hist_global.append((mensagem,resp))
+    <span class="kw">return</span> hist_global
+
+<span class="kw">with</span> gr.Blocks() <span class="kw">as</span> app:
+    chatbot=gr.Chatbot(height=<span class="nb">300</span>)
+    msg=gr.Textbox(label=<span class="st">&#x27;Pergunta&#x27;</span>)
+    btn=gr.Button(<span class="st">&#x27;Enviar&#x27;</span>)
+    btn.click(chat_rag,[msg,chatbot],[chatbot])
+app.launch(share=<span class="kw">True</span>, quiet=<span class="kw">True</span>)
+</pre></div></div>
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4><p><strong>1. Variável global não declarada</strong> — esquecer <code>global hist_global</code> dentro da função causa erro <code>UnboundLocalError</code>. Solução: sempre declarar <code>global</code> antes de modificar a variável.</p><p><strong>2. Buscar contexto sem cache</strong> — buscar docs a cada mensagem funciona mas fica lento. Solução: limitar histórico com <code>hist_global[-3:]</code> para reduzir chamadas.</p><p><strong>3. Formato do Chatbot incompatível</strong> — o Gradio espera tuplas <code>(user_msg, bot_msg)</code> no histórico. Solução: retornar <code>hist_global</code> como lista de tuplas.</p></div>
+  <div class="cbox"><h4>💬 Sugestão de Discussão</h4><p><em>Esse é literalmente o esqueleto do CKP03 (Aula 11) — RAG + Agente + interface. O que muda lá é a adição de tools e do loop de decisão do agente.</em></p></div>
+</section>
+</main>
+<section class="bl c--tl" id="refs">
+  <div class="bh"><span class="bn">REFERÊNCIAS</span><h2 class="bt">Fontes e Leitura Complementar</h2></div>
+  <div class="tp"><h3>📚 Referências da Aula 08</h3><p><strong>Livro:</strong> Chollet, F. <em>Deep Learning com Python</em>. Pearson, 2018. (Cap. 7:_deploy_ de modelos)</p><p><strong>Paper:</strong> Gradio Team. <em>"Gradio: Open-Source Python Library for Machine Learning Demos"</em>. 2024. (arxiv.org/abs/2401.01146)</p><p><strong>Docs Oficiais:</strong></p><p>• <a href="https://www.gradio.app/docs/" target="_blank">Gradio Docs</a> — Documentação oficial com todos os componentes</p><p>• <a href="https://www.gradio.app/guides/quickstart" target="_blank">Gradio Quickstart</a> — Tutorial rápido para iniciantes</p><p>• <a href="https://colab.research.google.com/" target="_blank">Google Colab</a> — Ambiente de execução gratuito</p></div>
+</section>
+<footer class="ft"><p>FIAP · Prompt Engineering and Artificial Intelligence · 2026 · 2º Semestre</p><p>Prof. Jorge Luiz Gomes · Todos os direitos reservados</p></footer>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# ============================================================
+# FIAP AI Lab — .gitignore
+# ============================================================
+
+# ---------- Segredos ----------
+# .env contém WEBUI_SECRET_KEY, SEARXNG_SECRET e OLLAMA_API_KEY.
+# Só o .env.example vai para o repositório.
+.env
+.env.local
+.env.*.local
+
+# ---------- Dados gerados em runtime ----------
+data/
+!data/.gitkeep
+
+# ---------- SearXNG ----------
+# settings.yml É versionado (configuração do laboratório).
+# Só o que o container gera fica de fora.
+searxng/uwsgi.ini
+searxng/*.log
+
+# ---------- Pipelines ----------
+# Os .py são versionados; o estado das valves é escrito pelo
+# container a cada boot e muda conforme o aluno mexe na UI.
+pipelines/*/valves.json
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---------- Ferramentas de agente ----------
+.omc/
+
+# ---------- Sistema operacional ----------
+.DS_Store
+Thumbs.db

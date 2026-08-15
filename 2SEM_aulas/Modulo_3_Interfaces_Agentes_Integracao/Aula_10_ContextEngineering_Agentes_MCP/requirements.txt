@@ -1,0 +1,10 @@
+# Dependências do projeto — Context Engineering e Agentes MCP
+# Instale com:  pip install -r requirements.txt
+
+langchain
+langchain-ollama
+langchain-community
+duckduckgo-search
+langchain-mcp-adapters
+tiktoken
+python-dotenv

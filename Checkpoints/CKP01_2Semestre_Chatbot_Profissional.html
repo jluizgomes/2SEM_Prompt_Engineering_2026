@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CKP01 · 2º Sem · Chatbot Profissional</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--bg:#f5f6fa;--surface:#fff;--surface2:#f0f1f5;--border:#e2e4ec;--pink:#ED145B;--text:#1a1b2f;--muted:#4e4e68;--white:#1a1b2f;--red:#C9492C;
+        --green:#29AF8C;--blue:#3D9CCC;--purple:#7C60C6;--orange:#D58C2E;
+        --fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b;--code-text:#e2e8f0;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px}
+  a{color:var(--pink)}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#f5f6fa 0%,#fce7f3 40%,#eff6ff 100%);padding:60px 40px 50px;border-bottom:1px solid var(--border)}
+  .hero-badge{display:inline-block;background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.25);color:var(--pink);padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px}
+  .hero h1{font-size:34px;font-weight:800;background:linear-gradient(135deg,#1a1b2f,#ED145B,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:12px}
+  .hero p{color:var(--muted);font-size:15px;max-width:700px;margin-bottom:28px}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px}
+  .meta-pill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);padding:7px 14px;border-radius:8px;font-size:13px}
+
+  /* SECTIONS */
+  section{padding:44px 40px;border-bottom:1px solid var(--border)}
+  .section-header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+  .section-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+  .section-header h2{font-size:21px;font-weight:700}
+  .section-header p{font-size:13px;color:var(--muted);margin-top:2px}
+
+  /* HIGHLIGHT BOX */
+  .hbox{border-radius:10px;padding:18px 22px;margin:16px 0;border-left:3px solid}
+  .hbox-pink{background:rgba(237,20,91,.06);border-color:var(--pink)}
+  .hbox-blue{background:rgba(61,156,204,.06);border-color:var(--blue)}
+  .hbox-green{background:rgba(41,175,140,.06);border-color:var(--green)}
+  .hbox-orange{background:rgba(213,140,46,.06);border-color:var(--orange)}
+  .hbox-purple{background:rgba(124,96,198,.06);border-color:var(--purple)}
+  .hbox h3{font-size:13px;font-weight:700;margin-bottom:8px}
+  .hbox-pink h3{color:var(--pink)} .hbox-blue h3{color:var(--blue)} .hbox-green h3{color:var(--green)}
+  .hbox-orange h3{color:var(--orange)} .hbox-purple h3{color:var(--purple)}
+  .hbox p{font-size:13px;color:var(--muted);line-height:1.6}
+  .hbox ul{padding-left:18px;margin-top:6px}
+  .hbox ul li{font-size:13px;color:var(--muted);margin-bottom:4px;line-height:1.5}
+
+  /* ARC BAR */
+  .arc-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:16px 0}
+  .arc-bar h3{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+  .arc-steps{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .arc-step{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted)}
+  .arc-step.active{background:rgba(237,20,91,.08);border-color:rgba(237,20,91,.3);color:var(--pink)}
+  .arc-step.done{opacity:.5}
+  .arc-arrow{color:var(--muted);font-size:14px;padding:0 2px}
+  .arc-bar p{margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6}
+
+  /* TABLE */
+  .tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0}
+  .tbl-wrap table{width:100%;border-collapse:collapse}
+  .tbl-wrap th{background:var(--surface2);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+  .tbl-wrap td{padding:13px 16px;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;vertical-align:top;color:var(--muted)}
+  .tbl-wrap td strong{color:var(--text)}
+  .tbl-wrap tr:last-child td{border-bottom:none}
+  .tbl-wrap tr:hover td{background:rgba(0,0,0,.015)}
+
+  /* PILLS */
+  .pill{display:inline-block;padding:2px 9px;border-radius:4px;font-size:11px;font-weight:600;margin:2px}
+  .pill-pink{background:rgba(237,20,91,.1);color:var(--pink)}
+  .pill-green{background:rgba(41,175,140,.1);color:var(--green)}
+  .pill-blue{background:rgba(61,156,204,.1);color:var(--blue)}
+  .pill-orange{background:rgba(213,140,46,.1);color:var(--orange)}
+  .pill-purple{background:rgba(124,96,198,.1);color:var(--purple)}
+  .pill-gray{background:rgba(0,0,0,.07);color:var(--muted)}
+
+  /* RUBRIC SCORE CARDS */
+  .score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .score-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+  .score-val{font-size:30px;font-weight:800;color:var(--pink);margin-bottom:3px}
+  .score-label{font-size:11px;color:var(--muted);line-height:1.4}
+
+  /* TIMELINE */
+  .timeline{padding-left:24px;position:relative;margin:8px 0}
+  .timeline::before{content:'';position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--border)}
+  .timeline-item{position:relative;margin-bottom:20px}
+  .timeline-item::before{content:'';position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--pink);border:2px solid var(--bg)}
+  .tl-aula{display:inline-block;background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.25);color:var(--pink);padding:1px 8px;border-radius:4px;font-size:10px;font-weight:700;margin-bottom:4px}
+  .timeline-item h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+  .timeline-item p{font-size:12px;color:var(--muted);line-height:1.5}
+
+  /* DELIVERY BOX */
+  .delivery-box{background:rgba(237,20,91,.04);border:1px solid rgba(237,20,91,.2);border-radius:12px;padding:20px 24px;margin:20px 0}
+  .delivery-box h3{font-size:14px;font-weight:700;color:var(--pink);margin-bottom:8px}
+  .delivery-box p{font-size:13px;color:var(--muted);line-height:1.6}
+  .delivery-box ul{padding-left:18px;margin-top:6px}
+  .delivery-box ul li{font-size:13px;color:var(--muted);margin-bottom:4px}
+
+  /* CARDS GRID */
+  .card-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px}
+  .card-icon{font-size:22px;margin-bottom:10px}
+  .card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .card-body{font-size:12px;color:var(--muted);line-height:1.6}
+
+  /* DROP TAG */
+  .drop-tag{background:rgba(213,140,46,.1);border:1px dashed rgba(213,140,46,.4);border-radius:4px;padding:1px 7px;font-size:9px;font-weight:700;color:var(--orange);vertical-align:middle;margin-left:6px}
+
+  code{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;color:var(--text)}
+
+  footer{background:var(--surface);border-top:1px solid var(--border);padding:28px 40px;text-align:center;color:var(--muted);font-size:12px}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:hidden;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow-x:auto;white-space:pre}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">2º Semestre · Checkpoint 01 · Módulo 1</div>
+  <h1>CKP01 — Chatbot<br>Profissional</h1>
+  <p>LangChain LCEL · Memória gerenciada · Pydantic v2 · Grupo de 3–4 alunos · Entrega: Aula 04</p>
+  <div class="hero-meta">
+    <div class="meta-pill">📅 Entrega: Aula 04</div>
+    <div class="meta-pill">👥 Grupos de 3–4 alunos</div>
+    <div class="meta-pill">🔗 LangChain LCEL obrigatório</div>
+    <div class="meta-pill">⏱️ Estimativa: 3–4h por grupo</div>
+    <div class="meta-pill">⚖️ Peso: 25% da nota</div>
+  </div>
+</div>
+
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background:rgba(237,20,91,.1);color:var(--pink)">🎯</div>
+    <div><h2>Contexto e Objetivo</h2>
+    <p>Módulo 1 · Aulas 01–04 · LangChain, memória e context engineering</p></div>
+  </div>
+  <div class="arc-bar">
+    <h3>Arco do semestre — 14 aulas · 4 módulos · 3 CKPs · Domínio fixo</h3>
+    <div class="arc-steps">
+      <div class="arc-step active">📍 M1 Aulas 01–04<br><small>CKP01 ← aqui</small></div>
+      <div class="arc-arrow">→</div>
+      <div class="arc-step">M2 Aulas 05–07<br><small>CKP02 RAG</small></div>
+      <div class="arc-arrow">→</div>
+      <div class="arc-step">M3 Aulas 08–11<br><small>CKP03 Agente</small></div>
+      <div class="arc-arrow">→</div>
+      <div class="arc-step">M4 Aulas 12–14<br><small>LangGraph — Sem CKP</small></div>
+    </div>
+    <p><strong>Domínio fixo:</strong> o grupo escolhe um domínio real na Aula 01 e o mantém nos três CKPs. O chatbot do CKP01 vira base do RAG no CKP02, que vira tool do agente no CKP03. Escolher bem o domínio na Aula 01 é a decisão mais importante do semestre.</p>
+  </div>
+  <div class="hbox hbox-pink">
+    <h3>Missão do CKP01</h3>
+    <p>O grupo <strong>reescreve o chatbot do CKP03 do 1º semestre usando LangChain</strong>: LCEL com operador <code>|</code>, ChatOllama, ChatPromptTemplate, 1 tipo de memória gerenciada e pelo menos 1 schema Pydantic validando a saída. O objetivo é mostrar que o mesmo comportamento do chatbot manual agora exige menos código e é mais profissional. <strong>Antes: ~40 linhas manuais. Depois: ~15 linhas LCEL.</strong></p>
+  </div>
+  <div class="card-row">
+    <div class="card"><div class="card-icon">🔗</div><div class="card-title">Pipeline LCEL</div><div class="card-body"><code>ChatPromptTemplate | ChatOllama | OutputParser</code> — operador pipe obrigatório. Sem chains manuais.</div></div>
+    <div class="card"><div class="card-icon">🧠</div><div class="card-title">1 tipo de memória</div><div class="card-body">Buffer, Window (N=5–8) ou Summary. Justificar a escolha com base no domínio e no custo de tokens.</div></div>
+    <div class="card"><div class="card-icon">📐</div><div class="card-title">Pydantic v2</div><div class="card-body">BaseModel com ≥4 campos tipados validando ao menos 1 saída do chatbot (análise de input, relatório, classificação).</div></div>
+    <div class="card"><div class="card-icon">⚙️</div><div class="card-title">Context engineering</div><div class="card-body">System prompt rico + seção mostrando degradação de qualidade com contexto crescente ("context rot" em gráfico ou tabela).</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background:rgba(61,156,204,.1);color:var(--blue)">📋</div>
+    <div><h2>Requisitos Técnicos</h2></div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Componente</th><th>Status</th><th>Especificação</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ChatOllama + LCEL</strong></td><td><span class="pill pill-pink">Obrigatório</span></td><td>Chain usando operador <code>|</code>. Usar <code>gpt-oss:120b</code> via Ollama Cloud com <code>OLLAMA_API_KEY</code> como Secret.</td></tr>
+        <tr><td><strong>ChatPromptTemplate</strong></td><td><span class="pill pill-pink">Obrigatório</span></td><td>Templates com variáveis — não f-strings manuais. System message e human message separados.</td></tr>
+        <tr><td><strong>Memória gerenciada</strong></td><td><span class="pill pill-pink">Obrigatório</span></td><td>Buffer, Window ou Summary. Célula markdown justificando a escolha. Demonstração de que funciona em ≥5 turnos.</td></tr>
+        <tr><td><strong>Pydantic v2 BaseModel</strong></td><td><span class="pill pill-pink">Obrigatório</span></td><td>≥4 campos tipados. Usar <code>with_structured_output()</code> ou <code>JsonOutputParser</code> para validar 1+ saída.</td></tr>
+        <tr><td><strong>Seção "context rot"</strong></td><td><span class="pill pill-pink">Obrigatório</span></td><td>Demonstrar degradação de qualidade com contexto crescente — mesmo prompt, janelas de tokens diferentes.</td></tr>
+        <tr><td><strong>Domínio documentado</strong></td><td><span class="pill pill-pink">Obrigatório</span></td><td>README ou célula markdown: qual domínio, por que foi escolhido, quem são os usuários-alvo.</td></tr>
+        <tr><td><strong>Context engineering com métricas</strong></td><td><span class="pill pill-green">Diferencial (+0,5)</span></td><td>Contar tokens, medir latência e qualidade entre janelas diferentes. Gráfico ou tabela comparativa.</td></tr>
+        <tr><td><strong>Comparação 1º vs 2º semestre</strong></td><td><span class="pill pill-green">Diferencial (+0,5)</span></td><td>Tabela lado a lado: chatbot manual do CKP03 vs pipeline LangChain. Linhas de código, legibilidade, extensibilidade.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background:rgba(41,175,140,.1);color:var(--green)">⚖️</div>
+    <div><h2>Rubrica de Avaliação</h2>
+    <p>Total: 10 pontos</p></div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Critério</th><th style="text-align:center">Peso</th><th>Como será avaliado</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Pipeline LCEL funcional</strong><br><span style="font-size:11px;color:var(--muted)">Chain com <code>|</code>, templates e parser correto</span></td>
+          <td style="text-align:center;font-size:22px;font-weight:800;color:var(--pink)">3,0</td>
+          <td>A chain usa operador pipe? Templates têm variáveis? Output parser está correto para o tipo de saída? Roda sem erros com Run All?</td>
+        </tr>
+        <tr>
+          <td><strong>Gestão de memória e context rot</strong><br><span style="font-size:11px;color:var(--muted)">Estratégia documentada e demonstrada</span></td>
+          <td style="text-align:center;font-size:22px;font-weight:800;color:var(--pink)">2,5</td>
+          <td>A estratégia é justificada? O chatbot lembra contexto em 5+ turnos? A seção de context rot mostra degradação real?</td>
+        </tr>
+        <tr>
+          <td><strong>Pydantic v2 com validação</strong><br><span style="font-size:11px;color:var(--muted)">BaseModel tipado e integrado ao pipeline</span></td>
+          <td style="text-align:center;font-size:22px;font-weight:800;color:var(--pink)">2,0</td>
+          <td>BaseModel com ≥4 campos bem tipados? Field validators presentes se necessário? Integrado ao pipeline LCEL?</td>
+        </tr>
+        <tr>
+          <td><strong>System prompt e domínio</strong><br><span style="font-size:11px;color:var(--muted)">Persona robusta, regras claras, domínio documentado</span></td>
+          <td style="text-align:center;font-size:22px;font-weight:800;color:var(--pink)">1,5</td>
+          <td>O chatbot "sai do personagem" durante os testes? O domínio está documentado? As restrições fazem sentido para o caso de uso?</td>
+        </tr>
+        <tr>
+          <td><strong>Código e documentação</strong></td>
+          <td style="text-align:center;font-size:22px;font-weight:800;color:var(--pink)">1,0</td>
+          <td>Comentários PT-BR úteis, células markdown organizadas, instruções de execução claras.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="score-grid">
+    <div class="score-card"><div class="score-val">3,0</div><div class="score-label">Pipeline LCEL</div></div>
+    <div class="score-card"><div class="score-val">2,5</div><div class="score-label">Memória + Context</div></div>
+    <div class="score-card"><div class="score-val">2,0</div><div class="score-label">Pydantic v2</div></div>
+    <div class="score-card"><div class="score-val">1,5</div><div class="score-label">System prompt</div></div>
+    <div class="score-card"><div class="score-val">1,0</div><div class="score-label">Docs</div></div>
+  </div>
+</section>
+
+<section style="border-bottom:none">
+  <div class="section-header">
+    <div class="section-num" style="background:rgba(124,96,198,.1);color:var(--purple)">🗓️</div>
+    <div><h2>Cronograma e Entrega</h2></div>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="tl-aula">Aula 01</div>
+      <h4>Domínio definido e registrado</h4>
+      <p>Grupos formados, domínio escolhido e registrado no Portal. <strong>O domínio persiste nos CKP01, CKP02 e CKP03.</strong> Pense bem — é a decisão mais importante do semestre.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-aula">Aula 03</div>
+      <h4>Check-in: chain básica rodando</h4>
+      <p>Professor verifica que a chain LCEL está funcionando com pelo menos 3 turnos de conversa. Feedback sobre o system prompt antes da entrega.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-aula">Aula 04 — ENTREGA</div>
+      <h4>Entrega + demo de 5 minutos</h4>
+      <p>Link do Colab postado no Portal antes do início da aula. Demo ao vivo: 3 min conversando com o chatbot + 2 min explicando as escolhas de context engineering.</p>
+    </div>
+  </div>
+  <div class="hbox hbox-orange">
+    <h3>⚠️ Atenção — 2º Semestre</h3>
+    <ul>
+      <li>O chatbot do CKP01 será a <strong>base do CKP02 (RAG) e CKP03 (Agente)</strong> — construa modular desde o início.</li>
+      <li><code>OLLAMA_API_KEY</code> em <code>userdata.get('OLLAMA_API_KEY')</code> — nunca hardcoded.</li>
+      <li>Não use modelos deprecated. Use exclusivamente <code>gpt-oss:120b</code> via Ollama Cloud.</li>
+      <li>Grupos com domínio idêntico ao de outro grupo da turma: só o primeiro entregue é aceito.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:var(--text)">Disciplina: Prompt Engineering and Artificial Intelligence · FIAP · CC 2026</strong><br>
+  Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br
+</footer>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

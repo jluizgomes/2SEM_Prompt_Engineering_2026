@@ -1,0 +1,929 @@
+# ============================================================
+# FIAP AI Lab — Stack Completo
+# Prompt Engineering & AI · 2º Semestre 2026
+# ============================================================
+#
+# PERFIS (docker compose profiles)
+# ------------------------------------------------------------
+#   minimum  → postgres + ollama + open-webui
+#              Máquina fraca e primeiras aulas. Sem RAG externo,
+#              sem busca web, sem memória.
+#
+#   complete → tudo: RAG (chromadb), busca web (searxng+valkey),
+#              memória (mem0), crawling (firecrawl) e pipelines,
+#              todos integrados ao mesmo Open WebUI.
+#
+#   Perfis individuais — cada um sobe SÓ a base + a sua stack:
+#     rag     → chromadb
+#     search  → searxng + valkey
+#     memory  → mem0
+#     crawl   → firecrawl (api, playwright, redis, rabbitmq)
+#     langfuse → Langfuse self-hosted (observabilidade de LLM)
+#
+#   `langfuse` NÃO entra no perfil `complete` de propósito: são
+#   mais 5 containers e ~5 GB de RAM, e ele não é uma integração
+#   do Open WebUI, e sim do código LangChain das aulas. Para ter
+#   os dois ao mesmo tempo, acumule os perfis:
+#     docker compose --profile complete --profile langfuse up -d
+#   O core do Langfuse é MIT: self-hosted sem licença e sem custo.
+#
+#   A base (postgres + ollama + open-webui + pipelines) entra em
+#   todos eles, então o Open WebUI está sempre no ar e já
+#   configurado, seja qual for o perfil.
+#
+#   Perfis são acumuláveis:
+#     docker compose --profile rag --profile memory up -d
+#
+# Uso:
+#   cp .env.example .env
+#   make up-complete        # ou: docker compose --profile complete up -d
+#   make up-minimum
+#   make up-rag / up-search / up-memory / up-crawl
+#
+# NUNCA suba `minimum` junto com outro perfil: `open-webui` e
+# `open-webui-full` compartilham container_name, porta e volume
+# de propósito (para os dados do usuário sobreviverem à troca de
+# perfil), então só um dos dois pode rodar por vez.
+#
+# Portas (padrões do .env.example):
+#   http://localhost:3000  → Open WebUI
+#   http://localhost:8080  → SearXNG
+#   http://localhost:8000  → ChromaDB API
+#   http://localhost:8100  → mem0 API (Swagger em /docs)
+#   http://localhost:3002  → Firecrawl API
+#   http://localhost:9099  → Open WebUI Pipelines
+#   http://localhost:3001  → Langfuse self-hosted (UI + API)
+#   http://localhost:9091  → Console do MinIO do Langfuse
+#   http://localhost:11434 → Ollama API
+#   localhost:5432         → Postgres unificado
+# ============================================================
+
+name: fiap-ai-lab
+
+# ============================================================
+# Perfis reaproveitados. `profiles: *nome` funciona porque o
+# alias aponta para uma sequência YAML inteira.
+# ------------------------------------------------------------
+#   base  → infraestrutura: sobe em QUALQUER perfil
+#   stack → tudo que não é o perfil minimum
+# ============================================================
+x-profiles-base: &profiles-base ["minimum", "complete", "rag", "search", "memory", "crawl", "langfuse"]
+x-profiles-stack: &profiles-stack ["complete", "rag", "search", "memory", "crawl", "langfuse"]
+
+# ============================================================
+# Blocos reutilizados pelas duas variantes do Open WebUI.
+# ============================================================
+x-openwebui-base: &openwebui-base
+  image: ghcr.io/open-webui/open-webui:main
+  container_name: fiap-open-webui
+  restart: unless-stopped
+  ports:
+    - "${WEBUI_PORT:-3000}:8080"
+  volumes:
+    - openwebui_data:/app/backend/data
+  # O DNS interno do Compose usa o NOME DO SERVIÇO, que muda entre os perfis
+  # (open-webui / open-webui-full). O alias fixa `open-webui` como hostname
+  # nos dois casos, então o código das aulas não precisa saber qual perfil
+  # está no ar.
+  networks:
+    fiap-ai-net:
+      aliases:
+        - open-webui
+
+x-openwebui-env: &openwebui-env
+  # ---------- LLM ----------
+  OLLAMA_BASE_URL: http://ollama:11434
+  DEFAULT_MODELS: ${CHAT_MODEL:-qwen3.5:0.8b}
+  # ---------- Instância ----------
+  WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:-changeme_super_secret}
+  WEBUI_NAME: ${WEBUI_NAME:-FIAP AI Lab}
+  ENABLE_SIGNUP: ${ENABLE_SIGNUP:-true}
+  # ---------- Banco unificado ----------
+  # Sem isto o Open WebUI usaria um SQLite dentro do próprio volume.
+  # Com o Postgres, contas e históricos sobrevivem à troca de perfil
+  # e ficam inspecionáveis em aula com SQL.
+  DATABASE_URL: postgresql://${POSTGRES_USER:-fiap}:${POSTGRES_PASSWORD:-fiap2026}@postgres:5432/${WEBUI_POSTGRES_DB:-openwebui}
+  # ---------- Embeddings para o RAG nativo do Open WebUI ----------
+  RAG_EMBEDDING_ENGINE: ollama
+  RAG_EMBEDDING_MODEL: ${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+  RAG_OLLAMA_BASE_URL: http://ollama:11434
+
+# ============================================================
+# Ambiente comum aos containers do Firecrawl.
+# Espelha o x-common-env do compose oficial (v2.11.14), com dois
+# desvios: o Postgres é o unificado do lab e os modelos apontam
+# para o Ollama local em vez da OpenAI.
+# ============================================================
+x-firecrawl-env: &firecrawl-env
+  REDIS_URL: redis://firecrawl-redis:6379
+  REDIS_RATE_LIMIT_URL: redis://firecrawl-redis:6379
+  PLAYWRIGHT_MICROSERVICE_URL: http://firecrawl-playwright:3000/scrape
+  # Fila NuQ — mora no banco `postgres` do nosso Postgres unificado,
+  # que já sobe com pg_cron e o schema nuq.sql (ver postgres/Dockerfile).
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: ${POSTGRES_DB:-postgres}
+  POSTGRES_USER: ${POSTGRES_USER:-fiap}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fiap2026}
+  # Self-host sem Supabase: nenhuma API key é exigida nas chamadas.
+  USE_DB_AUTHENTICATION: "false"
+  NUM_WORKERS_PER_QUEUE: ${FIRECRAWL_WORKERS:-4}
+  CRAWL_CONCURRENT_REQUESTS: ${FIRECRAWL_CONCURRENCY:-5}
+  MAX_CONCURRENT_JOBS: ${FIRECRAWL_MAX_JOBS:-3}
+  BROWSER_POOL_SIZE: ${FIRECRAWL_BROWSERS:-2}
+  LOGGING_LEVEL: ${FIRECRAWL_LOG_LEVEL:-info}
+  # LLM local para as rotas /extract e /search do Firecrawl.
+  OPENAI_BASE_URL: http://ollama:11434/v1
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-ollama}
+  OLLAMA_BASE_URL: http://ollama:11434
+  MODEL_NAME: ${CHAT_MODEL:-qwen3.5:0.8b}
+  MODEL_EMBEDDING_NAME: ${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+  # Busca do Firecrawl reaproveita o SearXNG do lab (perfis complete/search).
+  SEARXNG_ENDPOINT: http://searxng:8080
+
+# ============================================================
+# Ambiente comum aos dois processos do Langfuse (web e worker).
+# ------------------------------------------------------------
+# Espelha o docker-compose.yml oficial (langfuse/langfuse, v4),
+# com dois desvios: o Postgres é o unificado do lab e a telemetria
+# sai desligada.
+#
+# O core do Langfuse é MIT — self-hosted não pede licença nem chave
+# paga, ao contrário do LangSmith self-hosted, que é add-on
+# Enterprise. Por isso ele é o alternativo indicado nas aulas.
+#
+# Quem escreve o quê:
+#   Postgres   → usuários, projetos, prompts, datasets, configuração
+#   ClickHouse → traces, observações e scores (o volume de verdade)
+#   Redis      → filas BullMQ entre web e worker, e cache
+#   MinIO      → blobs dos eventos de ingestão e mídia dos traces
+# ============================================================
+x-langfuse-env: &langfuse-env
+  # ---------- Identidade e segredos ----------
+  # URL que o navegador do aluno usa. Se trocar LANGFUSE_PORT,
+  # esta variável acompanha sozinha — o NextAuth valida contra ela.
+  NEXTAUTH_URL: http://localhost:${LANGFUSE_PORT:-3001}
+  # SALT deriva o hash das API keys e ENCRYPTION_KEY cifra os
+  # segredos guardados no banco (chaves de LLM, por exemplo).
+  # Trocar qualquer um DEPOIS do primeiro boot inutiliza o que já
+  # foi gravado. Gere uma vez com: openssl rand -hex 32
+  SALT: ${LANGFUSE_SALT:-}
+  ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-}
+
+  # ---------- Postgres unificado do lab ----------
+  DATABASE_URL: postgresql://${POSTGRES_USER:-fiap}:${POSTGRES_PASSWORD:-fiap2026}@postgres:5432/${LANGFUSE_POSTGRES_DB:-langfuse}
+
+  # ---------- ClickHouse — traces, observações e scores ----------
+  # Peça mais pesada da stack: guarda TODO span tracejado.
+  # A URL `clickhouse://` (porta nativa 9000) é só para as migrações;
+  # a aplicação usa HTTP na 8123.
+  CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
+  CLICKHOUSE_URL: http://langfuse-clickhouse:8123
+  CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
+  CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-fiap2026}
+  CLICKHOUSE_CLUSTER_ENABLED: "false"
+
+  # ---------- Redis próprio (filas BullMQ e cache) ----------
+  # Não reaproveita o firecrawl-redis: aquele sobe com `--save ""`
+  # (sem persistência) e é derrubado junto com o perfil crawl.
+  REDIS_HOST: langfuse-redis
+  REDIS_PORT: "6379"
+  REDIS_AUTH: ${LANGFUSE_REDIS_AUTH:-fiap2026}
+  REDIS_TLS_ENABLED: "false"
+
+  # ---------- MinIO (S3-compatible) — blobs de eventos e mídia ----
+  # O Langfuse NÃO funciona sem object storage: todo evento de
+  # ingestão é gravado como blob antes de virar linha no ClickHouse.
+  # `FORCE_PATH_STYLE=true` é obrigatório fora da AWS.
+  LANGFUSE_S3_EVENT_UPLOAD_BUCKET: ${LANGFUSE_S3_BUCKET:-langfuse}
+  LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+  LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://langfuse-minio:9000
+  LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${LANGFUSE_MINIO_USER:-minio}
+  LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-fiap2026minio}
+  LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+  LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: ${LANGFUSE_S3_BUCKET:-langfuse}
+  LANGFUSE_S3_MEDIA_UPLOAD_REGION: auto
+  LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://langfuse-minio:9000
+  LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: ${LANGFUSE_MINIO_USER:-minio}
+  LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: ${LANGFUSE_MINIO_PASSWORD:-fiap2026minio}
+  LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_MEDIA_UPLOAD_PREFIX: media/
+
+  # ---------- LLM local para as features de avaliação ------------
+  # Playground, LLM-as-a-judge e geração de datasets falam com o
+  # Ollama do lab por API OpenAI-compatible. Sem o whitelist abaixo
+  # o Langfuse recusa a conexão: por segurança ele bloqueia hosts
+  # de rede privada, e `ollama` é justamente um deles.
+  LANGFUSE_LLM_CONNECTION_WHITELISTED_HOST: ${LANGFUSE_WHITELISTED_HOST:-ollama}
+
+  # ---------- Telemetria para a Langfuse: DESLIGADA --------------
+  # Sala de aula: nenhum dado de uso sai da máquina do professor.
+  TELEMETRY_ENABLED: "false"
+  LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: ${LANGFUSE_EXPERIMENTAL:-false}
+
+services:
+
+  # ==========================================================
+  # 1. Postgres unificado — TODAS as stacks gravam aqui
+  #    Bancos: postgres (fila do Firecrawl) · openwebui · mem0 · langfuse
+  #    Perfis: todos
+  # ==========================================================
+  postgres:
+    profiles: *profiles-base
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+      args:
+        FIRECRAWL_VERSION: ${FIRECRAWL_VERSION:-2.11.14}
+    image: fiap-postgres:latest
+    container_name: fiap-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fiap}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fiap2026}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      # Lido pelo init/000-databases.sh
+      EXTRA_DATABASES: ${WEBUI_POSTGRES_DB:-openwebui} ${MEM0_POSTGRES_DB:-mem0} ${LANGFUSE_POSTGRES_DB:-langfuse}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fiap} -d ${POSTGRES_DB:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 2. Ollama — Servidor de LLM + Guardrails (CPU)
+  #    Perfis: todos
+  # ==========================================================
+  ollama:
+    profiles: *profiles-base
+    build:
+      context: ./ollama
+      dockerfile: Dockerfile
+    image: fiap-ollama-cpu:latest
+    container_name: fiap-ollama
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_MODELS=/root/.ollama/models
+      - OLLAMA_KEEP_ALIVE=${OLLAMA_KEEP_ALIVE:-24h}
+      - CHAT_MODEL=${CHAT_MODEL:-qwen3.5:0.8b}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+      # Guardrails didáticos, escolhidos para rodar bem sem GPU.
+      # Llama Guard 3 1B Q4_K_M (~955 MB) + Granite Guardian 3 2B (~2,7 GB).
+      - GUARDRAIL_MODELS=${GUARDRAIL_MODELS:-llama-guard3:1b-q4_K_M,granite3-guardian:2b}
+      # Opcional pesado para demonstração avançada:
+      # EXTRA_MODELS=granite4.1-guardian:8b
+      - EXTRA_MODELS=${EXTRA_MODELS:-}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 3a. Open WebUI — perfil MINIMUM
+  #     Só conversa com o Ollama. Vector store embutido
+  #     (Chroma local dentro do próprio container), sem busca web.
+  # ==========================================================
+  open-webui:
+    <<: *openwebui-base
+    profiles: ["minimum"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *openwebui-env
+
+  # ==========================================================
+  # 3b. Open WebUI — demais perfis
+  #     Mesma imagem, mesma porta e MESMO volume da variante
+  #     minimum, porém integrado a ChromaDB, SearXNG, Pipelines
+  #     (mem0 + Firecrawl) e ao Postgres unificado.
+  #
+  #     As integrações de stacks que podem não estar no ar
+  #     (searxng, mem0, firecrawl) são "soft": ficam configuradas
+  #     e só falham se o aluno usar a feature sem o perfil certo.
+  # ==========================================================
+  open-webui-full:
+    <<: *openwebui-base
+    profiles: *profiles-stack
+    depends_on:
+      ollama:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+      pipelines:
+        condition: service_started
+        required: false
+      searxng:
+        condition: service_started
+        required: false
+    environment:
+      <<: *openwebui-env
+
+      # ---------- Integração 1: ChromaDB como vector store ----------
+      # O RAG do Open WebUI grava no MESMO ChromaDB usado pelo código
+      # das aulas, então dá para inspecionar as coleções ao vivo.
+      VECTOR_DB: chroma
+      CHROMA_HTTP_HOST: chromadb
+      CHROMA_HTTP_PORT: 8000
+
+      # ---------- Integração 2: busca web via SearXNG ----------
+      # Nomes novos (Open WebUI 0.6+)
+      ENABLE_WEB_SEARCH: "true"
+      WEB_SEARCH_ENGINE: searxng
+      WEB_SEARCH_RESULT_COUNT: ${WEB_SEARCH_RESULT_COUNT:-5}
+      WEB_SEARCH_CONCURRENT_REQUESTS: 10
+      # Nomes legados, mantidos para imagens mais antigas
+      ENABLE_RAG_WEB_SEARCH: "true"
+      RAG_WEB_SEARCH_ENGINE: searxng
+      RAG_WEB_SEARCH_RESULT_COUNT: ${WEB_SEARCH_RESULT_COUNT:-5}
+      # O backend remove a query string e envia format=json;
+      # o marcador <query> é mantido por compatibilidade.
+      SEARXNG_QUERY_URL: http://searxng:8080/search?q=<query>
+      SEARXNG_LANGUAGE: ${SEARXNG_LANGUAGE:-pt-BR}
+
+      # ---------- Integração 3: Pipelines (mem0 + Firecrawl) ----------
+      # O container `pipelines` é exposto como endpoint OpenAI-compatible.
+      # É por ele que entram o filtro de memória (mem0) e o "modelo"
+      # Firecrawl Web, sem o aluno instalar nada pela interface.
+      ENABLE_OPENAI_API: "true"
+      OPENAI_API_BASE_URLS: http://pipelines:9099
+      OPENAI_API_KEYS: ${PIPELINES_API_KEY:-0p3n-w3bu!}
+
+  # ==========================================================
+  # 4. ChromaDB — Vector Store para RAG
+  #    Usado nas Aulas 05 a 11 e em CKP02 + CKP03
+  #    Perfis: todos menos minimum (o Open WebUI depende dele)
+  # ==========================================================
+  chromadb:
+    profiles: *profiles-stack
+    image: chromadb/chroma:latest
+    container_name: fiap-chromadb
+    restart: unless-stopped
+    ports:
+      - "${CHROMADB_PORT:-8000}:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+      - ALLOW_RESET=TRUE
+    # A imagem chromadb/chroma:latest é mínima: NÃO tem curl, wget, nc
+    # nem python, e o /bin/sh é dash (sem /dev/tcp). O único interpretador
+    # com socket embutido é o bash (/usr/bin/bash) — daí o GET manual.
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - 'exec 3<>/dev/tcp/127.0.0.1/8000; printf "GET /api/v2/heartbeat HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3; grep -qm1 "200 OK" <&3'
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 5. Pipelines — plugins do Open WebUI (mem0 + Firecrawl)
+  #    Perfis: todos menos minimum
+  #
+  #    Os .py de ./pipelines são carregados no boot. Cada um vira
+  #    um filter (memória) ou um modelo (Firecrawl Web) na UI.
+  # ==========================================================
+  pipelines:
+    profiles: *profiles-stack
+    image: ghcr.io/open-webui/pipelines:main
+    container_name: fiap-pipelines
+    restart: unless-stopped
+    ports:
+      - "${PIPELINES_PORT:-9099}:9099"
+    volumes:
+      # rw: o próprio container grava aqui as pipelines instaladas pela UI
+      - ./pipelines:/app/pipelines
+    environment:
+      - PIPELINES_API_KEY=${PIPELINES_API_KEY:-0p3n-w3bu!}
+      # Valores default das valves; podem ser trocados pela UI depois.
+      - MEM0_BASE_URL=http://mem0:8000
+      - FIRECRAWL_BASE_URL=http://firecrawl-api:3002
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - CHAT_MODEL=${CHAT_MODEL:-qwen3.5:0.8b}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9099/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 6. SearXNG — metabuscador self-hosted (sem API key)
+  #    https://docs.searxng.org/admin/installation-docker.html
+  #    Perfis: complete, search
+  #
+  #    Consumido por: Open WebUI (busca web), Firecrawl (/v2/search)
+  #    e pelo SearxSearchWrapper do LangChain no código das aulas.
+  # ==========================================================
+  searxng:
+    profiles: ["complete", "search"]
+    image: docker.io/searxng/searxng:${SEARXNG_VERSION:-latest}
+    container_name: fiap-searxng
+    restart: unless-stopped
+    ports:
+      - "${SEARXNG_PORT:-8080}:8080"
+    volumes:
+      # Configuração versionada no repositório (settings.yml)
+      - ./searxng:/etc/searxng:rw
+      # Cache/favicons — volume nomeado, não vai para o git
+      - searxng_data:/var/cache/searxng
+    environment:
+      # Sobrescreve server.secret_key do settings.yml
+      - SEARXNG_SECRET=${SEARXNG_SECRET:-troque-esta-chave-no-env}
+      - SEARXNG_BASE_URL=http://localhost:${SEARXNG_PORT:-8080}/
+      - SEARXNG_VALKEY_URL=valkey://searxng-valkey:6379/0
+      - UWSGI_WORKERS=${SEARXNG_WORKERS:-4}
+      - UWSGI_THREADS=${SEARXNG_THREADS:-4}
+    depends_on:
+      - valkey
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "1"
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 7. Valkey — cache do SearXNG (limiter e plugins)
+  #    Perfis: complete, search
+  # ==========================================================
+  valkey:
+    profiles: ["complete", "search"]
+    image: docker.io/valkey/valkey:9-alpine
+    container_name: searxng-valkey
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: unless-stopped
+    volumes:
+      - valkey_data:/data
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "1"
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 8. mem0 — memória de longo prazo para agentes
+  #    https://github.com/mem0ai/mem0
+  #    Perfis: complete, memory
+  #
+  #    Build local: a imagem oficial mem0/mem0-api-server só é
+  #    publicada para linux/arm64. Ver mem0/Dockerfile.
+  # ==========================================================
+  mem0:
+    profiles: ["complete", "memory"]
+    build:
+      context: ./mem0
+      dockerfile: Dockerfile
+    image: fiap-mem0:latest
+    container_name: fiap-mem0
+    restart: unless-stopped
+    ports:
+      - "${MEM0_PORT:-8100}:8000"
+    volumes:
+      - mem0_data:/app/history
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      # Modelo que EXTRAI os fatos. Precisa devolver JSON limpo: modelos
+      # com thinking ligado (Qwen3, DeepSeek-R) quebram o parser do mem0.
+      - MEM0_LLM_MODEL=${MEM0_LLM_MODEL:-llama3.2:1b}
+      - MEM0_EMBEDDER_MODEL=${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+      - MEM0_EMBEDDING_DIMS=${MEM0_EMBEDDING_DIMS:-1024}
+      - MEM0_AUTO_PULL=${MEM0_AUTO_PULL:-true}
+      - MEM0_COLLECTION=${MEM0_COLLECTION:-fiap_memories}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER:-fiap}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-fiap2026}
+      - MEM0_POSTGRES_DB=${MEM0_POSTGRES_DB:-mem0}
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 9. Firecrawl — crawling e extração de páginas em markdown
+  #    https://github.com/firecrawl/firecrawl
+  #    Perfis: complete, crawl
+  #
+  #    Topologia oficial do self-host: api (que sobe os workers
+  #    sozinho), playwright, redis e rabbitmq. A fila NuQ usa o
+  #    Postgres unificado em vez da imagem nuq-postgres deles.
+  # ==========================================================
+  firecrawl-api:
+    profiles: ["complete", "crawl"]
+    image: ghcr.io/firecrawl/firecrawl:${FIRECRAWL_VERSION:-2.11.14}
+    container_name: fiap-firecrawl-api
+    restart: unless-stopped
+    command: node dist/src/harness.js --start-docker
+    ports:
+      - "${FIRECRAWL_PORT:-3002}:3002"
+    environment:
+      <<: *firecrawl-env
+      HOST: "0.0.0.0"
+      PORT: 3002
+      EXTRACT_WORKER_PORT: 3004
+      WORKER_PORT: 3005
+      NUQ_RABBITMQ_URL: amqp://firecrawl-rabbitmq:5672
+      HARNESS_STARTUP_TIMEOUT_MS: ${FIRECRAWL_STARTUP_TIMEOUT_MS:-120000}
+      ENV: local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      firecrawl-redis:
+        condition: service_started
+      firecrawl-playwright:
+        condition: service_started
+      firecrawl-rabbitmq:
+        condition: service_healthy
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Limites menores que os do compose oficial (4 CPU / 8G): esta
+    # máquina roda o Ollama em CPU ao mesmo tempo.
+    cpus: ${FIRECRAWL_API_CPUS:-3.0}
+    mem_limit: ${FIRECRAWL_API_MEM:-4g}
+    memswap_limit: ${FIRECRAWL_API_MEM:-4g}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3002/ || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"
+    networks:
+      - fiap-ai-net
+
+  firecrawl-playwright:
+    profiles: ["complete", "crawl"]
+    image: ghcr.io/firecrawl/playwright-service:latest
+    container_name: fiap-firecrawl-playwright
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      MAX_CONCURRENT_PAGES: ${FIRECRAWL_CONCURRENCY:-5}
+      BLOCK_MEDIA: ${FIRECRAWL_BLOCK_MEDIA:-true}
+    cpus: ${FIRECRAWL_PW_CPUS:-2.0}
+    mem_limit: ${FIRECRAWL_PW_MEM:-2g}
+    memswap_limit: ${FIRECRAWL_PW_MEM:-2g}
+    tmpfs:
+      - /tmp/.cache:noexec,nosuid,size=512m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"
+    networks:
+      - fiap-ai-net
+
+  firecrawl-redis:
+    profiles: ["complete", "crawl"]
+    image: redis:alpine
+    container_name: fiap-firecrawl-redis
+    restart: unless-stopped
+    command: redis-server --bind 0.0.0.0 --save "" --appendonly no
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "1"
+    networks:
+      - fiap-ai-net
+
+  firecrawl-rabbitmq:
+    profiles: ["complete", "crawl"]
+    image: rabbitmq:3-management
+    container_name: fiap-firecrawl-rabbitmq
+    restart: unless-stopped
+    command: rabbitmq-server
+    ports:
+      # Painel de administração — útil para mostrar a fila em aula
+      - "${RABBITMQ_UI_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "1"
+    networks:
+      - fiap-ai-net
+
+  # ==========================================================
+  # 10. Langfuse self-hosted — observabilidade de aplicações LLM
+  #     https://langfuse.com/self-hosting/docker-compose
+  #     Perfil: langfuse
+  #
+  #     Alternativa open source ao LangSmith self-hosted: mesma
+  #     ideia (traces, prompts versionados, datasets, avaliação,
+  #     custo por run), core MIT, sem licença e sem chave paga.
+  #
+  #     Topologia (2 processos + 3 datastores):
+  #       clickhouse → traces, observações e scores
+  #       redis      → filas BullMQ entre web e worker
+  #       minio      → blobs de eventos e de mídia (S3-compatible)
+  #       worker     → drena as filas e grava no ClickHouse  (3030)
+  #       web        → UI + API pública, ÚNICO exposto       (3000)
+  #
+  #     Não existe container de migração: o `langfuse-web` roda as
+  #     migrações de Postgres e de ClickHouse no próprio boot, por
+  #     isso o primeiro start demora mais que os seguintes.
+  # ==========================================================
+  langfuse-clickhouse:
+    profiles: ["langfuse"]
+    image: clickhouse/clickhouse-server:${LANGFUSE_CLICKHOUSE_VERSION:-25.12}
+    container_name: fiap-langfuse-clickhouse
+    restart: unless-stopped
+    # UID/GID do usuário `clickhouse` na imagem oficial. Sem isto os
+    # arquivos do volume nascem com dono errado.
+    user: "101:101"
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
+      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-fiap2026}
+    volumes:
+      - langfuse_clickhouse_data:/var/lib/clickhouse
+      - langfuse_clickhouse_logs:/var/log/clickhouse-server
+    # O ClickHouse abre milhares de arquivos por consulta.
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    # Teto para não engolir a máquina junto com o Ollama.
+    mem_limit: ${LANGFUSE_CLICKHOUSE_MEM:-4g}
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 45s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"
+    networks:
+      - fiap-ai-net
+
+  langfuse-redis:
+    profiles: ["langfuse"]
+    image: redis:${LANGFUSE_REDIS_VERSION:-7}
+    container_name: fiap-langfuse-redis
+    restart: unless-stopped
+    # `noeviction` é exigência do BullMQ: se o Redis descartar chave
+    # sob pressão de memória, job de ingestão some sem aviso.
+    command: >-
+      redis-server
+      --requirepass ${LANGFUSE_REDIS_AUTH:-fiap2026}
+      --maxmemory-policy noeviction
+      --appendonly yes
+    volumes:
+      - langfuse_redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${LANGFUSE_REDIS_AUTH:-fiap2026} ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "1"
+    networks:
+      - fiap-ai-net
+
+  # ---- MinIO: object storage S3-compatible -------------------
+  # Obrigatório. Todo evento de ingestão vira blob aqui ANTES de
+  # ser processado; sem o bucket o worker rejeita a fila inteira.
+  # O bucket é criado no comando, antes do servidor subir.
+  langfuse-minio:
+    profiles: ["langfuse"]
+    image: ${LANGFUSE_MINIO_IMAGE:-cgr.dev/chainguard/minio}
+    container_name: fiap-langfuse-minio
+    restart: unless-stopped
+    entrypoint: sh
+    command: -c 'mkdir -p /data/${LANGFUSE_S3_BUCKET:-langfuse} && minio server --address ":9000" --console-address ":9001" /data'
+    environment:
+      MINIO_ROOT_USER: ${LANGFUSE_MINIO_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${LANGFUSE_MINIO_PASSWORD:-fiap2026minio}
+    ports:
+      # A API precisa estar acessível pelo navegador do aluno: o
+      # Langfuse entrega a mídia dos traces por URL pré-assinada.
+      - "${LANGFUSE_MINIO_PORT:-9090}:9000"
+      - "${LANGFUSE_MINIO_CONSOLE_PORT:-9091}:9001"
+    volumes:
+      - langfuse_minio_data:/data
+    mem_limit: ${LANGFUSE_MINIO_MEM:-1g}
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "1"
+    networks:
+      - fiap-ai-net
+
+  # ---- Worker: drena as filas e escreve no ClickHouse ---------
+  langfuse-worker:
+    profiles: ["langfuse"]
+    image: docker.io/langfuse/langfuse-worker:${LANGFUSE_VERSION:-4}
+    container_name: fiap-langfuse-worker
+    restart: unless-stopped
+    environment:
+      <<: *langfuse-env
+    depends_on: &langfuse-depends-on
+      postgres:
+        condition: service_healthy
+      langfuse-clickhouse:
+        condition: service_healthy
+      langfuse-redis:
+        condition: service_healthy
+      langfuse-minio:
+        condition: service_healthy
+    mem_limit: ${LANGFUSE_WORKER_MEM:-2g}
+    # A imagem é Node distroless-ish: nem sempre traz curl ou wget.
+    # O fallback com `node -e` usa o fetch global (Node 18+) e é o
+    # único que funciona nas três variantes de base.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget -q -O /dev/null http://localhost:3030/api/health ||
+          curl -sf http://localhost:3030/api/health ||
+          node -e "fetch('http://localhost:3030/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" ||
+          exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"
+    networks:
+      - fiap-ai-net
+
+  # ---- Web: UI, API pública e migrações. Único exposto --------
+  langfuse-web:
+    profiles: ["langfuse"]
+    image: docker.io/langfuse/langfuse:${LANGFUSE_VERSION:-4}
+    container_name: fiap-langfuse-web
+    restart: unless-stopped
+    ports:
+      # 3000 no container; no host a 3000 já é do Open WebUI.
+      - "${LANGFUSE_PORT:-3001}:3000"
+    environment:
+      <<: *langfuse-env
+      # Assina os cookies de sessão do NextAuth. Trocar depois
+      # derruba todo mundo que já estava logado.
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-}
+      # Este endpoint vai para o NAVEGADOR (URL pré-assinada da
+      # mídia), então precisa ser localhost, não o hostname interno.
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://localhost:${LANGFUSE_MINIO_PORT:-9090}
+      # ---------- Bootstrap do primeiro boot ----------
+      # Cria organização, projeto, usuário e o par de chaves de API
+      # sem ninguém precisar clicar na interface. As chaves abaixo
+      # são as mesmas que o código das aulas usa no .env.
+      LANGFUSE_INIT_ORG_ID: ${LANGFUSE_INIT_ORG_ID:-fiap}
+      LANGFUSE_INIT_ORG_NAME: ${LANGFUSE_INIT_ORG_NAME:-FIAP}
+      LANGFUSE_INIT_PROJECT_ID: ${LANGFUSE_INIT_PROJECT_ID:-prompt-engineering-2026}
+      LANGFUSE_INIT_PROJECT_NAME: ${LANGFUSE_INIT_PROJECT_NAME:-Prompt Engineering 2026}
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_ADMIN_EMAIL:-}
+      LANGFUSE_INIT_USER_NAME: ${LANGFUSE_ADMIN_NAME:-Prof. Jorge Luiz Gomes}
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_ADMIN_PASSWORD:-}
+    depends_on: *langfuse-depends-on
+    mem_limit: ${LANGFUSE_WEB_MEM:-2g}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget -q -O /dev/null http://localhost:3000/api/public/health ||
+          curl -sf http://localhost:3000/api/public/health ||
+          node -e "fetch('http://localhost:3000/api/public/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" ||
+          exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"
+    networks:
+      - fiap-ai-net
+
+# ============================================================
+# Volumes persistentes
+# ============================================================
+volumes:
+  postgres_data:
+    name: fiap_postgres_data
+  ollama_data:
+    name: fiap_ollama_data
+  openwebui_data:
+    name: fiap_openwebui_data
+  chromadb_data:
+    name: fiap_chromadb_data
+  searxng_data:
+    name: fiap_searxng_data
+  valkey_data:
+    name: fiap_valkey_data
+  mem0_data:
+    name: fiap_mem0_data
+  rabbitmq_data:
+    name: fiap_rabbitmq_data
+  # Langfuse usa o Postgres unificado, mas ClickHouse, Redis e MinIO
+  # são dele — por isso ganham volumes próprios.
+  langfuse_clickhouse_data:
+    name: fiap_langfuse_clickhouse_data
+  langfuse_clickhouse_logs:
+    name: fiap_langfuse_clickhouse_logs
+  langfuse_redis_data:
+    name: fiap_langfuse_redis_data
+  langfuse_minio_data:
+    name: fiap_langfuse_minio_data
+
+# ============================================================
+# Rede compartilhada entre todos os serviços
+# ============================================================
+networks:
+  fiap-ai-net:
+    name: fiap-ai-net
+    driver: bridge

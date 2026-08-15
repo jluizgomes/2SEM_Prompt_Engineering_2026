@@ -1,0 +1,8 @@
+# Dependências do projeto — LangGraph: StateGraph e Human-in-the-Loop
+# Instale com:  pip install -r requirements.txt
+
+langgraph
+langchain-ollama
+langchain-community
+duckduckgo-search
+python-dotenv

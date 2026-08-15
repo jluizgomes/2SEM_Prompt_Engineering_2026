@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 02 — Memória conversacional</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(237,20,91,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:42px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:800px}
+  .cover-subtitle{font-size:18px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.25);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-pink);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:28px;font-weight:800;color:var(--fiap-white);margin-bottom:32px;padding-bottom:12px;border-bottom:2px solid var(--fiap-pink);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:20px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:12px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-pink);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:12px 18px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:20px 24px;margin:24px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-pink);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-blue{border-left-color:var(--fiap-blue)}.callout-blue .callout-title{color:var(--fiap-blue)}
+  .callout-purple{border-left-color:var(--fiap-purple)}.callout-purple .callout-title{color:var(--fiap-purple)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:20px 0}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
+  .agenda-item{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:10px}
+  .agenda-num{width:32px;height:32px;background:rgba(237,20,91,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--fiap-pink);flex-shrink:0}
+  .agenda-text{font-size:14px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:12px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:4px 10px;border-radius:6px}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#ecfdf5 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:20px;font-size:13px;line-height:1.9}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .mem-card{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;position:relative;overflow:hidden}
+  .mem-bar{position:absolute;top:0;left:0;right:0;height:4px}
+  .mem-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+  .mem-title{font-size:15px;font-weight:800;color:var(--fiap-white);margin-bottom:8px}
+  .mem-body{font-size:12px;color:var(--fiap-muted);line-height:1.7}
+  .mem-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-top:10px}
+  .exercise{background:linear-gradient(135deg,rgba(41,175,140,.06),rgba(61,156,204,.06));border:1px solid rgba(41,175,140,.2);border-radius:14px;padding:28px;margin:20px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-green);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:16px}
+  .exercise-steps{padding-left:20px;margin-bottom:16px}
+  .exercise-steps li{color:var(--fiap-text);font-size:14px;margin-bottom:8px;line-height:1.6}
+  /* token counter visual */
+  .token-bar-wrap{margin:12px 0}
+  .token-bar-label{font-size:12px;font-weight:600;color:var(--fiap-muted);margin-bottom:4px;display:flex;justify-content:space-between}
+  .token-bar{height:10px;border-radius:5px;background:var(--fiap-surface2)}
+  .token-bar-fill{height:100%;border-radius:5px;transition:width .3s}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Memória conversacional<br>Buffer, Summary e TokenBuffer</div>
+  <div class="cover-subtitle">Aula 02/14 — Módulo 1: LangChain Foundations</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">⏱️ 1h40min</div>
+    <div class="cover-meta-item">🧠 3 tipos de memória</div>
+    <div class="cover-meta-item">🔁 Andaime 45%</div>
+  </div>
+  <div class="slide-number">01 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">O problema de custo da lista <code style="font-family:'JetBrains Mono',monospace;font-size:13px">historico</code> do 1º semestre</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">Os 3 tipos de memória LangChain — quando usar cada um</div><div class="agenda-time">25 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">🚀 Demo ao vivo — conversa longa: Buffer vs. Summary vs. TokenBuffer</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">💻 Lab — chatbot do domínio do grupo com memória escolhida (45% lacunas)</div><div class="agenda-time">25 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">Síntese + preview Aula 03 + CKP01 update</div><div class="agenda-time">15 min</div></div>
+  <div class="callout callout-purple" style="margin-top:12px">
+    <div class="callout-title">🎯 Objetivo da aula</div>
+    <div class="callout-body">Tornar a chain da Aula 01 <strong>stateful</strong> — com memória persistida entre turnos — escolhendo o tipo certo para o domínio do grupo, e entender o trade-off de custo de tokens de cada abordagem.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário da Aula 02</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">Memória (Memory)</div>
+      <div class="gl-def">Mecanismo que permite a uma chain "lembrar" de turnos anteriores da conversa. O LLM em si não guarda nada entre chamadas — a memória é injetada de fora, como parte do prompt.</div>
+      <div class="gl-analogy">Analogia: o modelo é como alguém com amnésia a cada chamada; a memória é o caderno de anotações que alguém lê para ele antes de responder.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Stateless</div>
+      <div class="gl-def">Característica de APIs de LLM de não reter nenhuma informação entre requisições — cada chamada é isolada e não sabe da anterior, a menos que o histórico seja reenviado explicitamente.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">ConversationBufferMemory</div>
+      <div class="gl-def">Tipo de memória que armazena o histórico completo da conversa, palavra por palavra, sem resumir ou descartar nada. Fidelidade máxima, custo crescente.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">ConversationSummaryMemory</div>
+      <div class="gl-def">Tipo de memória que usa o próprio LLM para gerar, a cada turno, um resumo compacto de tudo que já foi dito — mantendo o custo de tokens estável mesmo em conversas longas.</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">ConversationTokenBufferMemory</div>
+      <div class="gl-def">Memória com janela deslizante: mantém o histórico completo até um limite de tokens (<code style="font-family:'JetBrains Mono',monospace;font-size:.9em">max_token_limit</code>); ao ultrapassar, descarta as mensagens mais antigas.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">Token</div>
+      <div class="gl-def">Unidade mínima de texto processada pelo modelo — fração de palavra, palavra inteira ou sinal de pontuação. É a unidade usada para medir tamanho de contexto e custo.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Context window (janela de contexto)</div>
+      <div class="gl-def">Quantidade máxima de tokens que o modelo consegue processar em uma única chamada — soma de prompt, histórico injetado e resposta gerada.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">session_id</div>
+      <div class="gl-def">Identificador único que separa o histórico de conversa de diferentes usuários ou sessões simultâneas, usado por <code style="font-family:'JetBrains Mono',monospace;font-size:.9em">RunnableWithMessageHistory</code> para não misturar conversas.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O problema que você já resolveu — e por que não escala</h2>
+  <p>No 1º semestre, você gerenciou o histórico manualmente. Funciona — mas tem um custo crescente:</p>
+  <div style="margin:20px 0">
+    <div style="font-size:13px;font-weight:600;color:var(--fiap-muted);margin-bottom:8px">Custo de tokens a cada turno (lista <code style="font-family:'JetBrains Mono',monospace;font-size:12px">historico</code> completa reenviada)</div>
+    <div class="token-bar-wrap">
+      <div class="token-bar-label"><span>Turno 1</span><span style="color:var(--fiap-green)">~50 tokens</span></div>
+      <div class="token-bar"><div class="token-bar-fill" style="width:5%;background:var(--fiap-green)"></div></div>
+    </div>
+    <div class="token-bar-wrap">
+      <div class="token-bar-label"><span>Turno 5</span><span style="color:var(--fiap-blue)">~350 tokens</span></div>
+      <div class="token-bar"><div class="token-bar-fill" style="width:35%;background:var(--fiap-blue)"></div></div>
+    </div>
+    <div class="token-bar-wrap">
+      <div class="token-bar-label"><span>Turno 10</span><span style="color:var(--fiap-orange)">~900 tokens</span></div>
+      <div class="token-bar"><div class="token-bar-fill" style="width:65%;background:var(--fiap-orange)"></div></div>
+    </div>
+    <div class="token-bar-wrap">
+      <div class="token-bar-label"><span>Turno 20</span><span style="color:var(--fiap-red)">~2.500 tokens (ou mais)</span></div>
+      <div class="token-bar"><div class="token-bar-fill" style="width:100%;background:var(--fiap-red)"></div></div>
+    </div>
+  </div>
+  <div class="callout callout-red">
+    <div class="callout-title">⚠️ Por que isso é um problema real</div>
+    <div class="callout-body">Cada chamada ao LLM envia <strong>todo o histórico acumulado</strong>. Numa conversa de 50 turnos de 100 tokens cada, o turno 50 envia ~5.000 tokens só de histórico — antes mesmo de processar a nova pergunta. Em produção com múltiplos usuários simultâneos, o custo explode.</div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">✅ A solução: gerenciamento automático de memória</div>
+    <div class="callout-body">LangChain oferece 3 estratégias de memória que resolvem o problema de formas diferentes — cada uma com trade-offs de custo, qualidade de contexto e complexidade.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">04 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">Os 3 tipos<br>de memória</div>
+  <div class="section-desc">Buffer · Summary · TokenBuffer — quando usar cada um e qual o trade-off de tokens vs. qualidade de contexto.</div>
+  <div class="slide-number">05 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Os 3 tipos de memória — comparativo</h2>
+  <div class="three-col">
+    <div class="mem-card">
+      <div class="mem-bar" style="background:linear-gradient(90deg,var(--fiap-blue),var(--fiap-purple))"></div>
+      <div class="mem-label" style="color:var(--fiap-blue)">Buffer Memory</div>
+      <div class="mem-title">Tudo na janela</div>
+      <div class="mem-body">Guarda <strong>todas as mensagens</strong> integralmente. Igual à lista <code style="font-family:'JetBrains Mono',monospace;font-size:11px">historico</code> do 1º sem — mas gerenciada pelo framework.</div>
+      <div class="mem-tag" style="background:rgba(61,156,204,.1);color:var(--fiap-blue)">✅ Fidelidade máxima</div>
+      <div class="mem-tag" style="background:rgba(201,73,44,.1);color:var(--fiap-red);margin-left:4px">❌ Custo cresce</div>
+    </div>
+    <div class="mem-card">
+      <div class="mem-bar" style="background:linear-gradient(90deg,var(--fiap-green),var(--fiap-blue))"></div>
+      <div class="mem-label" style="color:var(--fiap-green)">Summary Memory</div>
+      <div class="mem-title">Resumo automático</div>
+      <div class="mem-body">Usa o LLM para <strong>resumir o histórico</strong> progressivamente. O contexto passa a ser um parágrafo, não uma lista de mensagens.</div>
+      <div class="mem-tag" style="background:rgba(41,175,140,.1);color:var(--fiap-green)">✅ Custo estável</div>
+      <div class="mem-tag" style="background:rgba(213,140,46,.1);color:var(--fiap-orange);margin-left:4px">⚠️ Perde detalhes</div>
+    </div>
+    <div class="mem-card">
+      <div class="mem-bar" style="background:linear-gradient(90deg,var(--fiap-purple),var(--fiap-pink))"></div>
+      <div class="mem-label" style="color:var(--fiap-purple)">TokenBuffer Memory</div>
+      <div class="mem-title">Limite por tokens</div>
+      <div class="mem-body">Mantém as mensagens mais <strong>recentes</strong> dentro de um limite de tokens configurado. Descarta o mais antigo quando o limite é atingido.</div>
+      <div class="mem-tag" style="background:rgba(124,96,198,.1);color:var(--fiap-purple)">✅ Controle preciso</div>
+      <div class="mem-tag" style="background:rgba(213,140,46,.1);color:var(--fiap-orange);margin-left:4px">⚠️ Perde início</div>
+    </div>
+  </div>
+  <table class="data-table" style="margin-top:16px">
+    <thead><tr><th>Critério</th><th>BufferMemory</th><th>SummaryMemory</th><th>TokenBufferMemory</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Custo após 50 turnos</strong></td><td style="color:var(--fiap-red)">Alto e crescente</td><td style="color:var(--fiap-green)">Baixo e estável</td><td style="color:var(--fiap-blue)">Fixo (pelo limite)</td></tr>
+      <tr><td><strong>Fidelidade do contexto</strong></td><td style="color:var(--fiap-green)">Perfeita</td><td style="color:var(--fiap-orange)">Aproximada</td><td style="color:var(--fiap-orange)">Só as últimas N</td></tr>
+      <tr><td><strong>Custo de setup</strong></td><td>Nenhum</td><td>1 call LLM extra por turno</td><td>Contagem de tokens</td></tr>
+      <tr><td><strong>Melhor para</strong></td><td>Conversas curtas, demos</td><td>Conversas longas, suporte</td><td>Controle de orçamento</td></tr>
+    </tbody>
+  </table>
+  <div class="chart" data-chart="bar" data-title="Custo em tokens no turno 50, por estratégia de memória" data-labels="BufferMemory|SummaryMemory|TokenBufferMemory" data-values="5000|600|800" data-unit=" tokens" data-notes="Cresce linearmente — reenvia o histórico completo a cada turno|Resumo compacto e estável — o LLM reescreve o resumo a cada turno|Fixo pelo max_token_limit configurado — não cresce além disso">
+    <div class="chart-title">Custo em tokens no turno 50 — mesma conversa, 3 estratégias</div>
+    <div class="chart-sub">Os mesmos ~5.000 tokens do slide anterior (sem gestão de memória) comparados ao custo estável de SummaryMemory e ao teto fixo de TokenBufferMemory.</div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Memória de Sessão vs. Memória Persistente</div>
+    <div class="callout-body">Freed, Jacobs e Rózsa (<em>Effective Conversational AI</em>, 2025) distinguem dois tipos de histórico em um chatbot: <strong>session history</strong>, o conteúdo da sessão atual — descartado quando ela termina, mas suficiente para resolver referências e perguntas de acompanhamento dentro da mesma conversa —, e <strong>persistent user history</strong>, que atravessa múltiplas sessões do mesmo usuário e exige esforço extra de engenharia para ser incorporada, pois permite inferir preferências ao longo do tempo. As três classes desta aula — BufferMemory, SummaryMemory e TokenBufferMemory — implementam apenas session history: vivem e morrem com a instância do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationChain</code>. Memória persistente entre sessões exige persistir esse buffer externamente (banco de dados, vector store) — o gancho direto para RAG e ChromaDB nas Aulas 07–08.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">06 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ConversationBufferMemory — o mais simples</h2>
+  <p>Equivalente direto da lista <code style="font-family:'JetBrains Mono',monospace;font-size:13px">historico</code> — agora gerenciada pelo framework dentro de uma <code style="font-family:'JetBrains Mono',monospace;font-size:13px">ConversationChain</code>:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">buffer_memory.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_classic.memory</span> <span class="kw">import</span> <span class="va">ConversationBufferMemory</span>
+<span class="kw">from</span> <span class="va">langchain_classic.chains</span> <span class="kw">import</span> <span class="va">ConversationChain</span>
+
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">)</span>
+
+<span class="cm"># Memória: guarda TUDO — crescimento linear</span>
+<span class="va">memoria</span> <span class="op">=</span> <span class="va">ConversationBufferMemory</span><span class="op">(</span>
+    <span class="va">memory_key</span><span class="op">=</span><span class="st">"history"</span><span class="op">,</span>        <span class="cm"># chave no contexto do prompt</span>
+    <span class="va">return_messages</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>       <span class="cm"># retorna como lista de mensagens</span>
+<span class="op">)</span>
+
+<span class="cm"># ConversationChain: gerencia prompt + memória automaticamente</span>
+<span class="va">chat</span> <span class="op">=</span> <span class="va">ConversationChain</span><span class="op">(</span>
+    <span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span>
+    <span class="va">memory</span><span class="op">=</span><span class="va">memoria</span><span class="op">,</span>
+    <span class="va">verbose</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>              <span class="cm"># mostra o prompt completo a cada turno</span>
+<span class="op">)</span>
+
+<span class="cm"># Conversa — o histórico é mantido automaticamente</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">chat</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="st">"Meu nome é Ana."</span><span class="op">))</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">chat</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="st">"Qual é o meu nome?"</span><span class="op">))</span>  <span class="cm"># → "Seu nome é Ana"</span>
+
+<span class="cm"># Inspecionar o que está na memória</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">memoria</span><span class="op">.</span><span class="fn">load_memory_variables</span><span class="op">({})</span><span class="op">)</span>
+<span class="cm"># → {"history": [HumanMessage(...), AIMessage(...), ...]}</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">🔍 verbose=True — a ferramenta de aprendizado mais útil</div>
+    <div class="callout-body">Com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">verbose=True</code>, o LangChain imprime o prompt completo enviado ao modelo a cada turno. Use isso para entender exatamente o que está no contexto — e por que o modelo responde o que responde.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">07 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ConversationSummaryMemory — resumo progressivo</h2>
+  <p>Em vez de guardar todas as mensagens, o LLM gera um <strong>resumo corrente</strong> que é atualizado a cada turno:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">summary_memory.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_classic.memory</span> <span class="kw">import</span> <span class="va">ConversationSummaryMemory</span>
+
+<span class="cm"># Summary memory usa o próprio LLM para resumir</span>
+<span class="va">memoria_summary</span> <span class="op">=</span> <span class="va">ConversationSummaryMemory</span><span class="op">(</span>
+    <span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span>                       <span class="cm"># LLM usado para gerar o resumo</span>
+    <span class="va">memory_key</span><span class="op">=</span><span class="st">"history"</span><span class="op">,</span>
+    <span class="va">return_messages</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="va">chat_summary</span> <span class="op">=</span> <span class="va">ConversationChain</span><span class="op">(</span>
+    <span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span>
+    <span class="va">memory</span><span class="op">=</span><span class="va">memoria_summary</span><span class="op">,</span>
+    <span class="va">verbose</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># Após vários turnos, inspecionar o resumo acumulado</span>
+<span class="va">chat_summary</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="st">"Meu nome é Ana e tenho 28 anos."</span><span class="op">)</span>
+<span class="va">chat_summary</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="st">"Trabalho como engenheira de dados."</span><span class="op">)</span>
+<span class="va">chat_summary</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="st">"Estou aprendendo LangChain."</span><span class="op">)</span>
+
+<span class="cm"># O resumo é algo como:</span>
+<span class="cm"># "A usuária Ana, 28 anos, engenheira de dados, está aprendendo LangChain."</span>
+<span class="cm"># — independente de quantos turnos houve</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">memoria_summary</span><span class="op">.</span><span class="fn">load_memory_variables</span><span class="op">({})</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ Custo oculto da SummaryMemory</div>
+    <div class="callout-body">A cada turno, a SummaryMemory faz <strong>uma chamada extra ao LLM</strong> para atualizar o resumo. Para conversas muito curtas (menos de 5 turnos), isso é mais caro que a BufferMemory. O benefício aparece em conversas longas (15+ turnos).</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">08 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ConversationTokenBufferMemory — limite explícito de tokens</h2>
+  <p>Mantém o histórico completo até o limite configurado, descartando as mensagens mais antigas quando o limite é atingido:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">token_buffer_memory.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_classic.memory</span> <span class="kw">import</span> <span class="va">ConversationTokenBufferMemory</span>
+
+<span class="cm"># Limite de tokens para o histórico (excluindo o novo input)</span>
+<span class="va">memoria_token</span> <span class="op">=</span> <span class="va">ConversationTokenBufferMemory</span><span class="op">(</span>
+    <span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span>                       <span class="cm"># usado para contar tokens</span>
+    <span class="va">max_token_limit</span><span class="op">=</span><span class="num">500</span><span class="op">,</span>           <span class="cm"># máximo de tokens no histórico</span>
+    <span class="va">memory_key</span><span class="op">=</span><span class="st">"history"</span><span class="op">,</span>
+    <span class="va">return_messages</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="va">chat_token</span> <span class="op">=</span> <span class="va">ConversationChain</span><span class="op">(</span>
+    <span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span>
+    <span class="va">memory</span><span class="op">=</span><span class="va">memoria_token</span><span class="op">,</span>
+    <span class="va">verbose</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># Com max_token_limit=500:</span>
+<span class="cm"># - Turno 1–4: histórico completo (dentro do limite)</span>
+<span class="cm"># - Turno 5: mensagem mais antiga é descartada automaticamente</span>
+<span class="cm"># - Sempre mantém as mais recentes — janela deslizante</span>
+
+<span class="cm"># Inspecionar quantos tokens estão no buffer agora</span>
+<span class="va">historico_atual</span> <span class="op">=</span> <span class="va">memoria_token</span><span class="op">.</span><span class="fn">load_memory_variables</span><span class="op">({})</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Mensagens no buffer: {len(historico_atual['history'])}"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">💡 Analogia: janela deslizante</div>
+    <div class="callout-body">TokenBufferMemory é como uma janela deslizante: você vê sempre os últimos N tokens de conversa, e o que fica para trás da janela é esquecido. É previsível, controlável e garante que o custo nunca ultrapassa o limite definido.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">09 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ConversationChain com system prompt customizado</h2>
+  <p>A <code style="font-family:'JetBrains Mono',monospace;font-size:13px">ConversationChain</code> usa um prompt padrão genérico. Para adicionar <strong>persona do grupo</strong>, injete um <code style="font-family:'JetBrains Mono',monospace;font-size:13px">PromptTemplate</code> customizado:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">chain_com_persona.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">PromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_classic.chains</span> <span class="kw">import</span> <span class="va">ConversationChain</span>
+<span class="kw">from</span> <span class="va">langchain_classic.memory</span> <span class="kw">import</span> <span class="va">ConversationTokenBufferMemory</span>
+
+<span class="cm"># Template customizado — deve conter {history} e {input}</span>
+<span class="va">TEMPLATE</span> <span class="op">=</span> <span class="st">"""Você é um assistente especialista em culinária brasileira.
+Seja simpático e dê dicas práticas. Sempre que der uma receita,
+liste os ingredientes de forma clara.
+
+Histórico da conversa:
+{history}
+
+Usuário: {input}
+Assistente:"""</span>
+
+<span class="va">prompt_custom</span> <span class="op">=</span> <span class="va">PromptTemplate</span><span class="op">(</span>
+    <span class="va">input_variables</span><span class="op">=[</span><span class="st">"history"</span><span class="op">,</span> <span class="st">"input"</span><span class="op">],</span>  <span class="cm"># obrigatório para ConversationChain</span>
+    <span class="va">template</span><span class="op">=</span><span class="va">TEMPLATE</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="va">chat_culinaria</span> <span class="op">=</span> <span class="va">ConversationChain</span><span class="op">(</span>
+    <span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span>
+    <span class="va">memory</span><span class="op">=</span><span class="va">ConversationTokenBufferMemory</span><span class="op">(</span><span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span> <span class="va">max_token_limit</span><span class="op">=</span><span class="num">800</span><span class="op">),</span>
+    <span class="va">prompt</span><span class="op">=</span><span class="va">prompt_custom</span><span class="op">,</span>
+    <span class="va">verbose</span><span class="op">=</span><span class="kw">False</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="va">resp</span> <span class="op">=</span> <span class="va">chat_culinaria</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="st">"Como faço um feijão tropeiro?"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resp</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">✅ Regra do template para ConversationChain</div>
+    <div class="callout-body">O template DEVE conter exatamente <code style="font-family:'JetBrains Mono',monospace;font-size:12px">{history}</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">{input}</code> como variáveis. O <code style="font-family:'JetBrains Mono',monospace;font-size:12px">{history}</code> é preenchido automaticamente pela memória; o <code style="font-family:'JetBrains Mono',monospace;font-size:12px">{input}</code> recebe o texto do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.predict(input=...)</code>.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">10 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">45% de lacunas — chatbot do domínio do grupo com o tipo de memória escolhido e justificativa da escolha.</div>
+  <div class="slide-number">11 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 45% de lacunas</h2>
+  <p>Use o domínio escolhido na Aula 01. Complete as lacunas e justifique no comentário qual tipo de memória você escolheu e por quê.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_02_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama langchain-classic <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_classic.memory</span> <span class="kw">import</span> <span class="op">(</span>
+    <span class="va">ConversationBufferMemory</span><span class="op">,</span>
+    <span class="va">ConversationSummaryMemory</span><span class="op">,</span>
+    <span class="va">ConversationTokenBufferMemory</span><span class="op">,</span>
+<span class="op">)</span>
+<span class="kw">from</span> <span class="va">langchain_classic.chains</span> <span class="kw">import</span> <span class="va">ConversationChain</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">PromptTemplate</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: escreva o template com a persona do domínio do grupo</span>
+<span class="cm"># Lembre: deve conter {history} e {input}</span>
+<span class="va">TEMPLATE</span> <span class="op">=</span> <span class="gap">___</span>
+
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">PromptTemplate</span><span class="op">(</span><span class="va">input_variables</span><span class="op">=[</span><span class="st">"history"</span><span class="op">,</span> <span class="st">"input"</span><span class="op">],</span> <span class="va">template</span><span class="op">=</span><span class="va">TEMPLATE</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 2: escolha o tipo de memória para o domínio do grupo</span>
+<span class="cm"># Justifique em comentário: por que este tipo e não os outros?</span>
+<span class="va">memoria</span> <span class="op">=</span> <span class="gap">___</span>  <span class="cm"># Buffer, Summary ou TokenBuffer</span>
+
+<span class="cm"># 👉 LACUNA 3: monte a ConversationChain com llm, memory e prompt</span>
+<span class="va">chat</span> <span class="op">=</span> <span class="va">ConversationChain</span><span class="op">(</span><span class="gap">___</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 4: teste com 5 turnos do domínio do grupo</span>
+<span class="kw">for</span> <span class="va">pergunta</span> <span class="kw">in</span> <span class="op">[</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">]:</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"R: {chat.predict(input=pergunta)}\n"</span><span class="op">)</span>
+
+<span class="cm"># Inspecionar o estado final da memória</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">memoria</span><span class="op">.</span><span class="fn">load_memory_variables</span><span class="op">({})</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Guia de decisão — qual memória usar no CKP01</h2>
+  <table class="data-table">
+    <thead><tr><th>Domínio / Cenário</th><th>Recomendação</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Suporte técnico, atendimento ao cliente</strong></td>
+        <td><span style="color:var(--fiap-green);font-weight:700">SummaryMemory</span></td>
+        <td>Conversas longas, mas o resumo captura os pontos principais (problema relatado, soluções tentadas)</td>
+      </tr>
+      <tr>
+        <td><strong>Tutor educacional, assistente de estudo</strong></td>
+        <td><span style="color:var(--fiap-purple);font-weight:700">TokenBufferMemory</span></td>
+        <td>As últimas explicações são mais relevantes que as primeiras; limite de 1000–2000 tokens é suficiente</td>
+      </tr>
+      <tr>
+        <td><strong>Assistente jurídico, médico</strong></td>
+        <td><span style="color:var(--fiap-blue);font-weight:700">BufferMemory</span></td>
+        <td>Fidelidade máxima importa — perder um detalhe pode mudar o diagnóstico ou o parecer. Conversas curtas</td>
+      </tr>
+      <tr>
+        <td><strong>Chatbot de receitas, entretenimento</strong></td>
+        <td><span style="color:var(--fiap-purple);font-weight:700">TokenBufferMemory</span></td>
+        <td>Conversas curtas a médias; o usuário raramente referencia o início; controle de custo é útil</td>
+      </tr>
+      <tr>
+        <td><strong>Assistente de código/programação</strong></td>
+        <td><span style="color:var(--fiap-purple);font-weight:700">TokenBufferMemory</span> com limite alto (2000–4000)</td>
+        <td>Código é verboso; o contexto recente (últimas funções discutidas) é o mais importante</td>
+      </tr>
+      <tr>
+        <td><strong>Demo/apresentação curta</strong></td>
+        <td><span style="color:var(--fiap-blue);font-weight:700">BufferMemory</span></td>
+        <td>Menos de 10 turnos — sem custo problemático, setup mais simples, funciona perfeitamente</td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">13 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Inspecionar e manipular a memória em código</h2>
+  <p>Os 3 tipos compartilham a mesma interface — útil para debug e para o CKP01:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">inspecionar_memoria.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Ler o estado atual da memória (funciona em todos os tipos)</span>
+<span class="va">estado</span> <span class="op">=</span> <span class="va">memoria</span><span class="op">.</span><span class="fn">load_memory_variables</span><span class="op">({})</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">estado</span><span class="op">)</span>
+<span class="cm"># BufferMemory →    {"history": [HumanMessage, AIMessage, ...]}</span>
+<span class="cm"># SummaryMemory →   {"history": "A usuária Ana é médica e..."}</span>
+<span class="cm"># TokenBuffer →     {"history": [HumanMessage, AIMessage, ...]} (últimas N)</span>
+
+<span class="cm"># Adicionar memória externamente (útil para testes)</span>
+<span class="va">memoria</span><span class="op">.</span><span class="fn">save_context</span><span class="op">(</span>
+    <span class="op">{</span><span class="st">"input"</span><span class="op">:</span> <span class="st">"Qual é a capital do Brasil?"</span><span class="op">},</span>
+    <span class="op">{</span><span class="st">"output"</span><span class="op">:</span> <span class="st">"Brasília."</span><span class="op">},</span>
+<span class="op">)</span>
+
+<span class="cm"># Limpar completamente a memória (ex: nova sessão de usuário)</span>
+<span class="va">memoria</span><span class="op">.</span><span class="fn">clear</span><span class="op">()</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">memoria</span><span class="op">.</span><span class="fn">load_memory_variables</span><span class="op">({})</span><span class="op">)</span>  <span class="cm"># → {"history": []}</span>
+
+<span class="cm"># Acessar o buffer diretamente (Buffer e TokenBuffer)</span>
+<span class="kw">if</span> <span class="nb">hasattr</span><span class="op">(</span><span class="va">memoria</span><span class="op">,</span> <span class="st">"chat_memory"</span><span class="op">):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Mensagens guardadas: {len(memoria.chat_memory.messages)}"</span><span class="op">)</span>
+
+<span class="cm"># Acessar o resumo (SummaryMemory)</span>
+<span class="kw">if</span> <span class="nb">hasattr</span><span class="op">(</span><span class="va">memoria</span><span class="op">,</span> <span class="st">"moving_summary_buffer"</span><span class="op">):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Resumo atual: {memoria.moving_summary_buffer}"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Erros comuns com memória LangChain</h2>
+  <table class="data-table">
+    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ValueError: Missing input variables</code></td>
+        <td>Template customizado não tem <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{history}</code> ou <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{input}</code></td>
+        <td>Conferir que ambas as variáveis existem no template</td>
+      </tr>
+      <tr>
+        <td>Modelo "esquece" o início da conversa</td>
+        <td>TokenBuffer com limite muito baixo descartou as mensagens antigas</td>
+        <td>Aumentar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">max_token_limit</code> ou trocar para SummaryMemory</td>
+      </tr>
+      <tr>
+        <td>SummaryMemory gera resumos imprecisos</td>
+        <td>O modelo de resumo (mesmo LLM) não capturou bem os detalhes</td>
+        <td>Usar um modelo menor para o resumo via <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ConversationSummaryMemory(llm=llm_resumo)</code></td>
+      </tr>
+      <tr>
+        <td>Memória não persiste entre reinicializações do kernel</td>
+        <td>Toda memória é em RAM — reiniciar o Python limpa tudo</td>
+        <td>Serializar com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pickle</code> ou usar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">RedisChatMessageHistory</code> para persistência</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ModuleNotFoundError: langchain.memory</code> / <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain.chains</code></td>
+        <td>LangChain 1.0+ moveu <code style="font-family:'JetBrains Mono',monospace;font-size:11px">Memory</code>/<code style="font-family:'JetBrains Mono',monospace;font-size:11px">Chains</code> legado pra fora do pacote <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain</code></td>
+        <td>Instalar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain-classic</code> e importar de <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain_classic.memory</code> / <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain_classic.chains</code></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>CKP01 — Aula 02 completa o requisito de memória</h2>
+  <div style="background:rgba(237,20,91,.04);border:2px solid rgba(237,20,91,.2);border-radius:14px;padding:24px;margin:16px 0">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🏁 CKP01 — Chatbot LangChain · Entrega Aula 04</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:20px;height:20px;background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">✅</div>
+        <div style="font-size:13px"><strong>R1 (Aula 01):</strong> ChatOllama + ChatPromptTemplate + StrOutputParser — chain LCEL básica</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:20px;height:20px;background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">✅</div>
+        <div style="font-size:13px"><strong>R2 (Aula 02 — hoje):</strong> ConversationChain com 1 tipo de memória escolhido e justificado</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:20px;height:20px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+        <div style="font-size:13px;color:var(--fiap-muted)"><strong>R3 (Aula 03):</strong> PydanticOutputParser com schema Pydantic v2 — validação de saída</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:20px;height:20px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+        <div style="font-size:13px;color:var(--fiap-muted)"><strong>R4 (Aula 04):</strong> Context Engineering aplicado + domínio documentado + 5 turnos</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">📌 O que documentar no notebook do CKP01 sobre memória</div>
+    <div class="callout-body">1. Qual tipo escolheu e por quê (1 parágrafo). 2. Print do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">load_memory_variables({})</code> após 5 turnos — mostra o estado da memória. 3. Se usou TokenBuffer: qual o limite configurado e por que esse valor faz sentido para o domínio.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Consolidação<br>e conexões</div>
+  <div class="section-desc">Do laboratório aos padrões do mercado — fechando a Aula 02 com síntese, referências e o glossário técnico.</div>
+  <div class="slide-number">17 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Memória conversacional na prática — padrões por tipo de produto</h2>
+  <p>Produtos de IA conversacional em produção não inventam uma quarta estratégia — eles combinam os mesmos 3 padrões desta aula, escolhidos de acordo com o tipo de sessão e o custo tolerável.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0">
+    <div class="mem-card" style="border-top:3px solid var(--fiap-blue)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Chat de suporte ao cliente</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">SummaryMemory na transferência de atendimento</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.6">Quando o atendimento escala de um agente de IA para um humano, o sistema gera um resumo da conversa para o novo atendente — exatamente o que a SummaryMemory faz internamente com o LLM.</div>
+    </div>
+    <div class="mem-card" style="border-top:3px solid var(--fiap-green)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Assistente de código no editor</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">TokenBuffer com janela de código</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.6">Assistentes de IA integrados a editores mantêm os últimos N tokens de contexto de código e conversa. Quando o contexto excede o limite, o trecho mais antigo é descartado — o comportamento do TokenBufferMemory com limite configurável.</div>
+    </div>
+    <div class="mem-card" style="border-top:3px solid var(--fiap-purple)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Chatbot de e-commerce</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">BufferMemory com limite de sessão</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.6">Chatbots de atendimento por sessão curta (tipicamente 5–15 mensagens) mantêm o histórico completo durante o atendimento e descartam ao fechar o ticket. Para sessões curtas, Buffer é a escolha certa.</div>
+    </div>
+    <div class="mem-card" style="border-top:3px solid var(--fiap-orange)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Assistente corporativo (ERP)</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Memória híbrida</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.6">Assistentes embutidos em sistemas de gestão empresarial costumam combinar SummaryMemory (para capturar o que já foi configurado) com TokenBuffer (para manter os últimos comandos). A combinação dá contexto sem custo explosivo.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">💡 Padrão, não coincidência</div>
+    <div class="callout-body">Nenhum produto real usa uma quarta estratégia mágica — a escolha é sempre um trade-off entre fidelidade, custo e tamanho típico de sessão, os mesmos 3 eixos que você aprendeu a comparar hoje.</div>
+  </div>
+  <div class="callout callout-blue" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — 6 sinais de contexto além do histórico</div>
+    <div class="callout-body">Freed, Jacobs e Rózsa (<em>Effective Conversational AI</em>, 2025, cap. 9) listam 6 tipos de informação contextual que um assistente de produção combina com a memória conversacional: <strong>localização</strong>, <strong>fuso horário</strong>, <strong>tipo de dispositivo</strong>, <strong>preferências do usuário</strong>, <strong>padrões comportamentais</strong> e <strong>interações anteriores</strong>. Este último é o único que Buffer/Summary/TokenBufferMemory cobrem — os outros 5 exigem armazenamento externo ao <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationChain</code> (perfil de usuário, sessão HTTP, banco de dados). Os autores ilustram com "Max", chatbot bancário que dá conselho genérico por ignorar que a usuária já é correntista — o mesmo risco de uma memória tecnicamente correta, mas contextualmente vazia.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Nota técnica — memória em LCEL moderno (LangChain 0.3+)</h2>
+  <p>O LangChain 0.3+ prefere <code style="font-family:'JetBrains Mono',monospace;font-size:13px">RunnableWithMessageHistory</code> para integrar histórico em chains LCEL. <code style="font-family:'JetBrains Mono',monospace;font-size:13px">ConversationChain</code> ainda funciona mas é considerada legacy:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">lcel_com_historico_moderno.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_core.runnables.history</span> <span class="kw">import</span> <span class="va">RunnableWithMessageHistory</span>
+<span class="kw">from</span> <span class="va">langchain_core.chat_history</span> <span class="kw">import</span> <span class="va">InMemoryChatMessageHistory</span>
+
+<span class="cm"># Armazena históricos por session_id (multi-usuário)</span>
+<span class="va">store</span> <span class="op">= {}</span>
+<span class="kw">def</span> <span class="fn">get_session_history</span><span class="op">(</span><span class="va">session_id</span><span class="op">:</span> <span class="nb">str</span><span class="op">):</span>
+    <span class="kw">if</span> <span class="va">session_id</span> <span class="kw">not in</span> <span class="va">store</span><span class="op">:</span>
+        <span class="va">store</span><span class="op">[</span><span class="va">session_id</span><span class="op">]</span> <span class="op">=</span> <span class="fn">InMemoryChatMessageHistory</span><span class="op">()</span>
+    <span class="kw">return</span> <span class="va">store</span><span class="op">[</span><span class="va">session_id</span><span class="op">]</span>
+
+<span class="cm"># chain LCEL da Aula 01</span>
+<span class="va">chain_base</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="cm"># Envolver com histórico — suporta múltiplas sessões simultâneas</span>
+<span class="va">chain_com_hist</span> <span class="op">=</span> <span class="va">RunnableWithMessageHistory</span><span class="op">(</span>
+    <span class="va">chain_base</span><span class="op">,</span>
+    <span class="va">get_session_history</span><span class="op">,</span>
+    <span class="va">input_messages_key</span><span class="op">=</span><span class="st">"pergunta"</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># Invocar com session_id — cada usuário tem seu histórico</span>
+<span class="va">chain_com_hist</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span>
+    <span class="op">{</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="st">"Olá!"</span><span class="op">},</span>
+    <span class="va">config</span><span class="op">={</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"session_id"</span><span class="op">:</span> <span class="st">"usuario_123"</span><span class="op">}},</span>
+<span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 760 165" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ED145B"/></marker>
+        <linearGradient id="g2Blue" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3D9CCC"/><stop offset="100%" stop-color="#5fb3de"/></linearGradient>
+        <linearGradient id="g2Purple" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7C60C6"/><stop offset="100%" stop-color="#9b7fd6"/></linearGradient>
+        <linearGradient id="g2Green" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#29AF8C"/><stop offset="100%" stop-color="#4cc4a5"/></linearGradient>
+      </defs>
+      <rect x="10" y="10" width="150" height="60" rx="12" fill="url(#g2Blue)" data-info="Cada usuário que conversa com o assistente carrega seu próprio session_id. O mesmo chain_com_hist atende todos — só o identificador muda." data-title="session_id: usuario_123"/>
+      <text x="85" y="35" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#fff">SESSÃO A</text>
+      <text x="85" y="53" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#eaf6fb">usuario_123</text>
+      <rect x="10" y="90" width="150" height="60" rx="12" fill="url(#g2Blue)" data-info="Uma segunda sessão, completamente isolada da primeira — get_session_history() garante que cada session_id tenha seu próprio histórico." data-title="session_id: usuario_456"/>
+      <text x="85" y="115" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#fff">SESSÃO B</text>
+      <text x="85" y="133" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#eaf6fb">usuario_456</text>
+      <line x1="165" y1="40" x2="205" y2="65" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrow2)"/>
+      <line x1="165" y1="120" x2="205" y2="90" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrow2)"/>
+      <rect x="210" y="45" width="160" height="76" rx="12" fill="url(#g2Purple)" data-info="Dicionário em RAM que mapeia session_id → InMemoryChatMessageHistory. É o que a função get_session_history() consulta e preenche a cada chamada." data-title="store = {} · get_session_history()"/>
+      <text x="290" y="73" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#fff">ROTEAMENTO</text>
+      <text x="290" y="91" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#f3e8ff">store[session_id]</text>
+      <text x="290" y="107" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#f3e8ff">1 histórico por usuário</text>
+      <line x1="375" y1="83" x2="415" y2="83" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrow2)"/>
+      <rect x="420" y="45" width="170" height="76" rx="12" fill="url(#g2Green)" data-info="InMemoryChatMessageHistory guarda as mensagens só em RAM — some quando o processo do Colab reinicia. É memória de curto prazo, igual às 3 estratégias BufferMemory/SummaryMemory/TokenBuffer desta aula." data-title="InMemoryChatMessageHistory"/>
+      <text x="505" y="73" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#fff">CURTO PRAZO</text>
+      <text x="505" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#e7f6f1">vive em RAM</text>
+      <text x="505" y="107" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5" fill="#e7f6f1">some ao reiniciar</text>
+      <line x1="595" y1="83" x2="630" y2="83" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#arrow2)"/>
+      <rect x="635" y="45" width="120" height="76" rx="12" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,4" data-info="Para sobreviver entre sessões (usuário fecha e reabre o app), a memória precisa sair da RAM. A taxonomia moderna da LangChain chama isso de long-term memory: fatos do usuário guardados num store (JSON por namespace + key) — é o que o mem0 usa na Aula 11. O ChromaDB das Aulas 07–08 é outro papel: conhecimento/RAG, não memória do usuário." data-title="Memória de longo prazo (store do LangGraph)"/>
+      <text x="695" y="73" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="10.5" fill="#4e4e68">LONGO PRAZO</text>
+      <text x="695" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#4e4e68">LangGraph store</text>
+      <text x="695" y="106" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#4e4e68">mem0 · Aula 11</text>
+    </svg>
+    <div class="diagram-cap">Clique nos blocos para ver o papel de cada peça. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">store</code> isola a memória por usuário, mas tudo ainda é <strong>curto prazo</strong> (RAM) — o próximo passo, memória de <strong>longo prazo</strong> persistida no <strong>store</strong> do LangGraph (namespace + key), é o que o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">mem0</code> usa na Aula 11. O <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ChromaDB</code> das Aulas 07–08 é outro papel: conhecimento/RAG, não memória do usuário.</div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">📌 Estratégia para o semestre</div>
+    <div class="callout-body">Use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationChain</code> no CKP01 — mais simples e direta para aprender o conceito. O <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RunnableWithMessageHistory</code> aparece na Aula 08 quando você criar a interface Gradio multi-sessão.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 02</h2>
+  <div style="display:flex;flex-direction:column;gap:12px;margin:20px 0">
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>A lista <code style="font-family:'JetBrains Mono',monospace;font-size:12px">historico</code> do 1º semestre não escala</strong> — o custo cresce linearmente com o número de turnos. Em produção com muitos usuários, isso se torna proibitivo.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>BufferMemory → fidelidade máxima, custo crescente.</strong> Para demos e conversas curtas (menos de 10 turnos).</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>SummaryMemory → custo estável, fidelidade aproximada.</strong> Para conversas longas onde o resumo captura o essencial.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>TokenBufferMemory → custo fixo, janela deslizante.</strong> Para a maioria dos casos — controle preciso com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">max_token_limit</code>.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🎯</div>
+      <div style="font-size:14px"><strong>CKP01 — R2 entregue:</strong> ConversationChain com memória escolhida e justificada. Faltam R3 (Pydantic, Aula 03) e R4 (Context Engineering, Aula 04).</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Posso usar memória com a chain LCEL da Aula 01?"</strong></td><td>Sim, com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">RunnableWithMessageHistory</code>. Para o CKP01 use <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ConversationChain</code> — mais simples. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">RunnableWithMessageHistory</code> aparece na Aula 08 com Gradio.</td></tr>
+      <tr><td><strong>"A memória persiste quando eu fechar o Colab?"</strong></td><td>Não — toda memória LangChain é em RAM por padrão. Para persistência, use <code style="font-family:'JetBrains Mono',monospace;font-size:11px">RedisChatMessageHistory</code> ou salve com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pickle</code>. No CKP01, memória em RAM é suficiente.</td></tr>
+      <tr><td><strong>"SummaryMemory pode resumir errado?"</strong></td><td>Sim — o LLM pode omitir detalhes ao resumir. Por isso domínios onde cada detalhe importa (médico, jurídico) preferem Buffer ou TokenBuffer. SummaryMemory é ótima para domínios onde a essência é suficiente.</td></tr>
+      <tr><td><strong>"Posso combinar dois tipos de memória?"</strong></td><td>Sim — <code style="font-family:'JetBrains Mono',monospace;font-size:11px">CombinedMemory</code> permite combinar, por exemplo, Buffer para a sessão atual + Summary para histórico de sessões anteriores. Abordagem avançada que aparece no M3 (Agentes).</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula02_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. Importação de múltiplos símbolos com parênteses</span>
+<span class="kw">from</span> <span class="va">langchain_classic.memory</span> <span class="kw">import</span> <span class="op">(</span>
+    <span class="va">ConversationBufferMemory</span><span class="op">,</span>
+    <span class="va">ConversationSummaryMemory</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># 2. Instância com parâmetros nomeados — keyword arguments</span>
+<span class="va">mem</span> <span class="op">=</span> <span class="va">ConversationTokenBufferMemory</span><span class="op">(</span>
+    <span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span>
+    <span class="va">max_token_limit</span><span class="op">=</span><span class="num">800</span><span class="op">,</span>
+    <span class="va">return_messages</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># 3. hasattr() — verificar se objeto tem um atributo</span>
+<span class="kw">if</span> <span class="nb">hasattr</span><span class="op">(</span><span class="va">mem</span><span class="op">,</span> <span class="st">"chat_memory"</span><span class="op">):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">mem</span><span class="op">.</span><span class="va">chat_memory</span><span class="op">.</span><span class="va">messages</span><span class="op">)</span>
+
+<span class="cm"># 4. Chamada .predict() — método de conveniência da ConversationChain</span>
+<span class="va">resp</span> <span class="op">=</span> <span class="va">chat</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="st">"Minha pergunta"</span><span class="op">)</span>
+<span class="cm"># equivale a chat.invoke({"input": "Minha pergunta"})["response"]</span>
+
+<span class="cm"># 5. Dict com chave computed (f-string como key não é pythônico — use variável)</span>
+<span class="va">estado</span> <span class="op">=</span> <span class="va">mem</span><span class="op">.</span><span class="fn">load_memory_variables</span><span class="op">({})</span>  <span class="cm"># {} = nenhum input extra</span>
+<span class="va">historico</span> <span class="op">=</span> <span class="va">estado</span><span class="op">[</span><span class="st">"history"</span><span class="op">]</span>
+
+<span class="cm"># 6. save_context() — injetar memória manualmente (útil em testes)</span>
+<span class="va">mem</span><span class="op">.</span><span class="fn">save_context</span><span class="op">(</span>
+    <span class="op">{</span><span class="st">"input"</span><span class="op">:</span>  <span class="st">"pergunta do usuário"</span><span class="op">},</span>
+    <span class="op">{</span><span class="st">"output"</span><span class="op">:</span> <span class="st">"resposta do modelo"</span><span class="op">},</span>
+<span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Onde estamos no semestre</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(41,175,140,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>A01:</strong> chain LCEL · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | StrOutputParser()</code> · domínio do grupo escolhido</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(41,175,140,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>A02 (hoje):</strong> ConversationChain com memória · chain stateful · CKP01 R2 entregue</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A03:</strong> Pydantic v2 · PydanticOutputParser · saída com schema garantido · CKP01 R3</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A04:</strong> Context Engineering · CKP01 R4 · <strong>entrega do CKP01</strong></div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A05–07:</strong> RAG — Embeddings · ChromaDB · pipeline completo · CKP02</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A09–11:</strong> Agentes · ReAct · tools · RAG como tool · Gradio · CKP03</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Mais dúvidas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Qual o max_token_limit ideal para o CKP01?"</strong></td><td>Para a maioria dos domínios, 800–1500 tokens é um bom ponto de partida. Uma resposta média tem ~150 tokens; um turno completo (pergunta + resposta) ~200 tokens. 800 tokens mantém ~4 turnos completos com contexto confortável.</td></tr>
+      <tr><td><strong>"SummaryMemory usa o mesmo modelo ou pode ser diferente?"</strong></td><td>Pode ser diferente — você pode passar um modelo menor/mais barato para o resumo. Exemplo: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ConversationSummaryMemory(llm=ChatOllama(model="qwen2.5:7b"))</code> para resumir e o modelo maior para responder.</td></tr>
+      <tr><td><strong>"Como mostrar no CKP01 que a memória está funcionando?"</strong></td><td>Inclua um bloco no notebook que: (1) faz 5 turnos de conversa, (2) imprime <code style="font-family:'JetBrains Mono',monospace;font-size:11px">load_memory_variables({})</code>, (3) pergunta algo que depende de um turno anterior. A resposta coerente demonstra que a memória funciona.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 03 — Structured Output e Pydantic v2</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-red">
+        <div class="callout-title">⚠️ O problema que a Aula 03 resolve</div>
+        <div class="callout-body">O chatbot responde em texto livre — mas quando outro sistema precisa consumir a resposta (um banco de dados, uma API, uma interface), texto livre quebra tudo.<br><br>
+        <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp["ingredientes"]</code> falha se o modelo retornou <code style="font-family:'JetBrains Mono',monospace;font-size:12px">"ingredients"</code> em vez de <code style="font-family:'JetBrains Mono',monospace;font-size:12px">"ingredientes"</code>.</div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-green">
+        <div class="callout-title">🔮 O que você vai aprender</div>
+        <div class="callout-body">
+          <strong>Pydantic v2 + LangChain:</strong><br>
+          · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">BaseModel</code> — definir o schema da saída<br>
+          · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PydanticOutputParser</code> — validar automaticamente<br>
+          · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ValidationError</code> — tratar erros de schema<br>
+          · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">format="json"</code> nativo do Ollama<br><br>
+          O modelo <strong>é obrigado</strong> a retornar o schema certo — ou o parser levanta erro.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:10px;font-size:13px">
+    <strong>💾 Antes da Aula 03:</strong> mantenha o notebook de hoje com o chatbot do domínio. Na Aula 03 você vai adicionar um segundo modo de resposta: além do texto livre, o chatbot vai poder responder em JSON validado com Pydantic.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Conversa longa com os 3 tipos — o aluno vê o custo crescer com Buffer e estabilizar com Summary e TokenBuffer.</div>
+  <div class="slide-number">26 / 30</div>
+</div>
+
+
+<div class="slide slide-content" style="text-align:center">
+  <div style="font-size:64px;margin-bottom:6px">🚀</div>
+  <h2>Demo Prática ao Vivo</h2>
+  <p style="max-width:680px;margin:0 auto 8px;text-align:left">O professor executa, ao vivo no Colab, a mesma conversa de 20 turnos (perguntas progressivas de um paciente fictício) através dos 3 tipos de memória — lado a lado, com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">verbose=True</code> mostrando o tamanho do contexto a cada turno.</p>
+  <div class="three-col" style="text-align:left;margin-top:16px">
+    <div style="padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:0 0 10px 10px;font-size:13px">
+      <strong style="color:var(--fiap-blue)">BufferMemory</strong><br>Contexto cresce a cada turno. No turno 20, o prompt tem ~20× mais tokens que no turno 1.
+    </div>
+    <div style="padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:0 0 10px 10px;font-size:13px">
+      <strong style="color:var(--fiap-green)">SummaryMemory</strong><br>Contexto cresce nas primeiras rodadas, depois estabiliza em ~150–200 tokens de resumo, independente do número de turnos.
+    </div>
+    <div style="padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:0 0 10px 10px;font-size:13px">
+      <strong style="color:var(--fiap-purple)">TokenBuffer</strong><br>Contexto cresce até o limite (500 tokens), depois descarta as mensagens mais antigas. Plateau fixo.
+    </div>
+  </div>
+  <div class="callout callout-orange" style="text-align:left;max-width:680px;margin:18px auto 0">
+    <div class="callout-title">🧪 Teste de memória ao vivo</div>
+    <div class="callout-body">No turno 20, o professor pergunta: <em>"Qual foi a primeira coisa que te disse?"</em> — BufferMemory responde corretamente; TokenBuffer e SummaryMemory podem falhar, dependendo de quanto já foi descartado ou resumido.</div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:680px;margin:14px auto 0">
+    <div class="callout-title">🛠️ Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gpt-oss:120b</code></div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 02 · 2º Semestre</div>
+    <div class="exercise-title">Chatbot com memória — domínio do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 25 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 4 lacunas</strong> do notebook — template com persona do domínio, tipo de memória, montagem da ConversationChain e 5 turnos de teste.</li>
+      <li><strong>Justifique a escolha</strong> do tipo de memória em comentário no notebook. Critérios: conversas do domínio tendem a ser curtas ou longas? O usuário vai referenciar informações do início da conversa?</li>
+      <li><strong>Teste o limite da memória:</strong> após 5 turnos, pergunte algo que dependia do turno 1. A resposta ainda é coerente?</li>
+      <li><strong>Desafio:</strong> adicione um <strong>segundo chat com outro tipo de memória</strong> e compare as respostas para a mesma conversa. Qual deu respostas mais coerentes no seu domínio?</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(237,20,91,.06);border-left:3px solid var(--fiap-pink);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--fiap-muted);line-height:1.9">
+        Lacuna 1: f-string com persona + "Histórico:\n{history}\n\nUsuário: {input}\nAssistente:"<br>
+        Lacuna 2: ConversationTokenBufferMemory(llm=llm, max_token_limit=800) — boa para a maioria dos domínios<br>
+        Lacuna 3: llm=llm, memory=memoria, prompt=prompt<br>
+        Lacuna 4: 5 perguntas reais do domínio escolhido na Aula 01
+      </div>
+    </div>
+    <div style="background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-blue)">
+      💡 <strong>Dica de escolha:</strong> domínios de suporte técnico ou jurídico → SummaryMemory (conversas longas, detalhes importam mas o resumo serve). Domínios de receitas ou jogos → TokenBuffer (conversas mais curtas, últimas mensagens são as mais relevantes).
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — Memory: ConversationBufferMemory, SummaryMemory, TokenBufferMemory. <a href="https://python.langchain.com/docs/modules/memory" style="color:var(--fiap-blue)">python.langchain.com/docs/modules/memory</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — ConversationChain: combinar memória com prompt customizado. <a href="https://python.langchain.com/docs/modules/chains/foundational/llm_chain" style="color:var(--fiap-blue)">python.langchain.com/docs/modules/chains</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — RunnableWithMessageHistory: abordagem moderna para memória em LCEL (0.3+). <a href="https://python.langchain.com/docs/expression_language/how_to/message_history" style="color:var(--fiap-blue)">python.langchain.com/docs/expression_language/how_to/message_history</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — Short-term memory: memória dentro de uma mesma conversa/thread (checkpointer). <a href="https://docs.langchain.com/oss/python/langchain/short-term-memory" style="color:var(--fiap-blue)">docs.langchain.com/oss/python/langchain/short-term-memory</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — Long-term memory: memória entre sessões (LangGraph store, namespace + key). <a href="https://docs.langchain.com/oss/python/langchain/long-term-memory" style="color:var(--fiap-blue)">docs.langchain.com/oss/python/langchain/long-term-memory</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Russell, S.; Norvig, P.</strong> — Inteligência Artificial. 3ª ed. Pearson, 2016. Cap. 3: Memória em agentes — a relevância do histórico para tomada de decisão.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Paper</span><div class="ref-text"><strong>Brown, T. et al.</strong> — "Language Models are Few-Shot Learners." NeurIPS, 2020. Seção sobre context window e por que o tamanho do contexto impacta diretamente o custo e a qualidade. <a href="https://arxiv.org/abs/2005.14165" style="color:var(--fiap-blue)">arxiv.org/abs/2005.14165</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Ebook</span><div class="ref-text"><strong>Freed, A.; Jacobs, C.; Rózsa, E.</strong> — Effective Conversational AI. Manning, 2025. Cap. 9: Harnessing Context for an Adaptive Virtual Assistant Experience — a distinção entre session history e persistent user history que fundamenta esta aula.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">29 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Aula 02 concluída 🧠</div>
+  <div style="font-size:16px;color:var(--fiap-muted);margin-bottom:12px;max-width:540px">A chain da Aula 01 agora tem memória. Na Aula 03 ela ganha saída estruturada com Pydantic — e o CKP01 fica quase completo.</div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:32px;text-align:left;max-width:600px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:8px">→ Próxima Aula — Aula 03 · 17/08</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Structured output e Pydantic v2</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">Forçar o LLM a responder com um schema garantido. CKP01 R3 entregue.</div>
+  </div>
+  <div style="margin-top:20px;padding:14px 24px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;max-width:540px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">📌 CKP01 progresso</div>
+    <div style="font-size:13px;color:var(--fiap-muted)">R1 ✅ · R2 ✅ · R3 (Aula 03) · R4 (Aula 04). Entrega na Aula 04.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">30 / 30</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

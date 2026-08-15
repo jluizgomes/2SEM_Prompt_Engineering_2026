@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha do Professor — Exercícios 2Sem Aula 04 | FIAP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fa;--card:#ffffff;--code:#1e293b;--bdr:#e2e4ec;--cy:#0891b2;--gn:#16a34a;--pu:#9333ea;--or:#d97706;--pk:#db2777;--yl:#ca8a04;--rd:#dc2626;--bl:#2563eb;--tl:#0d9488;--ag:#f472b6;--t1:#1a1b2f;--t2:#4e4e68;--t3:#6b6b80}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.75;font-size:17px;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ag);border-radius:3px}
+.hero{min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 450px at 20% 25%,rgba(244,114,182,.09),transparent),radial-gradient(ellipse 600px 400px at 80% 75%,rgba(147,51,234,.05),transparent),radial-gradient(ellipse 500px 350px at 50% 50%,rgba(8,145,178,.08),transparent);pointer-events:none}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:6px;text-transform:uppercase;color:var(--ag);margin-bottom:1.5rem;opacity:.7}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,var(--ag),var(--pu),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-family:'Crimson Pro',serif;font-size:clamp(1rem,2vw,1.2rem);font-style:italic;color:var(--t2);max-width:700px;margin-bottom:1.5rem}
+.hero .info{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.hero .info span{font-family:'JetBrains Mono',monospace;font-size:.72rem;background:var(--card);border:1px solid var(--bdr);padding:.3rem .7rem;border-radius:6px;color:var(--t3)}
+nav.toc{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:.65rem 1rem;overflow-x:auto}
+.toc-inner{display:flex;gap:.15rem;max-width:1100px;margin:0 auto;justify-content:center;flex-wrap:nowrap}
+.toc a{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-decoration:none;padding:.3rem .45rem;border-radius:5px;white-space:nowrap;transition:all .2s}
+.toc a:hover{color:var(--ag);background:rgba(219,39,119,.1)}
+.cc{max-width:1060px;margin:0 auto;padding:2rem 1.5rem 6rem}
+.bl{margin-bottom:4rem;scroll-margin-top:58px}
+.bh{display:flex;align-items:center;gap:1rem;margin-bottom:.5rem}
+.bn{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:2px;padding:.22rem .55rem;border-radius:4px;white-space:nowrap}
+.bt{font-size:clamp(1.2rem,2.5vw,1.7rem);font-weight:800;line-height:1.2}
+.btag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;color:var(--t2);margin-bottom:1.5rem;padding-left:.5rem;border-left:3px solid var(--t3)}
+.c--cy .bn{background:rgba(8,145,178,.12);color:var(--cy)}.c--cy .bt{color:var(--cy)}
+.c--gn .bn{background:rgba(22,163,74,.12);color:var(--gn)}.c--gn .bt{color:var(--gn)}
+.c--pu .bn{background:rgba(147,51,234,.12);color:var(--pu)}.c--pu .bt{color:var(--pu)}
+.c--or .bn{background:rgba(217,119,6,.12);color:var(--or)}.c--or .bt{color:var(--or)}
+.c--pk .bn{background:rgba(219,39,119,.12);color:var(--pk)}.c--pk .bt{color:var(--pk)}
+.c--yl .bn{background:rgba(202,138,4,.12);color:var(--yl)}.c--yl .bt{color:var(--yl)}
+.c--rd .bn{background:rgba(220,38,38,.12);color:var(--rd)}.c--rd .bt{color:var(--rd)}
+.c--bl .bn{background:rgba(37,99,235,.12);color:var(--bl)}.c--bl .bt{color:var(--bl)}
+.c--tl .bn{background:rgba(13,148,136,.12);color:var(--tl)}.c--tl .bt{color:var(--tl)}
+.c--ag .bn{background:rgba(244,114,182,.1);color:var(--ag)}.c--ag .bt{color:var(--ag)}
+.tp{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;transition:border-color .3s}
+.tp:hover{border-color:rgba(219,39,119,.25)}
+.tp h3{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;margin-bottom:.8rem}
+.tp p{color:var(--t2);font-size:.92rem;line-height:1.8;margin-bottom:.6rem}
+.tp p:last-child{margin-bottom:0}
+.cb{background:var(--code);border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:.5rem .85rem;background:#0f172a;border-bottom:1px solid #334155}
+.ch span{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase}
+.cd{display:flex;gap:5px}.cd i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cd i:nth-child(1){background:#ff5f57}.cd i:nth-child(2){background:#febc2e}.cd i:nth-child(3){background:#28c840}
+pre{padding:1rem 1.2rem;overflow-x:hidden;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.8;color:#e2e8f0;margin:0;white-space:pre-wrap;word-break:break-all;tab-size:4}
+.cm{color:#94a3b8;font-style:italic}.kw{color:var(--pu)}.st{color:var(--gn)}.fn{color:var(--cy)}.nb{color:var(--or)}.bi{color:var(--yl)}.op{color:var(--pk)}
+.cbox{background:rgba(147,51,234,.08);border-left:3px solid var(--pu);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.cbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--pu);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.cbox p{color:var(--t2);font-size:.92rem}
+.wbox{background:rgba(217,119,6,.08);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.wbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.wbox p{color:var(--t2);font-size:.92rem}
+.tbox{background:rgba(8,145,178,.08);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.tbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cy);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.tbox p{color:var(--t2);font-size:.92rem}
+.pp{display:flex;align-items:center;gap:.35rem;flex-wrap:nowrap;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+.pp .s{padding:.38rem .8rem;background:var(--card);border:1px solid var(--bdr);border-radius:6px;color:var(--ag);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0}
+th{background:rgba(237,20,91,.08);color:var(--pk);padding:.6rem .8rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:1px;text-transform:uppercase}
+td{padding:.6rem .8rem;border-bottom:1px solid var(--bdr);color:var(--t2)}
+tr:last-child td{border-bottom:none}
+.ft{text-align:center;padding:3rem 2rem;border-top:1px solid var(--bdr);color:var(--t3);font-size:.85rem}
+@media(max-width:768px){.cc{padding:1rem}.tp{padding:1.2rem}pre{padding:.8rem;font-size:.74rem}.toc-inner{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-label">Ficha do Professor · 2º Semestre</div>
+  <h1>Aula 04 — Context Engineering — CKP01<br>Exercícios Práticos</h1>
+  <p class="sub">Guia completo: 3 exercícios com objetivo, passo a passo, código no Colab, erros comuns e sugestões de discussão. Inclui a entrega do CKP01.</p>
+  <div class="info"><span>👨‍🏫 Prof. Jorge Luiz Gomes</span><span>🎓 FIAP · Ciência da Computação</span><span>📅 Módulo 1 — LangChain, Chatbots e Context Engineering</span><span>⏱️ 1h40min (100 min)</span></div>
+</section>
+<nav class="toc"><div class="toc-inner"><a href="#crono">Cronograma</a><a href="#ex1">Ex1</a><a href="#ex2">Ex2</a><a href="#ex3">Ex3</a></div></nav>
+<main class="cc">
+<section class="bl c--pk" id="crono">
+  <div class="bh"><span class="bn">CRONOGRAMA</span><h2 class="bt">Planejamento da Aula</h2></div>
+  <p class="btag">Distribuição sugerida dos 100 minutos entre os exercícios.</p>
+  <div class="tp"><table><thead><tr><th>Tempo</th><th>Exercício</th><th>Tipo</th><th>Dinâmica</th></tr></thead>
+  <tbody><tr><td>00-08</td><td>Anunciar formato da entrega CKP01 (5 min por grupo)</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Professor</td></tr><tr><td>08-30</td><td>Ex 1 — System prompt rico</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Individual</td></tr><tr><td>30-50</td><td>Ex 2 — Context Engineering avançado (context rot)</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Individual</td></tr><tr><td>50-75</td><td>Ex 3 — CKP01: chatbot de produção do grupo</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Grupo</td></tr><tr><td>75-100</td><td>Entregas — demo de 5 min por grupo</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Grupo + Professor</td></tr></tbody></table></div>
+  <div class="cbox"><h4>⏱️ Turma Compacta — 1h</h4><p>Não recomendado comprimir esta aula — é dia de entrega (25% da nota). Se necessário, cortar o Ex.2 (context rot) e ir direto para o Ex.3, mantendo o tempo de entregas intacto.</p></div>
+</section>
+<section class="bl c--cy" id="ex1">
+  <div class="bh"><span class="bn">EXERCÍCIO 01</span><h2 class="bt">System prompt rico ⭐</h2></div>
+  <p class="btag">⭐</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Escrever um system prompt de produção — com identidade, regras explícitas e restrições — em vez do 'Você é um assistente útil' genérico usado até aqui.</p></div>
+  <div class="tp"><h3>🧩 Conceitos Trabalhados</h3><p><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 f-strings multilinha</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Classe reaproveitando padrão anterior</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 System prompt estruturado</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Persona + regras + restrições</span></p></div>
+  <div class="tp"><h3>⚙️ Preparação Prévia</h3><p>Nenhuma dependência nova.</p></div>
+  <div class="tp"><h3>📋 Passo a Passo no Colab</h3><div class="pp"><span class="s">1</span><span style="color:var(--t2);font-size:.9rem"><strong>Mostrar o exemplo de SYSTEM_SAUDE completo</strong> — Apontar as 4 seções: identidade, regras críticas, o que coletar, restrições.</span></div><div class="pp"><span class="s">2</span><span style="color:var(--t2);font-size:.9rem"><strong>Alunos adaptam para o próprio domínio</strong> — Cada grupo escreve seu próprio system prompt seguindo a mesma estrutura de 4 seções.</span></div><div class="pp"><span class="s">3</span><span style="color:var(--t2);font-size:.9rem"><strong>Testar com uma pergunta fora do escopo</strong> — O bot deve recusar educadamente — esse é o teste que prova que as restrições funcionam.</span></div></div>
+  
+  <div class="tp"><h3>💻 Código Completo no Colab</h3><p>Código que os alunos executarão no Google Colab. Narre cada bloco explicando o propósito de cada trecho.</p><div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>2Sem_04_exercicio_01.py · Google Colab</span></div><pre><span class="cm"># ============================================================</span>
+<span class="cm"># EXERCICIO 1 -- SYSTEM PROMPT RICO</span>
+<span class="cm"># ============================================================</span>
+
+<span class="cm"># 👉 COMPLETE AQUI: crie SYSTEM para o dominio do seu grupo com identidade, regras e restricoes</span>
+<span class="cm"># SYSTEM = (</span>
+<span class="cm">#     &#x27;Voce e o [NomeBot], assistente de [dominio] da [Empresa].\n\n&#x27;</span>
+<span class="cm">#     &#x27;REGRAS:\n1. [regra1]\n2. [regra2]\n\n&#x27;</span>
+<span class="cm">#     &#x27;RESTRICOES:\n- [restricao1]&#x27;</span>
+<span class="cm"># )</span>
+<span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+
+<span class="kw">class</span> ChatbotProducao:
+    <span class="kw">def</span> __init__(self, system):
+        <span class="cm"># 👉 COMPLETE AQUI: inicialize self.historico = [SystemMessage(content=system)]</span>
+        <span class="cm"># self.historico = [SystemMessage(content=system)]</span>
+        <span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+
+    <span class="kw">def</span> chat(self, msg):
+        <span class="cm"># 👉 COMPLETE AQUI: adicione HumanMessage, invoque llm e adicione AIMessage</span>
+        <span class="cm"># self.historico.append(HumanMessage(content=msg))</span>
+        <span class="cm"># resp = llm.invoke(self.historico)</span>
+        <span class="cm"># self.historico.append(AIMessage(content=resp.content))</span>
+        <span class="cm"># return resp.content</span>
+        <span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+
+bot = ChatbotProducao(SYSTEM)
+<span class="kw">for</span> msg <span class="kw">in</span> [<span class="st">&#x27;Ola, preciso de ajuda.&#x27;</span>, <span class="st">&#x27;Pode me dar mais detalhes?&#x27;</span>]:
+    <span class="fn">print</span>(<span class="st">f&#x27;U: {msg}\nA: {bot.chat(msg)[:200]}\n&#x27;</span>)
+</pre></div></div>
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4><p>System prompt genérico demais ('seja útil e educado') não passa no teste de restrição — o bot responde qualquer coisa, inclusive fora do domínio. É o erro mais comum e mais fácil de identificar ao vivo.</p></div>
+  <div class="cbox"><h4>💬 Sugestão de Discussão</h4><p><em>Reparem que o mesmo chatbot, com o MESMO modelo por trás, se comporta de forma completamente diferente só pela qualidade do system prompt. Isso é Context Engineering na prática.</em></p></div>
+</section>
+<section class="bl c--gn" id="ex2">
+  <div class="bh"><span class="bn">EXERCÍCIO 02</span><h2 class="bt">Context Engineering avançado (context rot) ⭐⭐</h2></div>
+  <p class="btag">⭐⭐</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Implementar gestão de contexto que preserva o system prompt intacto e demonstrar 'context rot' — degradação de qualidade conforme o contexto cresce.</p></div>
+  <div class="tp"><h3>🧩 Conceitos Trabalhados</h3><p><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Property (tokens_estimados)</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Composição: system + resumo + turns</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Context rot</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Preservação do system prompt</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Compressão condicional</span></p></div>
+  <div class="tp"><h3>⚙️ Preparação Prévia</h3><p>Nenhuma dependência nova. Conecta diretamente com Memória (Aula 02).</p></div>
+  <div class="tp"><h3>📋 Passo a Passo no Colab</h3><div class="pp"><span class="s">1</span><span style="color:var(--t2);font-size:.9rem"><strong>Explicar por que o system prompt NUNCA deve sumir</strong> — Mesmo comprimindo o histórico, a identidade/regras do bot precisam sobreviver.</span></div><div class="pp"><span class="s">2</span><span style="color:var(--t2);font-size:.9rem"><strong>Alunos completam _comprimir_se_necessario e chat()</strong> — Reaproveita a lógica de Summary Memory (Aula 02) com uma peça a mais: o system fixo.</span></div><div class="pp"><span class="s">3</span><span style="color:var(--t2);font-size:.9rem"><strong>Rodar 5+ mensagens e observar tokens_estimados</strong> — Mostrar o contador crescendo mesmo com compressão ativa.</span></div></div>
+  <div class="tbox"><h4>✅ Gabarito</h4><p><div style="background:rgba(22,163,74,.08);border-radius:6px;padding:.6rem 1rem"><code style="font-size:.82rem">self.resumo = chat(f'Resuma em 2 frases:\n{texto}', max_tokens=80, temperature=0.0)<br>...<br>contexto = [SystemMessage(content=self.system)]</code></div></p></div>
+  <div class="tp"><h3>💻 Código Completo no Colab</h3><p>Código que os alunos executarão no Google Colab. Narre cada bloco explicando o propósito de cada trecho.</p><div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>2Sem_04_exercicio_02.py · Google Colab</span></div><pre><span class="cm"># ============================================================</span>
+<span class="cm"># EXERCICIO 2 -- CONTEXT ENGINEERING</span>
+<span class="cm"># ============================================================</span>
+
+<span class="kw">class</span> ContextoCuidadoso:
+    <span class="kw">def</span> __init__(self, system, max_turns=<span class="nb">5</span>):
+        self.system = system
+        self.max_turns = max_turns
+        self.turns = []
+        self.resumo = <span class="st">&#x27;&#x27;</span>
+
+    <span class="kw">def</span> _comprimir_se_necessario(self):
+        <span class="kw">if</span> <span class="fn">len</span>(self.turns) &lt; self.max_turns: <span class="kw">return</span>
+        antigos = self.turns[:-<span class="nb">3</span>]
+        texto = <span class="st">&#x27;\n&#x27;</span>.join(<span class="st">f&#x27;U:{u}\nA:{a}&#x27;</span> <span class="kw">for</span> u,a <span class="kw">in</span> antigos)
+        <span class="cm"># 👉 COMPLETE AQUI: chame chat() para gerar resumo e salve em self.resumo</span>
+        <span class="cm"># self.resumo = chat(f&#x27;Resuma em 2 frases:\n{texto}&#x27;, max_tokens=80, temperature=0.0)</span>
+        <span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+        self.turns = self.turns[-<span class="nb">3</span>:]
+
+    <span class="kw">def</span> chat(self, msg):
+        self._comprimir_se_necessario()
+        <span class="cm"># 👉 COMPLETE AQUI: construa contexto = [SystemMessage(content=self.system)]</span>
+        <span class="cm"># contexto = [SystemMessage(content=self.system)]</span>
+        <span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+        <span class="kw">if</span> self.resumo:
+            contexto.append(SystemMessage(content=<span class="st">f&#x27;[Resumo: {self.resumo}]&#x27;</span>))
+        <span class="kw">for</span> u,a <span class="kw">in</span> self.turns:
+            contexto.extend([HumanMessage(content=u), AIMessage(content=a)])
+        contexto.append(HumanMessage(content=msg))
+        resp = llm.invoke(contexto)
+        self.turns.append((msg, resp.content))
+        <span class="kw">return</span> resp.content
+
+bot = ContextoCuidadoso(<span class="st">&#x27;Voce e assistente especializado.&#x27;</span>, max_turns=<span class="nb">3</span>)
+<span class="kw">for</span> msg <span class="kw">in</span> [<span class="st">&#x27;Meu nome e Carlos.&#x27;</span>,<span class="st">&#x27;O que e context engineering?&#x27;</span>,<span class="st">&#x27;Voce lembra meu nome?&#x27;</span>,<span class="st">&#x27;E para que serve?&#x27;</span>,<span class="st">&#x27;Resuma o que discutimos.&#x27;</span>]:
+    resp = bot.chat(msg)
+    <span class="fn">print</span>(<span class="st">f&#x27;U: {msg}\nA: {resp[:150]}\n&#x27;</span>)
+</pre></div></div>
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4><p>Comprimir o system prompt junto com o histórico — isso é o erro mais grave possível, porque o bot perde a própria identidade/regras no meio da conversa.</p></div>
+  <div class="cbox"><h4>💬 Sugestão de Discussão</h4><p><em>Anthropic chama isso de 'Context Engineering' desde 2025 — não é mais só escrever um bom prompt, é GERENCIAR o contexto como um recurso finito que se degrada com o tempo/uso.</em></p></div>
+</section>
+<section class="bl c--pu" id="ex3">
+  <div class="bh"><span class="bn">EXERCÍCIO 03</span><h2 class="bt">CKP01 — Chatbot de produção do grupo ⭐⭐⭐</h2></div>
+  <p class="btag">⭐⭐⭐</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Consolidar tudo (LCEL + Memória + Pydantic + System Prompt rico) no chatbot final que será entregue e demonstrado ao vivo.</p></div>
+  <div class="tp"><h3>🧩 Conceitos Trabalhados</h3><p><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Integração de componentes</span><span style="background:rgba(37,99,235,.1);color:var(--bl);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🐍 Classe completa de produção</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Chatbot de produção</span><span style="background:rgba(22,163,74,.1);color:var(--gn);padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:600;margin:2px">🤖 Todos os conceitos do Módulo 1 combinados</span></p></div>
+  <div class="tp"><h3>⚙️ Preparação Prévia</h3><p>Nenhuma dependência nova — é a integração de tudo já visto.</p></div>
+  <div class="tp"><h3>📋 Passo a Passo no Colab</h3><div class="pp"><span class="s">1</span><span style="color:var(--t2);font-size:.9rem"><strong>Relembrar a rubrica ANTES do lab</strong> — 4 itens: pipeline LCEL, memória gerenciada, Pydantic v2, system prompt rico com context rot documentado.</span></div><div class="pp"><span class="s">2</span><span style="color:var(--t2);font-size:.9rem"><strong>Grupo define DOMINIO e SYSTEM_PROMPT final</strong> — Esse é o chatbot que será demonstrado — não é rascunho.</span></div><div class="pp"><span class="s">3</span><span style="color:var(--t2);font-size:.9rem"><strong>Testar com a CONVERSA_TESTE do domínio</strong> — 3+ mensagens reais do domínio, incluindo 1 que testa os limites do escopo.</span></div></div>
+  
+  <div class="tp"><h3>💻 Código Completo no Colab</h3><p>Código que os alunos executarão no Google Colab. Narre cada bloco explicando o propósito de cada trecho.</p><div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>2Sem_04_exercicio_03.py · Google Colab</span></div><pre><span class="cm"># ============================================================</span>
+<span class="cm"># EXERCICIO 3 -- CKP01: SEU CHATBOT DE PRODUCAO</span>
+<span class="cm"># ============================================================</span>
+
+<span class="cm"># INSTRUCAO: Adapte TUDO ao dominio do seu grupo!</span>
+
+<span class="cm"># 👉 COMPLETE AQUI: defina DOMINIO e SYSTEM_PROMPT para o seu grupo</span>
+<span class="cm"># DOMINIO = &#x27;saude&#x27;  # ou &#x27;educacao&#x27;, &#x27;financas&#x27;, &#x27;juridico&#x27;...</span>
+<span class="cm"># SYSTEM_PROMPT = &#x27;Voce e assistente de {DOMINIO}. Regras: ...&#x27;</span>
+<span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+
+<span class="kw">class</span> ChatbotCKP01:
+    <span class="kw">def</span> __init__(self, system, dominio, max_turns=<span class="nb">6</span>):
+        self.system = system
+        self.dominio = dominio
+        self.turns = []
+        self.resumo = <span class="st">&#x27;&#x27;</span>
+        self.max_turns = max_turns
+
+    <span class="kw">def</span> _comprimir(self):
+        <span class="kw">if</span> <span class="fn">len</span>(self.turns) &lt; self.max_turns: <span class="kw">return</span>
+        txt = <span class="st">&#x27;\n&#x27;</span>.join(<span class="st">f&#x27;U:{u}\nA:{a}&#x27;</span> <span class="kw">for</span> u,a <span class="kw">in</span> self.turns[:-<span class="nb">3</span>])
+        <span class="cm"># 👉 COMPLETE AQUI: gere self.resumo com chat()</span>
+        <span class="cm"># self.resumo = chat(f&#x27;Resuma em 2 frases:\n{txt}&#x27;, max_tokens=80, temperature=0.0)</span>
+        <span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+        self.turns = self.turns[-<span class="nb">3</span>:]
+
+    <span class="kw">def</span> chat(self, msg):
+        self._comprimir()
+        ctx = [SystemMessage(content=self.system)]
+        <span class="kw">if</span> self.resumo: ctx.append(SystemMessage(content=<span class="st">f&#x27;Resumo: {self.resumo}&#x27;</span>))
+        <span class="kw">for</span> u,a <span class="kw">in</span> self.turns:
+            ctx.extend([HumanMessage(content=u), AIMessage(content=a)])
+        ctx.append(HumanMessage(content=msg))
+        <span class="cm"># 👉 COMPLETE AQUI: invoque llm.invoke(ctx), registre o turno e retorne resp.content</span>
+        <span class="cm"># resp = llm.invoke(ctx)</span>
+        <span class="cm"># self.turns.append((msg, resp.content))</span>
+        <span class="cm"># return resp.content</span>
+        <span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+
+<span class="cm"># 👉 COMPLETE AQUI: instancie e teste com perguntas do seu dominio</span>
+<span class="cm"># bot_ckp = ChatbotCKP01(SYSTEM_PROMPT, DOMINIO)</span>
+<span class="cm"># for msg in [&#x27;pergunta1&#x27;, &#x27;pergunta2&#x27;, &#x27;pergunta3&#x27;]:</span>
+<span class="cm">#     print(f&#x27;A: {bot_ckp.chat(msg)[:200]}&#x27;)</span>
+<span class="kw">pass</span>  <span class="cm"># Substitua esta linha</span>
+</pre></div></div>
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4><p>Grupo chega ao lab sem ter completado os Exercícios 1-3 das Aulas 01-03 — identificar isso nos primeiros minutos, não durante a demo.</p></div>
+  <div class="cbox"><h4>💬 Sugestão de Discussão</h4><p><em>Este é o chatbot que abre o arco do semestre — ele vira a base do RAG (CKP02) e do agente (CKP03). Vale a pena construir com cuidado agora.</em></p></div>
+</section>
+</main>
+<footer class="ft"><p>FIAP · Prompt Engineering and Artificial Intelligence · 2026 · 2º Semestre</p><p>Prof. Jorge Luiz Gomes · Todos os direitos reservados</p></footer>
+</body>
+</html>

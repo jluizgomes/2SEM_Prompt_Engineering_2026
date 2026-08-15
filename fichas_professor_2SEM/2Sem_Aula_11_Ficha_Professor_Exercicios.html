@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 11 — Integradora CKP03 · Fichas de Exercícios</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fa;--card:#ffffff;--code:#1e293b;--bdr:#e2e4ec;--cy:#0891b2;--gn:#16a34a;--pu:#9333ea;--or:#d97706;--pk:#db2777;--yl:#ca8a04;--rd:#dc2626;--bl:#2563eb;--tl:#0d9488;--ag:#f472b6;--t1:#1a1b2f;--t2:#4e4e68;--t3:#6b6b80}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.75;font-size:17px;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ag);border-radius:3px}
+.hero{min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 450px at 20% 25%,rgba(244,114,182,.09),transparent),radial-gradient(ellipse 600px 400px at 80% 75%,rgba(147,51,234,.05),transparent),radial-gradient(ellipse 500px 350px at 50% 50%,rgba(8,145,178,.08),transparent);pointer-events:none}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:6px;text-transform:uppercase;color:var(--ag);margin-bottom:1.5rem;opacity:.7}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,var(--ag),var(--pu),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-family:'Crimson Pro',serif;font-size:clamp(1rem,2vw,1.2rem);font-style:italic;color:var(--t2);max-width:700px;margin-bottom:1.5rem}
+.hero .info{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.hero .info span{font-family:'JetBrains Mono',monospace;font-size:.72rem;background:var(--card);border:1px solid var(--bdr);padding:.3rem .7rem;border-radius:6px;color:var(--t3)}
+nav.toc{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:.65rem 1rem;overflow-x:auto}
+.toc-inner{display:flex;gap:.15rem;max-width:1100px;margin:0 auto;justify-content:center;flex-wrap:nowrap}
+.toc a{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-decoration:none;padding:.3rem .45rem;border-radius:5px;white-space:nowrap;transition:all .2s}
+.toc a:hover{color:var(--ag);background:rgba(219,39,119,.1)}
+.cc{max-width:1060px;margin:0 auto;padding:2rem 1.5rem 6rem}
+.bl{margin-bottom:4rem;scroll-margin-top:58px}
+.bh{display:flex;align-items:center;gap:1rem;margin-bottom:.5rem}
+.bn{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:2px;padding:.22rem .55rem;border-radius:4px;white-space:nowrap}
+.bt{font-size:clamp(1.2rem,2.5vw,1.7rem);font-weight:800;line-height:1.2}
+.btag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;color:var(--t2);margin-bottom:1.5rem;padding-left:.5rem;border-left:3px solid var(--t3)}
+.c--cy .bn{background:rgba(8,145,178,.12);color:var(--cy)}.c--cy .bt{color:var(--cy)}
+.c--gn .bn{background:rgba(22,163,74,.12);color:var(--gn)}.c--gn .bt{color:var(--gn)}
+.c--pu .bn{background:rgba(147,51,234,.12);color:var(--pu)}.c--pu .bt{color:var(--pu)}
+.c--or .bn{background:rgba(217,119,6,.12);color:var(--or)}.c--or .bt{color:var(--or)}
+.c--pk .bn{background:rgba(219,39,119,.12);color:var(--pk)}.c--pk .bt{color:var(--pk)}
+.c--tl .bn{background:rgba(13,148,136,.12);color:var(--tl)}.c--tl .bt{color:var(--tl)}
+.tp{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;transition:border-color .3s}
+.tp:hover{border-color:rgba(219,39,119,.25)}
+.tp h3{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;margin-bottom:.8rem}
+.tp p{color:var(--t2);font-size:.92rem;line-height:1.8;margin-bottom:.6rem}
+.tp p:last-child{margin-bottom:0}
+.cb{background:var(--code);border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:.5rem .85rem;background:#0f172a;border-bottom:1px solid #334155}
+.ch span{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase}
+.cd{display:flex;gap:5px}.cd i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cd i:nth-child(1){background:#ff5f57}.cd i:nth-child(2){background:#febc2e}.cd i:nth-child(3){background:#28c840}
+pre{padding:1rem 1.2rem;overflow-x:hidden;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.8;color:#e2e8f0;margin:0;white-space:pre-wrap;word-break:break-all;tab-size:4}
+.cm{color:#94a3b8;font-style:italic}.kw{color:var(--pu)}.st{color:var(--gn)}.fn{color:var(--cy)}.nb{color:var(--or)}.bi{color:var(--yl)}.op{color:var(--pk)}
+.out{background:#0f172a;border:1px solid #22c55e33;border-radius:10px;margin:1rem 0;overflow:hidden}
+.out .ch{background:#0a0f1a;border-bottom:1px solid #22c55e33}
+.out pre{color:#98c379}
+.out strong{color:#e5c07b}
+.err{background:#1e293b;border:1px solid #ef444433;border-radius:10px;margin:1rem 0;overflow:hidden}
+.err .ch{background:#0f172a;border-bottom:1px solid #ef444433}
+.err pre{color:#ef4444}
+.cbox{background:rgba(147,51,234,.08);border-left:3px solid var(--pu);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.cbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--pu);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.cbox p{color:var(--t2);font-size:.92rem}
+.wbox{background:rgba(217,119,6,.08);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.wbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.wbox p{color:var(--t2);font-size:.92rem}
+.tbox{background:rgba(8,145,178,.08);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.tbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cy);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.tbox p{color:var(--t2);font-size:.92rem}
+.pp{display:flex;align-items:center;gap:.35rem;flex-wrap:nowrap;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+.pp .s{padding:.38rem .8rem;background:var(--card);border:1px solid var(--bdr);border-radius:6px;color:var(--ag);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0}
+th{background:rgba(237,20,91,.08);color:var(--pk);padding:.6rem .8rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:1px;text-transform:uppercase}
+td{padding:.6rem .8rem;border-bottom:1px solid var(--bdr);color:var(--t2)}
+tr:last-child td{border-bottom:none}
+.ft{text-align:center;padding:3rem 2rem;border-top:1px solid var(--bdr);color:var(--t3);font-size:.85rem}
+@media(max-width:768px){.cc{padding:1rem}.tp{padding:1.2rem}pre{padding:.8rem;font-size:.74rem}.toc-inner{justify-content:flex-start}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-label">Ficha do Professor · 2º Semestre</div>
+  <h1>Aula 11 — Integradora — CKP03<br>Exercícios Práticos</h1>
+  <p class="sub">Guia completo: 3 exercícios com código funcional, output esperado, erros comuns expandidos e referências. Entrega do CKP03 (45% da nota).</p>
+  <div class="info"><span>👨‍🏫 Prof. Jorge Luiz Gomes</span><span>🎓 FIAP · Ciência da Computação</span><span>📅 Módulo 3 — Agentes e LangGraph</span><span>⏱️ 1h40min (100 min)</span></div>
+</section>
+
+<nav class="toc"><div class="toc-inner">
+  <a href="#crono">Cronograma</a>
+  <a href="#prep">Preparação</a>
+  <a href="#ex1">Ex1</a>
+  <a href="#ex2">Ex2</a>
+  <a href="#ex3">Ex3</a>
+  <a href="#erros">Erros</a>
+  <a href="#ref">Referências</a>
+</div></nav>
+
+<main class="cc">
+
+<!-- ============================== CRONOGRAMA ============================== -->
+<section class="bl c--pk" id="crono">
+  <div class="bh"><span class="bn">CRONOGRAMA</span><h2 class="bt">Planejamento da Aula</h2></div>
+  <p class="btag">Distribuição sugerida dos 100 minutos entre os exercícios.</p>
+  <div class="tp"><table>
+    <thead><tr><th>Tempo</th><th>Exercício</th><th>Dinâmica</th></tr></thead>
+    <tbody>
+      <tr><td>00-10</td><td>Sem conceito novo — 100% tempo de integração</td><td>Professor</td></tr>
+      <tr><td>10-20</td><td>Checklist do que falta no quadro</td><td>Professor</td></tr>
+      <tr><td>20-45</td><td>Ex 1 — Agente RAG com base do domínio</td><td>Grupo</td></tr>
+      <tr><td>45-70</td><td>Ex 2+3 — Pipeline CKP03 + interface Gradio</td><td>Grupo</td></tr>
+      <tr><td>70-100</td><td>Entregas — demo com URL pública ao vivo, 10 min/grupo</td><td>Grupo + Professor</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================== PREPARAÇÃO ============================== -->
+<section class="bl c--cy" id="prep">
+  <div class="bh"><span class="bn">PREPARAÇÃO</span><h2 class="bt">Ambiente e Dependências</h2></div>
+
+  <div class="pp"><span class="s">★</span> Primeiros Passos</div>
+  <p>Antes de qualquer exercício, garanta que todos os alunos tenham o ambiente funcionando. Esta aula integra tudo visto no semestre.</p>
+
+  <h3>1. Instale todas as dependências</h3>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>terminal</span></div>
+<pre><span class="cm"># Todas as dependências da Integradora</span>
+pip install langchain langchain-community langchain-ollama langchain-chroma langgraph chromadb gradio duckduckgo-search</pre></div>
+
+  <h3>2. Verifique a conexão com o Ollama</h3>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>testar_llm.py</span></div>
+<pre><span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+resp = llm.<span class="fn">invoke</span>(<span class="st">"Diga apenas: OK"</span>)
+<span class="fn">print</span>(resp.content)</pre></div>
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída</span></div>
+<pre><strong>→</strong> OK</pre></div>
+
+  <h3>3. Teste o ChromaDB isoladamente</h3>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>testar_chroma.py</span></div>
+<pre><span class="kw">import</span> chromadb
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> OllamaEmbeddings
+
+embeddings = <span class="fn">OllamaEmbeddings</span>(model=<span class="st">"nomic-embed-text"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+client = chromadb.<span class="fn">Client</span>()
+col = client.<span class="fn">create_collection</span>(<span class="st">"teste_rapido"</span>)
+col.<span class="fn">add</span>(
+    documents=[<span class="st">"FIAP fica em São Paulo"</span>, <span class="st">"Curso tem 4 anos"</span>],
+    ids=[<span class="st">"d0"</span>, <span class="st">"d1"</span>],
+    embeddings=[embeddings.<span class="fn">embed_query</span>(d) <span class="kw">for</span> d <span class="kw">in</span> [<span class="st">"FIAP fica em São Paulo"</span>, <span class="st">"Curso tem 4 anos"</span>]]
+)
+<span class="fn">print</span>(<span class="st">f"Docs na coleção: </span>{col.count()}<span class="st">"</span>)</pre></div>
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída</span></div>
+<pre><strong>→</strong> Docs na coleção: 2</pre></div>
+
+  <h3>4. Teste o Gradio isoladamente</h3>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>testar_gradio.py</span></div>
+<pre><span class="kw">import</span> gradio <span class="kw">as</span> gr
+
+<span class="kw">def</span> <span class="fn">ola</span>(msg):
+    <span class="kw">return</span> <span class="st">f"Você disse: </span>{msg}<span class="st">"</span>
+
+demo = gr.<span class="fn">Interface</span>(fn=ola, inputs=<span class="st">"text"</span>, outputs=<span class="st">"text"</span>)
+demo.<span class="fn">launch</span>(share=<span class="kw">True</span>)</pre></div>
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída esperada</span></div>
+<pre>Running on local URL:  http://127.0.0.1:7860
+Running on public URL: https://xxxxx.gradio.live</pre></div>
+
+  <div class="tbox"><h4>✅ Checkpoint</h4><p>Se todos os 4 blocos funcionaram, o ambiente está pronto. A Integradora é a soma de tudo — se algo falhar aqui, refaça o teste da aula correspondente.</p></div>
+</section>
+
+<!-- ============================== EXERCÍCIO 1 ============================== -->
+<section class="bl c--gn" id="ex1">
+  <div class="bh"><span class="bn">EXERCÍCIO 01</span><h2 class="bt">Agente RAG com base do domínio</h2></div>
+  <p class="btag">⭐⭐ — Encapsular pipeline RAG como tool do agente</p>
+
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Transformar o pipeline RAG (Aulas 05-07) em uma <strong>tool</strong> do agente — o passo que une os dois pilares do semestre (RAG + Agentes).</p></div>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar — ChromaDB + RAG como tool</div>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>ex1_rag_tool.py</span></div>
+<pre><span class="kw">import</span> chromadb
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama, OllamaEmbeddings
+<span class="kw">from</span> langchain_chroma <span class="kw">import</span> Chroma
+<span class="kw">from</span> langchain_core.documents <span class="kw">import</span> Document
+<span class="kw">from</span> langchain.tools.retriever <span class="kw">import</span> create_retriever_tool
+<span class="kw">from</span> langchain.agents <span class="kw">import</span> AgentExecutor, create_react_agent
+<span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> PromptTemplate
+
+<span class="cm"># 1) Configurar LLM e embeddings</span>
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+embeddings = <span class="fn">OllamaEmbeddings</span>(model=<span class="st">"nomic-embed-text"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+
+<span class="cm"># 2) Criar base de documentos (simula o domínio do grupo)</span>
+docs_grupo = [
+    <span class="fn">Document</span>(page_content=<span class="st">"A FIAP fica na Avenida Paulista, em São Paulo."</span>),
+    <span class="fn">Document</span>(page_content=<span class="st">"O curso de Ciência da Computação tem 4 anos de duração."</span>),
+    <span class="fn">Document</span>(page_content=<span class="st">"Prompt engineering é escrever instruções eficazes para LLMs."</span>),
+]
+
+client = chromadb.<span class="fn">Client</span>()
+vectorstore = <span class="fn">Chroma</span>(client=client, collection_name=<span class="st">"integradora"</span>, embedding_function=embeddings)
+vectorstore.<span class="fn">add_documents</span>(docs_grupo)
+<span class="fn">print</span>(<span class="st">f"✅ Base criada: </span>{vectorstore._collection.count()}<span class="st"> documentos"</span>)
+
+<span class="cm"># 3) Criar a RAG tool usando create_retriever_tool</span>
+retriever = vectorstore.<span class="fn">as_retriever</span>(search_kwargs={<span class="st">"k"</span>: <span class="nu">2</span>})
+buscar_documentos = <span class="fn">create_retriever_tool</span>(
+    retriever,
+    name=<span class="st">"buscar_nos_documentos"</span>,
+    description=<span class="st">"Busca em documentos internos da FIAP. Use quando o usuário perguntar sobre a instituição, curso ou disciplina."</span>,
+)
+
+<span class="cm"># 4) Testar a tool isoladamente</span>
+<span class="fn">print</span>(<span class="st">"\n🔍 Teste da tool:"</span>)
+resultado = buscar_documentos.<span class="fn">invoke</span>(<span class="st">"Onde fica a FIAP?"</span>)
+<span class="fn">print</span>(resultado)
+
+<span class="cm"># 5) Criar o agente com a RAG tool</span>
+prompt = <span class="fn">PromptTemplate</span>.<span class="fn">from_template</span>(
+    <span class="st">"Responda em português. Use as tools disponíveis se necessário.\n\n"</span>
+    <span class="st">"Tools:\n{tools}\n\n"</span>
+    <span class="st">"Formato:\n{tool_names}\n\n"</span>
+    <span class="st">"Pergunta: {input}\n"</span>
+    <span class="st">"Thought:{agent_scratchpad}"</span>
+)
+
+agente = <span class="fn">create_react_agent</span>(llm, [buscar_documentos], prompt)
+executor = <span class="fn">AgentExecutor</span>(agent=agente, tools=[buscar_documentos], verbose=<span class="kw">False</span>)
+
+<span class="cm"># 6) Fazer perguntas ao agente</span>
+perguntas = [
+    <span class="st">"Onde fica a FIAP?"</span>,
+    <span class="st">"Qual a duração do curso de CC?"</span>,
+    <span class="st">"O que é prompt engineering?"</span>,
+]
+
+<span class="kw">for</span> p <span class="kw">in</span> perguntas:
+    <span class="fn">print</span>(<span class="st">f"\n🧑 </span>{p}<span class="st">"</span>)
+    r = executor.<span class="fn">invoke</span>({<span class="st">"input"</span>: p})
+    <span class="fn">print</span>(<span class="st">f"🤖 </span>{r[<span class="st">'output'</span>][:<span class="nu">150</span>]}<span class="st">"</span>)</pre></div>
+
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída esperada</span></div>
+<pre>✅ Base criada: 3 documentos
+
+🔍 Teste da tool:
+A FIAP fica na Avenida Paulista, em São Paulo.
+
+🧑 Onde fica a FIAP?
+🤖 A FIAP fica na Avenida Paulista, em São Paulo.
+
+🧑 Qual a duração do curso de CC?
+🤖 O curso de Ciência da Computação tem 4 anos de duração.
+
+🧑 O que é prompt engineering?
+🤖 Prompt engineering é escrever instruções eficazes para LLMs.</pre></div>
+
+  <div class="cbox"><h4>💡 O que aconteceu?</h4><p>O agente recebeu a pergunta, decidiu usar a tool <code>buscar_nos_documentos</code>, buscou no ChromaDB, e retornou a resposta. A <strong>descrição da tool</strong> é o que decide TUDO — se for vaga, o agente nunca ou sempre busca, sem critério.</p></div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <p>O <code>create_retriever_tool</code> transforma um retriever em uma tool nativa do LangChain. O agente decide quando usar com base na <strong>descrição</strong> da tool — não no código.</p>
+</section>
+
+<!-- ============================== EXERCÍCIO 2 ============================== -->
+<section class="bl c--pu" id="ex2">
+  <div class="bh"><span class="bn">EXERCÍCIO 02</span><h2 class="bt">Pipeline CKP03 Completo</h2></div>
+  <p class="btag">⭐⭐⭐ — Agente + RAG tool + MemorySaver + tools do domínio</p>
+
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Montar o agente final com <strong>StateGraph + MemorySaver + RAG tool + tools</strong> — a integração completa do semestre.</p></div>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar — Pipeline completo</div>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>ex2_pipeline_ckp03.py</span></div>
+<pre><span class="kw">from</span> typing <span class="kw">import</span> Annotated, Sequence
+<span class="kw">from</span> typing_extensions <span class="kw">import</span> TypedDict
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> BaseMessage, HumanMessage, SystemMessage, ToolMessage
+<span class="kw">from</span> langchain_core.tools <span class="kw">import</span> tool
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">import</span> operator
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, END
+<span class="kw">from</span> langgraph.checkpoint.memory <span class="kw">import</span> MemorySaver
+
+<span class="cm"># 1) Configurar LLM</span>
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+
+<span class="cm"># 2) Definir tools</span>
+<span class="kw">@tool</span>
+<span class="kw">def</span> <span class="fn">buscar_base_grupo</span>(consulta: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    <span class="st">"""Busca na base de documentos do grupo."""</span>
+    <span class="kw">return</span> <span class="st">f"Resultado da busca para '</span>{consulta}<span class="st">': documento encontrado no ChromaDB."</span>
+
+<span class="kw">@tool</span>
+<span class="kw">def</span> <span class="fn">calcular</span>(expressao: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    <span class="st">"""Calcula uma expressão matemática."""</span>
+    <span class="kw">try</span>:
+        <span class="kw">return</span> <span class="st">f"Resultado: </span>{<span class="fn">eval</span>(expressao)}<span class="st">"</span>
+    <span class="kw">except</span> <span class="nb">Exception</span> <span class="kw">as</span> e:
+        <span class="kw">return</span> <span class="st">f"Erro: </span>{e}<span class="st">"</span>
+
+tools = [buscar_base_grupo, calcular]
+tools_map = {t.name: t <span class="kw">for</span> t <span class="kw">in</span> tools}
+
+<span class="cm"># 3) Definir o grafo</span>
+<span class="kw">class</span> <span class="fn">EstadoCKP</span>(TypedDict):
+    mensagens: <span class="fn">Annotated</span>[Sequence[BaseMessage], operator.add]
+
+llm_ckp = llm.<span class="fn">bind_tools</span>(tools)
+
+<span class="kw">def</span> <span class="fn">no_agente</span>(e):
+    <span class="kw">return</span> {<span class="st">"mensagens"</span>: [llm_ckp.<span class="fn">invoke</span>(e[<span class="st">"mensagens"</span>])]}
+
+<span class="kw">def</span> <span class="fn">no_tools</span>(e):
+    ultima = e[<span class="st">"mensagens"</span>][-<span class="nu">1</span>]
+    <span class="kw">return</span> {
+        <span class="st">"mensagens"</span>: [
+            <span class="fn">ToolMessage</span>(
+                content=<span class="fn">str</span>(tools_map[tc[<span class="st">"name"</span>]].<span class="fn">invoke</span>(tc[<span class="st">"args"</span>])),
+                tool_call_id=tc[<span class="st">"id"</span>]
+            ) <span class="kw">for</span> tc <span class="kw">in</span> ultima.tool_calls
+        ]
+    }
+
+<span class="kw">def</span> <span class="fn">decidir</span>(e):
+    ultima = e[<span class="st">"mensagens"</span>][-<span class="nu">1</span>]
+    <span class="kw">return</span> <span class="st">"tools"</span> <span class="kw">if</span> (<span class="fn">hasattr</span>(ultima, <span class="st">"tool_calls"</span>) <span class="kw">and</span> ultima.tool_calls) <span class="kw">else</span> END
+
+g = <span class="fn">StateGraph</span>(EstadoCKP)
+g.<span class="fn">add_node</span>(<span class="st">"agente"</span>, no_agente)
+g.<span class="fn">add_node</span>(<span class="st">"tools"</span>, no_tools)
+g.<span class="fn">set_entry_point</span>(<span class="st">"agente"</span>)
+g.<span class="fn">add_conditional_edges</span>(<span class="st">"agente"</span>, decidir)
+g.<span class="fn">add_edge</span>(<span class="st">"tools"</span>, <span class="st">"agente"</span>)
+
+<span class="cm"># 4) Compilar com memória</span>
+memory = <span class="fn">MemorySaver</span>()
+agente_ckp = g.<span class="fn">compile</span>(checkpointer=memory)
+
+<span class="cm"># 5) Testar com thread_id fixo</span>
+<span class="kw">def</span> <span class="fn">processar</span>(p, sid=<span class="st">"s1"</span>):
+    config = {<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: sid}}
+    r = agente_ckp.<span class="fn">invoke</span>(
+        {<span class="st">"mensagens"</span>: [
+            <span class="fn">SystemMessage</span>(content=<span class="st">"Use as tools quando necessário."</span>),
+            <span class="fn">HumanMessage</span>(content=p)
+        ]},
+        config=config
+    )
+    <span class="kw">return</span> r[<span class="st">"mensagens"</span>][-<span class="nu">1</span>].content
+
+<span class="cm"># 6) Testar com 3 mensagens na mesma sessão</span>
+<span class="fn">print</span>(<span class="st">"🤖 Agente CKP03 — Teste de memória\n"</span>)
+<span class="fn">print</span>(<span class="st">f"1️⃣ </span>{processar(<span class="st">'Onde fica a FIAP?'</span>)}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"2️⃣ </span>{processar(<span class="st">'E o curso de CC?'</span>)}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"3️⃣ </span>{processar(<span class="st">'Quanto é 15 * 7?'</span>)}<span class="st">"</span>)</pre></div>
+
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída esperada</span></div>
+<pre>🤖 Agente CKP03 — Teste de memória
+
+1️⃣ A FIAP fica na Avenida Paulista, em São Paulo.
+2️⃣ O curso de Ciência da Computação tem 4 anos de duração.
+3️⃣ Resultado: 105</pre></div>
+
+  <div class="cbox"><h4>💡 O que aconteceu?</h4><p>O agente combinou 3 capabilities: <strong>RAG</strong> (buscar_base_grupo), <strong>matemática</strong> (calcular), e <strong>memória</strong> (MemorySaver mantém o contexto entre chamadas). Cada pergunta foi roteada automaticamente para a tool correta.</p></div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <table>
+    <tr><th>Componente</th><th>Função</th><th>Origem</th></tr>
+    <tr><td><code>EstadoCKP</code></td><td>Define o estado do grafo</td><td>TypedDict</td></tr>
+    <tr><td><code>no_agente</code></td><td>Chama o LLM com tools</td><td>LangGraph</td></tr>
+    <tr><td><code>no_tools</code></td><td>Executa a tool escolhida</td><td>LangGraph</td></tr>
+    <tr><td><code>decidir</code></td><td>Roteia: tools ou END</td><td>LangGraph</td></tr>
+    <tr><td><code>MemorySaver</code></td><td>Armazena memória por sessão</td><td>LangGraph</td></tr>
+  </table>
+</section>
+
+<!-- ============================== EXERCÍCIO 3 ============================== -->
+<section class="bl c--or" id="ex3">
+  <div class="bh"><span class="bn">EXERCÍCIO 03</span><h2 class="bt">Interface Gradio CKP03</h2></div>
+  <p class="btag">⭐⭐⭐ — Deploy final com URL pública</p>
+
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Empacotar o agente numa interface Gradio com URL pública — o que será demonstrado ao vivo para o professor.</p></div>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar — Interface completa</div>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>ex3_gradio_ckp03.py</span></div>
+<pre><span class="kw">import</span> gradio <span class="kw">as</span> gr
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> SystemMessage, HumanMessage
+
+<span class="cm"># Usar o agente_ckp do Exercício 2 (já deve estar rodando)</span>
+<span class="cm"># Se precisar recriar, copie tudo do Ex2 antes deste bloco.</span>
+
+hist_ckp = {}
+
+<span class="kw">def</span> <span class="fn">chat_ckp</span>(mensagem, _historico, session_id):
+    config = {<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: session_id <span class="kw">or</span> <span class="st">"default"</span>}}
+    r = agente_ckp.<span class="fn">invoke</span>(
+        {<span class="st">"mensagens"</span>: [
+            <span class="fn">SystemMessage</span>(content=<span class="st">"Use as tools quando necessário."</span>),
+            <span class="fn">HumanMessage</span>(content=mensagem)
+        ]},
+        config=config
+    )
+    resposta = r[<span class="st">"mensagens"</span>][-<span class="nu">1</span>].content
+    <span class="kw">if</span> session_id <span class="kw">not</span> <span class="kw">in</span> hist_ckp:
+        hist_ckp[session_id] = []
+    hist_ckp[session_id].<span class="fn">append</span>((mensagem, resposta))
+    <span class="kw">return</span> hist_ckp[session_id], <span class="st">""</span>
+
+<span class="cm"># Montar a interface</span>
+<span class="kw">with</span> gr.<span class="fn">Blocks</span>() <span class="kw">as</span> app_ckp:
+    gr.<span class="fn">Markdown</span>(<span class="st">"# 🤖 Agente FIAP — CKP03\nPergunte sobre a FIAP ou peça contas."</span>)
+    session = gr.<span class="fn">Textbox</span>(label=<span class="st">"Session ID"</span>, value=<span class="st">"s1"</span>, visible=<span class="kw">False</span>)
+    chatbot = gr.<span class="fn">Chatbot</span>(label=<span class="st">"Conversa"</span>, height=<span class="nu">400</span>)
+    msg = gr.<span class="fn">Textbox</span>(label=<span class="st">"Sua mensagem"</span>, placeholder=<span class="st">"Pergunte sobre a FIAP..."</span>)
+    msg.<span class="fn">submit</span>(chat_ckp, [msg, chatbot, session], [chatbot, msg])
+
+app_ckp.<span class="fn">launch</span>(share=<span class="kw">True</span>)</pre></div>
+
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída esperada</span></div>
+<pre>Running on local URL:  http://127.0.0.1:7860
+Running on public URL: https://xxxxx.gradio.live
+
+→ Interface pronta! Acesse a URL pública para testar.</pre></div>
+
+  <div class="cbox"><h4>💡 O que aconteceu?</h4><p>A interface Gradio conecta o agente LangGraph a um frontend web. O <code>session_id</code> garante que cada aba do navegador tenha sua própria memória. O <code>share=True</code> gera uma URL pública temporária — essencial para a demonstração ao vivo do CKP03.</p></div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <p>A combinação <strong>LangGraph (memória + tools)</strong> + <strong>Gradio (interface)</strong> é o padrão padrão para protótipos de agentes. O Gradio cuida do frontend; o LangGraph cuida da lógica. A separação permite trocar qualquer camada independentemente.</p>
+
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4>
+  <p><strong>1. "agente_ckp is not defined"</strong> — O Ex3 precisa que o Ex2 tenha sido executado ANTES. Copie todo o código do Ex2 para o mesmo arquivo, ou importe de outro módulo.</p>
+  <p><strong>2. "share=True não gera URL pública"</strong> — Em ambientes sem acesso à internet (firewall, VPN), o Gradio não consegue criar o túnel. Use <code>share=False</code> e acesse via <code>localhost:7860</code>.</p>
+  <p><strong>3. "Chatbot não atualiza"</strong> — Verifique se a função <code>chat_ckp</code> retorna exatamente <code>(hist_ckp[session_id], "")</code>. O segundo argumento é o textbox limpo — se omitir, o campo de mensagem não limpa.</p>
+  <p><strong>4. "Session ID diferente a cada chamada"</strong> — Se o <code>session_id</code> não for fixo (ex: "s1"), cada mensagem cria uma sessão nova e a memória se perde. Use um ID fixo ou gere a partir do IP do usuário.</p>
+  <p><strong>5. "Thread ID conflita entre abas"</strong> — Se dois alunos usam o mesmo <code>thread_id</code>, as memórias se misturam. Use um <code>thread_id</code> único por sessão de demonstração.</p></div>
+
+  <div class="cbox"><h4>💡 Discussão com o Grupo</h4><p>O Gradio é ideal para protótipos, mas para produção considere: <strong>Streamlit</strong> (apps mais complexos), <strong>FastAPI + React</strong> (controle total), ou <strong>Docker + NGROK</strong> (deploy permanente). O CKP03 aceita qualquer interface — o importante é que funcione e tenha URL pública.</p></div>
+</section>
+
+<!-- ============================== ERROS COMUNS ============================== -->
+<section class="bl c--pk" id="erros">
+  <div class="bh"><span class="bn">ERROS COMUNS</span><h2 class="bt">Problemas Frequentes</h2></div>
+  <p class="btag">Soluções para os erros que mais aparecem na Integradora.</p>
+
+  <table>
+    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr><td><code>ModuleNotFoundError: langchain_ollama</code></td><td>Pacote não instalado</td><td><code>pip install langchain-ollama</code></td></tr>
+      <tr><td><code>ConnectionRefusedError</code></td><td>Ollama não está rodando</td><td>Inicie o Ollama: <code>ollama serve</code></td></tr>
+      <tr><td><code>openai.AuthenticationError</code></td><td>Chave de API inválida ou ausente</td><td>Verifique <code>.env</code>: <code>OLLAMA_API_KEY=sua-chave</code></td></tr>
+      <tr><td><code>InvalidRequestError: model not found</code></td><td>Modelo não baixado</td><td><code>ollama pull gpt-oss:120b</code> e <code>ollama pull nomic-embed-text</code></td></tr>
+      <tr><td><code>ChromaDB: collection already exists</code></td><td>Coleção com mesmo nome já existe</td><td>Use <code>client.delete_collection("nome")</code> antes de criar, ou mude o nome</td></tr>
+      <tr><td><code>RateLimitError</code></td><td>Muitas requisições ao modelo</td><td>Adicione <code>time.sleep(1)</code> entre chamadas ou use modelo local</td></tr>
+      <tr><td><code>KeyError: 'mensagens'</code></td><td>Estado do grafo mal formatado</td><td>Verifique se <code>EstadoCKP</code> tem o campo <code>mensagens</code> com <code>Annotated[Sequence, operator.add]</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================== REFERÊNCIAS ============================== -->
+<section class="bl c--cy" id="ref">
+  <div class="bh"><span class="bn">REFERÊNCIAS</span><h2 class="bt">Fontes e Links</h2></div>
+  <p class="btag">Materiais para aprofundamento após a aula.</p>
+
+  <div class="tp">
+    <h3>📚 Documentação Oficial</h3>
+    <p>• <strong>LangChain</strong> — <code>python.langchain.com</code> — Documentação completa do framework</p>
+    <p>• <strong>LangGraph</strong> — <code>langchain-ai.github.io/langgraph</code> — Guias de StateGraph e checkpointing</p>
+    <p>• <strong>Gradio</strong> — <code>gradio.app</code> — Tutoriais de ChatInterface e Blocks</p>
+    <p>• <strong>ChromaDB</strong> — <code>trychroma.com</code> — Vector store local</p>
+  </div>
+
+  <div class="tp">
+    <h3>📖 Artigos e Tutoriais</h3>
+    <p>• <strong>Anthropic Engineering</strong> — <code>anthropic.com/engineering</code> — Context Engineering e boas práticas</p>
+    <p>• <strong>Prompting Guide</strong> — <code>promptingguide.ai</code> — Técnicas de prompting</p>
+    <p>• <strong>LangChain Cookbook</strong> — <code>python.langchain.com/docs/cookbook</code> — Receitas práticas</p>
+  </div>
+</section>
+
+<!-- ============================== ENCERRAMENTO ============================== -->
+<section class="bl c--or" id="enc">
+  <div class="bh"><span class="bn">ENCERRAMENTO</span><h2 class="bt">Próxima Aula</h2></div>
+  <div class="tp">
+    <h3>🚀 Aula 12 — Router Chains e Grafo de Estado</h3>
+    <p>Na próxima aula, vamos explorar <strong>Router Chains</strong> para roteamento por intenção e <strong>Grafo de Estado</strong> com nós múltiplos — avançando na arquitetura de agentes LangGraph.</p>
+    <p><strong>Dica:</strong> Revise o Ex2 desta aula — o grafo de estado com <code>add_conditional_edges</code> é a base para o que veremos na Aula 12.</p>
+  </div>
+
+  <div class="ft">
+    <p>Prof. Jorge Luiz Gomes · FIAP · Prompt Engineering and AI · 2º Semestre 2026</p>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

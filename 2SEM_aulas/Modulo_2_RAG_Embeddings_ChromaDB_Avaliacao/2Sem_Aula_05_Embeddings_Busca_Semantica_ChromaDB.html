@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 05 — Embeddings e busca semântica com ChromaDB</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(61,156,204,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:42px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:800px}
+  .cover-subtitle{font-size:18px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(61,156,204,.1);border:1px solid rgba(61,156,204,.25);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-blue);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:28px;font-weight:800;color:var(--fiap-white);margin-bottom:32px;padding-bottom:12px;border-bottom:2px solid var(--fiap-blue);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:20px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:12px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-blue);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:12px 18px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-blue);border-radius:0 10px 10px 0;padding:20px 24px;margin:20px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-blue);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-pink{border-left-color:var(--fiap-pink)}.callout-pink .callout-title{color:var(--fiap-pink)}
+  .callout-purple{border-left-color:var(--fiap-purple)}.callout-purple .callout-title{color:var(--fiap-purple)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:20px 0}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
+  .agenda-item{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:10px}
+  .agenda-num{width:32px;height:32px;background:rgba(61,156,204,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--fiap-blue);flex-shrink:0}
+  .agenda-text{font-size:14px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:12px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:4px 10px;border-radius:6px}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:20px;font-size:13px;line-height:1.9}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .exercise{background:linear-gradient(135deg,rgba(61,156,204,.06),rgba(41,175,140,.06));border:1px solid rgba(61,156,204,.2);border-radius:14px;padding:28px;margin:20px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-blue);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:16px}
+  .exercise-steps{padding-left:20px;margin-bottom:16px}
+  .exercise-steps li{color:var(--fiap-text);font-size:14px;margin-bottom:8px;line-height:1.6}
+  /* vector visual */
+  .vec-demo{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;margin:12px 0}
+  .vec-row{display:flex;gap:3px;margin:6px 0;align-items:center}
+  .vec-label{font-size:12px;font-weight:600;color:var(--fiap-muted);width:120px;flex-shrink:0}
+  .vec-cell{width:28px;height:28px;border-radius:4px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff}
+  /* sim bar */
+  .sim-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+  .sim-text{font-size:12px;color:var(--fiap-text);flex:1}
+  .sim-bar-wrap{width:160px;flex-shrink:0}
+  .sim-bar-bg{height:12px;background:var(--fiap-surface2);border-radius:6px;overflow:hidden}
+  .sim-bar-fill{height:100%;border-radius:6px}
+  .sim-pct{font-size:11px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Embeddings e busca<br>semântica com ChromaDB</div>
+  <div class="cover-subtitle">Aula 05/14 — Módulo 2: RAG</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">⏱️ 1h40min</div>
+    <div class="cover-meta-item">🔢 nomic-embed-text · ChromaDB</div>
+    <div class="cover-meta-item">🔁 Andaime 45%</div>
+  </div>
+  <div class="slide-number">01 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">O que é um embedding — a intuição geométrica do significado</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">Similaridade cosseno — como o sistema encontra documentos relevantes</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">nomic-embed-text via Ollama Cloud — setup e OllamaEmbeddings no LangChain</div><div class="agenda-time">10 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">ChromaDB — <code style="font-family:'JetBrains Mono',monospace;font-size:13px">add()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:13px">query()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:13px">persist()</code> e metadata filtering</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">🚀 Demo — indexar 20 frases e ver busca semântica vs. keyword</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">💻 Lab — coleção ChromaDB com textos do domínio (45% lacunas)</div><div class="agenda-time">25 min</div></div>
+  <div class="callout" style="margin-top:12px">
+    <div class="callout-title">🎯 Objetivo da aula</div>
+    <div class="callout-body">Entender como texto vira número e como números permitem encontrar documentos por <em>significado</em> — não por palavras-chave. Ao final, o grupo tem uma coleção ChromaDB do domínio pronta para o pipeline RAG da Aula 06.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">Embedding <span class="gl-pron">/ẽ.bé.dín/</span></div>
+      <div class="gl-def">Vetor de números reais que representa o significado de um texto — palavras e frases com sentidos parecidos ficam próximas nesse espaço.</div>
+      <div class="gl-analogy">Analogia: como coordenadas GPS, mas em vez de latitude/longitude, cada eixo representa uma nuance de significado.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Vetor</div>
+      <div class="gl-def">Lista ordenada de números. O nomic-embed-text gera vetores de 768 dimensões — 768 números que, juntos, codificam o significado do texto.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">Similaridade cosseno</div>
+      <div class="gl-def">Métrica que mede o ângulo entre dois vetores. Vai de −1 (opostos) a 1 (idênticos) — na prática, de 0 a 1 para textos.</div>
+      <div class="gl-analogy">Analogia: dois ponteiros de relógio apontando quase para o mesmo lugar têm ângulo pequeno = alta similaridade.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">ChromaDB</div>
+      <div class="gl-def">Vector store (banco de dados de vetores) local e gratuito. Armazena embeddings, busca por similaridade e persiste no disco.</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">Coleção (collection)</div>
+      <div class="gl-def">Conjunto de documentos dentro do ChromaDB — cada um com texto, embedding, id e metadados opcionais. Equivalente a uma tabela num banco relacional.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">Retriever</div>
+      <div class="gl-def">Componente do LangChain que recebe uma pergunta, converte em embedding e devolve os documentos mais similares — a peça que conecta o ChromaDB à chain RAG da Aula 06.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">nomic-embed-text</div>
+      <div class="gl-def">Modelo de embedding de 274M de parâmetros usado no semestre, gratuito via Ollama Cloud. Gera vetores de 768 dimensões com janela de 8.192 tokens.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">Persistência (persist directory)</div>
+      <div class="gl-def">Pasta onde o ChromaDB salva a coleção em disco, permitindo recarregar os embeddings sem recalculá-los numa nova sessão.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">O que é<br>um embedding</div>
+  <div class="section-desc">Texto → vetor de números que codifica significado. Palavras com sentidos parecidos ficam próximas no espaço vetorial — independente das palavras usadas.</div>
+  <div class="slide-number">04 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Embedding — transformar significado em coordenadas</h2>
+  <p>Um embedding é um vetor de números reais onde <strong>proximidade geométrica = similaridade de significado</strong>. O modelo aprendeu essa geometria durante o treinamento:</p>
+  <div class="vec-demo">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Representação simplificada — 4 dimensões (na prática: 768)</div>
+    <div class="vec-row">
+      <div class="vec-label">"pizza"</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.9">0.8</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.5">0.3</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.2">0.1</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.7">0.7</div>
+      <div style="font-size:11px;color:var(--fiap-muted);margin-left:8px">→ [0.8, 0.3, 0.1, 0.7, ...]</div>
+    </div>
+    <div class="vec-row">
+      <div class="vec-label">"macarrão"</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.8">0.7</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.45">0.3</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.25">0.2</div>
+      <div class="vec-cell" style="background:#3D9CCC;opacity:.65">0.6</div>
+      <div style="font-size:11px;color:var(--fiap-muted);margin-left:8px">→ [0.7, 0.3, 0.2, 0.6, ...] ← <strong style="color:var(--fiap-green)">próximo de pizza</strong></div>
+    </div>
+    <div class="vec-row">
+      <div class="vec-label">"carro"</div>
+      <div class="vec-cell" style="background:var(--fiap-red);opacity:.3">0.1</div>
+      <div class="vec-cell" style="background:var(--fiap-red);opacity:.7">0.8</div>
+      <div class="vec-cell" style="background:var(--fiap-red);opacity:.8">0.9</div>
+      <div class="vec-cell" style="background:var(--fiap-red);opacity:.2">0.1</div>
+      <div style="font-size:11px;color:var(--fiap-muted);margin-left:8px">→ [0.1, 0.8, 0.9, 0.1, ...] ← <strong style="color:var(--fiap-red)">longe de pizza e macarrão</strong></div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:16px">
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">✅ O que embedding captura</div>
+      <div class="callout-body">Semântica, contexto, relações de significado. "Pizza" e "lasanha" têm alta similaridade porque aparecem em contextos parecidos nos dados de treinamento — não porque compartilham letras.</div>
+    </div>
+    <div class="callout" style="margin:0">
+      <div class="callout-title">⚡ Por que é poderoso para busca</div>
+      <div class="callout-body">"Qual é o custo do plano?" pode encontrar "O valor mensal é R$ 49,90" — sem uma palavra em comum. A busca por keyword tradicional falharia; embeddings encontram por significado.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Similaridade cosseno — a métrica de proximidade</h2>
+  <p>O sistema mede o <strong>ângulo entre vetores</strong> para determinar similaridade. Quanto menor o ângulo, mais similares os significados:</p>
+  <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:16px 0">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:12px">Demo — query: "comida italiana" (sem usar essa frase no corpus)</div>
+    <div class="sim-row">
+      <div class="sim-text">🍕 "A pizza napolitana usa tomate San Marzano"</div>
+      <div class="sim-bar-wrap"><div class="sim-bar-bg"><div class="sim-bar-fill" style="width:94%;background:var(--fiap-green)"></div></div></div>
+      <div class="sim-pct" style="color:var(--fiap-green)">0.94</div>
+    </div>
+    <div class="sim-row">
+      <div class="sim-text">🍝 "Macarrão al dente com molho bolonhesa"</div>
+      <div class="sim-bar-wrap"><div class="sim-bar-bg"><div class="sim-bar-fill" style="width:91%;background:var(--fiap-green)"></div></div></div>
+      <div class="sim-pct" style="color:var(--fiap-green)">0.91</div>
+    </div>
+    <div class="sim-row">
+      <div class="sim-text">🧀 "Lasanha com ricota e queijo parmesão"</div>
+      <div class="sim-bar-wrap"><div class="sim-bar-bg"><div class="sim-bar-fill" style="width:89%;background:var(--fiap-green)"></div></div></div>
+      <div class="sim-pct" style="color:var(--fiap-green)">0.89</div>
+    </div>
+    <div class="sim-row">
+      <div class="sim-text">🌮 "Tacos com carne temperada e pico de gallo"</div>
+      <div class="sim-bar-wrap"><div class="sim-bar-bg"><div class="sim-bar-fill" style="width:62%;background:var(--fiap-orange)"></div></div></div>
+      <div class="sim-pct" style="color:var(--fiap-orange)">0.62</div>
+    </div>
+    <div class="sim-row">
+      <div class="sim-text">🚗 "O motor do carro faz barulho estranho"</div>
+      <div class="sim-bar-wrap"><div class="sim-bar-bg"><div class="sim-bar-fill" style="width:12%;background:var(--fiap-red)"></div></div></div>
+      <div class="sim-pct" style="color:var(--fiap-red)">0.12</div>
+    </div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">💡 Similaridade cosseno — a fórmula intuitiva</div>
+    <div class="callout-body">cos(θ) = (A · B) / (|A| × |B|) · Vai de −1 (opostos) a 1 (idênticos). Para textos, raramente fica negativo — a faixa prática é 0 (sem relação) a 1 (idêntico). Um threshold de 0.75+ costuma indicar relevância real.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">nomic-embed-text<br>via Ollama Cloud</div>
+  <div class="section-desc">274M parâmetros · janela de 8.192 tokens · gratuito via Ollama Cloud · o modelo de embedding padrão do semestre — sem HuggingFace, sem chave de API extra.</div>
+  <div class="slide-number">07 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>nomic-embed-text — setup no LangChain e Ollama</h2>
+  <p>O mesmo cliente Ollama que você usa para o LLM serve para embeddings. Só troca o modelo:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">setup_embeddings.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain-ollama langchain-community chromadb <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">OllamaEmbeddings</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># Modelo de embedding — não é um LLM de geração de texto</span>
+<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span>
+    <span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">,</span>   <span class="cm"># 274M params, janela 8k tokens</span>
+<span class="op">)</span>
+
+<span class="cm"># Gerar embedding de uma frase — retorna lista de floats</span>
+<span class="va">vetor</span> <span class="op">=</span> <span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="st">"Como fazer feijoada?"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Dimensões: {len(vetor)}"</span><span class="op">)</span>   <span class="cm"># → 768 floats</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Primeiros 5: {vetor[:5]}"</span><span class="op">)</span>  <span class="cm"># → [-0.024, 0.031, ...]</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Tipo: {type(vetor[0])}"</span><span class="op">)</span>    <span class="cm"># → &lt;class 'float'&gt;</span>
+
+<span class="cm"># Embeddings de múltiplos documentos de uma vez</span>
+<span class="va">docs</span> <span class="op">= [</span><span class="st">"Pizza com queijo"</span><span class="op">,</span> <span class="st">"Macarrão ao sugo"</span><span class="op">,</span> <span class="st">"Motor de carro"</span><span class="op">]</span>
+<span class="va">vetores</span> <span class="op">=</span> <span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_documents</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Documentos: {len(vetores)}"</span><span class="op">)</span>   <span class="cm"># → 3</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Dims cada: {len(vetores[0])}"</span><span class="op">)</span>  <span class="cm"># → 768</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">✅ embed_query vs. embed_documents</div>
+    <div class="callout-body"><code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed_query("texto")</code> → um vetor (para a pergunta). <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed_documents(["a", "b"])</code> → lista de vetores (para os documentos). O nomic-embed-text aplica prefixos diferentes internamente: "search_query:" para queries e "search_document:" para documentos — essa assimetria melhora a qualidade da busca.</div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:12px">
+    <div class="callout-title">📖 Fundamentação — Por que nomic-embed-text, e quando trocar</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026, seção 5.4) recomenda escolher modelo de embedding assim: consultar o leaderboard MTEB (Massive Text Embedding Benchmark) no Hugging Face, estabelecer uma baseline com um modelo comprovado e <strong>testar com 50-100 queries reais do seu caso de uso</strong> antes de trocar — benchmarks gerais nem sempre refletem o desempenho em domínios específicos (jurídico, médico, culinário). O autor alerta contra "oversizing": se subir de um modelo pequeno para um maior ganha só 2% de acurácia, raramente compensa dobrar custo e latência — o nomic-embed-text (274M params, local, gratuito via Ollama) é justamente a baseline certa quando não há requisito de compliance que force um modelo comercial. Ele nota ainda que modelos de embedding evoluem mais devagar que LLMs: muitos sistemas RAG em produção ainda usam o antigo text-embedding-ada-002 da OpenAI porque a acurácia permanece suficiente — a escolha do modelo tende a ser decisão única, raramente precisa ser revisitada.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Calcular similaridade cosseno — o mecanismo por baixo</h2>
+  <p>Antes de usar o ChromaDB, entender o cálculo manual ajuda a intuir o que acontece por baixo:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">similaridade_manual.py</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> <span class="va">numpy</span> <span class="kw">as</span> <span class="va">np</span>
+
+<span class="kw">def</span> <span class="fn">similaridade_cosseno</span><span class="op">(</span><span class="va">v1</span><span class="op">:</span> <span class="va">list</span><span class="op">,</span> <span class="va">v2</span><span class="op">:</span> <span class="va">list</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">float</span><span class="op">:</span>
+    <span class="st">"""Calcula similaridade entre dois vetores de embedding."""</span>
+    <span class="va">a</span><span class="op">,</span> <span class="va">b</span> <span class="op">=</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">(</span><span class="va">v1</span><span class="op">),</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">(</span><span class="va">v2</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="nb">float</span><span class="op">(</span><span class="va">np</span><span class="op">.</span><span class="fn">dot</span><span class="op">(</span><span class="va">a</span><span class="op">,</span> <span class="va">b</span><span class="op">) /</span> <span class="op">(</span><span class="va">np</span><span class="op">.</span><span class="fn">linalg</span><span class="op">.</span><span class="fn">norm</span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">*</span> <span class="va">np</span><span class="op">.</span><span class="fn">linalg</span><span class="op">.</span><span class="fn">norm</span><span class="op">(</span><span class="va">b</span><span class="op">)))</span>
+
+<span class="cm"># Comparar pares de frases</span>
+<span class="va">frases</span> <span class="op">= {</span>
+    <span class="st">"pizza"</span><span class="op">:</span>    <span class="st">"Pizza napolitana com mozarela"</span><span class="op">,</span>
+    <span class="st">"lasanha"</span><span class="op">:</span>  <span class="st">"Lasanha com queijo e presunto"</span><span class="op">,</span>
+    <span class="st">"futebol"</span><span class="op">:</span>  <span class="st">"Futebol é o esporte mais popular"</span><span class="op">,</span>
+    <span class="st">"carro"</span><span class="op">:</span>    <span class="st">"Motor do carro faz barulho"</span><span class="op">,</span>
+<span class="op">}</span>
+<span class="va">vetores</span> <span class="op">= {</span><span class="va">k</span><span class="op">:</span> <span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="kw">for</span> <span class="va">k</span><span class="op">,</span> <span class="va">v</span> <span class="kw">in</span> <span class="va">frases</span><span class="op">.</span><span class="fn">items</span><span class="op">()}</span>
+
+<span class="va">query_vec</span> <span class="op">=</span> <span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="st">"comida italiana"</span><span class="op">)</span>
+
+<span class="kw">for</span> <span class="va">nome</span><span class="op">,</span> <span class="va">vec</span> <span class="kw">in</span> <span class="va">vetores</span><span class="op">.</span><span class="fn">items</span><span class="op">():</span>
+    <span class="va">sim</span> <span class="op">=</span> <span class="fn">similaridade_cosseno</span><span class="op">(</span><span class="va">query_vec</span><span class="op">,</span> <span class="va">vec</span><span class="op">)</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"{nome:10s}: {sim:.4f}"</span><span class="op">)</span>
+<span class="cm"># pizza:    0.8945  ← alta similaridade</span>
+<span class="cm"># lasanha:  0.8712  ← alta similaridade</span>
+<span class="cm"># futebol:  0.4321  ← baixa similaridade</span>
+<span class="cm"># carro:    0.2104  ← muito baixa similaridade</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">ChromaDB</div>
+  <div class="section-desc">Vector store local e gratuito — armazena embeddings, faz busca por similaridade e persiste no disco. A peça de armazenamento do pipeline RAG.</div>
+  <div class="slide-number">10 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ChromaDB — add, query e persist</h2>
+  <p>ChromaDB organiza documentos em <strong>coleções</strong>. Cada documento tem: texto, embedding, id e metadados opcionais:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">chromadb_basico.py</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> <span class="va">chromadb</span>
+<span class="kw">from</span> <span class="va">chromadb</span> <span class="kw">import</span> <span class="va">Settings</span>
+
+<span class="cm"># Cliente persistente — salva no disco (não perde ao reiniciar)</span>
+<span class="va">client</span> <span class="op">=</span> <span class="va">chromadb</span><span class="op">.</span><span class="fn">PersistentClient</span><span class="op">(</span><span class="va">path</span><span class="op">=</span><span class="st">"/content/chroma_db"</span><span class="op">)</span>
+
+<span class="cm"># Criar ou recuperar uma coleção</span>
+<span class="va">colecao</span> <span class="op">=</span> <span class="va">client</span><span class="op">.</span><span class="fn">get_or_create_collection</span><span class="op">(</span>
+    <span class="va">name</span><span class="op">=</span><span class="st">"dominio_grupo"</span><span class="op">,</span>
+    <span class="va">metadata</span><span class="op">={</span><span class="st">"hnsw:space"</span><span class="op">:</span> <span class="st">"cosine"</span><span class="op">},</span>  <span class="cm"># usar similaridade cosseno</span>
+<span class="op">)</span>
+
+<span class="cm"># Adicionar documentos com embeddings pré-computados</span>
+<span class="va">textos</span> <span class="op">= [</span><span class="st">"Pizza napolitana com mozarela"</span><span class="op">,</span> <span class="st">"Lasanha bolonhesa com ricota"</span><span class="op">]</span>
+<span class="va">vetores</span> <span class="op">=</span> <span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_documents</span><span class="op">(</span><span class="va">textos</span><span class="op">)</span>
+
+<span class="va">colecao</span><span class="op">.</span><span class="fn">add</span><span class="op">(</span>
+    <span class="va">documents</span><span class="op">=</span><span class="va">textos</span><span class="op">,</span>
+    <span class="va">embeddings</span><span class="op">=</span><span class="va">vetores</span><span class="op">,</span>
+    <span class="va">ids</span><span class="op">=[</span><span class="st">"doc_1"</span><span class="op">,</span> <span class="st">"doc_2"</span><span class="op">],</span>
+    <span class="va">metadatas</span><span class="op">=[{</span><span class="st">"categoria"</span><span class="op">:</span><span class="st">"italiana"</span><span class="op">},</span> <span class="op">{</span><span class="st">"categoria"</span><span class="op">:</span><span class="st">"italiana"</span><span class="op">}],</span>
+<span class="op">)</span>
+
+<span class="cm"># Buscar os k documentos mais similares à query</span>
+<span class="va">query_vec</span> <span class="op">=</span> <span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="st">"comida italiana"</span><span class="op">)</span>
+<span class="va">resultados</span> <span class="op">=</span> <span class="va">colecao</span><span class="op">.</span><span class="fn">query</span><span class="op">(</span>
+    <span class="va">query_embeddings</span><span class="op">=[</span><span class="va">query_vec</span><span class="op">],</span>
+    <span class="va">n_results</span><span class="op">=</span><span class="num">2</span><span class="op">,</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resultados</span><span class="op">[</span><span class="st">"documents"</span><span class="op">])</span>   <span class="cm"># → [["Pizza napolitana...", "Lasanha..."]]</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resultados</span><span class="op">[</span><span class="st">"distances"</span><span class="op">])</span>   <span class="cm"># → [[0.10, 0.13]] (distância, não similaridade)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ distance vs. similarity</div>
+    <div class="callout-body">O ChromaDB retorna <strong>distância</strong>, não similaridade. Com espaço cosseno: distância = 1 − similaridade. Distância 0.10 = similaridade 0.90. Quanto <em>menor</em> a distância, <em>mais</em> similar.</div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Ephemeral vs. Persistent, e por que gerar o embedding fora do Chroma</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) descreve dois modos de cliente Chroma: <strong>ephemeral</strong>, que guarda tudo em memória e perde os dados ao encerrar o processo, e <strong>persistent</strong> — o usado nesta aula —, que grava em disco e sobrevive a um restart. O autor recomenda algo que o código acima já faz: gerar o embedding no seu próprio código (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed_documents</code>) e usar o Chroma só para guardar e buscar, em vez de depender da geração automática embutida. Isso é conveniente para prototipagem, mas prende seu projeto ao Chroma; gerando o vetor por fora, trocar para PostgreSQL/pgvector ou Pinecone mais tarde é só trocar o destino do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.add()</code>.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">11 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Metadata filtering — filtrar antes de buscar</h2>
+  <p>Metadados permitem pré-filtrar a coleção antes da busca por similaridade — indispensável em RAG sobre múltiplas fontes ou categorias:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">metadata_filtering.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Adicionar documentos com metadados ricos</span>
+<span class="va">colecao</span><span class="op">.</span><span class="fn">add</span><span class="op">(</span>
+    <span class="va">documents</span><span class="op">=[</span>
+        <span class="st">"Pizza margherita é originária de Nápoles"</span><span class="op">,</span>
+        <span class="st">"Frango à parmegiana — clássico brasileiro"</span><span class="op">,</span>
+        <span class="st">"Churrasco gaúcho com costela e linguiça"</span><span class="op">,</span>
+        <span class="st">"Feijoada completa com laranja"</span><span class="op">,</span>
+    <span class="op">],</span>
+    <span class="va">embeddings</span><span class="op">=</span><span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_documents</span><span class="op">([...]),</span>
+    <span class="va">ids</span><span class="op">=[</span><span class="st">"d1"</span><span class="op">,</span><span class="st">"d2"</span><span class="op">,</span><span class="st">"d3"</span><span class="op">,</span><span class="st">"d4"</span><span class="op">],</span>
+    <span class="va">metadatas</span><span class="op">=[</span>
+        <span class="op">{</span><span class="st">"culinaria"</span><span class="op">:</span><span class="st">"italiana"</span><span class="op">,</span>   <span class="st">"pais"</span><span class="op">:</span><span class="st">"italia"</span><span class="op">},</span>
+        <span class="op">{</span><span class="st">"culinaria"</span><span class="op">:</span><span class="st">"brasileira"</span><span class="op">,</span>  <span class="st">"pais"</span><span class="op">:</span><span class="st">"brasil"</span><span class="op">},</span>
+        <span class="op">{</span><span class="st">"culinaria"</span><span class="op">:</span><span class="st">"brasileira"</span><span class="op">,</span>  <span class="st">"pais"</span><span class="op">:</span><span class="st">"brasil"</span><span class="op">},</span>
+        <span class="op">{</span><span class="st">"culinaria"</span><span class="op">:</span><span class="st">"brasileira"</span><span class="op">,</span>  <span class="st">"pais"</span><span class="op">:</span><span class="st">"brasil"</span><span class="op">},</span>
+    <span class="op">],</span>
+<span class="op">)</span>
+
+<span class="cm"># Buscar SOMENTE culinária brasileira</span>
+<span class="va">res</span> <span class="op">=</span> <span class="va">colecao</span><span class="op">.</span><span class="fn">query</span><span class="op">(</span>
+    <span class="va">query_embeddings</span><span class="op">=[</span><span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="st">"prato com carne"</span><span class="op">)],</span>
+    <span class="va">n_results</span><span class="op">=</span><span class="num">2</span><span class="op">,</span>
+    <span class="va">where</span><span class="op">={</span><span class="st">"culinaria"</span><span class="op">:</span> <span class="st">"brasileira"</span><span class="op">},</span>  <span class="cm"># filtro antes da busca</span>
+<span class="op">)</span>
+<span class="cm"># → pizza excluída mesmo que tenha boa similaridade com "carne"</span>
+<span class="cm"># → retorna somente churrasco e feijoada</span>
+
+<span class="cm"># Filtro com operador AND</span>
+<span class="va">colecao</span><span class="op">.</span><span class="fn">query</span><span class="op">(...,</span> <span class="va">where</span><span class="op">={</span><span class="st">"$and"</span><span class="op">: [{</span><span class="st">"pais"</span><span class="op">:</span><span class="st">"brasil"</span><span class="op">}, {</span><span class="st">"culinaria"</span><span class="op">:</span><span class="st">"brasileira"</span><span class="op">}]})</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">💡 Metadata filtering é o que torna RAG escalável</div>
+    <div class="callout-body">Sem filtro, buscar em 100.000 documentos compara todos os vetores. Com filtro de metadata (ex: apenas documentos do semestre atual, apenas categoria X), o ChromaDB pré-filtra antes de calcular similaridade — muito mais eficiente.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ChromaDB via LangChain — a integração declarativa</h2>
+  <p>O LangChain tem um wrapper sobre o ChromaDB que usa a mesma API LCEL e funciona diretamente como <strong>retriever</strong> no pipeline RAG:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">chroma_langchain.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="va">Chroma</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">OllamaEmbeddings</span>
+<span class="kw">from</span> <span class="va">langchain_core.documents</span> <span class="kw">import</span> <span class="va">Document</span>
+
+<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">)</span>
+
+<span class="cm"># Criar vector store com LangChain Documents</span>
+<span class="va">documentos</span> <span class="op">= [</span>
+    <span class="va">Document</span><span class="op">(</span><span class="va">page_content</span><span class="op">=</span><span class="st">"Pizza napolitana"</span><span class="op">,</span> <span class="va">metadata</span><span class="op">={</span><span class="st">"fonte"</span><span class="op">:</span><span class="st">"livro_1"</span><span class="op">}),</span>
+    <span class="va">Document</span><span class="op">(</span><span class="va">page_content</span><span class="op">=</span><span class="st">"Macarrão ao sugo"</span><span class="op">,</span>   <span class="va">metadata</span><span class="op">={</span><span class="st">"fonte"</span><span class="op">:</span><span class="st">"livro_1"</span><span class="op">}),</span>
+    <span class="va">Document</span><span class="op">(</span><span class="va">page_content</span><span class="op">=</span><span class="st">"Churrasco gaúcho"</span><span class="op">,</span>   <span class="va">metadata</span><span class="op">={</span><span class="st">"fonte"</span><span class="op">:</span><span class="st">"livro_2"</span><span class="op">}),</span>
+<span class="op">]</span>
+
+<span class="cm"># from_documents calcula embeddings e salva tudo automaticamente</span>
+<span class="va">db</span> <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span>
+    <span class="va">documents</span><span class="op">=</span><span class="va">documentos</span><span class="op">,</span>
+    <span class="va">embedding</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>
+    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_langchain"</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># Busca direta por similaridade</span>
+<span class="va">docs</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">similarity_search</span><span class="op">(</span><span class="st">"comida italiana"</span><span class="op">,</span> <span class="va">k</span><span class="op">=</span><span class="num">2</span><span class="op">)</span>
+<span class="kw">for</span> <span class="va">d</span> <span class="kw">in</span> <span class="va">docs</span><span class="op">:</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">d</span><span class="op">.</span><span class="va">page_content</span><span class="op">,</span> <span class="st">"|"</span><span class="op">,</span> <span class="va">d</span><span class="op">.</span><span class="va">metadata</span><span class="op">)</span>
+
+<span class="cm"># Converter em retriever para uso em chain (Aula 06)</span>
+<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span>
+    <span class="va">search_type</span><span class="op">=</span><span class="st">"similarity"</span><span class="op">,</span>
+    <span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span> <span class="num">3</span><span class="op">},</span>         <span class="cm"># recuperar top-3</span>
+<span class="op">)</span>
+<span class="cm"># → este retriever vai direto na chain RAG da Aula 06</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">13 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">45% de lacunas — criar coleção ChromaDB com textos do domínio do grupo, testar 5 queries semânticas e documentar a qualidade dos resultados.</div>
+  <div class="slide-number">14 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 45% de lacunas</h2>
+  <p>Construir a coleção ChromaDB do domínio. Ela será a base do CKP02 (RAG completo, Aula 07).</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_05_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain-ollama langchain-community chromadb numpy <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">OllamaEmbeddings</span>
+<span class="kw">from</span> <span class="va">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="va">Chroma</span>
+<span class="kw">from</span> <span class="va">langchain_core.documents</span> <span class="kw">import</span> <span class="va">Document</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: instancie OllamaEmbeddings com o modelo correto</span>
+<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 2: crie 10+ documentos do domínio do grupo</span>
+<span class="cm"># Use Document(page_content="...", metadata={"categoria": "..."})</span>
+<span class="va">documentos</span> <span class="op">= [</span>
+    <span class="va">Document</span><span class="op">(</span><span class="va">page_content</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">metadata</span><span class="op">={</span><span class="st">"categoria"</span><span class="op">:</span> <span class="gap">___</span><span class="op">}),</span>
+    <span class="cm"># ... mais 9+ documentos</span>
+<span class="op">]</span>
+
+<span class="cm"># 👉 LACUNA 3: crie o vector store com from_documents</span>
+<span class="va">db</span> <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span>
+    <span class="va">documents</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>
+    <span class="va">embedding</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>
+    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_ckp02"</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 4: faça 5 queries semânticas e documente a qualidade</span>
+<span class="va">queries</span> <span class="op">= [</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">]</span>
+<span class="kw">for</span> <span class="va">q</span> <span class="kw">in</span> <span class="va">queries</span><span class="op">:</span>
+    <span class="va">res</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">similarity_search_with_score</span><span class="op">(</span><span class="va">q</span><span class="op">,</span> <span class="va">k</span><span class="op">=</span><span class="num">3</span><span class="op">)</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"\nQuery: {q}"</span><span class="op">)</span>
+    <span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">res</span><span class="op">:</span>
+        <span class="nb">print</span><span class="op">(</span><span class="st">f"  [{score:.3f}] {doc.page_content}"</span><span class="op">)</span>
+
+<span class="cm"># Converter em retriever para a Aula 06</span>
+<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span><span class="num">3</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"\nRetriever pronto para Aula 06: {type(retriever)}"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Persistência e recarga da coleção</h2>
+  <p>Embeddings são computacionalmente caros — você não quer recalcular a cada sessão. O ChromaDB persiste no disco e recarrega instantaneamente:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">persistencia_reload.py</span></div>
+    <div class="code-body"><pre><span class="cm"># ─── SESSÃO 1: criar e salvar ───────────────────────────────</span>
+<span class="va">db</span> <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span>
+    <span class="va">documents</span><span class="op">=</span><span class="va">documentos</span><span class="op">,</span>
+    <span class="va">embedding</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>
+    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_ckp02"</span><span class="op">,</span>  <span class="cm"># salva automaticamente</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Documentos salvos: {db._collection.count()}"</span><span class="op">)</span>
+
+<span class="cm"># ─── SESSÃO 2: recarregar sem recalcular embeddings ─────────</span>
+<span class="va">db_recarregado</span> <span class="op">=</span> <span class="fn">Chroma</span><span class="op">(</span>
+    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_ckp02"</span><span class="op">,</span>  <span class="cm"># lê do disco</span>
+    <span class="va">embedding_function</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>              <span class="cm"># para gerar embeddings de queries</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Documentos recuperados: {db_recarregado._collection.count()}"</span><span class="op">)</span>
+
+<span class="cm"># Adicionar documentos a uma coleção existente</span>
+<span class="va">novos_docs</span> <span class="op">= [</span><span class="va">Document</span><span class="op">(</span><span class="va">page_content</span><span class="op">=</span><span class="st">"Novo documento do domínio"</span><span class="op">)]</span>
+<span class="va">db_recarregado</span><span class="op">.</span><span class="fn">add_documents</span><span class="op">(</span><span class="va">novos_docs</span><span class="op">)</span>
+<span class="cm"># Só os novos docs têm embeddings computados — os antigos já estão no disco</span>
+
+<span class="cm"># No Google Colab: copiar a pasta para o Drive para persistência entre sessões</span>
+<span class="op">!</span>cp <span class="op">-</span>r <span class="op">/</span>content<span class="op">/</span>chroma_ckp02 <span class="op">/</span>content<span class="op">/</span>drive<span class="op">/</span>MyDrive<span class="op">/</span>chroma_ckp02</pre>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ Google Colab não persiste entre sessões</div>
+    <div class="callout-body">O <code style="font-family:'JetBrains Mono',monospace;font-size:12px">/content/</code> do Colab é temporário — se a sessão reiniciar, a pasta some. Para o CKP02, monte o Google Drive e salve a coleção lá, ou reindexe os documentos sempre que precisar.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>similarity_search_with_score — avaliar a qualidade da recuperação</h2>
+  <p>Para o CKP02, você vai precisar saber se os documentos recuperados são de fato relevantes. <code style="font-family:'JetBrains Mono',monospace;font-size:13px">similarity_search_with_score</code> retorna os scores junto com os documentos:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">busca_com_score.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Busca com scores (distância cosseno — menor = mais similar)</span>
+<span class="va">resultados</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">similarity_search_with_score</span><span class="op">(</span>
+    <span class="st">"comida italiana"</span><span class="op">,</span>
+    <span class="va">k</span><span class="op">=</span><span class="num">5</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span><span class="op">:</span>
+    <span class="cm"># score é distância (0 = idêntico, 1 = sem relação)</span>
+    <span class="va">similaridade</span> <span class="op">=</span> <span class="num">1</span> <span class="op">-</span> <span class="va">score</span>  <span class="cm"># converter para similaridade</span>
+    <span class="va">relevante</span>    <span class="op">=</span> <span class="st">"✅"</span> <span class="kw">if</span> <span class="va">similaridade</span> <span class="op">&gt;</span> <span class="num">0.75</span> <span class="kw">else</span> <span class="st">"⚠️"</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"{relevante} [{similaridade:.3f}] {doc.page_content[:60]}"</span><span class="op">)</span>
+
+<span class="cm"># Exemplo de saída:</span>
+<span class="cm"># ✅ [0.943] Pizza margherita com tomate fresco e mozarela</span>
+<span class="cm"># ✅ [0.921] Lasanha bolonhesa com ricota cremosa</span>
+<span class="cm"># ✅ [0.897] Macarrão al dente com pesto de manjericão</span>
+<span class="cm"># ⚠️ [0.623] Frango à parmegiana — clássico brasileiro</span>
+<span class="cm"># ⚠️ [0.412] Tacos com carne temperada</span>
+
+<span class="cm"># Filtrar por threshold de relevância</span>
+<span class="va">THRESHOLD</span> <span class="op">=</span> <span class="num">0.75</span>
+<span class="va">relevantes</span> <span class="op">= [</span><span class="va">doc</span> <span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span> <span class="kw">if</span> <span class="op">(</span><span class="num">1</span><span class="op">-</span><span class="va">score</span><span class="op">) &gt;</span> <span class="va">THRESHOLD</span><span class="op">]</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">💡 Threshold 0.75 — uma heurística prática</div>
+    <div class="callout-body">Não existe threshold universal — depende do domínio e do modelo. Para o nomic-embed-text, 0.75+ costuma indicar relevância real. O RAGAS da Aula 07 vai medir isso de forma mais rigorosa com métricas de faithfulness e answer relevancy.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Embeddings e busca semântica no mercado</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Streaming e recomendação</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Recomendação de músicas e vídeos</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Cada faixa ou vídeo vira um vetor baseado em características acústicas, visuais ou de texto. "Itens parecidos" = vizinhos no espaço vetorial. O mesmo princípio do ChromaDB, em escala de dezenas de milhões de itens.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Busca jurídica</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Busca de jurisprudência</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Plataformas de busca em bases de processos judiciais usam embeddings para achar decisões por significado. "Indenização por atraso de voo" encontra decisões que falam em "dano material por cancelamento de aeronave" — sem palavra em comum.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Organização pessoal</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Busca em notas e documentos pessoais</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Ferramentas de anotação indexam cada nota como embedding. "Ideias de projetos de IA" encontra uma nota chamada "Brainstorm de automação com LLMs" — busca semântica sobre o próprio conteúdo do usuário.</div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:16px">
+    <div class="callout-title">🔮 Onde isso aparece no CKP02</div>
+    <div class="callout-body">No CKP02, os PDFs do domínio do grupo serão indexados como embeddings no ChromaDB. Uma pergunta do usuário vira um vetor, os trechos mais similares são recuperados e injetados no contexto do LLM — isso é o RAG que você vai construir nas Aulas 06 e 07.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Erros comuns com embeddings e ChromaDB</h2>
+  <table class="data-table">
+    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ConnectionError</code> ao gerar embedding</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">os.environ["OLLAMA_HOST"]</code> não definido antes de instanciar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">OllamaEmbeddings</code></td>
+        <td>Definir as variáveis de ambiente antes de qualquer instanciação LangChain</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">UniqueConstraintError</code> no <code style="font-family:'JetBrains Mono',monospace;font-size:11px">add()</code></td>
+        <td>ID duplicado — tentou adicionar doc com mesmo id já existente na coleção</td>
+        <td>Usar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">get_or_create_collection</code> e gerar ids únicos com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">str(uuid.uuid4())</code></td>
+      </tr>
+      <tr>
+        <td>Resultados irrelevantes na busca</td>
+        <td>Corpus muito pequeno ou textos genéricos demais para o domínio</td>
+        <td>Indexar textos mais específicos do domínio; usar textos de 1–3 parágrafos (não frases curtas demais)</td>
+      </tr>
+      <tr>
+        <td>Coleção some após reiniciar o Colab</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">/content/</code> é temporário no Colab</td>
+        <td>Montar Google Drive e salvar a pasta lá, ou reindexar ao iniciar a sessão</td>
+      </tr>
+      <tr>
+        <td>Scores todos iguais a 1.0</td>
+        <td>Espaço de distância não configurado como cosine — usando distância Euclidiana padrão</td>
+        <td>Criar coleção com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">metadata={"hnsw:space": "cosine"}</code></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 05</h2>
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Embedding = significado em coordenadas.</strong> Palavras e frases com sentidos parecidos ficam próximas no espaço vetorial — independente das palavras usadas.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Similaridade cosseno</strong> mede o ângulo entre vetores. De 0 (sem relação) a 1 (idêntico). O ChromaDB retorna distância — similaridade = 1 − distância.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>nomic-embed-text</strong> — modelo de embedding gratuito via Ollama Cloud. 768 dimensões, janela de 8k tokens. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed_query</code> para buscas, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed_documents</code> para o corpus.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>ChromaDB</strong> armazena embeddings, faz busca por similaridade e persiste no disco. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">from_documents</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">similarity_search</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">as_retriever()</code> — prontos para o RAG da Aula 06.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(61,156,204,.05);border:2px solid rgba(61,156,204,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🔜</div>
+      <div style="font-size:14px"><strong>Próximo passo — Aula 06:</strong> conectar o retriever a uma chain LCEL. O LLM vai responder sobre documentos reais usando o contexto recuperado pelo ChromaDB. Isso é o pipeline RAG completo.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Por que nomic-embed-text e não o modelo de embedding do OpenAI?"</strong></td><td>nomic-embed-text é gratuito via Ollama Cloud e roda sem API key extra. O text-embedding-3 da OpenAI tem custo por uso. Para o semestre, o nomic-embed-text oferece qualidade excelente para a maioria dos domínios — é o padrão aprovado.</td></tr>
+      <tr><td><strong>"768 dimensões é suficiente ou precisamos de mais?"</strong></td><td>Para a maioria das aplicações práticas, 768 dimensões (nomic-embed-text) é mais que suficiente. Modelos maiores usam 1536 ou 3072 dimensões — mais dimensões nem sempre = melhor para domínios específicos. O que importa é a qualidade do treinamento.</td></tr>
+      <tr><td><strong>"Posso usar o ChromaDB em produção ou é só para desenvolvimento?"</strong></td><td>ChromaDB tem modo servidor (não só local) e é usado em produção em aplicações pequenas e médias. Para escala maior, Pinecone, Weaviate e pgvector são opções. Para o semestre e CKP02, ChromaDB local é perfeito.</td></tr>
+      <tr><td><strong>"O que é FAISS e qual a diferença para o ChromaDB?"</strong></td><td>FAISS (Meta) é uma biblioteca de busca vetorial de alto desempenho — muito rápida, mas sem persistência nativa e sem metadados. ChromaDB é um banco de dados completo com persistência, metadados e API HTTP. Para RAG em produção, ambos são usados — ChromaDB para simplicidade, FAISS para velocidade.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula05_2sem.py</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> <span class="va">numpy</span> <span class="kw">as</span> <span class="va">np</span>
+<span class="kw">import</span> <span class="va">uuid</span>
+
+<span class="cm"># 1. numpy — dot product e norma vetorial</span>
+<span class="va">a</span> <span class="op">=</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">([</span><span class="num">0.8</span><span class="op">,</span> <span class="num">0.3</span><span class="op">,</span> <span class="num">0.5</span><span class="op">])</span>
+<span class="va">b</span> <span class="op">=</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">([</span><span class="num">0.7</span><span class="op">,</span> <span class="num">0.4</span><span class="op">,</span> <span class="num">0.6</span><span class="op">])</span>
+<span class="va">np</span><span class="op">.</span><span class="fn">dot</span><span class="op">(</span><span class="va">a</span><span class="op">,</span> <span class="va">b</span><span class="op">)</span>           <span class="cm"># produto escalar (dot product)</span>
+<span class="va">np</span><span class="op">.</span><span class="va">linalg</span><span class="op">.</span><span class="fn">norm</span><span class="op">(</span><span class="va">a</span><span class="op">)</span>      <span class="cm"># norma (magnitude) do vetor</span>
+
+<span class="cm"># 2. Dict comprehension com zip — gerar vetores por chave</span>
+<span class="va">nomes</span>   <span class="op">= [</span><span class="st">"pizza"</span><span class="op">,</span> <span class="st">"carro"</span><span class="op">]</span>
+<span class="va">vetores</span> <span class="op">=</span> <span class="op">[</span><span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="kw">for</span> <span class="va">n</span> <span class="kw">in</span> <span class="va">nomes</span><span class="op">]</span>
+<span class="va">mapa</span>    <span class="op">= {</span><span class="va">k</span><span class="op">:</span> <span class="va">v</span> <span class="kw">for</span> <span class="va">k</span><span class="op">,</span> <span class="va">v</span> <span class="kw">in</span> <span class="nb">zip</span><span class="op">(</span><span class="va">nomes</span><span class="op">,</span> <span class="va">vetores</span><span class="op">)}</span>  <span class="cm"># zip e dict comp</span>
+
+<span class="cm"># 3. uuid — gerar IDs únicos para documentos</span>
+<span class="va">doc_id</span> <span class="op">=</span> <span class="nb">str</span><span class="op">(</span><span class="va">uuid</span><span class="op">.</span><span class="fn">uuid4</span><span class="op">())</span>   <span class="cm"># "f47ac10b-58cc-4372-a567-0e02b2c3d479"</span>
+
+<span class="cm"># 4. List comprehension com unpacking de tupla</span>
+<span class="va">resultados</span> <span class="op">= [</span><span class="op">(</span><span class="va">doc</span><span class="op">,</span> <span class="va">score</span><span class="op">)]</span>  <span class="cm"># retorno do similarity_search_with_score</span>
+<span class="va">relevantes</span> <span class="op">= [</span><span class="va">doc</span> <span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span> <span class="kw">if</span> <span class="op">(</span><span class="num">1</span><span class="op">-</span><span class="va">score</span><span class="op">) &gt;</span> <span class="num">0.75</span><span class="op">]</span>
+
+<span class="cm"># 5. f-string com formatação de float</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Score: {score:.3f}"</span><span class="op">)</span>   <span class="cm"># 3 casas decimais</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Texto: {texto[:60]}"</span><span class="op">)</span>  <span class="cm"># cortar string em 60 chars</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Onde estamos no Módulo 2 — RAG</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(61,156,204,.06);border:2px solid rgba(61,156,204,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(61,156,204,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>A05 (hoje):</strong> Embeddings · Similaridade cosseno · nomic-embed-text · ChromaDB · coleção do domínio pronta</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(61,156,204,.08);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-blue)">→</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A06:</strong> Pipeline RAG completo — load PDF · split · embed · store · retrieve · generate · chain LCEL com retriever</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A07:</strong> RAG avançado — chunking estratégico · reranking · RAGAS · <strong>entrega CKP02</strong></div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A08:</strong> Interfaces com Gradio e Streamlit — RAG com URL pública</div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">📌 Para a Aula 06 — trazer os PDFs</div>
+    <div class="callout-body">Trazer 2–3 PDFs do domínio do grupo (mínimo 5 páginas cada). Na Aula 06 você vai carregá-los com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PyPDFLoader</code>, dividir em chunks e indexar no ChromaDB. A coleção de hoje (com textos manuais) vai ser complementada ou substituída pela coleção de PDFs reais.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 06 — Pipeline RAG completo</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-pink">
+        <div class="callout-title">🔮 O que você vai construir</div>
+        <div class="callout-body">Um pipeline completo que transforma PDFs em respostas:<br><br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PDF</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PyPDFLoader</code> → chunks → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChromaDB</code><br>
+          Pergunta → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">query</code> → contexto → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">LLM</code> → resposta<br><br>
+          Tudo numa chain LCEL: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">retriever | prompt | llm | parser</code>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-green">
+        <div class="callout-title">🧩 O que a coleção de hoje já resolve</div>
+        <div class="callout-body">A coleção ChromaDB construída hoje já tem o <code style="font-family:'JetBrains Mono',monospace;font-size:12px">retriever</code> pronto via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">as_retriever()</code>. Na Aula 06, você só precisa conectar esse retriever à chain LCEL e adicionar o prompt de RAG. O passo pesado (embeddings) já está feito.</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;font-size:13px">
+    <strong>📌 Ação antes da Aula 06:</strong> salve o notebook de hoje com a coleção pronta. Leve os PDFs do domínio. A Aula 06 vai conectar as peças: retriever + prompt RAG + LLM.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Indexar 20 frases sobre temas variados → buscar por "comida italiana" → ver retornar pizza, macarrão e lasanha sem a frase aparecer no corpus.</div>
+  <div class="slide-number">25 / 29</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor indexa ao vivo ~20 frases de temas variados (culinária italiana, culinária brasileira, tecnologia e outros) numa coleção ChromaDB e roda a mesma busca de duas formas: por significado (embedding) e por palavra-chave. A turma compara os resultados lado a lado.</p>
+  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
+    <div class="callout" style="margin:0">
+      <div class="callout-title">1. Indexação</div>
+      <div class="callout-body">20 frases viram vetores de 768 dimensões via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nomic-embed-text</code> e são salvas numa coleção ChromaDB, cada uma com metadado de categoria.</div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">2. Busca semântica</div>
+      <div class="callout-body">Query <strong>"comida italiana"</strong> — que não aparece em nenhuma frase do corpus — retorna pizza, lasanha e macarrão, todas com similaridade acima de <strong>0.89</strong>.</div>
+    </div>
+    <div class="callout callout-orange" style="margin:0">
+      <div class="callout-title">3. Busca por palavra-chave</div>
+      <div class="callout-body">A mesma pergunta filtrada por substring "italiana" retorna <strong>zero resultados</strong> — a palavra literal não existe no corpus. Essa é a diferença que a aula quer mostrar.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
+    <div class="callout-title">🧱 Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nomic-embed-text</code> · ChromaDB</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 05 · 2º Semestre</div>
+    <div class="exercise-title">Coleção ChromaDB do domínio do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 25 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 4 lacunas</strong> — modelo de embedding, 10+ documentos do domínio com metadados, criação do vector store e 5 queries semânticas.</li>
+      <li><strong>Use metadados significativos</strong> para o domínio — ex: em culinária, uma categoria como "sobremesa"; em direito, a lei aplicável como "CDC". Esses metadados serão usados no RAG avançado da Aula 07.</li>
+      <li><strong>Documente a qualidade</strong> de cada query num comentário: o resultado faz sentido? A similaridade reflete o esperado?</li>
+      <li><strong>Desafio:</strong> calcule manualmente a similaridade cosseno entre 2 frases do corpus usando numpy (Slide 08) e compare com o score retornado pelo ChromaDB.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(61,156,204,.06);border-left:3px solid var(--fiap-blue);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12.5px;color:var(--fiap-muted);line-height:1.9">
+        <strong>Lacuna 1:</strong> o nome do modelo de embedding usado no semestre inteiro — o mesmo configurado no Slide 07.<br>
+        <strong>Lacuna 2:</strong> cada documento recebe o texto relevante do domínio do grupo e uma categoria como metadado — repetido para os 10+ documentos da lista.<br>
+        <strong>Lacuna 3:</strong> o vector store recebe a lista de documentos e o objeto de embeddings criados nas lacunas anteriores.<br>
+        <strong>Lacuna 4:</strong> 5 frases que representam perguntas reais de alguém do domínio — quanto mais distantes das palavras exatas do corpus, melhor o teste de busca semântica.
+      </div>
+    </div>
+    <div style="background:rgba(41,175,140,.08);border:1px solid rgba(41,175,140,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-green)">
+      💡 <strong>Dica de qualidade:</strong> para testar se a busca está boa, use queries que <em>não</em> compartilham palavras com os documentos indexados. Se ainda retornar resultados relevantes, o embedding está funcionando bem para o domínio.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>ChromaDB</strong> — Documentação oficial: collections, add, query, persist, metadata filtering. <a href="https://docs.trychroma.com" style="color:var(--fiap-blue)">docs.trychroma.com</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — OllamaEmbeddings e integração com ChromaDB. <a href="https://python.langchain.com/docs/integrations/vectorstores/chroma" style="color:var(--fiap-blue)">python.langchain.com/docs/integrations/vectorstores/chroma</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Modelo</span><div class="ref-text"><strong>Nomic AI</strong> — nomic-embed-text: especificações, benchmarks e casos de uso. <a href="https://huggingface.co/nomic-ai/nomic-embed-text-v1" style="color:var(--fiap-blue)">huggingface.co/nomic-ai/nomic-embed-text-v1</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Paper</span><div class="ref-text"><strong>Mikolov, T. et al.</strong> — "Efficient Estimation of Word Representations in Vector Space." (Word2Vec, 2013) — a fundação conceitual dos embeddings modernos. <a href="https://arxiv.org/abs/1301.3781" style="color:var(--fiap-blue)">arxiv.org/abs/1301.3781</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Goodfellow, I.; Bengio, Y.; Courville, A.</strong> — Deep Learning. Pearson, 2017. Cap. 15: Representação distribuída — a base teórica dos embeddings e espaços vetoriais.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Aula 05 concluída 🔢</div>
+  <div style="font-size:16px;color:var(--fiap-muted);margin-bottom:12px;max-width:540px">Texto virou número, número virou busca semântica. Na Aula 06 esse retriever se conecta ao LLM e o chatbot passa a responder sobre documentos reais.</div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:32px;text-align:left;max-width:600px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-blue);margin-bottom:8px">→ Próxima Aula — Aula 06 · 14/09</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Pipeline RAG completo — load, split, embed, retrieve, generate</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">Conectar o retriever à chain LCEL. O LLM responde com base nos seus documentos.</div>
+  </div>
+  <div style="margin-top:20px;padding:14px 24px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;max-width:540px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">📌 Trazer para a Aula 06</div>
+    <div style="font-size:13px;color:var(--fiap-muted)">2–3 PDFs do domínio do grupo (mín. 5 páginas cada). Serão o corpus do CKP02.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">29 / 29</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

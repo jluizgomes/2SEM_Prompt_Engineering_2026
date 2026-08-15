@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 01 — Revisão expressa + LangChain LCEL e ChatOllama</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(237,20,91,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:42px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:800px}
+  .cover-subtitle{font-size:18px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.25);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-pink);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:28px;font-weight:800;color:var(--fiap-white);margin-bottom:32px;padding-bottom:12px;border-bottom:2px solid var(--fiap-pink);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin:24px 0}
+  .card{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:24px}
+  .card-icon{font-size:28px;margin-bottom:12px}
+  .card-title{font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px}
+  .card-body{font-size:13px;color:var(--fiap-muted);line-height:1.6}
+  .data-table{width:100%;border-collapse:collapse;margin:20px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:12px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-pink);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:12px 18px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:20px 24px;margin:24px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-pink);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-blue{border-left-color:var(--fiap-blue)}.callout-blue .callout-title{color:var(--fiap-blue)}
+  .callout-purple{border-left-color:var(--fiap-purple)}.callout-purple .callout-title{color:var(--fiap-purple)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin:20px 0}
+  .agenda-item{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:10px}
+  .agenda-num{width:32px;height:32px;background:rgba(237,20,91,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--fiap-pink);flex-shrink:0}
+  .agenda-text{font-size:14px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:12px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:4px 10px;border-radius:6px}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#ecfdf5 100%);justify-content:center;align-items:center;text-align:center}
+  .next-class{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:40px;text-align:left;max-width:600px}
+  .next-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:8px}
+  .next-title{font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px}
+  .next-desc{font-size:13px;color:var(--fiap-muted)}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:20px;font-size:13px;line-height:1.9}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:12px}
+  /* pipe visual */
+  .pipe-box{display:flex;align-items:center;gap:0;margin:16px 0;flex-wrap:wrap;row-gap:8px}
+  .pipe-step{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;padding:10px 16px;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--fiap-text);text-align:center;min-width:120px}
+  .pipe-arrow{font-size:20px;color:var(--fiap-pink);font-weight:900;padding:0 6px;flex-shrink:0}
+  /* exercise */
+  .exercise{background:linear-gradient(135deg,rgba(41,175,140,.06) 0%,rgba(61,156,204,.06) 100%);border:1px solid rgba(41,175,140,.2);border-radius:14px;padding:28px;margin:28px 0}
+  .exercise-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .exercise-icon{width:40px;height:40px;background:rgba(41,175,140,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-green)}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white)}
+  .exercise-steps{margin:16px 0;padding-left:20px}
+  .exercise-steps li{color:var(--fiap-text);font-size:14px;margin-bottom:8px;line-height:1.6}
+  .exercise-hint{background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:8px;padding:12px 16px;margin-top:16px;font-size:13px;color:var(--fiap-blue)}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<!-- S01 -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Revisão expressa<br>+ LangChain LCEL e ChatOllama</div>
+  <div class="cover-subtitle">Aula 01/14 — Módulo 1: LangChain Foundations</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">⏱️ 1h40min</div>
+    <div class="cover-meta-item">🐍 LCEL · ChatOllama · OutputParser</div>
+    <div class="cover-meta-item">🔁 Andaime 40%</div>
+  </div>
+  <div class="slide-number">01 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">Revisão expressa do 1º semestre — mapa de conceitos em 20 min</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">Por que LangChain — o problema de orquestrar manualmente em produção</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">LCEL — o operador <code style="font-family:'JetBrains Mono',monospace;font-size:13px">|</code> como composição de pipeline</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">🚀 Demo ao vivo — reescrever um chatbot manual em 15 linhas LCEL</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">💻 Lab — Notebook Aluno: chain básica com domínio do grupo (40% lacunas)</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">Síntese + preview Aula 02 + CKP01</div><div class="agenda-time">10 min</div></div>
+  <div class="callout callout-purple" style="margin-top:12px">
+    <div class="callout-title">🎯 O que você vai conseguir fazer ao final desta aula</div>
+    <div class="callout-body">Construir uma chain LangChain com LCEL que substitui o <code style="font-family:'JetBrains Mono',monospace;font-size:12px">chamar_llm()</code> manual do 1º semestre — com menos código, mais composição e pronto para escalar com memória e RAG nas próximas aulas.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <!-- S03 GLOSSÁRIO -->
+  <h2>Glossário — termos novos de hoje</h2>
+  <p>Conceitos que você vai usar em <strong>todas</strong> as aulas deste semestre. Definição técnica direta — nada de decoreba:</p>
+  <div class="glossary">
+    <div class="gl-item"><div class="gl-term">LangChain <span class="gl-pron">/læŋʧeɪn/</span></div><div class="gl-def">Framework Python para orquestrar LLMs: conecta modelo, prompt, memória, RAG e tools em <em>chains</em> (cadeias) composáveis, em vez de código manual repetido.</div></div>
+    <div class="gl-item gl-blue"><div class="gl-term">LCEL</div><div class="gl-def">LangChain Expression Language — linguagem declarativa que compõe componentes com o operador <code style="font-family:'JetBrains Mono',monospace;font-size:11px">|</code> (pipe). A chain descreve o fluxo, não o código que o executa.</div></div>
+    <div class="gl-item gl-green"><div class="gl-term">Runnable <span class="gl-pron">/rʌnəbəl/</span></div><div class="gl-def">Interface padrão que toda chain herda: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.invoke()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.stream()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.batch()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.ainvoke()</code>. É o "contrato" único para executar qualquer pipeline.</div></div>
+    <div class="gl-item gl-purple"><div class="gl-term">ChatPromptTemplate</div><div class="gl-def">Template de prompt com roles (system/human/ai) e variáveis <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{var}</code> validadas em runtime — evolução da função <code style="font-family:'JetBrains Mono',monospace;font-size:11px">montar_prompt()</code> do 1º semestre.</div></div>
+    <div class="gl-item gl-orange"><div class="gl-term">ChatOllama</div><div class="gl-def">Integração oficial do LangChain com o Ollama (local ou Cloud): conecta o modelo (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">gpt-oss:120b</code>) como componente de chat dentro de uma chain.</div></div>
+    <div class="gl-item"><div class="gl-term">OutputParser</div><div class="gl-def">Componente que transforma a resposta bruta do modelo (AIMessage) em um formato útil para o seu código: texto, dict, ou objeto Pydantic validado.</div></div>
+    <div class="gl-item gl-blue"><div class="gl-term">StrOutputParser</div><div class="gl-def">Parser mais simples: extrai apenas o conteúdo textual da resposta. Elimina o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">resp["message"]["content"]</code> do 1º semestre.</div></div>
+    <div class="gl-item gl-green"><div class="gl-term">JsonOutputParser</div><div class="gl-def">Parser que converte a resposta em dict Python. Exige que o prompt peça JSON explicitamente — sem schema garantido (isso vem na Aula 03 com Pydantic).</div></div>
+    <div class="gl-item gl-purple"><div class="gl-term">chain</div><div class="gl-def">Pipeline de componentes encadeados pelo operador <code style="font-family:'JetBrains Mono',monospace;font-size:11px">|</code>. O output de um componente é o input do próximo.</div></div>
+    <div class="gl-item gl-orange"><div class="gl-term">stateless</div><div class="gl-def">Sem estado: cada chamada <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.invoke()</code> começa do zero, sem lembrar conversas anteriores. A chain de hoje é stateless; memória é a Aula 02.</div></div>
+    <div class="gl-item"><div class="gl-term">streaming</div><div class="gl-def">Receber a resposta token por token, em tempo real — efeito "digitando" em interfaces. Método <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.stream()</code>, usado em produção e na Aula 08 com Gradio.</div></div>
+    <div class="gl-item gl-blue"><div class="gl-term">AIMessage</div><div class="gl-def">Objeto de resposta do LangChain: contém o texto em <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.content</code>, além de metadados (uso de tokens, modelo, timestamps).</div></div>
+  </div>
+  <div class="callout callout-pink" style="border-left-color:var(--fiap-pink)">
+    <div class="callout-title">💼 Por que isso importa no mercado</div>
+    <div class="callout-body">LangChain é o framework de orquestração de LLMs mais usado em produção — a base de pipelines de geração de código, escrita assistida e automação de workflows em empresas de tecnologia. Domine o vocabulário de hoje (<em>chain</em>, <em>parser</em>, <em>Runnable</em>) e você fala a mesma língua das vagas de <strong>AI Engineer</strong> em 2026.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <!-- S04 REVISÃO -->
+  <h2>Mapa do 1º semestre — de onde você vem</h2>
+  <p>10 aulas, 3 módulos — o que foi de fato aplicado nesta turma no 1º semestre (Módulo 1 ao Módulo 3, até a Aula 10). Nada disso será reexplicado hoje — mas você precisa reconhecer onde cada peça se encaixa antes de acelerar com LangChain.</p>
+  <div class="card-grid">
+    <div class="card" style="border-left:4px solid var(--fiap-pink)">
+      <div class="card-icon">🧠</div>
+      <div class="card-title">Módulo 1 — Fundamentos de IA (Aulas 01–04)</div>
+      <div class="card-body">O que é Inteligência Artificial e suas subáreas (Machine Learning, Deep Learning, NLP, Visão Computacional). Como os LLMs funcionam por dentro (tokens, embeddings, atenção). Ambiente Python configurado para IA.</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--fiap-blue)">
+      <div class="card-icon">✍️</div>
+      <div class="card-title">Módulo 2 — Prompt Engineering Básico (Aulas 05–08)</div>
+      <div class="card-body">Conceito e anatomia de um prompt. Técnicas zero-shot, few-shot e Chain-of-Thought. Role prompting e parâmetros do modelo (temperatura, top-p). Prompts para tarefas específicas.</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--fiap-purple)">
+      <div class="card-icon">🛡️</div>
+      <div class="card-title">Módulo 3 — Prompt Engineering Avançado (Aulas 09–10)</div>
+      <div class="card-body">Avaliação e iteração de prompts com structured output. Prompt injection, jailbreak e guardrails — a base de segurança que volta na próxima seção.</div>
+    </div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi">📚 10 aulas concluídas</div>
+    <div class="kpi">🧩 3 módulos</div>
+    <div class="kpi">🐍 Python + prompting já consolidados</div>
+    <div class="kpi">🚀 Módulos 4–6 (LangChain, RAG, agentes, ética/carreiras) não aplicados — viram conteúdo novo deste 2º semestre</div>
+  </div>
+  <div class="callout callout-red" style="margin-top:14px">
+    <div class="callout-title">🛡️ O que volta hoje sem reexplicação</div>
+    <div class="callout-body">Token · temperatura · top-p · janela de contexto · prompt injection · jailbreak · guardrail · structured output. Toda chain que você construir com LangChain herda os mesmos riscos do 1º semestre — um <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatPromptTemplate</code> mal desenhado é tão vulnerável a prompt injection quanto o system prompt manual. A defesa em camadas continua sendo sua responsabilidade; Context Engineering chega com mais profundidade nas Aulas 04 e 10 deste semestre.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">04 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <!-- S05 REVISÃO SEGURANÇA (prompt injection, jailbreak, guardrails) -->
+  <h2>Segurança em LLMs — revisão: prompt injection, jailbreak e guardrails</h2>
+  <p>Este bloco recapitula a Aula 10 do 1º semestre (Módulo 3 — Prompt Engineering Avançado: "Prompt Injection, Segurança e Guardrails"). Não é conteúdo novo — é o que garante que a chain LCEL que você vai montar hoje não repita as mesmas vulnerabilidades do system prompt manual do 1º semestre.</p>
+  <div class="two-col">
+    <div>
+      <div style="background:rgba(201,73,44,.06);border:1px solid rgba(201,73,44,.2);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">⚠️ Ataques que você já viu</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.9">
+          <strong>Prompt injection direto</strong> — o usuário tenta sobrescrever o system prompt na própria mensagem ("ignore as instruções anteriores...").<br>
+          <strong>Prompt injection indireto</strong> — instrução maliciosa embutida num dado processado pelo modelo (e-mail, PDF, página web sendo resumida).<br>
+          <strong>Prompt leaking</strong> — extrair o system prompt oculto através de perguntas indiretas.<br>
+          <strong>Jailbreaking</strong> — roleplay, encoding (Base64) ou personas fictícias para contornar guardrails.
+        </div>
+      </div>
+      <div class="callout callout-red" style="margin:0">
+        <div class="callout-title">🚨 Por que isso nunca desaparece</div>
+        <div class="callout-body">LLMs não distinguem instrução do desenvolvedor de instrução do usuário — tudo é texto na mesma <em>context window</em> (janela de contexto). Isso vale igual para o <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatPromptTemplate</code> que você vai construir hoje.</div>
+      </div>
+    </div>
+    <div>
+      <div style="background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🛡️ Defesa em camadas — as 5 que você já aprendeu</div>
+        <ul class="checklist" style="margin:0">
+          <li><strong>System prompt robusto</strong> — regras invioláveis + sandwich defense (regras repetidas no início e no fim)</li>
+          <li><strong>Validação de input</strong> — bloquear padrões como "ignore", "esqueça", "system prompt"</li>
+          <li><strong>Separação dados↔instruções</strong> — delimitadores (crases triplas, tags XML)</li>
+          <li><strong>Validação de output</strong> — checar dado sensível vazado antes de responder</li>
+          <li><strong>Monitoramento e logging</strong> — kill switch para respostas fora do esperado</li>
+        </ul>
+      </div>
+      <div class="callout callout-blue" style="margin:0">
+        <div class="callout-title">🔗 Conexão com a Aula 04 e a Aula 10 deste semestre</div>
+        <div class="callout-body">Context Engineering (Anthropic, 2025) trata o contexto como recurso finito — quanto mais informação irrelevante no contexto, menos atenção o modelo dá aos guardrails. A Aula 04 aprofunda essa curadoria; a Aula 10 aplica defesa em camadas a agentes com tools.</div>
+      </div>
+    </div>
+  </div>
+  <table class="data-table" style="margin-top:14px">
+    <thead><tr><th>Rank</th><th>Risco OWASP LLM Top 10 (2025)</th><th>Onde é tratado no curso</th></tr></thead>
+    <tbody>
+      <tr><td>#1</td><td>Prompt Injection</td><td>1º sem · Aula 10 (Módulo 3) · reforçado hoje</td></tr>
+      <tr><td>#2</td><td>Insecure Output Handling</td><td>Mitigado pelo OutputParser de hoje (slide 13)</td></tr>
+      <tr><td>#6</td><td>Sensitive Information Disclosure</td><td>Mencionado no 1º sem (Módulos 2–3) · LGPD</td></tr>
+      <tr><td>#8</td><td>Excessive Agency</td><td>2º sem · Aula 10 deste semestre (agentes com tools)</td></tr>
+      <tr><td>#9</td><td>Overreliance</td><td>Mencionado no 1º sem (Módulos 2–3)</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">05 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <!-- S06 REVISÃO 3/4 -->
+  <h2>Técnicas de prompt e Python que você já escreve</h2>
+  <p>Nenhuma dessas habilidades desaparece com LangChain — elas migram para dentro dos componentes da chain.</p>
+  <div class="two-col">
+    <div>
+      <div style="background:rgba(213,140,46,.06);border:1px solid rgba(213,140,46,.2);border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✅ Técnicas de prompt</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.9">Zero-shot · Few-shot · Chain-of-Thought<br>Role prompting · System prompt com persona<br>Parâmetros: temperatura, top-p, num_predict</div>
+      </div>
+      <div style="background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✅ Python que você sabe fazer</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.9"><code style="font-family:'JetBrains Mono',monospace;font-size:12px">def</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">while True/break</code>, f-string multiline, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">**dict</code>, retorno múltiplo, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">continue</code></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Onde essas técnicas vão morar em LCEL</h3>
+      <ul class="checklist">
+        <li>Few-shot e CoT viram exemplos dentro do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatPromptTemplate</code></li>
+        <li>Role prompting vira a mensagem <code style="font-family:'JetBrains Mono',monospace;font-size:12px">system</code> do template</li>
+        <li>Parâmetros (temperatura, top-p) viram argumentos do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatOllama(...)</code></li>
+        <li><code style="font-family:'JetBrains Mono',monospace;font-size:12px">def montar_prompt()</code> vira um <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatPromptTemplate.from_messages([...])</code></li>
+        <li><code style="font-family:'JetBrains Mono',monospace;font-size:12px">while True</code> do loop de chat vira <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.stream()</code> ou memória gerenciada</li>
+      </ul>
+      <div class="callout callout-green" style="margin-top:12px">
+        <div class="callout-title">💡 Nada foi perdido</div>
+        <div class="callout-body">Você não está aprendendo prompting do zero — está aprendendo a <strong>declarar</strong> em LCEL o que já sabia escrever manualmente em Python puro.</div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">06 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <!-- S07 REVISÃO 4/4 -->
+  <h2>O ponto de partida: o chatbot manual do 1º semestre</h2>
+  <p>Este é o código que você já escreveu e que serve de base para tudo que vem hoje. Guarde-o na cabeça — o próximo bloco reescreve exatamente isto em LCEL.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">python — chatbot manual do 1º semestre (~40 linhas, resumido)</span></div>
+    <div class="code-body"><pre><code><span class="kw">def</span> <span class="fn">montar_prompt</span>(historico, pergunta):
+    <span class="kw">return</span> [{<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: SYSTEM_PROMPT}] \
+        + historico + [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: pergunta}]
+
+<span class="kw">def</span> <span class="fn">chamar_llm</span>(messages):
+    resp = ollama.chat(model=<span class="st">"gpt-oss:120b"</span>, messages=messages)
+    <span class="kw">return</span> resp[<span class="st">"message"</span>][<span class="st">"content"</span>]
+
+<span class="kw">def</span> <span class="fn">iniciar_chat</span>():
+    historico = []
+    <span class="kw">while</span> <span class="nb">True</span>:
+        pergunta = <span class="fn">input</span>(<span class="st">"Você: "</span>)
+        <span class="kw">if</span> pergunta == <span class="st">"sair"</span>: <span class="kw">break</span>
+        msgs = <span class="fn">montar_prompt</span>(historico, pergunta)
+        resposta = <span class="fn">chamar_llm</span>(msgs)
+        historico += [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: pergunta},
+                     {<span class="st">"role"</span>: <span class="st">"assistant"</span>, <span class="st">"content"</span>: resposta}]
+        <span class="fn">print</span>(<span class="st">"Bot:"</span>, resposta)</code></pre></div>
+  </div>
+  <div class="card" style="border-left:4px solid var(--fiap-purple);margin-top:14px">
+    <div class="card-title">✅ Chatbot manual — o que ele já faz</div>
+    <div class="card-body"><code style="font-family:'JetBrains Mono',monospace;font-size:12px">chamar_llm()</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">iniciar_chat()</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">montar_prompt()</code> · lista <code style="font-family:'JetBrains Mono',monospace;font-size:12px">messages</code> com 3 roles · histórico gerenciado manualmente em cada volta do loop.</div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">🔗 O ponto de partida desta aula</div>
+    <div class="callout-body">Três funções, gerenciamento manual de <code style="font-family:'JetBrains Mono',monospace;font-size:12px">historico</code>, acesso direto a <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp["message"]["content"]</code>. Funciona — mas não escala, não compõe e não tem memória além do que você programar à mão. Esse chatbot manual (~40 linhas) é o problema que o LangChain resolve: hoje você reescreve isso em 15 linhas usando LCEL.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">07 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">Por que LangChain</div>
+  <div class="section-desc">O problema de escalar orquestração manual — e como o framework resolve com composição declarativa.</div>
+  <div class="slide-number">08 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O problema do 1º semestre em produção</h2>
+  <p>O chatbot manual funciona para um usuário num Colab. Mas o que acontece quando você precisa escalar?</p>
+  <table class="data-table">
+    <thead><tr><th>Cenário</th><th>Com o código manual</th><th>Com LangChain</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Trocar o modelo</strong></td>
+        <td>Reescrever a chamada à API em cada função</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ChatOllama(model="outro")</code> — 1 linha</td>
+      </tr>
+      <tr>
+        <td><strong>Adicionar memória</strong></td>
+        <td>Gerenciar a lista <code style="font-family:'JetBrains Mono',monospace;font-size:11px">historico</code> manualmente</td>
+        <td>Trocar tipo de memória em 1 parâmetro</td>
+      </tr>
+      <tr>
+        <td><strong>Parsear o output</strong></td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">resp["message"]["content"]</code> em todo lugar</td>
+        <td>OutputParser declarado uma vez na chain</td>
+      </tr>
+      <tr>
+        <td><strong>Compor chains</strong></td>
+        <td>Chamar cada função manualmente em sequência</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">chain1 | chain2 | chain3</code></td>
+      </tr>
+      <tr>
+        <td><strong>Adicionar RAG</strong></td>
+        <td>Refatorar toda a arquitetura do chatbot</td>
+        <td>Inserir retriever na chain existente</td>
+      </tr>
+      <tr>
+        <td><strong>Rastreamento/debug</strong></td>
+        <td>Print statements espalhados</td>
+        <td>LangSmith integrado automaticamente</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="chart" data-chart="bar" data-title="Esforço de manutenção — código manual vs. LangChain" data-labels="Trocar modelo|Adicionar memória|Parsear output|Compor chains|Adicionar RAG|Debug/Rastreio" data-values="9|8|7|9|10|7" data-unit=" (1-10)" data-notes="Reescrever chamada em cada função|Gerenciar lista de histórico à mão|resp[message][content] em todo lugar|Chamar funções em sequência|Refatorar toda a arquitetura|Print statements espalhados">
+    <div class="chart-title">Esforço relativo de manutenção (1 = trivial · 10 = refatoração completa)</div>
+    <div class="chart-sub">Cada cenário do slide anterior, quantificado: quanto custa mudar com código manual vs. com uma chain LCEL</div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">📊 Leitura do gráfico</div>
+    <div class="callout-body">Esses valores representam o <strong>esforço de mudança</strong> (1–10) para 6 operações comuns. Com LCEL, cada mudança vira uma linha de código: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatOllama(model="outro")</code>, trocar o parser, inserir um retriever. O gráfico reflete por que o framework existe: <strong>o custo marginal de evoluir cai de "refatorar" para "1 linha"</strong>.</div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">💡 A intuição central do LangChain</div>
+    <div class="callout-body">LangChain não faz nada que você não poderia fazer manualmente. O valor é a <strong>composição declarativa</strong> — você descreve o que quer acontecer, não como fazer cada passo. O framework cuida da orquestração.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">09 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">LCEL — LangChain<br>Expression Language</div>
+  <div class="section-desc">O operador <code style="font-family:'JetBrains Mono',monospace;font-size:28px">|</code> como composição. Uma chain é a declaração de como os dados fluem — não o código que os move.</div>
+  <div class="slide-number">10 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>LCEL — o operador <code style="font-family:'JetBrains Mono',monospace;font-size:22px">|</code> como pipe</h2>
+  <p>O LCEL usa o operador <code style="font-family:'JetBrains Mono',monospace;font-size:13px">|</code> (pipe) para compor componentes. O output de um vira input do próximo:</p>
+  <div class="pipe-box">
+    <div class="pipe-step" style="border-color:rgba(124,96,198,.3);background:rgba(124,96,198,.06)"><div style="font-size:10px;font-weight:700;color:var(--fiap-purple);margin-bottom:4px">PROMPT TEMPLATE</div><code style="font-size:11px">ChatPromptTemplate</code></div>
+    <div class="pipe-arrow">|</div>
+    <div class="pipe-step" style="border-color:rgba(61,156,204,.3);background:rgba(61,156,204,.06)"><div style="font-size:10px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">MODELO</div><code style="font-size:11px">ChatOllama</code></div>
+    <div class="pipe-arrow">|</div>
+    <div class="pipe-step" style="border-color:rgba(41,175,140,.3);background:rgba(41,175,140,.06)"><div style="font-size:10px;font-weight:700;color:var(--fiap-green);margin-bottom:4px">PARSER</div><code style="font-size:11px">StrOutputParser</code></div>
+    <div class="pipe-arrow" style="color:var(--fiap-muted);font-size:16px">→</div>
+    <div class="pipe-step" style="border-color:rgba(237,20,91,.3);background:rgba(237,20,91,.06)"><div style="font-size:10px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">OUTPUT</div><code style="font-size:11px">str</code></div>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 760 150" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ED145B"/></marker>
+        <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7C60C6"/><stop offset="100%" stop-color="#9b7fd6"/></linearGradient>
+        <linearGradient id="gBlue" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3D9CCC"/><stop offset="100%" stop-color="#5fb3de"/></linearGradient>
+        <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#29AF8C"/><stop offset="100%" stop-color="#4cc4a5"/></linearGradient>
+      </defs>
+      <rect x="20" y="20" width="150" height="76" rx="12" fill="url(#gPurple)" data-info="Recebe as variáveis (persona, pergunta) e monta a lista de mensagens system/human. Valida se todas as variáveis foram fornecidas — KeyError se faltar alguma." data-title="1 · Prompt Template"/>
+      <text x="95" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">PROMPT</text>
+      <text x="95" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="11" fill="#f3e8ff">ChatPromptTemplate</text>
+      <text x="95" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#e9d5ff">{"persona","pergunta"}</text>
+      <line x1="175" y1="58" x2="215" y2="58" stroke="#ED145B" stroke-width="3" marker-end="url(#arrow)"/>
+      <rect x="220" y="20" width="150" height="76" rx="12" fill="url(#gBlue)" data-info="Envia as mensagens para o modelo (gpt-oss:120b no Ollama Cloud) e devolve uma AIMessage com a resposta gerada e metadados." data-title="2 · Modelo"/>
+      <text x="295" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">LLM</text>
+      <text x="295" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="11" fill="#eaf6fb">ChatOllama</text>
+      <text x="295" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#d6ecf7">gpt-oss:120b</text>
+      <line x1="375" y1="58" x2="415" y2="58" stroke="#ED145B" stroke-width="3" marker-end="url(#arrow)"/>
+      <rect x="420" y="20" width="150" height="76" rx="12" fill="url(#gGreen)" data-info="Transforma a AIMessage em texto puro (StrOutputParser) ou em dict (JsonOutputParser). É o que elimina o resp[message][content]." data-title="3 · Output Parser"/>
+      <text x="495" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">PARSER</text>
+      <text x="495" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="11" fill="#e7f6f1">StrOutputParser</text>
+      <text x="495" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#d0f0e5">AIMessage → str</text>
+      <line x1="575" y1="58" x2="615" y2="58" stroke="#ED145B" stroke-width="3" marker-end="url(#arrow)"/>
+      <rect x="620" y="20" width="120" height="76" rx="12" fill="#ED145B" data-info="O resultado final: uma string limpa (ou dict) pronta para exibir, salvar ou encadear na próxima chain." data-title="4 · Output"/>
+      <text x="680" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">OUTPUT</text>
+      <text x="680" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="11" fill="#fde8f0">str / dict</text>
+      <text x="680" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#fce7ef">pronto p/ usar</text>
+    </svg>
+    <div class="diagram-cap">Workflow de uma chain LCEL — clique em cada bloco para ver o que acontece internamente. O <code style="font-family:'JetBrains Mono',monospace;font-size:11px">|</code> é a "esteira" que conecta os estágios.</div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">lcel_basico.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+
+<span class="cm"># Cada componente é independente — compostos pelo operador |</span>
+
+<span class="cm"># 1. Template: define estrutura e variáveis do prompt</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="st">"Você é {persona}. Responda sobre {especialidade}."</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="st">"{pergunta}"</span><span class="op">),</span>
+<span class="op">])</span>
+
+<span class="cm"># 2. Modelo: conecta ao Ollama Cloud</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span>
+    <span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span>
+    <span class="va">base_url</span><span class="op">=</span><span class="st">"https://ollama.com"</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># 3. Parser: extrai só o texto da resposta</span>
+<span class="va">parser</span> <span class="op">=</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="cm"># Composição com |  — isso é uma Runnable, não uma chamada</span>
+<span class="va">chain</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">parser</span>
+
+<span class="cm"># Invocar a chain com as variáveis do template</span>
+<span class="va">resposta</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span>
+    <span class="st">"persona"</span><span class="op">:</span>       <span class="st">"um chef de culinária brasileira"</span><span class="op">,</span>
+    <span class="st">"especialidade"</span><span class="op">:</span> <span class="st">"culinária brasileira"</span><span class="op">,</span>
+    <span class="st">"pergunta"</span><span class="op">:</span>      <span class="st">"Como faço um bolo de cenoura?"</span><span class="op">,</span>
+<span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resposta</span><span class="op">)</span>  <span class="cm"># → string direta, sem resp["message"]["content"]</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">11 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ChatPromptTemplate — evolução do <code style="font-family:'JetBrains Mono',monospace;font-size:20px">montar_prompt()</code></h2>
+  <p><code style="font-family:'JetBrains Mono',monospace;font-size:13px">ChatPromptTemplate</code> substitui a função <code style="font-family:'JetBrains Mono',monospace;font-size:13px">montar_prompt()</code> que você escreveu no 1º semestre — com validação automática de variáveis:</p>
+  <div class="two-col">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🔙 1º semestre — f-string manual</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <div class="code-body"><pre><span class="kw">def</span> <span class="fn">montar_prompt</span><span class="op">(</span><span class="va">pergunta</span><span class="op">,</span>
+                    <span class="va">especialidade</span><span class="op">,</span>
+                    <span class="va">tom</span><span class="op">=</span><span class="st">"direto"</span><span class="op">):</span>
+    <span class="kw">return</span> <span class="st">f"""</span>
+<span class="st">Você é especialista em {especialidade}.</span>
+<span class="st">Pergunta: {pergunta}</span>
+<span class="st">Tom: {tom}.</span>
+<span class="st">"""</span>
+
+<span class="cm"># Problema: f-string não valida variáveis</span>
+<span class="cm"># se esquecer uma, silencia sem erro</span></pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🔮 2º semestre — ChatPromptTemplate</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <div class="code-body"><pre><span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span>
+     <span class="st">"Você é especialista em {especialidade}."</span>
+     <span class="st">" Tom: {tom}."</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span> <span class="st">"Pergunta: {pergunta}"</span><span class="op">),</span>
+<span class="op">])</span>
+
+<span class="cm"># Vantagem: valida variáveis automaticamente</span>
+<span class="cm"># KeyError se esquecer alguma ao invocar</span>
+<span class="cm"># Separação de roles limpa (system/human/ai)</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">💡 from_messages vs. from_template</div>
+    <div class="callout-body">
+      <code style="font-family:'JetBrains Mono',monospace;font-size:12px">from_messages([("system","..."), ("human","...")])</code> — quando você precisa de roles diferentes (a maioria dos casos com LLMs de chat).<br>
+      <code style="font-family:'JetBrains Mono',monospace;font-size:12px">from_template("texto simples com {var}")</code> — para prompts de texto puro, sem roles.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Output Parsers — StrOutputParser e JsonOutputParser</h2>
+  <p>O parser define como o output do modelo é transformado antes de chegar ao seu código:</p>
+  <div class="two-col">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">StrOutputParser — texto limpo</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+
+<span class="va">chain</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="cm"># Retorna string direta</span>
+<span class="va">resposta</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span><span class="st">"Oi"</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="nb">type</span><span class="op">(</span><span class="va">resposta</span><span class="op">))</span>  <span class="cm"># → &lt;class 'str'&gt;</span>
+
+<span class="cm"># Sem mais resp["message"]["content"] !</span></pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">JsonOutputParser — dict direto</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">JsonOutputParser</span>
+
+<span class="va">chain</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">JsonOutputParser</span><span class="op">()</span>
+
+<span class="cm"># O prompt DEVE pedir JSON explicitamente</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span>
+    <span class="st">"pergunta"</span><span class="op">:</span> <span class="st">"Liste 3 ingredientes"</span>
+<span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="nb">type</span><span class="op">(</span><span class="va">resultado</span><span class="op">))</span>   <span class="cm"># → &lt;class 'dict'&gt;</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resultado</span><span class="op">[</span><span class="st">"ingredientes"</span><span class="op">])</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ JsonOutputParser sem schema = risco</div>
+    <div class="callout-body">O JsonOutputParser tenta parsear qualquer JSON que o modelo gere — mas não garante que as chaves esperadas existam. Na Aula 03 você vai usar <strong>PydanticOutputParser</strong>, que valida o schema e levanta erro se a saída não bater.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">13 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ChatOllama — conectando ao Ollama Cloud</h2>
+  <p>No 1º semestre você usou <code style="font-family:'JetBrains Mono',monospace;font-size:13px">ollama.Client(host=..., headers={...})</code>. No LangChain, o setup é declarativo:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">setup_ollama_cloud.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain-ollama langchain-core <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="kw">import</span> <span class="va">os</span>
+
+<span class="cm"># Definir a API key via variável de ambiente (Colab Secrets)</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># Instanciar o modelo — parâmetros declarativos</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span>
+    <span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span>          <span class="cm"># modelo padrão do semestre</span>
+    <span class="va">temperature</span><span class="op">=</span><span class="num">0.7</span><span class="op">,</span>               <span class="cm"># mesmo parâmetro do 1º sem</span>
+    <span class="va">num_predict</span><span class="op">=</span><span class="num">512</span><span class="op">,</span>               <span class="cm"># equivalente a max_tokens</span>
+<span class="op">)</span>
+
+<span class="cm"># Teste rápido direto (sem chain)</span>
+<span class="va">resp</span> <span class="op">=</span> <span class="va">llm</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="st">"Olá! Responda em 1 linha."</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resp</span><span class="op">.</span><span class="va">content</span><span class="op">)</span>   <span class="cm"># .content — não ["message"]["content"]</span>
+<span class="nb">print</span><span class="op">(</span><span class="nb">type</span><span class="op">(</span><span class="va">resp</span><span class="op">))</span>      <span class="cm"># → AIMessage (objeto LangChain)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">✅ Diferença chave: resposta direta vs. chain</div>
+    <div class="callout-body">
+      <code style="font-family:'JetBrains Mono',monospace;font-size:12px">llm.invoke("texto")</code> → retorna um <code style="font-family:'JetBrains Mono',monospace;font-size:12px">AIMessage</code> — precisa de <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.content</code> para acessar o texto.<br>
+      <code style="font-family:'JetBrains Mono',monospace;font-size:12px">chain.invoke({...})</code> com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">StrOutputParser</code> → retorna <code style="font-family:'JetBrains Mono',monospace;font-size:12px">str</code> diretamente. Use chains na maioria dos casos.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Runnable — o que toda chain herda</h2>
+  <p>Qualquer componente LCEL implementa a interface <code style="font-family:'JetBrains Mono',monospace;font-size:13px">Runnable</code>. Isso dá 4 métodos gratuitos:</p>
+  <div class="card-grid" style="grid-template-columns:1fr 1fr">
+    <div class="card" style="border-top:3px solid var(--fiap-pink)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--fiap-pink);margin-bottom:8px">.invoke()</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Chama a chain com 1 input e retorna 1 output. O método mais usado.</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;margin-top:8px;background:var(--code-bg);padding:6px 8px;border-radius:4px">chain.invoke({"pergunta": "..."})</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--fiap-blue)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--fiap-blue);margin-bottom:8px">.stream()</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Retorna generator — tokens chegam um a um. Usado em interfaces para efeito "digitando".</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;margin-top:8px;background:var(--code-bg);padding:6px 8px;border-radius:4px">for chunk in chain.stream({...}): print(chunk, end="")</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--fiap-green)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--fiap-green);margin-bottom:8px">.batch()</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Processa lista de inputs em paralelo. Útil para avaliar prompts com múltiplos casos de teste.</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;margin-top:8px;background:var(--code-bg);padding:6px 8px;border-radius:4px">chain.batch([{"q":"A"}, {"q":"B"}])</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--fiap-purple)">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--fiap-purple);margin-bottom:8px">.ainvoke()</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Versão assíncrona de invoke. Usado em servidores web (FastAPI, Gradio) para não bloquear.</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;margin-top:8px;background:var(--code-bg);padding:6px 8px;border-radius:4px">await chain.ainvoke({...})</div>
+    </div>
+  </div>
+  <div class="callout callout-blue" style="margin-top:12px">
+    <div class="callout-title">🎯 Regra prática para o semestre</div>
+    <div class="callout-body">Use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.invoke()</code> em notebooks e testes. Use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.stream()</code> na Aula 08 quando você adicionar interface Gradio. Use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.batch()</code> para avaliar seu RAG na Aula 07.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">40% de lacunas — componentes da chain e chamada final com o domínio que o grupo vai usar no semestre inteiro.</div>
+  <div class="slide-number">16 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 40% de lacunas</h2>
+  <p>Complete as lacunas. Esta chain é a base de todo o semestre — o domínio escolhido hoje será usado nos CKPs 01, 02 e 03.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_01_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain-ollama langchain-core <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="kw">import</span> <span class="va">os</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: instancie o ChatOllama com o modelo certo</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 2: crie o ChatPromptTemplate com 2 roles</span>
+<span class="cm"># system: persona + especialidade do grupo</span>
+<span class="cm"># human: a pergunta do usuário</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># system com persona do grupo</span>
+    <span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># human com {pergunta}</span>
+<span class="op">])</span>
+
+<span class="cm"># 👉 LACUNA 3: componha a chain com os 3 componentes</span>
+<span class="va">chain</span> <span class="op">=</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span>
+
+<span class="cm"># 👉 LACUNA 4: invoque com uma pergunta do domínio do grupo</span>
+<span class="va">resposta</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="gap">___</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resposta</span><span class="op">)</span>
+
+<span class="cm"># Bônus: testar .stream() — observe os tokens chegando</span>
+<span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">chain</span><span class="op">.</span><span class="fn">stream</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="st">"Me dê um exemplo rápido."</span><span class="op">}):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">chunk</span><span class="op">,</span> <span class="va">end</span><span class="op">=</span><span class="st">""</span><span class="op">,</span> <span class="va">flush</span><span class="op">=</span><span class="kw">True</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Como esta chain cresce ao longo do semestre</h2>
+  <p>A chain de hoje é a base. Cada aula adiciona uma peça:</p>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
+    <div style="display:flex;gap:12px;padding:12px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(41,175,140,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--fiap-green);flex-shrink:0">A1</div>
+      <div style="font-size:13px"><strong style="color:var(--fiap-white)">Hoje</strong> — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | StrOutputParser()</code> · chain stateless básica</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(61,156,204,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--fiap-blue);flex-shrink:0">A2</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>Aula 02</strong> — adicionar memória: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationChain + BufferMemory</code> · chain stateful</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(124,96,198,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--fiap-purple);flex-shrink:0">A3</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>Aula 03</strong> — adicionar validação: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PydanticOutputParser</code> · saída com schema garantido</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(213,140,46,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--fiap-orange);flex-shrink:0">A5</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>Aula 05–07</strong> — adicionar RAG: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">retriever | prompt | llm | parser</code> · contexto de documentos</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(237,20,91,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--fiap-pink);flex-shrink:0">A9</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>Aula 09</strong> — adicionar tools: chain → agente com ferramentas · RAG como tool do agente</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(124,96,198,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--fiap-purple);flex-shrink:0">A13</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>Aula 13</strong> — LangGraph: grafo de estado com routing condicional · além do loop linear</div>
+    </div>
+  </div>
+  <div style="margin-top:20px">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Para onde essa chain caminha: o ciclo agentic completo</div>
+    <div class="flow-diagram" style="justify-content:center;">
+      <div class="flow-step" style="background:rgba(201,73,44,.1);border-color:rgba(201,73,44,.25)">Get the Mission</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:rgba(213,140,46,.1);border-color:rgba(213,140,46,.25)">Scan the Scene</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:rgba(124,96,198,.1);border-color:rgba(124,96,198,.25)">Think It Through</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:rgba(61,156,204,.1);border-color:rgba(61,156,204,.25)">Take Action</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:rgba(41,175,140,.1);border-color:rgba(41,175,140,.25)">Learn &amp; Get Better</div>
+    </div>
+    <p style="font-size:12px;color:var(--fiap-muted);margin-top:8px">Gullí (<em>Agentic Design Patterns</em>, 2025) descreve este loop de 5 passos como o que distingue um agente de um script tradicional. A chain de hoje — <code style="font-family:'JetBrains Mono',monospace;font-size:11px">prompt | llm | parser</code> — cobre só "Think It Through → Take Action" de forma fixa; faltam "Scan the Scene" (perceber o ambiente) e "Learn &amp; Get Better" (aprender com o resultado), que as Aulas 09–13 adicionam via tools e grafos de estado.</p>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Prompt Chaining</div>
+    <div class="callout-body">Gullí (<em>Agentic Design Patterns</em>, 2025) descreve <strong>Prompt Chaining</strong> como o padrão fundacional de todo sistema agêntico: decompor uma tarefa complexa em etapas menores, cada uma processada por um componente especializado, com o output de uma etapa alimentando a próxima. A chain LCEL de hoje — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | parser</code> — é a versão mais simples desse padrão. Os agentes das Aulas 09–10 aplicam a mesma ideia, com decisões condicionais entre os elos.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>CKP01 — preview do que o grupo vai construir</h2>
+  <div style="background:rgba(237,20,91,.04);border:2px solid rgba(237,20,91,.2);border-radius:14px;padding:24px;margin:16px 0">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🏁 CKP01 — Chatbot LangChain · Grupo 3–4 · Entrega Aula 04</div>
+    <div style="font-size:14px;color:var(--fiap-text);line-height:1.8;margin-bottom:14px">Reescrever o chatbot manual do 1º semestre usando LangChain. <strong>Requisito mínimo:</strong> ConversationChain com 1 tipo de memória + schema Pydantic validando a saída + system prompt com persona + domínio real documentado.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+      <div style="padding:10px 12px;background:var(--fiap-surface);border-radius:8px;border:1px solid var(--fiap-border)">✅ <strong>R1:</strong> ChatOllama + ChatPromptTemplate + StrOutputParser</div>
+      <div style="padding:10px 12px;background:var(--fiap-surface);border-radius:8px;border:1px solid var(--fiap-border)">✅ <strong>R2:</strong> ConversationChain com 1 tipo de memória</div>
+      <div style="padding:10px 12px;background:var(--fiap-surface);border-radius:8px;border:1px solid var(--fiap-border)">✅ <strong>R3:</strong> PydanticOutputParser com schema definido</div>
+      <div style="padding:10px 12px;background:var(--fiap-surface);border-radius:8px;border:1px solid var(--fiap-border)">✅ <strong>R4:</strong> Domínio documentado + 5 turnos de conversa</div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:var(--fiap-muted)">Rubrica: 30% chain LCEL · 25% memória · 25% Pydantic · 20% código/comentários</div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">💡 Decisão de hoje importa para o semestre inteiro</div>
+    <div class="callout-body">O domínio escolhido na Aula 01 será mantido pelo semestre: CKP01 (chatbot), CKP02 (RAG sobre documentos do domínio), CKP03 (agente com tools do domínio). Escolha um domínio rico em documentos disponíveis publicamente — você vai precisar de PDFs na Aula 06.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>LangChain no mercado — padrões de produção com LCEL</h2>
+  <p>Os mesmos 3 componentes de hoje (prompt · modelo · parser) aparecem, com variações, em categorias inteiras de produtos de IA:</p>
+  <div class="card-grid" style="grid-template-columns:1fr 1fr">
+    <div class="card" style="position:relative;overflow:visible">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--fiap-blue),var(--fiap-purple))"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Assistentes de código</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">LangChain orquestrando múltiplos LLMs</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Ferramentas de código assistido orquestram chains de geração e revisão — o modelo gerador e o modelo revisor são componentes diferentes numa mesma pipeline LCEL. Você vai construir algo similar na Aula 12 com LangGraph.</div>
+    </div>
+    <div class="card" style="position:relative;overflow:visible">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--fiap-green),var(--fiap-blue))"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Escrita assistida</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">ChatPromptTemplate por contexto</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Templates de prompt diferentes por tipo de tarefa (resumo, expansão, brainstorm) — cada um com variáveis que recebem o conteúdo do documento atual. É exatamente o padrão que você aprendeu hoje com ChatPromptTemplate.</div>
+    </div>
+    <div class="card" style="position:relative;overflow:visible">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--fiap-purple),var(--fiap-pink))"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Automação de workflows</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Chains como nós de workflow</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Plataformas de automação (RPA + IA) usam LangChain por baixo — cada ação automatizada é uma chain que recebe contexto do usuário, chama o LLM e retorna output estruturado para o próximo passo do workflow. OutputParser com Pydantic garante que os dados chegam no formato certo.</div>
+    </div>
+    <div class="card" style="position:relative;overflow:visible">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--fiap-orange),var(--fiap-red))"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Automação de processos (BPM)</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Triagem e resposta padronizada</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Plataformas de BPM com IA usam LangChain para automatizar triagem de tickets e geração de respostas padronizadas — ChatPromptTemplate por tipo de solicitação, JsonOutputParser para routing automático.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Erros comuns ao começar com LangChain</h2>
+  <table class="data-table">
+    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ModuleNotFoundError: langchain_ollama</code></td>
+        <td>Pacote separado — LangChain não vem com a integração Ollama por padrão</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">!pip install langchain-ollama langchain-core langchain-classic -q</code></td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">KeyError: 'pergunta'</code> ao invocar</td>
+        <td>A variável no template usa <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{pergunta}</code> mas o dict passou <code style="font-family:'JetBrains Mono',monospace;font-size:11px">"question"</code></td>
+        <td>Nomes devem bater exatamente — case-sensitive</td>
+      </tr>
+      <tr>
+        <td>Resposta vem como <code style="font-family:'JetBrains Mono',monospace;font-size:11px">AIMessage</code> não como <code style="font-family:'JetBrains Mono',monospace;font-size:11px">str</code></td>
+        <td>Esqueceu o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">StrOutputParser()</code> no final da chain</td>
+        <td>Sempre terminar a chain com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">| StrOutputParser()</code></td>
+      </tr>
+      <tr>
+        <td>JsonOutputParser falha com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">JSONDecodeError</code></td>
+        <td>O modelo não gerou JSON válido — prompt não pediu explicitamente</td>
+        <td>Incluir no template: <em>"Responda SOMENTE em JSON válido."</em></td>
+      </tr>
+      <tr>
+        <td>Autenticação falha (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">401 Unauthorized</code>)</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">os.environ["OLLAMA_API_KEY"]</code> não definido antes de instanciar o modelo</td>
+        <td>Definir env vars antes do <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ChatOllama(...)</code></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 01</h2>
+  <div style="display:flex;flex-direction:column;gap:12px;margin:20px 0">
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>LangChain não faz nada que você não poderia fazer manualmente</strong> — o valor é a composição declarativa. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | parser</code> descreve o fluxo; o framework cuida da orquestração.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>ChatPromptTemplate substitui <code style="font-family:'JetBrains Mono',monospace;font-size:12px">montar_prompt()</code></strong> com validação automática de variáveis e separação limpa de roles (system/human/ai).</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>StrOutputParser e JsonOutputParser</strong> eliminam o acesso manual a <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp["message"]["content"]</code> — o output já chega no tipo certo.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Toda chain herda <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Runnable</code></strong> — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.invoke()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.stream()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.batch()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ainvoke()</code> sem código adicional.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🎯</div>
+      <div style="font-size:14px"><strong>O domínio escolhido hoje é o fio condutor do semestre</strong> — CKP01 (chatbot), CKP02 (RAG), CKP03 (agente) todos usam o mesmo domínio.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Preciso desinstalar o pacote ollama do 1º semestre?"</strong></td><td>Não — eles coexistem sem conflito. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ollama</code> (cliente original) e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain-ollama</code> (integração LangChain) são pacotes diferentes. Você pode ter os dois instalados simultaneamente.</td></tr>
+      <tr><td><strong>"O | é o operador OR do Python?"</strong></td><td>Em Python puro, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">|</code> é OR bitwise e union de dicts (Python 3.9+). No LangChain, a classe <code style="font-family:'JetBrains Mono',monospace;font-size:11px">Runnable</code> sobrescreve o método <code style="font-family:'JetBrains Mono',monospace;font-size:11px">__or__</code> para retornar uma chain composta em vez de OR.</td></tr>
+      <tr><td><strong>"Por que usar ChatPromptTemplate se f-string também funciona?"</strong></td><td>Para projetos simples, f-string funciona. A vantagem do template aparece na escala: validação de variáveis em tempo de execução, reutilização com valores diferentes, integração automática com chains mais complexas (memória, RAG, agentes).</td></tr>
+      <tr><td><strong>"Preciso de conta no LangSmith para usar LangChain?"</strong></td><td>Não — LangSmith é a plataforma de rastreamento (opcional). Todo o código do semestre roda sem LangSmith. Se quiser ativar, é gratuito para uso pessoal e adiciona observabilidade automática.</td></tr>
+      <tr><td><strong>"A versão do LangChain importa?"</strong></td><td>Muito — o LangChain teve mudanças de API significativas entre versões. O semestre usa LangChain 0.3+ (LCEL estável). Sempre instale com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pip install langchain-core langchain-ollama</code> para pegar a versão atual.</td></tr>
+      <tr><td><strong>"Posso usar outros modelos além de gpt-oss:120b?"</strong></td><td>Sim — o semestre usa gpt-oss:120b como padrão, mas qualquer modelo disponível no Ollama Cloud funciona. Outros modelos como llama4:scout ou deepseek-r2 também funcionam bem, dependendo da tarefa.</td></tr>
+      <tr><td><strong>"LCEL vai mudar? Vale aprender agora?"</strong></td><td>LCEL foi estabilizado na versão 0.3 e é a API de longo prazo do LangChain. O padrão <code style="font-family:'JetBrains Mono',monospace;font-size:11px">prompt | llm | parser</code> é o que a documentação oficial recomenda e o que toda a comunidade adotou.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Resumo — o que é novo no Python desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula01_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. Instância declarativa com keyword arguments</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0.7</span><span class="op">)</span>
+
+<span class="cm"># 2. Método de classe com lista de tuplas</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="st">"Você é {persona}."</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="st">"{pergunta}"</span><span class="op">),</span>
+<span class="op">])</span>
+
+<span class="cm"># 3. Operator overloading — | cria chain composta</span>
+<span class="va">chain</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="cm"># 4. .invoke() — método com dict de variáveis</span>
+<span class="va">resp</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"persona"</span><span class="op">:</span> <span class="st">"chef"</span><span class="op">,</span> <span class="st">"pergunta"</span><span class="op">:</span> <span class="st">"Olá"</span><span class="op">})</span>
+
+<span class="cm"># 5. Generator com for + yield (em .stream())</span>
+<span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">chain</span><span class="op">.</span><span class="fn">stream</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="st">"Oi"</span><span class="op">}):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">chunk</span><span class="op">,</span> <span class="va">end</span><span class="op">=</span><span class="st">""</span><span class="op">,</span> <span class="va">flush</span><span class="op">=</span><span class="kw">True</span><span class="op">)</span>
+    <span class="cm"># flush=True força exibição imediata de cada token</span>
+
+<span class="cm"># 6. os.environ — variáveis de ambiente em Python</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="st">"valor"</span>  <span class="cm"># dict especial do SO</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O semestre em 14 aulas — onde você vai chegar</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px;text-align:center;border-top:3px solid var(--fiap-purple)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;margin-bottom:8px">M1 — LangChain</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.8">Aulas 01–04<br>LCEL · Memória<br>Pydantic<br>Context Eng.<br>CKP01</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px;text-align:center;border-top:3px solid var(--fiap-blue)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:8px">M2 — RAG</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.8">Aulas 05–08<br>Embeddings<br>ChromaDB<br>Gradio<br>CKP02</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px;text-align:center;border-top:3px solid var(--fiap-green)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;margin-bottom:8px">M3 — Agentes</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.8">Aulas 09–11<br>ReAct · Tools<br>RAG como tool<br>URL pública<br>CKP03</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px;text-align:center;border-top:3px solid var(--fiap-orange)">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;margin-bottom:8px">M4 — LangGraph</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.8">Aulas 12–14<br>Router · Grafo<br>HITL<br>Tendências</div>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">🎯 Ao final do semestre você vai ter</div>
+    <div class="callout-body">Um agente com interface Gradio pública que usa RAG sobre documentos do seu domínio + busca web + executa código Python — orquestrado com LangGraph. Isso é o CKP03. O CKP01 (hoje) é o primeiro passo.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Reescrever um chatbot manual de 40 linhas para 15 linhas LCEL — mesmo comportamento, menos código.</div>
+  <div class="slide-number">26 / 30</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;display:block;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="max-width:700px;margin-left:auto;margin-right:auto">O professor abre um notebook com o chatbot manual do 1º semestre e o notebook LCEL de hoje lado a lado no Colab, executa os dois ao vivo com a mesma pergunta e compara o resultado linha a linha.</p>
+  <div class="card-grid" style="max-width:900px;margin:24px auto 0;text-align:left">
+    <div class="card">
+      <div class="card-icon">📂</div>
+      <div class="card-title">Dois notebooks lado a lado</div>
+      <div class="card-body">Chatbot manual (1º semestre) à esquerda, chain LCEL de hoje à direita — mesma persona, mesma pergunta de teste.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">▶️</div>
+      <div class="card-title">Execução ao vivo</div>
+      <div class="card-body">Os dois códigos rodam no Colab em tempo real — a turma observa a resposta chegar igual nos dois casos.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Comparação linha a linha</div>
+      <div class="card-body">O professor destaca onde cada função manual (montar_prompt, iniciar_chat, parsing do dict) foi substituída por um componente da chain.</div>
+    </div>
+  </div>
+  <div class="metric-grid" style="max-width:600px;margin:20px auto 0">
+    <div class="metric"><div class="metric-val">40→15</div><div class="metric-lbl">linhas de código</div></div>
+    <div class="metric"><div class="metric-val">3→1</div><div class="metric-lbl">funções manuais → 1 chain</div></div>
+    <div class="metric"><div class="metric-val">0</div><div class="metric-lbl">acessos a resp["message"]["content"]</div></div>
+  </div>
+  <div class="callout callout-blue" style="text-align:left;max-width:700px;margin:20px auto 0">
+    <div class="callout-title">🛠️ Stack usado na demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · gpt-oss:120b · langchain-core + langchain-ollama</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-header">
+      <div class="exercise-icon">⛓️</div>
+      <div>
+        <div class="exercise-label">Lab — Aula 01 · 2º Semestre</div>
+        <div class="exercise-title">Construir a chain base do grupo
+          <span style="font-size:14px;color:var(--fiap-orange);margin-left:8px">★★</span>
+        </div>
+      </div>
+    </div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:16px"><strong>Grupo 3–4 · 20 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Escolha o domínio do grupo</strong> — este domínio vai persistir pelo semestre inteiro: CKP01 (chatbot LangChain), CKP02 (RAG sobre documentos desse domínio), CKP03 (agente). Exemplos: culinária, direito do consumidor, saúde, games, finanças pessoais.</li>
+      <li><strong>Complete as 4 lacunas</strong> — modelo, template com persona do domínio, composição com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">|</code> e chamada com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.invoke()</code>.</li>
+      <li><strong>Teste com 3 perguntas do domínio</strong> — confirme que a persona está coerente com o domínio escolhido.</li>
+      <li><strong>Desafio — JsonOutputParser:</strong> crie uma segunda chain com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">JsonOutputParser</code>. No prompt, peça ao modelo para responder em JSON com as chaves <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resposta</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">confianca</code> (0–10). Imprima o tipo do resultado.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(237,20,91,.06);border-radius:8px;border-left:3px solid var(--fiap-pink);margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">🎯 Orientação das lacunas</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.8">
+        <strong>Lacuna 1:</strong> nome do modelo do semestre e a temperatura usada desde o 1º semestre (0.7).<br>
+        <strong>Lacuna 2:</strong> a role de sistema recebe a persona e o domínio do grupo; a role humana recebe a variável da pergunta.<br>
+        <strong>Lacuna 3:</strong> os 3 componentes na ordem prompt → modelo → parser, unidos pelo operador pipe.<br>
+        <strong>Lacuna 4:</strong> qualquer pergunta real do domínio escolhido pelo grupo.
+      </div>
+    </div>
+    <div class="exercise-hint">
+      💡 <strong>Dica para o desafio:</strong> no prompt, adicione: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">"Responda SOMENTE em JSON no formato: {\"resposta\": \"...\", \"confianca\": N}"</code>. O modelo precisa da instrução explícita para gerar JSON válido.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — LCEL (LangChain Expression Language): composição declarativa de chains com o operador |. <a href="https://python.langchain.com/docs/concepts/lcel" style="color:var(--fiap-blue)">python.langchain.com/docs/concepts/lcel</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — ChatPromptTemplate: estruturar prompts com roles e variáveis. <a href="https://python.langchain.com/docs/concepts/prompt_templates" style="color:var(--fiap-blue)">python.langchain.com/docs/concepts/prompt_templates</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — Output parsers: StrOutputParser, JsonOutputParser, PydanticOutputParser. <a href="https://python.langchain.com/docs/concepts/output_parsers" style="color:var(--fiap-blue)">python.langchain.com/docs/concepts/output_parsers</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>langchain-ollama</strong> — ChatOllama: integração LangChain com modelos Ollama. <a href="https://python.langchain.com/docs/integrations/chat/ollama" style="color:var(--fiap-blue)">python.langchain.com/docs/integrations/chat/ollama</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Russell, S.; Norvig, P.</strong> — Inteligência Artificial. 3ª ed. Pearson, 2016. Cap. 2: Agentes racionais — o modelo de percepção → ação que fundamenta o conceito de pipeline de LLM.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Ebook</span><div class="ref-text"><strong>Polzer, D.</strong> — RAG with Python Cookbook. O'Reilly, 2025. Cap. 1: escolha de frameworks para aplicações RAG e por que LangChain (LCEL) é o padrão de mercado para orquestração.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Ebook</span><div class="ref-text"><strong>Gullí, A.</strong> — Agentic Design Patterns. O'Reilly, 2025. Cap. 1: Prompt Chaining — a base dos padrões agênticos; o LCEL que você aprendeu hoje é a fundação dos agentes da Aula 10.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Ebook</span><div class="ref-text"><strong>Lanham, M.</strong> — AI Agents in Action. Manning, 2025. Cap. 2: prompting LLMs com personas e delimitadores — reforça o que você construiu no 1º semestre.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">29 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Aula 01 concluída ⛓️</div>
+  <div style="font-size:16px;color:var(--fiap-muted);margin-bottom:12px;max-width:540px">O que levou 40 linhas manuais no 1º semestre agora são 3 linhas de composição. Na Aula 02 você adiciona memória — e entende quando trocar de tipo.</div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:32px;text-align:left;max-width:600px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:8px">→ Próxima Aula — Aula 02 · 10/08</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Memória conversacional — Buffer, Summary e TokenBuffer</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">A chain de hoje é <strong>stateless</strong> — cada <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.invoke()</code> começa do zero, igual à lista <code style="font-family:'JetBrains Mono',monospace;font-size:12px">historico</code> manual do 1º semestre, que crescia sem limite de tokens. A Aula 02 resolve isso com 3 tipos de memória — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Buffer</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Summary</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">TokenBuffer</code> — e o CKP01 fica mais próximo.</div>
+  </div>
+  <div style="margin-top:20px;padding:14px 24px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;max-width:540px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">📌 Decisão de hoje</div>
+    <div style="font-size:13px;color:var(--fiap-muted)">Anote o domínio escolhido pelo grupo. Ele acompanha o semestre inteiro: CKP01 → CKP02 → CKP03.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">30 / 30</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

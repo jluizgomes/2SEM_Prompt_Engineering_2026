@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 12 — Router Chains e Grafo de Estado · Fichas de Exercícios</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fa;--card:#ffffff;--code:#1e293b;--bdr:#e2e4ec;--cy:#0891b2;--gn:#16a34a;--pu:#9333ea;--or:#d97706;--pk:#db2777;--yl:#ca8a04;--rd:#dc2626;--bl:#2563eb;--tl:#0d9488;--ag:#f472b6;--t1:#1a1b2f;--t2:#4e4e68;--t3:#6b6b80}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.75;font-size:17px;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ag);border-radius:3px}
+.hero{min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 450px at 20% 25%,rgba(244,114,182,.09),transparent),radial-gradient(ellipse 600px 400px at 80% 75%,rgba(147,51,234,.05),transparent),radial-gradient(ellipse 500px 350px at 50% 50%,rgba(8,145,178,.08),transparent);pointer-events:none}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:6px;text-transform:uppercase;color:var(--ag);margin-bottom:1.5rem;opacity:.7}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,var(--ag),var(--pu),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-family:'Crimson Pro',serif;font-size:clamp(1rem,2vw,1.2rem);font-style:italic;color:var(--t2);max-width:700px;margin-bottom:1.5rem}
+.hero .info{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.hero .info span{font-family:'JetBrains Mono',monospace;font-size:.72rem;background:var(--card);border:1px solid var(--bdr);padding:.3rem .7rem;border-radius:6px;color:var(--t3)}
+nav.toc{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:.65rem 1rem;overflow-x:auto}
+.toc-inner{display:flex;gap:.15rem;max-width:1100px;margin:0 auto;justify-content:center;flex-wrap:nowrap}
+.toc a{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-decoration:none;padding:.3rem .45rem;border-radius:5px;white-space:nowrap;transition:all .2s}
+.toc a:hover{color:var(--ag);background:rgba(219,39,119,.1)}
+.cc{max-width:1060px;margin:0 auto;padding:2rem 1.5rem 6rem}
+.bl{margin-bottom:4rem;scroll-margin-top:58px}
+.bh{display:flex;align-items:center;gap:1rem;margin-bottom:.5rem}
+.bn{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:2px;padding:.22rem .55rem;border-radius:4px;white-space:nowrap}
+.bt{font-size:clamp(1.2rem,2.5vw,1.7rem);font-weight:800;line-height:1.2}
+.btag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;color:var(--t2);margin-bottom:1.5rem;padding-left:.5rem;border-left:3px solid var(--t3)}
+.c--cy .bn{background:rgba(8,145,178,.12);color:var(--cy)}.c--cy .bt{color:var(--cy)}
+.c--gn .bn{background:rgba(22,163,74,.12);color:var(--gn)}.c--gn .bt{color:var(--gn)}
+.c--pu .bn{background:rgba(147,51,234,.12);color:var(--pu)}.c--pu .bt{color:var(--pu)}
+.c--or .bn{background:rgba(217,119,6,.12);color:var(--or)}.c--or .bt{color:var(--or)}
+.c--pk .bn{background:rgba(219,39,119,.12);color:var(--pk)}.c--pk .bt{color:var(--pk)}
+.c--tl .bn{background:rgba(13,148,136,.12);color:var(--tl)}.c--tl .bt{color:var(--tl)}
+.tp{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;transition:border-color .3s}
+.tp:hover{border-color:rgba(219,39,119,.25)}
+.tp h3{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;margin-bottom:.8rem}
+.tp p{color:var(--t2);font-size:.92rem;line-height:1.8;margin-bottom:.6rem}
+.tp p:last-child{margin-bottom:0}
+.cb{background:var(--code);border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:.5rem .85rem;background:#0f172a;border-bottom:1px solid #334155}
+.ch span{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase}
+.cd{display:flex;gap:5px}.cd i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cd i:nth-child(1){background:#ff5f57}.cd i:nth-child(2){background:#febc2e}.cd i:nth-child(3){background:#28c840}
+pre{padding:1rem 1.2rem;overflow-x:hidden;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.8;color:#e2e8f0;margin:0;white-space:pre-wrap;word-break:break-all;tab-size:4}
+.cm{color:#94a3b8;font-style:italic}.kw{color:var(--pu)}.st{color:var(--gn)}.fn{color:var(--cy)}.nb{color:var(--or)}.bi{color:var(--yl)}.op{color:var(--pk)}
+.out{background:#0f172a;border:1px solid #22c55e33;border-radius:10px;margin:1rem 0;overflow:hidden}
+.out .ch{background:#0a0f1a;border-bottom:1px solid #22c55e33}
+.out pre{color:#98c379}
+.out strong{color:#e5c07b}
+.err{background:#1e293b;border:1px solid #ef444433;border-radius:10px;margin:1rem 0;overflow:hidden}
+.err .ch{background:#0f172a;border-bottom:1px solid #ef444433}
+.err pre{color:#ef4444}
+.cbox{background:rgba(147,51,234,.08);border-left:3px solid var(--pu);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.cbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--pu);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.cbox p{color:var(--t2);font-size:.92rem}
+.wbox{background:rgba(217,119,6,.08);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.wbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.wbox p{color:var(--t2);font-size:.92rem}
+.tbox{background:rgba(8,145,178,.08);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.tbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cy);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.tbox p{color:var(--t2);font-size:.92rem}
+.pp{display:flex;align-items:center;gap:.35rem;flex-wrap:nowrap;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+.pp .s{padding:.38rem .8rem;background:var(--card);border:1px solid var(--bdr);border-radius:6px;color:var(--ag);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0}
+th{background:rgba(237,20,91,.08);color:var(--pk);padding:.6rem .8rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:1px;text-transform:uppercase}
+td{padding:.6rem .8rem;border-bottom:1px solid var(--bdr);color:var(--t2)}
+tr:last-child td{border-bottom:none}
+.ft{text-align:center;padding:3rem 2rem;border-top:1px solid var(--bdr);color:var(--t3);font-size:.85rem}
+@media(max-width:768px){.cc{padding:1rem}.tp{padding:1.2rem}pre{padding:.8rem;font-size:.74rem}.toc-inner{justify-content:flex-start}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-label">Ficha do Professor · 2º Semestre</div>
+  <h1>Aula 12 — Router Chains e Grafo de Estado<br>Exercícios Práticos</h1>
+  <p class="sub">Guia completo: 3 exercícios com código funcional, output esperado, erros comuns expandidos e referências. Roteamento por intenção e grafos de estado.</p>
+  <div class="info"><span>👨‍🏫 Prof. Jorge Luiz Gomes</span><span>🎓 FIAP · Ciência da Computação</span><span>📅 Módulo 4 — LangGraph e Spec-Driven Development</span><span>⏱️ 1h40min (100 min)</span></div>
+</section>
+
+<nav class="toc"><div class="toc-inner">
+  <a href="#crono">Cronograma</a>
+  <a href="#prep">Preparação</a>
+  <a href="#ex1">Ex1</a>
+  <a href="#ex2">Ex2</a>
+  <a href="#ex3">Ex3</a>
+  <a href="#erros">Erros</a>
+  <a href="#ref">Referências</a>
+</div></nav>
+
+<main class="cc">
+
+<!-- ============================== CRONOGRAMA ============================== -->
+<section class="bl c--pk" id="crono">
+  <div class="bh"><span class="bn">CRONOGRAMA</span><h2 class="bt">Planejamento da Aula</h2></div>
+  <p class="btag">Distribuição sugerida dos 100 minutos entre os exercícios.</p>
+  <div class="tp"><table>
+    <thead><tr><th>Tempo</th><th>Exercício</th><th>Dinâmica</th></tr></thead>
+    <tbody>
+      <tr><td>00-10</td><td>Reconhecer semana de GS/Avaliações — ritmo mais leve</td><td>Professor</td></tr>
+      <tr><td>10-35</td><td>Ex 1 — Router Chain</td><td>Individual</td></tr>
+      <tr><td>35-60</td><td>Ex 2 — Grafo com nós múltiplos</td><td>Individual</td></tr>
+      <tr><td>60-90</td><td>Ex 3 — Pipeline de validação</td><td>Individual</td></tr>
+      <tr><td>90-100</td><td>Síntese + preview: Aula 13 formaliza tudo em LangGraph</td><td>Professor</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================== PREPARAÇÃO ============================== -->
+<section class="bl c--cy" id="prep">
+  <div class="bh"><span class="bn">PREPARAÇÃO</span><h2 class="bt">Ambiente e Dependências</h2></div>
+
+  <div class="pp"><span class="s">★</span> Primeiros Passos</div>
+  <p>Antes de qualquer exercício, garanta que o ambiente esteja funcionando.</p>
+
+  <h3>1. Instale as dependências</h3>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>terminal</span></div>
+<pre><span class="cm"># Dependências da Aula 12</span>
+pip install langchain langchain-community langchain-ollama langchain-chroma langgraph chromadb</pre></div>
+
+  <h3>2. Verifique a conexão com o Ollama</h3>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>testar_llm.py</span></div>
+<pre><span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+resp = llm.<span class="fn">invoke</span>(<span class="st">"Diga apenas: OK"</span>)
+<span class="fn">print</span>(resp.content)</pre></div>
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída</span></div>
+<pre><strong>→</strong> OK</pre></div>
+
+  <div class="tbox"><h4>✅ Checkpoint</h4><p>Se o LLM respondeu "OK", o ambiente está pronto. Se falhar, verifique se o Ollama está rodando e se a chave de API está configurada no <code>.env</code>.</p></div>
+</section>
+
+<!-- ============================== EXERCÍCIO 1 ============================== -->
+<section class="bl c--gn" id="ex1">
+  <div class="bh"><span class="bn">EXERCÍCIO 01</span><h2 class="bt">Router Chain ⭐⭐</h2></div>
+  <p class="btag">⭐⭐ — Roteamento dinâmico com RunnableLambda</p>
+
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Implementar roteamento dinâmico: uma chain que decide qual sub-chain especializada usar, com base na classificação do input. O primeiro passo para grafos de estado.</p></div>
+
+  <div class="cbox"><h4>🔗 Conexão com a Aula 11</h4><p>O agente ReAct da Aula 11 decide qual tool usar internamente. Aqui, nós implementamos essa decisão explicitamente — com uma chain separada que classifica o input e roteia para a chain correta.</p></div>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar — Router Chain completo</div>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>ex1_router_chain.py</span></div>
+<pre><span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate
+<span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser
+<span class="kw">from</span> langchain_core.runnables <span class="kw">import</span> RunnableLambda
+
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+
+<span class="cm"># 1) Chains especializadas por categoria</span>
+chains = {
+    <span class="st">"tipo1"</span>: (
+        ChatPromptTemplate.<span class="fn">from_messages</span>([
+            (<span class="st">"system"</span>, <span class="st">"Você é um especialista em tipo1. Responda de forma técnica e detalhada."</span>),
+            (<span class="st">"human"</span>, <span class="st">"{input}"</span>),
+        ])
+        | llm | StrOutputParser()
+    ),
+    <span class="st">"tipo2"</span>: (
+        ChatPromptTemplate.<span class="fn">from_messages</span>([
+            (<span class="st">"system"</span>, <span class="st">"Você é um especialista em tipo2. Responda de forma prática e objetiva."</span>),
+            (<span class="st">"human"</span>, <span class="st">"{input}"</span>),
+        ])
+        | llm | StrOutputParser()
+    ),
+    <span class="st">"geral"</span>: (
+        ChatPromptTemplate.<span class="fn">from_messages</span>([
+            (<span class="st">"system"</span>, <span class="st">"Você é um assistente geral. Responda de forma clara e concisa."</span>),
+            (<span class="st">"human"</span>, <span class="st">"{input}"</span>),
+        ])
+        | llm | StrOutputParser()
+    ),
+}
+
+<span class="cm"># 2) Função de classificação</span>
+<span class="kw">def</span> <span class="fn">classificar_input</span>(x):
+    r = llm.<span class="fn">invoke</span>(<span class="st">f"Classifique em uma palavra: tipo1, tipo2 ou geral.\n{x['input']}"</span>).content
+    cat = r.strip().lower().split()[<span class="nu">0</span>] <span class="kw">if</span> r <span class="kw">else</span> <span class="st">"geral"</span>
+    <span class="kw">return</span> cat <span class="kw">if</span> cat <span class="kw">in</span> chains <span class="kw">else</span> <span class="st">"geral"</span>
+
+<span class="cm"># 3) Função de roteamento</span>
+<span class="kw">def</span> <span class="fn">processar</span>(pergunta):
+    cat = classificar_input({<span class="st">"input"</span>: pergunta})
+    resposta = chains[cat].<span class="fn">invoke</span>({<span class="st">"input"</span>: pergunta})
+    <span class="kw">return</span> cat, resposta
+
+<span class="cm"># 4) Testar com perguntas de categorias diferentes</span>
+<span class="kw">for</span> p <span class="kw">in</span> [<span class="st">"Explique o que é machine learning"</span>, <span class="st">"Como configurar um roteador?"</span>, <span class="st">"Qual a capital do Brasil?"</span>]:
+    cat, resp = processar(p)
+    <span class="fn">print</span>(<span class="st">f"P: {p}\n  [{cat}] {resp[:120]}\n"</span>)</pre></div>
+
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída esperada</span></div>
+<pre>P: Explique o que é machine learning
+  [tipo1] Machine learning é um subcampo da inteligência artificial que...
+
+P: Como configurar um roteador?
+  [tipo2] Para configurar um roteador, siga estes passos: 1) Acesse...
+
+P: Qual a capital do Brasil?
+  [geral] A capital do Brasil é Brasília.</pre></div>
+
+  <div class="cbox"><h4>💡 O que aconteceu?</h4><p>A chain de classificação analisa o input e retorna uma categoria. O <code>RunnableLambda</code> usa essa categoria para selecionar a chain especializada. A <strong>descrição de cada chain</strong> é o que decide se o roteamento funciona — se forem vagas, o classificador vai errar.</p></div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <p>O Router Chain é o primeiro passo para grafos. Hoje é apenas "if/else disfarçado de LLM". Na Aula 13, isso vira uma estrutura formal com <code>StateGraph</code>.</p>
+
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4>
+  <p><strong>1. "KeyError: categoria_nao_existe"</strong> — Se a classificação do LLM retornar algo fora do dicionário <code>chains</code>, o código quebra. Sempre inclua um fallback <code>"geral"</code>.</p>
+  <p><strong>2. Classificação inconsistente</strong> — O LLM pode classificar a mesma pergunta de formas diferentes. Use <code>temperature=0.0</code> para tornar a classificação mais determinística.</p>
+  <p><strong>3. Chain genérica demais</strong> — Se as descrições das chains não forem suficientemente distintas, o classificador vai confundir. Cada chain deve ter um propósito claro e único.</p>
+  <p><strong>4. Resposta muito longa do classificador</strong> — Se o LLM retornar uma frase inteira em vez de uma palavra, <code>split()[0]</code> pode pegar a palavra errada. Considere usar structured output (Pydantic) para classificação mais confiável.</p>
+  <p><strong>5. Chain não invoca corretamente</strong> — Verifique se o formato do dict passado para <code>invoke()</code> bate com o template do prompt. Se o template espera <code>{input}</code> e você passa <code>{pergunta}</code>, vai dar erro.</p></div>
+
+  <div class="cbox"><h4>💡 Discussão com o Grupo</h4><p><em>Router Chain é o primeiro passo para grafos — hoje é só "if/else disfarçado de LLM". Na Aula 13, isso vira uma estrutura formal com StateGraph.</em></p></div>
+</section>
+
+<!-- ============================== EXERCÍCIO 2 ============================== -->
+<section class="bl c--pu" id="ex2">
+  <div class="bh"><span class="bn">EXERCÍCIO 02</span><h2 class="bt">Grafo com nós múltiplos ⭐⭐</h2></div>
+  <p class="btag">⭐⭐ — StateGraph com arestas condicionais</p>
+
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Primeiro contato com StateGraph de verdade — múltiplos nós conectados por uma aresta condicional, sem ainda a complexidade de tools.</p></div>
+
+  <div class="cbox"><h4>🔗 Conexão com a Aula 11</h4><p>O grafo da Aula 11 usava <code>add_conditional_edges</code> para decidir entre "tools" e "END". Aqui, expandimos para múltiplos nós de processamento — a mesma mecânica, mas com mais destinos.</p></div>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar — Grafo de estado</div>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>ex2_grafo_estado.py</span></div>
+<pre><span class="kw">from</span> typing_extensions <span class="kw">import</span> TypedDict
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, END
+
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+
+<span class="cm"># 1) Definir o estado do grafo</span>
+<span class="kw">class</span> <span class="fn">EstadoGrafo</span>(TypedDict):
+    input: <span class="nb">str</span>
+    categoria: <span class="nb">str</span>
+    resultado: <span class="nb">str</span>
+
+<span class="cm"># 2) Nó de classificação</span>
+<span class="kw">def</span> <span class="fn">no_classificar</span>(estado):
+    r = llm.<span class="fn">invoke</span>(<span class="st">f"Classifique: urgente, normal ou informativo.\n{estado['input']}"</span>).content
+    cat = r.strip().lower()
+    <span class="kw">return</span> {<span class="st">"categoria"</span>: <span class="st">"urgente"</span> <span class="kw">if</span> <span class="st">"urg"</span> <span class="kw">in</span> cat <span class="kw">else</span> <span class="st">"normal"</span>}
+
+<span class="cm"># 3) Nós especializados</span>
+<span class="kw">def</span> <span class="fn">no_urgente</span>(e):
+    r = llm.<span class="fn">invoke</span>(<span class="st">f"URGENTE:\n{e['input']}"</span>).content
+    <span class="kw">return</span> {<span class="st">"resultado"</span>: <span class="st">f"[URGENTE] {r}"</span>}
+
+<span class="kw">def</span> <span class="fn">no_normal</span>(e):
+    r = llm.<span class="fn">invoke</span>(e[<span class="st">"input"</span>]).content
+    <span class="kw">return</span> {<span class="st">"resultado"</span>: r}
+
+<span class="cm"># 4) Função de decisão</span>
+<span class="kw">def</span> <span class="fn">decidir_no</span>(estado):
+    <span class="kw">return</span> estado[<span class="st">"categoria"</span>]
+
+<span class="cm"># 5) Montar o grafo</span>
+g = <span class="fn">StateGraph</span>(EstadoGrafo)
+g.<span class="fn">add_node</span>(<span class="st">"classificar"</span>, no_classificar)
+g.<span class="fn">add_node</span>(<span class="st">"urgente"</span>, no_urgente)
+g.<span class="fn">add_node</span>(<span class="st">"normal"</span>, no_normal)
+g.<span class="fn">set_entry_point</span>(<span class="st">"classificar"</span>)
+g.<span class="fn">add_conditional_edges</span>(<span class="st">"classificar"</span>, decidir_no, {<span class="st">"urgente"</span>: <span class="st">"urgente"</span>, <span class="st">"normal"</span>: <span class="st">"normal"</span>})
+<span class="kw">for</span> no <span class="kw">in</span> [<span class="st">"urgente"</span>, <span class="st">"normal"</span>]:
+    g.<span class="fn">add_edge</span>(no, END)
+
+grafo = g.<span class="fn">compile</span>()
+
+<span class="cm"># 6) Testar com entradas de categorias diferentes</span>
+<span class="kw">for</span> texto <span class="kw">in</span> [<span class="st">"Dor forte no peito!"</span>, <span class="st">"Qual a previsão do tempo?"</span>]:
+    r = grafo.<span class="fn">invoke</span>({<span class="st">"input"</span>: texto, <span class="st">"categoria"</span>: <span class="st">""</span>, <span class="st">"resultado"</span>: <span class="st">""</span>})
+    <span class="fn">print</span>(<span class="st">f"Cat: {r['categoria']} | R: {r['resultado'][:150]}"</span>)</pre></div>
+
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída esperada</span></div>
+<pre>Cat: urgente | R: [URGENTE] Recomendo procurar atendimento médico imediato...
+Cat: normal | R: A previsão do tempo para hoje é de céu parcialmente nublado...</pre></div>
+
+  <div class="cbox"><h4>💡 O que aconteceu?</h4><p>O grafo classifica o input e roteia para o nó correto. A diferença para o Ex1 é a <strong>estrutura formal</strong>: cada etapa é um nó explícito, o estado é um <code>TypedDict</code>, e o fluxo é um grafo compilado. Isso escala muito melhor que if/else aninhados.</p></div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <table>
+    <tr><th>Componente</th><th>Função</th><th>Exemplo</th></tr>
+    <tr><td><code>TypedDict</code></td><td>Define o estado do grafo</td><td><code>EstadoGrafo</code></td></tr>
+    <tr><td><code>add_node</code></td><td>Adiciona um nó de processamento</td><td><code>"classificar"</code>, <code>"urgente"</code></td></tr>
+    <tr><td><code>add_conditional_edges</code></td><td>Roteia com base no retorno de uma função</td><td><code>decidir_no</code> retorna a categoria</td></tr>
+    <tr><td><code>set_entry_point</code></td><td>Define por onde o grafo começa</td><td><code>"classificar"</code></td></tr>
+    <tr><td><code>add_edge</code></td><td>Conecta dois nós diretamente</td><td><code>"urgente" → END</code></td></tr>
+  </table>
+
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4>
+  <p><strong>1. "ValueError: Missing node"</strong> — O dict de <code>add_conditional_edges</code> precisa mapear TODOS os retornos possíveis da função de decisão para nomes de nós reais. Se <code>decidir_no</code> retorna "informativo" mas não existe nó "informativo", o grafo quebra.</p>
+  <p><strong>2. "KeyError: 'categoria'"</strong> — O estado inicial precisa ter todos os campos do TypedDict. Passe <code>{"input": "...", "categoria": "", "resultado": ""}</code> no <code>invoke()</code>.</p>
+  <p><strong>3. Estado mutado incorretamente</strong> — Cada nó deve retornar APENAS os campos que altera, não o estado inteiro. Use <code>{"categoria": "urgente"}</code>, não <code>{"input": ..., "categoria": ..., "resultado": ...}</code>.</p>
+  <p><strong>4. Grafo não termina</strong> — Se esquecer de adicionar <code>add_edge(no, END)</code> para todos os nós finais, o grafo fica preso em loop. Todo nó que não tem successor precisa ir para <code>END</code>.</p>
+  <p><strong>5. Classificação ambígua</strong> — Se o LLM retornar "urgente" para uma pergunta normal, o roteamento vai falhar. Use <code>temperature=0.0</code> e prompts de classificação mais específicos.</p></div>
+
+  <div class="cbox"><h4>💡 Discussão com o Grupo</h4><p><em>Esse exercício, mesmo em semana corrida, é a base direta do que formalizaremos na Aula 13 — vale garantir que o conceito de "aresta condicional" ficou claro antes de avançar.</em></p></div>
+</section>
+
+<!-- ============================== EXERCÍCIO 3 ============================== -->
+<section class="bl c--or" id="ex3">
+  <div class="bh"><span class="bn">EXERCÍCIO 03</span><h2 class="bt">Pipeline de validação ⭐⭐⭐</h2></div>
+  <p class="btag">⭐⭐⭐ — Grafo com loop de auto-correção</p>
+
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Grafo com loop: gerar → validar → corrigir se necessário → finalizar. Introduz o conceito de ciclo dentro de um grafo — a base para HITL (Human-in-the-Loop).</p></div>
+
+  <div class="cbox"><h4>🔗 Conexão com a Aula 13</h4><p>Este pipeline de auto-correção é a versão sem intervenção humana do HITL. Na Aula 13, substituímos o <code>no_validar</code> por um <code>interrupt_before</code> — onde um humano aprova ou rejeita a resposta antes de continuar.</p></div>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar — Pipeline de validação</div>
+  <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>ex3_pipeline_validacao.py</span></div>
+<pre><span class="kw">from</span> typing_extensions <span class="kw">import</span> TypedDict
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, END
+
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+
+<span class="cm"># 1) Estado do pipeline</span>
+<span class="kw">class</span> <span class="fn">EstadoPipeline</span>(TypedDict):
+    pergunta: <span class="nb">str</span>
+    rascunho: <span class="nb">str</span>
+    validado: <span class="nb">bool</span>
+    resposta_final: <span class="nb">str</span>
+    iteracoes: <span class="nb">int</span>
+
+<span class="cm"># 2) Nó de geração</span>
+<span class="kw">def</span> <span class="fn">no_gerar</span>(e):
+    r = llm.<span class="fn">invoke</span>(e[<span class="st">"pergunta"</span>]).content
+    <span class="kw">return</span> {<span class="st">"rascunho"</span>: r, <span class="st">"iteracoes"</span>: e.get(<span class="st">"iteracoes"</span>, <span class="nu">0</span>) + <span class="nu">1</span>}
+
+<span class="cm"># 3) Nó de validação</span>
+<span class="kw">def</span> <span class="fn">no_validar</span>(e):
+    check = llm.<span class="fn">invoke</span>(
+        <span class="st">f"A resposta é clara e relevante?\nP:{e['pergunta']}\nR:{e['rascunho']}\nSIM ou NAO"</span>
+    ).content
+    <span class="kw">return</span> {<span class="st">"validado"</span>: <span class="st">"SIM"</span> <span class="kw">in</span> check.upper()}
+
+<span class="cm"># 4) Nó de correção</span>
+<span class="kw">def</span> <span class="fn">no_corrigir</span>(e):
+    r = llm.<span class="fn">invoke</span>(<span class="st">f"Melhore a resposta.\nP:{e['pergunta']}\nAtual:{e['rascunho']}"</span>).content
+    <span class="kw">return</span> {<span class="st">"rascunho"</span>: r}
+
+<span class="cm"># 5) Nó final</span>
+<span class="kw">def</span> <span class="fn">no_final</span>(e):
+    <span class="kw">return</span> {<span class="st">"resposta_final"</span>: e[<span class="st">"rascunho"</span>]}
+
+<span class="cm"># 6) Função de decisão</span>
+<span class="kw">def</span> <span class="fn">decidir</span>(e):
+    <span class="kw">if</span> e[<span class="st">"validado"</span>] <span class="kw">or</span> e.get(<span class="st">"iteracoes"</span>, <span class="nu">0</span>) >= <span class="nu">3</span>:
+        <span class="kw">return</span> <span class="st">"finalizar"</span>
+    <span class="kw">return</span> <span class="st">"corrigir"</span>
+
+<span class="cm"># 7) Montar o grafo</span>
+g2 = <span class="fn">StateGraph</span>(EstadoPipeline)
+g2.<span class="fn">add_node</span>(<span class="st">"gerar"</span>, no_gerar)
+g2.<span class="fn">add_node</span>(<span class="st">"validar"</span>, no_validar)
+g2.<span class="fn">add_node</span>(<span class="st">"corrigir"</span>, no_corrigir)
+g2.<span class="fn">add_node</span>(<span class="st">"finalizar"</span>, no_final)
+g2.<span class="fn">set_entry_point</span>(<span class="st">"gerar"</span>)
+g2.<span class="fn">add_edge</span>(<span class="st">"gerar"</span>, <span class="st">"validar"</span>)
+g2.<span class="fn">add_conditional_edges</span>(<span class="st">"validar"</span>, decidir)
+g2.<span class="fn">add_edge</span>(<span class="st">"corrigir"</span>, <span class="st">"validar"</span>)
+g2.<span class="fn">add_edge</span>(<span class="st">"finalizar"</span>, END)
+
+pipeline = g2.<span class="fn">compile</span>()
+
+<span class="cm"># 8) Testar</span>
+r = pipeline.<span class="fn">invoke</span>({
+    <span class="st">"pergunta"</span>: <span class="st">"O que é RAG?"</span>,
+    <span class="st">"rascunho"</span>: <span class="st">""</span>,
+    <span class="st">"validado"</span>: <span class="kw">False</span>,
+    <span class="st">"resposta_final"</span>: <span class="st">""</span>,
+    <span class="st">"iteracoes"</span>: <span class="nu">0</span>,
+})
+<span class="fn">print</span>(<span class="st">f"Iterações: {r['iteracoes']} | Validado: {r['validado']}"</span>)
+<span class="fn">print</span>(<span class="st">f"R: {r['resposta_final'][:200]}"</span>)</pre></div>
+
+  <div class="out"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>saída esperada</span></div>
+<pre>Iterações: 2 | Validado: True
+R: RAG (Retrieval-Augmented Generation) é uma técnica que combina recuperação de documentos com geração de texto...</pre></div>
+
+  <div class="cbox"><h4>💡 O que aconteceu?</h4><p>O pipeline gera uma resposta, valida com o LLM, e corrige se necessário — até atingir a qualidade ou o limite de 3 iterações. O <code>decidir()</code> é a chave: ele observa o estado e decide se continua o loop ou finaliza.</p></div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <table>
+    <tr><th>Componente</th><th>Função</th><th>Exemplo</th></tr>
+    <tr><td>Loop de iteração</td><td>Repete até atingir critério</td><td><code>gerar → validar → corrigir → validar</code></td></tr>
+    <tr><td>Contador de iterações</td><td>Evita loop infinito</td><td><code>e.get("iteracoes", 0) >= 3</code></td></tr>
+    <tr><td>Função de decisão</td><td>Esclarece o próximo passo</td><td><code>decidir()</code> retorna "finalizar" ou "corrigir"</td></tr>
+    <tr><td>Validação externa</td><td>Verifica qualidade</td><td><code>no_validar()</code> usa LLM para avaliar</td></tr>
+  </table>
+
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4>
+  <p><strong>1. Loop infinito</strong> — Se esquecer o limite de iterações (<code>e.get("iteracoes", 0) >= 3</code>), um pipeline que nunca valida com sucesso entra em loop eterno.</p>
+  <p><strong>2. "KeyError: 'rascunho'"</strong> — O estado inicial precisa ter todos os campos. Passe <code>{"pergunta": "...", "rascunho": "", "validado": False, "resposta_final": "", "iteracoes": 0}</code>.</p>
+  <p><strong>3. Val sempre retorna True</strong> — Se o prompt de validação for vago, o LLM pode sempre responder "SIM". Seja específico: "A resposta é clara, relevante e completa? Responda SOMENTE SIM ou NAO."</p>
+  <p><strong>4. Correção não melhora</strong> — Se o prompt de correção não for claro, o LLM pode gerar uma resposta pior. Inclua o contexto: "Melhore a resposta considerando: clareza, completude e relevância."</p>
+  <p><strong>5. Grafo não termina</strong> — Se <code>decidir()</code> nunca retornar "finalizar" (por lógica incorreta), o grafo fica preso. Teste com uma pergunta simples antes de escalar.</p></div>
+
+  <div class="cbox"><h4>💡 Discussão com o Grupo</h4><p><em>Esse padrão de auto-correção com loop é a base conceitual do HITL (Human-in-the-Loop) que veremos na Aula 13 — só que ali, quem aprova é um humano, não outra chamada ao LLM.</em></p></div>
+</section>
+
+<!-- ============================== ERROS COMUNS ============================== -->
+<section class="bl c--pk" id="erros">
+  <div class="bh"><span class="bn">ERROS COMUNS</span><h2 class="bt">Problemas Frequentes</h2></div>
+  <p class="btag">Soluções para os erros que mais aparecem na Aula 12.</p>
+
+  <table>
+    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr><td><code>ModuleNotFoundError: langgraph</code></td><td>Pacote não instalado</td><td><code>pip install langgraph</code></td></tr>
+      <tr><td><code>ValueError: Missing node</code></td><td>Nó referenciado não existe no grafo</td><td>Verifique todos os nomes em <code>add_conditional_edges</code></td></tr>
+      <tr><td><code>KeyError: 'input'</code></td><td>Estado inicial incompleto</td><td>Passe todos os campos do TypedDict no <code>invoke()</code></td></tr>
+      <tr><td><code>TypeError: unhashable type</code></td><td>Usando dict como chave em conditional edges</td><td>Use strings simples, não dicts, como chaves do mapeamento</td></tr>
+      <tr><td><code>GraphRecursionError</code></td><td>Grafo em loop infinito</td><td>Adicione limite de iterações na função de decisão</td></tr>
+      <tr><td><code>ConnectionRefusedError</code></td><td>Ollama não está rodando</td><td>Inicie o Ollama: <code>ollama serve</code></td></tr>
+      <tr><td><code>openai.AuthenticationError</code></td><td>Chave de API inválida ou ausente</td><td>Verifique <code>.env</code>: <code>OLLAMA_API_KEY=sua-chave</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================== REFERÊNCIAS ============================== -->
+<section class="bl c--cy" id="ref">
+  <div class="bh"><span class="bn">REFERÊNCIAS</span><h2 class="bt">Fontes e Links</h2></div>
+  <p class="btag">Materiais para aprofundamento após a aula.</p>
+
+  <div class="tp">
+    <h3>📚 Documentação Oficial</h3>
+    <p>• <strong>LangChain</strong> — <code>python.langchain.com</code> — Documentação completa do framework</p>
+    <p>• <strong>LangGraph</strong> — <code>langchain-ai.github.io/langgraph</code> — Guias de StateGraph e conditional edges</p>
+    <p>• <strong>Pydantic</strong> — <code>docs.pydantic.dev</code> — Structured output e validação</p>
+    <p>• <strong>ChromaDB</strong> — <code>trychroma.com</code> — Vector store local</p>
+  </div>
+
+  <div class="tp">
+    <h3>📖 Artigos e Tutoriais</h3>
+    <p>• <strong>Anthropic Engineering</strong> — <code>anthropic.com/engineering</code> — Context Engineering e boas práticas</p>
+    <p>• <strong>Prompting Guide</strong> — <code>promptingguide.ai</code> — Técnicas de prompting</p>
+    <p>• <strong>LangGraph Conceptual Guide</strong> — <code>langchain-ai.github.io/langgraph/concepts</code> — Conceitos fundamentais de grafos</p>
+  </div>
+</section>
+
+<!-- ============================== ENCERRAMENTO ============================== -->
+<section class="bl c--or" id="enc">
+  <div class="bh"><span class="bn">ENCERRAMENTO</span><h2 class="bt">Próxima Aula</h2></div>
+  <div class="tp">
+    <h3>🚀 Aula 13 — LangGraph: StateGraph e HITL</h3>
+    <p>Na próxima aula, vamos formalizar tudo com <strong>StateGraph + MemorySaver + interrupt_before</strong> — introduzindo Human-in-the-Loop (HITL) com checkpointing.</p>
+    <p><strong>Dica:</strong> Revise o Ex3 desta aula — o loop de validação é a base conceitual do HITL.</p>
+  </div>
+
+  <div class="ft">
+    <p>Prof. Jorge Luiz Gomes · FIAP · Prompt Engineering and AI · 2º Semestre 2026</p>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

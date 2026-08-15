@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha do Professor — Exercícios 2Sem Aula 14 | FIAP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fa;--card:#ffffff;--code:#1e293b;--bdr:#e2e4ec;--cy:#0891b2;--gn:#16a34a;--pu:#9333ea;--or:#d97706;--pk:#db2777;--yl:#ca8a04;--rd:#dc2626;--bl:#2563eb;--tl:#0d9488;--ag:#f472b6;--t1:#1a1b2f;--t2:#4e4e68;--t3:#6b6b80}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.75;font-size:17px;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ag);border-radius:3px}
+.hero{min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 450px at 20% 25%,rgba(244,114,182,.09),transparent),radial-gradient(ellipse 600px 400px at 80% 75%,rgba(147,51,234,.05),transparent),radial-gradient(ellipse 500px 350px at 50% 50%,rgba(8,145,178,.08),transparent);pointer-events:none}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:6px;text-transform:uppercase;color:var(--ag);margin-bottom:1.5rem;opacity:.7}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,var(--ag),var(--pu),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-family:'Crimson Pro',serif;font-size:clamp(1rem,2vw,1.2rem);font-style:italic;color:var(--t2);max-width:700px;margin-bottom:1.5rem}
+.hero .info{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.hero .info span{font-family:'JetBrains Mono',monospace;font-size:.72rem;background:var(--card);border:1px solid var(--bdr);padding:.3rem .7rem;border-radius:6px;color:var(--t3)}
+nav.toc{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:.65rem 1rem;overflow-x:auto}
+.toc-inner{display:flex;gap:.15rem;max-width:1100px;margin:0 auto;justify-content:center;flex-wrap:nowrap}
+.toc a{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-decoration:none;padding:.3rem .45rem;border-radius:5px;white-space:nowrap;transition:all .2s}
+.toc a:hover{color:var(--ag);background:rgba(219,39,119,.1)}
+.cc{max-width:1060px;margin:0 auto;padding:2rem 1.5rem 6rem}
+.bl{margin-bottom:4rem;scroll-margin-top:58px}
+.bh{display:flex;align-items:center;gap:1rem;margin-bottom:.5rem}
+.bn{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:2px;padding:.22rem .55rem;border-radius:4px;white-space:nowrap}
+.bt{font-size:clamp(1.2rem,2.5vw,1.7rem);font-weight:800;line-height:1.2}
+.btag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;color:var(--t2);margin-bottom:1.5rem;padding-left:.5rem;border-left:3px solid var(--t3)}
+.c--cy .bn{background:rgba(8,145,178,.12);color:var(--cy)}.c--cy .bt{color:var(--cy)}
+.c--gn .bn{background:rgba(22,163,74,.12);color:var(--gn)}.c--gn .bt{color:var(--gn)}
+.c--pu .bn{background:rgba(147,51,234,.12);color:var(--pu)}.c--pu .bt{color:var(--pu)}
+.c--or .bn{background:rgba(217,119,6,.12);color:var(--or)}.c--or .bt{color:var(--or)}
+.c--pk .bn{background:rgba(219,39,119,.12);color:var(--pk)}.c--pk .bt{color:var(--pk)}
+.c--yl .bn{background:rgba(202,138,4,.12);color:var(--yl)}.c--yl .bt{color:var(--yl)}
+.c--rd .bn{background:rgba(220,38,38,.12);color:var(--rd)}.c--rd .bt{color:var(--rd)}
+.c--bl .bn{background:rgba(37,99,235,.12);color:var(--bl)}.c--bl .bt{color:var(--bl)}
+.c--tl .bn{background:rgba(13,148,136,.12);color:var(--tl)}.c--tl .bt{color:var(--tl)}
+.c--ag .bn{background:rgba(244,114,182,.1);color:var(--ag)}.c--ag .bt{color:var(--ag)}
+.tp{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;transition:border-color .3s}
+.tp:hover{border-color:rgba(219,39,119,.25)}
+.tp h3{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;margin-bottom:.8rem}
+.tp p{color:var(--t2);font-size:.92rem;line-height:1.8;margin-bottom:.6rem}
+.tp p:last-child{margin-bottom:0}
+.cb{background:var(--code);border:1px solid #334155;border-radius:10px;margin:1rem 0;overflow:hidden}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:.5rem .85rem;background:#0f172a;border-bottom:1px solid #334155}
+.ch span{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase}
+.cd{display:flex;gap:5px}.cd i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cd i:nth-child(1){background:#ff5f57}.cd i:nth-child(2){background:#febc2e}.cd i:nth-child(3){background:#28c840}
+pre{padding:1rem 1.2rem;overflow-x:hidden;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.8;color:#e2e8f0;margin:0;white-space:pre-wrap;word-break:break-all;tab-size:4}
+.cm{color:#94a3b8;font-style:italic}.kw{color:var(--pu)}.st{color:var(--gn)}.fn{color:var(--cy)}.nb{color:var(--or)}.bi{color:var(--yl)}.op{color:var(--pk)}
+.cbox{background:rgba(147,51,234,.08);border-left:3px solid var(--pu);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.cbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--pu);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.cbox p{color:var(--t2);font-size:.92rem}
+.wbox{background:rgba(217,119,6,.08);border-left:3px solid var(--or);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.wbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.wbox p{color:var(--t2);font-size:.92rem}
+.tbox{background:rgba(8,145,178,.08);border-left:3px solid var(--cy);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0}
+.tbox h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--cy);letter-spacing:1px;text-transform:uppercase;margin-bottom:.35rem}
+.tbox p{color:var(--t2);font-size:.92rem}
+.pp{display:flex;align-items:center;gap:.35rem;flex-wrap:nowrap;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+.pp .s{padding:.38rem .8rem;background:var(--card);border:1px solid var(--bdr);border-radius:6px;color:var(--ag);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.8rem 0}
+th{background:rgba(237,20,91,.08);color:var(--pk);padding:.6rem .8rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:1px;text-transform:uppercase}
+td{padding:.6rem .8rem;border-bottom:1px solid var(--bdr);color:var(--t2)}
+tr:last-child td{border-bottom:none}
+.ft{text-align:center;padding:3rem 2rem;border-top:1px solid var(--bdr);color:var(--t3);font-size:.85rem}
+.ref-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-top:1rem}
+.ref-item{background:var(--card);border:1px solid var(--bdr);padding:1rem;border-radius:8px;font-size:.85rem}
+.ref-tag{display:inline-block;padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:700;text-transform:uppercase;margin-bottom:.5rem}
+.ref-tag-book{background:rgba(37,99,235,.1);color:var(--bl)}
+.ref-tag-doc{background:rgba(13,148,136,.1);color:var(--tl)}
+.ref-tag-paper{background:rgba(147,51,234,.1);color:var(--pu)}
+@media(max-width:768px){.cc{padding:1rem}.tp{padding:1.2rem}pre{padding:.8rem;font-size:.74rem}.toc-inner{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-label">Ficha do Professor · 2º Semestre</div>
+  <h1>Aula 14 — Spec-Driven Development<br>Exercícios Práticos</h1>
+  <p class="sub">Guia completo: 3 atividades conceituais e demonstrativas — foco em arquitetura e especificações estruturadas para agentes de IA.</p>
+  <div class="info"><span>👨‍🏫 Prof. Jorge Luiz Gomes</span><span>🎓 FIAP · Ciência da Computação</span><span>📅 Módulo 4 — Tendências e SDD</span><span>⏱️ 1h40min (100 min)</span></div>
+</section>
+<nav class="toc"><div class="toc-inner"><a href="#crono">Cronograma</a><a href="#prep">Preparação</a><a href="#ex1">At1</a><a href="#ex2">At2</a><a href="#ex3">At3</a><a href="#ref">Referências</a></div></nav>
+<main class="cc">
+<section class="bl c--pk" id="crono">
+  <div class="bh"><span class="bn">CRONOGRAMA</span><h2 class="bt">Planejamento da Aula</h2></div>
+  <p class="btag">Distribuição sugerida dos 100 minutos entre os exercícios.</p>
+  <div class="tp"><table><thead><tr><th>Tempo</th><th>Exercício</th><th>Tipo</th><th>Dinâmica</th></tr></thead>
+  <tbody><tr><td>00-15</td><td>Retrospectiva: A evolução do Prompt ao SDD</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Turma</td></tr><tr><td>15-35</td><td>Atividade 1 — O que é Spec-Driven Development</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Professor + turma</td></tr><tr><td>35-65</td><td>Atividade 2 — Escrever uma spec.md real</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Individual/dupla</td></tr><tr><td>65-85</td><td>Atividade 3 — Ferramentas e Demo (Claude Code/Kiro)</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Professor</td></tr><tr><td>85-100</td><td>Encerramento — O futuro da engenharia de software com IA</td><td><span style="background:rgba(237,20,91,.1);color:#ED145B;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600">Obrigatório</span></td><td>Turma</td></tr></tbody></table></div>
+</section>
+
+<section class="bl c--cy" id="prep">
+  <div class="bh"><span class="bn">PREPARAÇÃO</span><h2 class="bt">Primeiros Passos</h2></div>
+  <div class="tp">
+    <h3>🎯 Objetivos da Aula</h3>
+    <p>1. Diferenciar Vibe Coding de Spec-Driven Development (SDD).<br>
+       2. Estruturar requisitos técnicos em formato spec.md.<br>
+       3. Compreender o ciclo de vida de desenvolvimento assistido por agentes.<br>
+       4. Avaliar ferramentas de mercado para SDD.<br>
+       5. Refletir sobre o papel do engenheiro de software em 2026.</p>
+  </div>
+  <div class="tp">
+    <h3>🛠️ Setup de Ferramentas</h3>
+    <p>Diferente das aulas anteriores, não usaremos notebooks. O foco é no fluxo de trabalho.</p>
+    <ul>
+      <li><strong>GitHub Spec Kit:</strong> Framework para gerenciar specs em repositórios.</li>
+      <li><strong>Claude Code:</strong> Agente CLI que opera sobre especificações persistentes.</li>
+      <li><strong>Kiro:</strong> IDE da AWS focada em spec-to-code.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="bl c--gn" id="ex1">
+  <div class="bh"><span class="bn">ATIVIDADE 01</span><h2 class="bt">O que é Spec-Driven Development</h2></div>
+  <p class="btag">Discussão guiada · ⭐⭐ Intermediário · 20 min</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Entender a transição do "vibe coding" (pedir e torcer) para o desenvolvimento guiado por especificações estruturadas e persistentes.</p></div>
+  
+  <div class="tp"><h3>📊 Comparação de Abordagens</h3>
+    <table><thead><tr><th>Dimensão</th><th>Vibe Coding</th><th>Prompt Engineering</th><th>SDD</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Estado</strong></td><td>Efêmero (chat)</td><td>Templates reutilizáveis</td><td>Persistente (spec.md)</td></tr>
+      <tr><td><strong>Escopo</strong></td><td>Vago / "Faz aí"</td><td>Instrução detalhada</td><td>Contrato de requisitos</td></tr>
+      <tr><td><strong>Verificação</strong></td><td>Visual / "Parece OK"</td><td>Unit tests manuais</td><td>Acceptance Criteria (AC)</td></tr>
+      <tr><td><strong>Escalabilidade</strong></td><td>Baixa (só o autor entende)</td><td>Média (bibliotecas de prompts)</td><td>Alta (documentação viva)</td></tr>
+    </tbody></table>
+  </div>
+
+  <div class="tp"><h3>📋 Passo a Passo</h3>
+    <div class="pp"><span class="s">1</span><span style="color:var(--t2);font-size:.9rem">Apresentar o conceito de <strong>SDD</strong> como a evolução do TDD (Test-Driven Development) para a era da IA.</span></div>
+    <div class="pp"><span class="s">2</span><span style="color:var(--t2);font-size:.9rem">Discutir o custo do retrabalho em agentes: prompts vagos geram código que "quase funciona", mas quebra a arquitetura.</span></div>
+    <div class="pp"><span class="s">3</span><span style="color:var(--t2);font-size:.9rem">Explicar o papel da <strong>Spec</strong> como a "fonte da verdade" que o agente consulta antes de cada edição.</span></div>
+  </div>
+
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4>
+    <p>1. Confundir SDD com documentação técnica tradicional (post-mortem).<br>
+       2. Achar que SDD elimina a necessidade de entender o código gerado.<br>
+       3. Tratar a spec como um prompt único e gigante (monolítico).<br>
+       4. Ignorar critérios de aceite técnicos (performance, segurança).<br>
+       5. Não atualizar a spec quando o requisito muda durante a implementação.</p>
+  </div>
+
+  <div class="cbox"><h4>🔗 Conexão com a Aula 01</h4><p>O <strong>System Prompt</strong> da Aula 01 evoluiu para a <strong>Spec</strong> da Aula 14. O que antes era uma instrução de comportamento agora é um contrato de funcionalidade.</p></div>
+</section>
+
+<section class="bl c--pu" id="ex2">
+  <div class="bh"><span class="bn">ATIVIDADE 02</span><h2 class="bt">Escrever uma spec.md real</h2></div>
+  <p class="btag">Mão na massa · ⭐⭐⭐ Avançado · 30 min</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Praticar a escrita de uma especificação técnica que um agente de IA consiga executar sem ambiguidades.</p></div>
+
+  <div class="tp"><h3>📄 Estrutura de uma spec.md</h3>
+    <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>spec.md · template</span></div><pre>
+# Feature: [Nome da Funcionalidade]
+
+## Contexto
+Por que estamos fazendo isso? Qual o problema resolve?
+
+## Requisitos
+- [ ] Requisito 1 (Funcional)
+- [ ] Requisito 2 (Técnico)
+
+## Critérios de Aceite (AC)
+1. Dado [cenário], quando [ação], então [resultado].
+2. O output deve seguir o schema [JSON/Pydantic].
+
+## Fora do Escopo
+O que o agente NÃO deve tocar ou implementar.</pre></div>
+  </div>
+
+  <div class="tp"><h3>📋 Saída Esperada</h3>
+    <div class="cb"><div class="ch"><div class="cd"><i></i><i></i><i></i></div><span>exemplo_final.md</span></div><pre>
+# Feature: Validador de CPF com RAG
+
+## Requisitos
+- Criar função `validar_cpf(cpf: str) -> bool`.
+- Consultar base RAG para verificar se o CPF está na lista de bloqueio.
+
+## Critérios de Aceite
+- CPFs inválidos matematicamente retornam False imediatamente.
+- CPFs na lista de bloqueio (via RAG) retornam False com log "Bloqueado".
+- Tempo de resposta < 200ms.</pre></div>
+  </div>
+
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4>
+    <p>1. Critérios de aceite subjetivos ("o sistema deve ser rápido").<br>
+       2. Falta de definição do que está "fora do escopo" (scope creep).<br>
+       3. Requisitos contraditórios na mesma spec.<br>
+       4. Omitir o formato de saída esperado (JSON, HTML, etc.).<br>
+       5. Não definir o estado inicial ou dependências da feature.</p>
+  </div>
+
+  <div class="cbox"><h4>🔗 Conexão com a Aula 04</h4><p>A <strong>Spec</strong> é a peça central da <strong>Context Engineering</strong>. Ela garante que o agente tenha a "altitude" correta de informação para agir.</p></div>
+</section>
+
+<section class="bl c--or" id="ex3">
+  <div class="bh"><span class="bn">ATIVIDADE 03</span><h2 class="bt">Ferramentas e Demo ao Vivo</h2></div>
+  <p class="btag">Demonstração · ⭐⭐ Intermediário · 20 min</p>
+  <div class="tp"><h3>🎯 Objetivo Pedagógico</h3><p>Visualizar o fluxo de trabalho real onde uma spec.md é consumida por um agente para gerar código, testes e documentação.</p></div>
+
+  <div class="tp"><h3>🛠️ Ecossistema SDD 2026</h3>
+    <ul>
+      <li><strong>GitHub Spec Kit:</strong> Automatiza a criação de PRs a partir de specs.</li>
+      <li><strong>Claude Code:</strong> O agente "lê" o arquivo de spec e propõe um plano de execução antes de escrever código.</li>
+      <li><strong>Kiro (AWS):</strong> Integração profunda com infraestrutura a partir de especificações de alto nível.</li>
+    </ul>
+  </div>
+
+  <div class="tp"><h3>📋 Ciclo de Vida SDD</h3>
+    <div class="pp"><span class="s">1</span><span><strong>Spec:</strong> Humano define o contrato no <code>spec.md</code>.</span></div>
+    <div class="pp"><span class="s">2</span><span><strong>Plan:</strong> Agente propõe os passos técnicos (arquivos a criar/editar).</span></div>
+    <div class="pp"><span class="s">3</span><span><strong>Execute:</strong> Agente escreve o código e os testes.</span></div>
+    <div class="pp"><span class="s">4</span><span><strong>Verify:</strong> Agente roda os testes contra os Critérios de Aceite.</span></div>
+    <div class="pp"><span class="s">5</span><span><strong>Review:</strong> Humano revisa o diff final.</span></div>
+  </div>
+
+  <div class="wbox"><h4>⚠️ Erros Comuns</h4>
+    <p>1. Tentar usar ferramentas de SDD sem uma spec escrita (vibe coding disfarçado).<br>
+       2. Ignorar os logs de execução do agente (black box syndrome).<br>
+       3. Não revisar o diff gerado contra a spec original.<br>
+       4. Achar que o agente resolve conflitos de arquitetura sem orientação.<br>
+       5. Subestimar o tempo de revisão humana no ciclo SDD.</p>
+  </div>
+
+  <div class="cbox"><h4>🔗 Conexão com a Aula 10</h4><p>As <strong>Tools</strong> definidas na Aula 10 são os "braços" que o agente usa para executar a <strong>Spec</strong> da Aula 14.</p></div>
+</section>
+
+<section class="bl c--bl" id="ref">
+  <div class="bh"><span class="bn">REFERÊNCIAS</span><h2 class="bt">Estudo Complementar</h2></div>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">DOC</span><br><strong>promptingguide.ai</strong><br>Guia completo sobre Spec-driven development e workflows de agentes.</div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">DOC</span><br><strong>anthropic.com/engineering</strong><br>Blog técnico sobre Context Engineering e o uso de specs em produção.</div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">DOC</span><br><strong>github.com/features/copilot</strong><br>Documentação oficial sobre workflows guiados por especificações.</div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">DOC</span><br><strong>modelcontextprotocol.io</strong><br>MCP como padrão para definir capacidades de ferramentas em specs.</div>
+    <div class="ref-item"><span class="ref-tag ref-tag-paper">PAPER</span><br><strong>Vaswani et al. (2017)</strong><br>"Attention Is All You Need" — A base de todo o raciocínio de LLMs.</div>
+    <div class="ref-item"><span class="ref-tag ref-tag-paper">PAPER</span><br><strong>Yao et al. (2022)</strong><br>"ReAct: Synergizing Reasoning and Acting in LLMs" — O motor dos agentes.</div>
+  </div>
+</section>
+</main>
+<footer class="ft"><p>FIAP · Prompt Engineering and Artificial Intelligence · 2026 · 2º Semestre</p><p>Prof. Jorge Luiz Gomes · Todos os direitos reservados</p></footer>
+</body>
+</html>

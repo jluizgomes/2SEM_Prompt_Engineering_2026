@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 10 — Context Engineering para Agentes: Curadoria em Loop Agêntico · Fichas de Exercícios</title>
+<style>
+  :root {
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --code: #1e293b;
+    --code-text: #e2e8f0;
+    --accent: #c084fc;
+    --ag: #f472b6;
+    --ct: #1e293b;
+    --mt: #64748b;
+    --bd: #e2e4ec;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --orange: #f97316;
+    --cyan: #06b6d4;
+    --teal: #14b8a6;
+    --blue: #3b82f6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--ct); line-height: 1.6; }
+  .hero { background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 60px 24px 48px; text-align: center; }
+  .hero h1 { font-size: 2.2em; margin-bottom: 8px; font-weight: 700; }
+  .hero p { font-size: 1.1em; opacity: 0.85; margin-bottom: 4px; }
+  .hero .tag { display: inline-block; background: var(--ag); color: white; padding: 4px 14px; border-radius: 20px; font-size: 0.85em; margin-top: 12px; }
+  .toc { position: sticky; top: 0; background: var(--card); border-bottom: 2px solid var(--bd); padding: 12px 24px; z-index: 100; overflow-x: auto; white-space: nowrap; }
+  .toc a { display: inline-block; padding: 6px 14px; margin: 0 2px; border-radius: 6px; font-size: 0.82em; font-weight: 500; color: var(--mt); text-decoration: none; transition: all 0.2s; }
+  .toc a:hover { background: var(--bg); color: var(--ct); }
+  .toc a.s { background: var(--purple); color: white; }
+  .container { max-width: 920px; margin: 0 auto; padding: 24px 20px 60px; }
+  .section { background: var(--card); border-radius: 16px; padding: 32px; margin-bottom: 24px; border: 1px solid var(--bd); }
+  .section h2 { font-size: 1.5em; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .section h3 { font-size: 1.15em; margin: 20px 0 12px; color: var(--ct); font-weight: 600; }
+  .pp { display: inline-flex; align-items: center; gap: 8px; background: var(--bg); padding: 6px 16px; border-radius: 8px; font-weight: 600; margin-bottom: 12px; font-size: 0.95em; }
+  .pp .s { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--purple); color: white; font-size: 0.8em; font-weight: 700; }
+  .tp { background: var(--bg); border-radius: 12px; padding: 20px; margin: 16px 0; border-left: 4px solid var(--purple); }
+  .cbox { background: #f0abfc22; border-left: 4px solid var(--purple); padding: 16px 20px; border-radius: 8px; margin: 16px 0; }
+  .cbox strong { color: var(--purple); }
+  .wbox { background: #fed7aa44; border-left: 4px solid var(--orange); padding: 16px 20px; border-radius: 8px; margin: 16px 0; }
+  .wbox strong { color: var(--orange); }
+  .tbox { background: #99f6e422; border-left: 4px solid var(--teal); padding: 16px 20px; border-radius: 8px; margin: 16px 0; }
+  .tbox strong { color: var(--teal); }
+  .cb { background: var(--code); color: var(--code-text); padding: 20px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; line-height: 1.65; overflow-x: auto; margin: 12px 0; white-space: pre; }
+  .cb .kw { color: #c678dd; }
+  .cb .fn { color: #61afef; }
+  .cb .st { color: #98c379; }
+  .cb .cm { color: #5c6370; font-style: italic; }
+  .cb .nb { color: #e5c07b; }
+  .cb .nu { color: #d19a66; }
+  .cb .op { color: #56b6c2; }
+  .cb .tx { color: #e2e8f0; }
+  .cb .hl { background: #61afef22; display: inline; }
+  .cb .hl2 { background: #22c55e22; display: inline; }
+  .cb .hl3 { background: #ef444422; display: inline; }
+  .err { background: #1e293b; color: #ef4444; padding: 20px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; line-height: 1.6; margin: 12px 0; white-space: pre; border: 1px solid #ef444433; }
+  .out { background: #0f172a; color: #98c379; padding: 20px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; line-height: 1.6; margin: 12px 0; white-space: pre; border: 1px solid #22c55e33; }
+  .out strong { color: #e5c07b; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th, td { padding: 10px 14px; border: 1px solid var(--bd); text-align: left; font-size: 0.92em; }
+  th { background: var(--bg); font-weight: 600; }
+  ul, ol { padding-left: 24px; margin: 8px 0; }
+  li { margin: 6px 0; font-size: 0.95em; }
+  .footer { text-align: center; padding: 32px 24px; color: var(--mt); font-size: 0.85em; }
+  .footer strong { color: var(--ct); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Aula 10 — Context Engineering para Agentes</h1>
+  <p>Curadoria de Contexto em Loop Agêntico</p>
+  <p style="font-size:0.9em; opacity:0.75;">Professor Jorge Luiz Gomes · FIAP · Prompt Engineering and AI · 2026</p>
+  <span class="tag">Fichas de Exercícios — Guia do Professor</span>
+</div>
+
+<nav class="toc">
+  <a href="#cronograma" class="s">Cronograma</a>
+  <a href="#preparacao">Preparação</a>
+  <a href="#ex1">Ex1</a>
+  <a href="#ex2">Ex2</a>
+  <a href="#ex3">Ex3</a>
+  <a href="#erros">Erros</a>
+  <a href="#referencias">Referências</a>
+</nav>
+
+<div class="container">
+
+<!-- ============================== CRONOGRAMA ============================== -->
+<div class="section" id="cronograma">
+  <h2>📋 Cronograma da Aula</h2>
+  <p style="margin-bottom:12px;">3 blocos de exercício. Cada bloco: <strong>5 min revisão → 10 min codificação → 5 min discussão</strong>. Total ≈ 60 minutos.</p>
+  <table>
+    <tr><th>Bloco</th><th>Tema</th><th>Tempo</th><th>Entregável</th></tr>
+    <tr><td>Ex 1</td><td>Compressão de contexto com trim_messages</td><td>20 min</td><td>Agente que mantém só o essencial do histórico</td></tr>
+    <tr><td>Ex 2</td><td>Seleção seletiva de memória</td><td>20 min</td><td>Agente com MemorySaver + filtro por namespace</td></tr>
+    <tr><td>Ex 3</td><td>Integrando ferramentas MCP</td><td>20 min</td><td>Agente com tools e MCP simulado</td></tr>
+  </table>
+</div>
+
+<!-- ============================== PREPARAÇÃO ============================== -->
+<div class="section" id="preparacao">
+  <h2>🔧 Preparação do Ambiente</h2>
+
+  <div class="pp"><span class="s">★</span> Primeiros Passos</div>
+  <p>Antes de qualquer exercício, garanta que todos os alunos tenham o ambiente funcionando. Copie e execute cada bloco no terminal/Colab.</p>
+
+  <h3>1. Instale as dependências</h3>
+  <div class="cb"><span class="cm"># Instale tudo de uma vez (executar no terminal ou Colab)</span>
+pip install langchain langchain-community langchain-ollama langgraph
+
+<span class="cm"># Se quiser usar DuckDuckGo como ferramenta:</span>
+pip install duckduckgo-search</div>
+
+  <h3>2. Verifique a conexão com o Ollama</h3>
+  <div class="cb"><span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+
+<span class="cm"># Teste se o modelo responde</span>
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+resp = llm.<span class="fn">invoke</span>(<span class="st">"Diga apenas: OK"</span>)
+<span class="fn">print</span>(resp.content)</div>
+  <div class="out"><strong>→ Saída esperada:</strong>  OK</div>
+
+  <h3>3. Teste o token_counter isoladamente</h3>
+  <div class="cb"><span class="cm"># O trim_messages usa uma função que conta tokens.</span>
+<span class="cm"># Primeiro, entenda como funciona:</span>
+
+<span class="kw">def</span> <span class="fn">contar_tokens</span>(text: <span class="nb">str</span>) -> <span class="nb">int</span>:
+    <span class="st">"""Conta tokens usando o método do modelo."""</span>
+    <span class="kw">return</span> llm.<span class="fn">get_num_tokens</span>(text)
+
+exemplo = <span class="st">"Olá, tudo bem?"</span>
+<span class="fn">print</span>(<span class="st">f"Texto: </span>{exemplo}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"Tokens: </span>{contar_tokens(exemplo)}<span class="st">"</span>)</div>
+  <div class="out"><strong>→ Saída esperada:</strong>  Texto: Olá, tudo bem?
+Tokens: 6</div>
+
+  <h3>4. Teste o duckduckgo isoladamente</h3>
+  <div class="cb"><span class="kw">from</span> langchain_community.tools <span class="kw">import</span> DuckDuckGoSearchRun
+
+tool_busca = DuckDuckGoSearchRun()
+resultado = tool_busca.<span class="fn">invoke</span>(<span class="st">" FIAP curso engenharia de software"</span>)
+<span class="fn">print</span>(resultado[:<span class="nu">200</span>])  <span class="cm"># Mostra só os 200 primeiros caracteres</span></div>
+  <div class="out"><strong>→ Saída esperada:</strong>  Resultado da busca sobre FIAP (texto com links e resumos)</div>
+
+  <div class="tbox">
+    <strong>✅ Checkpoint:</strong> Se todos os 4 blocos funcionaram, o ambiente está pronto. Se algum falhou, verifique a seção "Erros Comuns" no final desta ficha.
+  </div>
+</div>
+
+<!-- ============================== EXERCÍCIO 1 ============================== -->
+<div class="section" id="ex1">
+  <h2>📝 Exercício 1 — Compressão de Contexto com trim_messages</h2>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar o código</div>
+  <p>O <code>trim_messages</code> descarta automaticamente mensagens antigas quando o histórico fica grande demais. Copie o código abaixo, execute, e observe o que acontece.</p>
+
+  <h3>Código completo — copie, cole e execute</h3>
+  <div class="cb"><span class="cm"># ——— EXERCÍCIO 1: Compressão de Contexto ———</span>
+<span class="cm"># trim_messages remove mensagens antigas quando o</span>
+<span class="cm"># histórico ultrapassa um limite de tokens.</span>
+
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> HumanMessage, AIMessage
+<span class="kw">from</span> langchain_core.messages.utils <span class="kw">import</span> trim_messages
+
+<span class="cm"># 1) Criar o modelo</span>
+llm = <span class="fn">ChatOllama</span>(
+    model=<span class="st">"gpt-oss:120b"</span>,
+    base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>
+)
+
+<span class="cm"># 2) Função que conta tokens usando o próprio modelo</span>
+<span class="kw">def</span> <span class="fn">token_counter</span>(msgs):
+    <span class="kw">return</span> llm.<span class="fn">get_num_tokens</span>(msgs)
+
+<span class="cm"># 3) Criar um histórico longo (simula conversa antiga)</span>
+historico = [
+    HumanMessage(<span class="st">"Qual é a capital do Brasil?"</span>),
+    AIMessage(<span class="st">"A capital do Brasil é Brasília."</span>),
+    HumanMessage(<span class="st">"E quantos habitantes tem?"</span>),
+    AIMessage(<span class="st">"Brasília tem cerca de 3 milhões de habitantes."</span>),
+    HumanMessage(<span class="st">"Quando foi inaugurada?"</span>),
+    AIMessage(<span class="st">"Brasília foi inaugurada em 21 de abril de 1960."</span>),
+    HumanMessage(<span class="st">"Quem projetou a cidade?"</span>),
+    AIMessage(<span class="st">"Lúcio Costa projetou o plano urbanístico e Oscar Niemeyer as edificações."</span>),
+    HumanMessage(<span class="st">"Qual é a mensagem mais importante desta conversa?"</span>),
+]
+
+<span class="cm"># 4) Ver o tamanho ANTES do trim</span>
+tokens_antes = <span class="fn">token_counter</span>(historico)
+<span class="fn">print</span>(<span class="st">f"📊 Total de tokens ANTES do trim: </span>{tokens_antes}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"📄 Total de mensagens: </span>{<span class="fn">len</span>(historico)}<span class="st">"</span>)
+
+<span class="cm"># 5) Aplicar trim: manter no máximo 50 tokens</span>
+historico_recortado = <span class="fn">trim_messages</span>(
+    historico,
+    max_tokens=<span class="nu">50</span>,
+    token_counter=token_counter,
+    strategy=<span class="st">"last"</span>,         <span class="cm"># manter as ÚLTIMAS mensagens</span>
+    start_on=<span class="st">"human"</span>,         <span class="cm"># começar sempre com mensagem humana</span>
+)
+
+<span class="cm"># 6) Ver o tamanho DEPOIS do trim</span>
+tokens_depois = <span class="fn">token_counter</span>(historico_recortado)
+<span class="fn">print</span>(<span class="st">f"📊 Total de tokens DEPOIS do trim: </span>{tokens_depois}<span class="st">"</span>)
+<span class="fn">print</span>(<span class="st">f"📄 Mensagens restantes: </span>{<span class="fn">len</span>(historico_recortado)}<span class="st">"</span>)
+
+<span class="cm"># 7) Ver quais mensagens sobraram</span>
+<span class="fn">print</span>(<span class="st">"\n🔍 Mensagens que sobraram:"</span>)
+<span class="kw">for</span> msg <span class="kw">in</span> historico_recortado:
+    tipo = <span class="st">"🧑"</span> <span class="kw">if</span> <span class="fn">isinstance</span>(msg, HumanMessage) <span class="kw">else</span> <span class="st">"🤖"</span>
+    <span class="fn">print</span>(<span class="st">f"  </span>{tipo}<span class="st"> </span>{msg.content[:<span class="nu">60</span>]}<span class="st">"</span>)</div>
+
+  <div class="out"><strong>→ Saída esperada:</strong>
+📊 Total de tokens ANTES do trim: 89
+📄 Total de mensagens: 9
+📊 Total de tokens DEPOIS do trim: 47
+📄 Mensagens restantes: 3
+
+🔍 Mensagens que sobraram:
+  🧑 Qual é a mensagem mais importante desta conversa?
+  🤖 Brasília foi inaugurada em 21 de abril de 1960.
+  🧑 Qual é a mensagem mais importante desta conversa?</div>
+
+  <div class="cbox">
+    <strong>💡 O que aconteceu?</strong><br>
+    O trim removeu as mensagens mais antigas (capital, habitantes, projetista) e manteve só as 3 últimas, que cabem em 50 tokens. Se o agente tiver uma conversa longa com o usuário, ele só "lembra" das partes recentes.
+  </div>
+
+  <div class="pp"><span class="s">2</span> Modifique e observe</div>
+  <p><strong>Desafio rápido:</strong> Mude <code>max_tokens=50</code> para <code>max_tokens=100</code> e execute de novo. Quantas mensagens sobram agora?</p>
+  <p><strong>Resposta esperada:</strong> Com 100 tokens, sobram ~6 mensagens em vez de 3. O trim é proporcional ao limite que você define.</p>
+
+  <div class="pp"><span class="s">3</span> Entenda o padrão</div>
+  <p>O <code>trim_messages</code> é como um "recortador de histórico":</p>
+  <ul>
+    <li><strong>strategy="last"</strong> → mantém as mensagens mais recentes (descarta as antigas)</li>
+    <li><strong>strategy="first"</strong> → mantém as mensagens mais antigas (descarta as recentes)</li>
+    <li><strong>start_on="human"</strong> → garante que a primeira mensagem é do humano (evita respostas sem pergunta)</li>
+  </ul>
+  <p>Em agentes reais, isso evita que o contexto fique gigante e o modelo gaste tokens com conversa antiga irrelevante.</p>
+</div>
+
+<!-- ============================== EXERCÍCIO 2 ============================== -->
+<div class="section" id="ex2">
+  <h2>📝 Exercício 2 — Seleção Seletiva de Memória</h2>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar o código</div>
+  <p>Este exercício cria um agente com <code>MemorySaver</code> que mantém memória por sessão, mas permite filtrar o que o agente "lembra".</p>
+
+  <h3>Código completo — copie, cole e execute</h3>
+  <div class="cb"><span class="cm"># ——— EXERCÍCIO 2: Memória Seletiva ———</span>
+<span class="cm"># MemorySaver armazena o histórico por thread_id.</span>
+<span class="cm"># Aqui criamos 2 threads para mostrar como o agente</span>
+<span class="cm"># separa conversas de usuários diferentes.</span>
+
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> HumanMessage, AIMessage
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, MessagesState, START, END
+<span class="kw">from</span> langgraph.checkpoint.memory <span class="kw">import</span> MemorySaver
+
+<span class="cm"># 1) Criar o modelo</span>
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+
+<span class="cm"># 2) Criar o agente (nó que chama o LLM)</span>
+<span class="kw">def</span> <span class="fn">agente</span>(state: MessagesState):
+    resposta = llm.<span class="fn">invoke</span>(state[<span class="st">"messages"</span>])
+    <span class="kw">return</span> {<span class="st">"messages"</span>: [resposta]}
+
+<span class="cm"># 3) Montar o grafo</span>
+grafo = <span class="fn">StateGraph</span>(MessagesState)
+grafo.<span class="fn">add_node</span>(<span class="st">"agente"</span>, agente)
+grafo.<span class="fn">add_edge</span>(START, <span class="st">"agente"</span>)
+grafo.<span class="fn">add_edge</span>(<span class="st">"agente"</span>, END)
+
+<span class="cm"># 4) Adicionar memória</span>
+memoria = <span class="fn">MemorySaver</span>()
+app = grafo.<span class="fn">compile</span>(checkpointer=memoria)
+
+<span class="cm"># ——— SIMULAÇÃO: 2 usuários diferentes ———</span>
+
+<span class="cm"># Usuário 1: pergunta sobre Python</span>
+<span class="fn">print</span>(<span class="st">"═══ USUÁRIO 1 ═══"</span>)
+config1 = {<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: <span class="st">"usuario-1"</span>}}
+
+resp1 = app.<span class="fn">invoke</span>(
+    {<span class="st">"messages"</span>: [HumanMessage(<span class="st">"Meu nome é Alice e estudo Python."</span>)]},
+    config=config1
+)
+<span class="fn">print</span>(<span class="st">f"  Alice: </span>{resp1[<span class="st">'messages'</span>][-<span class="nu">1</span>].content[:<span class="nu">100</span>]}<span class="st">"</span>)
+
+resp2 = app.<span class="fn">invoke</span>(
+    {<span class="st">"messages"</span>: [HumanMessage(<span class="st">"Qual a minha linguagem favorita?"</span>)]},
+    config=config1
+)
+<span class="fn">print</span>(<span class="st">f"  Alice: </span>{resp2[<span class="st">'messages'</span>][-<span class="nu">1</span>].content[:<span class="nu">100</span>]}<span class="st">"</span>)
+
+<span class="cm"># Usuário 2: pergunta diferente (sessão separada)</span>
+<span class="fn">print</span>(<span class="st">"\n═══ USUÁRIO 2 ═══"</span>)
+config2 = {<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: <span class="st">"usuario-2"</span>}}
+
+resp3 = app.<span class="fn">invoke</span>(
+    {<span class="st">"messages"</span>: [HumanMessage(<span class="st">"Meu nome é Bob e estudo Java."</span>)]},
+    config=config2
+)
+<span class="fn">print</span>(<span class="st">f"  Bob: </span>{resp3[<span class="st">'messages'</span>][-<span class="nu">1</span>].content[:<span class="nu">100</span>]}<span class="st">"</span>)
+
+<span class="cm"># Bob pergunta pela Alice — NÃO deve saber!</span>
+resp4 = app.<span class="fn">invoke</span>(
+    {<span class="st">"messages"</span>: [HumanMessage(<span class="st">"Qual o nome da pessoa que estuda Python?"</span>)]},
+    config=config2
+)
+<span class="fn">print</span>(<span class="st">f"  Bob: </span>{resp4[<span class="st">'messages'</span>][-<span class="nu">1</span>].content[:<span class="nu">100</span>]}<span class="st">"</span>)
+
+<span class="cm"># Verificar: Alice ainda está na memória dela?</span>
+<span class="fn">print</span>(<span class="st">"\n═══ VERIFICAÇÃO ═══"</span>)
+hist_alice = app.<span class="fn">get_state</span>(config1)
+<span class="fn">print</span>(<span class="st">f"  Alice tem </span>{<span class="fn">len</span>(hist_alice.values[<span class="st">'messages'</span>])}<span class="st"> msgs na memória"</span>)
+hist_bob = app.<span class="fn">get_state</span>(config2)
+<span class="fn">print</span>(<span class="st">f"  Bob tem </span>{<span class="fn">len</span>(hist_bob.values[<span class="st">'messages'</span>])}<span class="st"> msgs na memória"</span>)</div>
+
+  <div class="out"><strong>→ Saída esperada:</strong>
+═══ USUÁRIO 1 ═══
+  Alice: Oi Alice! Python é uma ótima linguagem...
+  Alice: Sua linguagem favorita é Python! 🐍
+
+═══ USUÁRIO 2 ═══
+  Bob: Oi Bob! Java é uma linguagem muito usada...
+  Bob: Não tenho informações sobre quem estuda Python...
+
+═══ VERIFICAÇÃO ═══
+  Alice tem 4 msgs na memória
+  Bob tem 4 msgs na memória</div>
+
+  <div class="cbox">
+    <strong>💡 O que aconteceu?</strong><br>
+    Cada <code>thread_id</code> é uma "caixinha" separada. O Bob não consegue ver o que a Alice disse, porque estão em threads diferentes. O <code>MemorySaver</code> isola a memória por <code>thread_id</code>.
+  </div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <p>O padrão de memória em agentes LangGraph funciona assim:</p>
+  <table>
+    <tr><th>Componente</th><th>O que faz</th><th>Exemplo</th></tr>
+    <tr><td><code>MemorySaver</code></td><td>Armazena histórico na RAM</td><td>Sessões de chat</td></tr>
+    <tr><td><code>thread_id</code></td><td>Identifica cada sessão</td><td>Um id por usuário</td></tr>
+    <tr><td><code>get_state()</code></td><td>Mostra o estado atual da thread</td><td>Verificar memória</td></tr>
+  </table>
+
+  <div class="pp"><span class="s">3</span> Desafio rápido</div>
+  <p>Adicione uma terceira thread (<code>thread_id="usuario-3"</code>) e faça o usuário 3 perguntar algo sobre Alice. O que acontece?</p>
+</div>
+
+<!-- ============================== EXERCÍCIO 3 ============================== -->
+<div class="section" id="ex3">
+  <h2>📝 Exercício 3 — Ferramentas MCP (Simulado)</h2>
+
+  <div class="pp"><span class="s">1</span> Copiar e executar o código</div>
+  <p>O MCP (Model Context Protocol) permite conectar ferramentas externas. Neste exercício, simulamos ferramentas MCP usando funções simples.</p>
+
+  <h3>Código completo — copie, cole e execute</h3>
+  <div class="cb"><span class="cm"># ——— EXERCÍCIO 3: Ferramentas MCP (Simulado) ———</span>
+<span class="cm"># MCP é um protocolo para conectar LLMs a ferramentas externas.</span>
+<span class="cm"># Aqui simulamos o conceito com funções Python simples.</span>
+
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> HumanMessage
+<span class="kw">from</span> langchain_core.tools <span class="kw">import</span> tool
+<span class="kw">from</span> langgraph.prebuilt <span class="kw">import</span> create_react_agent
+
+<span class="cm"># 1) Criar o modelo</span>
+llm = <span class="fn">ChatOllama</span>(model=<span class="st">"gpt-oss:120b"</span>, base_url=<span class="st">"https://ollama.com.brcloud.com.br/v1"</span>)
+
+<span class="cm"># 2) Criar ferramentas simuladas (como se fossem MCP servers)</span>
+<span class="cm"># Em produção, essas viriam de servidores MCP reais</span>
+
+<span class="kw">@tool</span>
+<span class="kw">def</span> <span class="fn">buscar_clima</span>(cidade: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    <span class="st">"""Busca o clima atual de uma cidade (simulado)."""</span>
+    <span class="cm"># Simulação: em produção, chamaria API real</span>
+    dados = {
+        <span class="st">"São Paulo"</span>: <span class="st">"28°C, parcialmente nublado"</span>,
+        <span class="st">"Rio de Janeiro"</span>: <span class="st">"32°C, ensolarado"</span>,
+        <span class="st">"Curitiba"</span>: <span class="st">"18°C, chuvoso"</span>,
+    }
+    <span class="kw">return</span> dados.<span class="fn">get</span>(cidade, <span class="st">f"Clima não disponível para </span>{cidade}<span class="st">"</span>)
+
+<span class="kw">@tool</span>
+<span class="kw">def</span> <span class="fn">contar_palavras</span>(texto: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    <span class="st">"""Conta palavras, caracteres e frases de um texto."""</span>
+    palavras = <span class="fn">len</span>(texto.<span class="fn">split</span>())
+    chars = <span class="fn">len</span>(texto)
+    frases = texto.<span class="fn">count</span>(<span class="st">"."</span>) + texto.<span class="fn">count</span>(<span class="st">"!"</span>) + texto.<span class="fn">count</span>(<span class="st">"?"</span>)
+    <span class="kw">return</span> <span class="st">f"Palavras: </span>{palavras}<span class="st">, Caracteres: </span>{chars}<span class="st">, Frases: </span>{frases}<span class="st">"</span>
+
+<span class="kw">@tool</span>
+<span class="kw">def</span> <span class="fn">calcular</span>(expressao: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    <span class="st">"""Calcula uma expressão matemática básica."""</span>
+    <span class="kw">try</span>:
+        resultado = <span class="fn">eval</span>(expressao)
+        <span class="kw">return</span> <span class="st">f"Resultado: </span>{resultado}<span class="st">"</span>
+    <span class="kw">except</span> <span class="nb">Exception</span> <span class="kw">as</span> e:
+        <span class="kw">return</span> <span class="st">f"Erro: </span>{e}<span class="st">"</span>
+
+<span class="cm"># 3) Listar as ferramentas disponíveis</span>
+<span class="fn">print</span>(<span class="st">"🔧 Ferramentas MCP disponíveis:"</span>)
+ferramentas = [buscar_clima, contar_palavras, calcular]
+<span class="kw">for</span> f <span class="kw">in</span> ferramentas:
+    <span class="fn">print</span>(<span class="st">f"  • </span>{f.name}<span class="st">: </span>{f.description}<span class="st">"</span>)
+
+<span class="cm"># 4) Criar o agente com as ferramentas</span>
+agente = <span class="fn">create_react_agent</span>(llm, ferramentas)
+
+<span class="cm"># 5) Fazer perguntas que usam diferentes ferramentas</span>
+perguntas = [
+    <span class="st">"Como está o clima em Curitiba?"</span>,
+    <span class="st">"Conta as palavras desta frase: O gato pulou o muro"</span>,
+    <span class="st">"Quanto é 15 * 7 + 3?"</span>,
+]
+
+<span class="kw">for</span> p <span class="kw">in</span> perguntas:
+    <span class="fn">print</span>(<span class="st">f"\n🧑 Pergunta: </span>{p}<span class="st">"</span>)
+    resultado = agente.<span class="fn">invoke</span>({<span class="st">"messages"</span>: [HumanMessage(p)]})
+    <span class="fn">print</span>(<span class="st">f"🤖 Resposta: </span>{resultado[<span class="st">'messages'</span>][-<span class="nu">1</span>].content[:<span class="nu">150</span>]}<span class="st">"</span>)</div>
+
+  <div class="out"><strong>→ Saída esperada:</strong>
+🔧 Ferramentas MCP disponíveis:
+  • buscar_clima: Busca o clima atual de uma cidade (simulado).
+  • contar_palavras: Conta palavras, caracteres e frases de um texto.
+  • calcular: Calcula uma expressão matemática básica.
+
+🧑 Pergunta: Como está o clima em Curitiba?
+🤖 Resposta: Em Curitiba o clima está 18°C, chuvoso.
+
+🧑 Pergunta: Conta as palavras desta frase: O gato pulou o muro
+🤖 Resposta: Palavras: 6, Caracteres: 31, Frases: 1
+
+🧑 Pergunta: Quanto é 15 * 7 + 3?
+🤖 Resposta: Resultado: 108</div>
+
+  <div class="cbox">
+    <strong>💡 O que aconteceu?</strong><br>
+    O agente recebeu a pergunta, analisou qual ferramenta usar, chamou a função correta, e retornou a resposta. Isso é o <strong>ciclo agêntico</strong>: pergunta → decisão → ação → resultado → resposta.
+  </div>
+
+  <div class="pp"><span class="s">2</span> Entenda o padrão</div>
+  <p>O <code>create_react_agent</code> do LangGraph implementa o padrão ReAct:</p>
+  <ul>
+    <li><strong>Reason</strong> (raciocínio): O modelo decide qual ferramenta usar</li>
+    <li><strong>Act</strong> (ação): Executa a ferramenta escolhida</li>
+    <li><strong>Observe</strong> (observação): Analisa o resultado</li>
+    <li><strong>Repete</strong> até ter a resposta final</li>
+  </ul>
+  <p>Em produção, as ferramentas seriam servidores MCP reais (banco de dados, APIs, etc.), não funções simuladas.</p>
+</div>
+
+<!-- ============================== ERROS COMUNS ============================== -->
+<div class="section" id="erros">
+  <h2>🚨 Erros Comuns e Soluções</h2>
+
+  <h3>Erro 1: <code>ModuleNotFoundError: No module named 'langchain'</code></h3>
+  <div class="err">ModuleNotFoundError: No module named 'langchain'</div>
+  <p><strong>Causa:</strong> LangChain não está instalado.</p>
+  <p><strong>Solução:</strong></p>
+  <div class="cb">pip install langchain langchain-community langchain-ollama langgraph</div>
+
+  <h3>Erro 2: <code>ConnectError: [Errno 111] Connection refused</code></h3>
+  <div class="err">ConnectError: [Errno 111] Connection refused</div>
+  <p><strong>Causa:</strong> O servidor Ollama não está rodando.</p>
+  <p><strong>Solução:</strong> Verifique se o Ollama está ativo com <code>ollama list</code>. Se não estiver, inicie com <code>ollama serve</code>.</p>
+
+  <h3>Erro 3: <code>openai.NotFoundError: 404 model not found</code></h3>
+  <div class="err">NotFoundError: 404 - {"error":{"code":"404","message":"Requested : gpt-oss:120b not found"}}</div>
+  <p><strong>Causa:</strong> Nome do modelo incorreto ou modelo não baixado.</p>
+  <p><strong>Solução:</strong> Verifique com <code>ollama list</code> quais modelos estão disponíveis. Use exatamente o nome que aparece.</p>
+
+  <h3>Erro 4: <code>NameError: name 'tool' is not defined</code></h3>
+  <div class="err">NameError: name 'tool' is not defined</div>
+  <p><strong>Causa:</strong> Esqueceu de importar <code>tool</code> do LangChain.</p>
+  <p><strong>Solução:</strong> Adicione <code>from langchain_core.tools import tool</code> no topo do arquivo.</p>
+
+  <h3>Erro 5: Agente não usa a ferramenta (responde sem chamar tool)</h3>
+  <p><strong>Causa:</strong> A descrição da tool não é clara o suficiente, ou o modelo não "entende" quando usar.</p>
+  <p><strong>Solução:</strong> Melhore o docstring da função. Seja específico: "Use quando o usuário perguntar sobre clima" em vez de "Busca dados".</p>
+
+  <h3>Erro 6: <code>RecursionError</code> no grafo</h3>
+  <div class="err">RecursionError: maximum recursion depth exceeded</div>
+  <p><strong>Causa:</strong> Ciclo infinito no grafo (ex: nó aponta para si mesmo sem condição de parada).</p>
+  <p><strong>Solução:</strong> Verifique se há <code>add_edge</code> criando ciclos sem <code>add_conditional_edges</code> para sair.</p>
+</div>
+
+<!-- ============================== REFERÊNCIAS ============================== -->
+<div class="section" id="referencias">
+  <h2>📚 Referências</h2>
+  <table>
+    <tr><th>Tipo</th><th>Referência</th><th>Link</th></tr>
+    <tr><td>📖 Livro</td><td>Chollet, F. — <em>Deep Learning com Python</em> (cap. sobre APIs e agentes)</td><td>—</td></tr>
+    <tr><td>📄 Paper</td><td>Yao et al. — "ReAct: Synergizing Reasoning and Acting in Language Models"</td><td>arxiv.org/abs/2210.03629</td></tr>
+    <tr><td>📄 Paper</td><td>Wei et al. — "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"</td><td>arxiv.org/abs/2201.11903</td></tr>
+    <tr><td>🌐 Doc</td><td>LangChain — Memory & LangGraph State</td><td>python.langchain.com/docs</td></tr>
+    <tr><td>🌐 Doc</td><td>LangGraph — Checkpointing & MemorySaver</td><td>langchain-ai.github.io/langgraph</td></tr>
+    <tr><td>🌐 Doc</td><td>Model Context Protocol (MCP) — Especificação</td><td>modelcontextprotocol.io</td></tr>
+  </table>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  <p><strong>Fichas de Exercícios</strong> — Professor Jorge Luiz Gomes · profjorge.gomes@fiap.com.br</p>
+  <p>Prompt Engineering and AI · FIAP · 2026</p>
+</div>
+
+</body>
+</html>

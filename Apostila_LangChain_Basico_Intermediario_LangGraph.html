@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Apostila de LangChain — Básico, Intermediário e LangGraph | FIAP 2026</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+  --bg:#f5f6fa;--surface:#fff;--surface2:#f0f1f5;--border:#e2e4ec;--pink:#ED145B;--text:#1a1b2f;--muted:#4e4e68;
+  --green:#16a34a;--blue:#2563eb;--purple:#7c3aed;--orange:#ca8a04;--cyan:#0891b2;--code-bg:#1e293b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;display:flex}
+
+/* ══════ SIDEBAR ══════ */
+#sidebar{width:280px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:24px 0 60px}
+.sb-brand{padding:0 22px 18px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sb-brand-logo{font-weight:900;font-size:20px;color:var(--pink);letter-spacing:-.5px}
+.sb-brand-sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.sb-part{padding:14px 22px 6px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--pink)}
+.sb-link{display:block;padding:6px 22px;font-size:13px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;transition:.15s}
+.sb-link:hover{color:var(--text);background:var(--surface2)}
+.sb-link.lvl2{padding-left:36px;font-size:12.5px}
+#sidebar::-webkit-scrollbar{width:6px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ══════ MAIN ══════ */
+#main{flex:1;min-width:0}
+.hero,.part-divider,section,footer{max-width:1100px;margin:0 auto}
+a{color:var(--pink)}
+
+.hero{background:linear-gradient(135deg,#f5f6fa 0%,#fce7f3 40%,#eff6ff 100%);padding:70px 60px 50px;border-bottom:1px solid var(--border)}
+.hero-badge{display:inline-block;background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.25);color:var(--pink);padding:5px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-size:40px;font-weight:800;background:linear-gradient(135deg,#1a1b2f,#ED145B,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;margin-bottom:14px}
+.hero p{color:var(--muted);font-size:16px;max-width:720px;margin-bottom:26px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px}
+.meta-pill{background:var(--surface);border:1px solid var(--border);padding:7px 15px;border-radius:8px;font-size:12.5px}
+
+.part-divider{background:linear-gradient(135deg,#1a1b2f 0%,#3b1f4d 60%,#1a1b2f 100%);padding:50px 60px;margin-top:0}
+.part-divider .part-num{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#f0abc4;margin-bottom:8px}
+.part-divider h2{font-size:30px;font-weight:800;color:#fff;margin-bottom:8px}
+.part-divider p{color:#c9c9de;font-size:14px;max-width:650px}
+
+section{padding:40px 60px;border-bottom:1px solid var(--border);scroll-margin-top:20px}
+.chapter-num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:rgba(237,20,91,.1);color:var(--pink);font-weight:800;font-size:14px;margin-right:10px}
+h2.chapter-title{font-size:24px;font-weight:800;display:flex;align-items:center;margin-bottom:6px}
+.chapter-sub{color:var(--muted);font-size:13.5px;margin-bottom:24px;margin-left:44px}
+h3{font-size:17px;font-weight:700;margin:26px 0 12px;color:var(--text)}
+h3:first-of-type{margin-top:6px}
+p.body{color:var(--text);margin-bottom:14px;max-width:820px;font-size:14.5px}
+p.body strong{color:var(--text)}
+ul.body-list{margin:10px 0 16px 22px;max-width:800px}
+ul.body-list li{font-size:14.5px;color:var(--text);margin-bottom:6px;line-height:1.6}
+
+.code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:hidden;font-family:'JetBrains Mono',monospace;max-width:900px}
+.code-header{background:#0f172a;padding:9px 16px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #334155}
+.code-dot{width:9px;height:9px;border-radius:50%}
+.code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+.code-filename{font-size:11.5px;color:#94a3b8;margin-left:6px}
+.code-body{padding:16px 18px;font-size:12.5px;line-height:1.8;overflow-x:auto;color:#e2e8f0}
+.code-body pre{color:#e2e8f0}
+.code-body pre{margin:0;white-space:pre}
+.kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+.nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+
+.callout{background:var(--surface);border-left:3px solid var(--purple);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0;max-width:820px}
+.callout-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--purple);margin-bottom:6px}
+.callout-body{font-size:13.5px;color:var(--muted);line-height:1.6}
+.callout-body code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:12px}
+.callout-green{border-left-color:var(--green)}.callout-green .callout-title{color:var(--green)}
+.callout-orange{border-left-color:var(--orange)}.callout-orange .callout-title{color:var(--orange)}
+.callout-pink{border-left-color:var(--pink)}.callout-pink .callout-title{color:var(--pink)}
+.callout-blue{border-left-color:var(--blue)}.callout-blue .callout-title{color:var(--blue)}
+.callout-cyan{border-left-color:var(--cyan)}.callout-cyan .callout-title{color:var(--cyan)}
+
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0;max-width:900px}
+.tbl-wrap table{width:100%;border-collapse:collapse}
+.tbl-wrap th{background:var(--surface2);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+.tbl-wrap td{padding:11px 16px;font-size:13px;color:var(--muted);border-bottom:1px solid rgba(0,0,0,.05);vertical-align:top}
+.tbl-wrap td strong{color:var(--text)}
+.tbl-wrap tr:last-child td{border-bottom:none}
+.tbl-wrap code{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px}
+
+code.inline{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:rgba(0,0,0,.06);padding:1px 6px;border-radius:4px;color:var(--text)}
+
+.pill{display:inline-block;padding:2px 10px;border-radius:5px;font-size:11px;font-weight:700;margin-right:6px}
+.pill-basico{background:rgba(22,163,74,.1);color:var(--green)}
+.pill-inter{background:rgba(37,99,235,.1);color:var(--blue)}
+.pill-graph{background:rgba(124,58,237,.1);color:var(--purple)}
+.pill-new{background:rgba(237,20,91,.1);color:var(--pink)}
+
+.mini-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0;max-width:900px}
+.mini-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.mini-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px}
+.mini-card-body{font-size:12.5px;color:var(--muted);line-height:1.55}
+
+.exercise{background:rgba(237,20,91,.03);border:1px solid rgba(237,20,91,.15);border-radius:10px;padding:16px 20px;margin:16px 0;max-width:820px}
+.exercise-title{font-size:12.5px;font-weight:700;color:var(--pink);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.exercise-body{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+footer{padding:36px 60px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
+
+/* scroll-to-top */
+#toTop{position:fixed;bottom:24px;right:24px;background:var(--pink);color:#fff;width:42px;height:42px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(237,20,91,.35);cursor:pointer;
+  font-size:18px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:999}
+#toTop.show{opacity:1;pointer-events:auto}
+
+@media(max-width:900px){
+  body{display:block}
+  #sidebar{position:relative;width:100%;height:auto;}
+  section,.hero,.part-divider{padding-left:24px;padding-right:24px}
+}
+</style>
+
+</head>
+<body>
+<nav id="sidebar">
+<div class="sb-brand">
+  <div class="sb-brand-logo">📘 Apostila LangChain</div>
+  <div class="sb-brand-sub">Prompt Engineering and AI · FIAP · 2º Semestre 2026</div>
+</div>
+<a class="sb-link" href="#intro" style="font-weight:700;color:var(--text)">Introdução</a>
+
+<div class="sb-part">Parte 1 — Fundamentos</div>
+<a class="sb-link" href="#cap01">1. O que é LangChain</a>
+<a class="sb-link" href="#cap02">2. Instalação e setup</a>
+<a class="sb-link" href="#cap03">3. Chat Models</a>
+<a class="sb-link" href="#cap04">4. Prompt Templates</a>
+<a class="sb-link" href="#cap05">5. Output Parsers</a>
+<a class="sb-link" href="#cap06">6. LCEL — o operador pipe</a>
+<a class="sb-link" href="#cap07">7. Runnables</a>
+
+<div class="sb-part">Parte 2 — Intermediário</div>
+<a class="sb-link" href="#cap08">8. Memória conversacional</a>
+<a class="sb-link" href="#cap09">9. Structured Output + Pydantic</a>
+<a class="sb-link" href="#cap10">10. Loaders e Text Splitters</a>
+<a class="sb-link" href="#cap11">11. Embeddings e Vector Stores</a>
+<a class="sb-link" href="#cap12">12. RAG completo</a>
+<a class="sb-link" href="#cap13">13. Tools</a>
+<a class="sb-link" href="#cap14">14. Agentes (manual → create_agent)</a>
+
+<div class="sb-part">Parte 3 — LangGraph</div>
+<a class="sb-link" href="#cap15">15. Por que LangGraph</a>
+<a class="sb-link" href="#cap16">16. StateGraph — nodes e edges</a>
+<a class="sb-link" href="#cap17">17. Conditional edges</a>
+<a class="sb-link" href="#cap18">18. Checkpointer e memória</a>
+<a class="sb-link" href="#cap19">19. Human-in-the-Loop</a>
+<a class="sb-link" href="#cap20">20. Multiagentes</a>
+<a class="sb-link" href="#cap21">21. create_agent por dentro</a>
+
+<div class="sb-part">Apêndice</div>
+<a class="sb-link" href="#glossario">Glossário</a>
+<a class="sb-link" href="#cheatsheet">Cheatsheet rápido</a>
+<a class="sb-link" href="#erros">Erros comuns</a>
+<a class="sb-link" href="#referencias">Referências</a>
+</nav>
+<div id="main">
+<div style="max-width:940px;margin:0 auto">
+
+<div class="hero" id="intro">
+  <div class="hero-badge">Apostila de Referência · 2º Semestre 2026</div>
+  <h1>LangChain — do Básico ao LangGraph</h1>
+  <p>Guia completo para acompanhar a disciplina Prompt Engineering and Artificial Intelligence. Cobre LCEL, memória, structured output, RAG, agentes e LangGraph — com todos os exemplos usando exatamente o stack que vocês já usam em aula: Ollama Cloud, gpt-oss:120b e ChromaDB.</p>
+  <div class="hero-meta">
+    <div class="meta-pill">📚 21 capítulos</div>
+    <div class="meta-pill">🐍 100% Google Colab</div>
+    <div class="meta-pill">🆓 Sem API paga</div>
+    <div class="meta-pill">🔗 docs.langchain.com</div>
+  </div>
+</div>
+
+<section>
+  <h2 class="chapter-title" style="margin-bottom:16px">Como usar esta apostila</h2>
+  <p class="body">Esta apostila acompanha — mas não substitui — as aulas e os notebooks do curso. Use-a como <strong>referência para consultar quando tiver dúvida</strong>, revisar antes dos CKPs, ou entender um conceito com mais profundidade do que dá tempo em aula. A navegação lateral leva direto a qualquer capítulo.</p>
+  <div class="mini-cards">
+    <div class="mini-card">
+      <div class="mini-card-title" style="color:var(--green)">🟢 Parte 1 — Fundamentos</div>
+      <div class="mini-card-body">O que é LangChain, como montar seu primeiro pipeline com LCEL. Corresponde às Aulas 01–04.</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-card-title" style="color:var(--blue)">🔵 Parte 2 — Intermediário</div>
+      <div class="mini-card-body">Memória, saída estruturada, RAG completo, tools e agentes. Corresponde às Aulas 05–11.</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-card-title" style="color:var(--purple)">🟣 Parte 3 — LangGraph</div>
+      <div class="mini-card-body">Grafos de estado, roteamento condicional, memória persistente e HITL. Corresponde às Aulas 12–14.</div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ Sobre versões</div>
+    <div class="callout-body">LangChain muda rápido. Esta apostila foi escrita em agosto de 2026 com base em <a href="https://docs.langchain.com" target="_blank">docs.langchain.com</a> — a documentação oficial atual (não mais python.langchain.com, que está desatualizada). Se algum import não funcionar, o motivo mais comum é uma versão diferente da biblioteca — rode sempre <code class="inline">!pip install -U langchain langchain-ollama langgraph</code> antes de começar.</div>
+  </div>
+</section>
+
+
+<div class="part-divider">
+  <div class="part-num">Parte 1 de 3</div>
+  <h2>Fundamentos</h2>
+  <p>Os blocos de construção de qualquer aplicação LangChain: models, prompts, parsers e o operador que os une — LCEL.</p>
+</div>
+
+
+<section id="cap01">
+  <h2 class="chapter-title"><span class="chapter-num">1</span>O que é LangChain</h2>
+  <p class="chapter-sub"><span class="pill pill-basico">Básico</span> Fundamentos</p>
+
+  <p class="body">LangChain é um framework Python (e JavaScript) que padroniza como aplicações conversam com LLMs. Ele resolve três problemas que aparecem assim que você tenta ir além de uma chamada de API isolada:</p>
+  <ul class="body-list">
+    <li><strong>Troca de provedor sem reescrever tudo</strong> — trocar de Ollama para OpenAI ou Anthropic é, na maioria dos casos, uma linha de código.</li>
+    <li><strong>Composição de etapas</strong> — prompt → modelo → parser → próxima etapa, sem código repetitivo de "pegar o texto e passar para frente".</li>
+    <li><strong>Integração com o ecossistema</strong> — vector stores, document loaders, tools e agentes já vêm com interface padronizada.</li>
+  </ul>
+
+  <div class="callout callout-purple" style="border-left-color:var(--purple)">
+    <div class="callout-title" style="color:var(--purple)">LangChain vs. LangGraph vs. Deep Agents</div>
+    <div class="callout-body">A documentação oficial apresenta os três como camadas: <strong>Deep Agents</strong> é "bateria inclusa" (contexto automático, sistema de arquivos virtual, subagentes) para quem quer o máximo de funcionalidade pronta. <strong>LangChain</strong> (com <code class="inline">create_agent</code>) é um harness mínimo e configurável — você compõe só o que precisa. <strong>LangGraph</strong> é a camada mais baixa: o motor de grafos de estado que sustenta os outros dois. Esta apostila ensina LangChain primeiro, depois desce para LangGraph — para você entender o que tem por baixo do capô antes de usar os atalhos.</div>
+  </div>
+
+  <h3>Os 7 conceitos centrais</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Conceito</th><th>O que é</th><th>Onde aparece nesta apostila</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Chat Model</strong></td><td>Interface padronizada para conversar com qualquer LLM</td><td>Capítulo 3</td></tr>
+        <tr><td><strong>Prompt Template</strong></td><td>Template reutilizável com variáveis</td><td>Capítulo 4</td></tr>
+        <tr><td><strong>Output Parser</strong></td><td>Transforma a resposta do modelo em algo utilizável</td><td>Capítulo 5</td></tr>
+        <tr><td><strong>Runnable / LCEL</strong></td><td>A unidade de composição — tudo em LangChain é um Runnable</td><td>Capítulos 6–7</td></tr>
+        <tr><td><strong>Retriever</strong></td><td>Busca documentos relevantes numa base de conhecimento</td><td>Capítulos 11–12</td></tr>
+        <tr><td><strong>Tool</strong></td><td>Função que um agente pode decidir chamar</td><td>Capítulo 13</td></tr>
+        <tr><td><strong>Agent</strong></td><td>Modelo + tools + loop de decisão</td><td>Capítulos 14, 21</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-green">
+    <div class="callout-title">Quando usar LangChain — e quando não usar</div>
+    <div class="callout-body"><strong>Use</strong> quando precisar de RAG, agentes, múltiplos provedores de LLM, ou composição de várias etapas. <strong>Pule</strong> quando for só uma chamada simples a uma API — nesse caso, o SDK nativo do provedor (como a biblioteca <code class="inline">ollama</code> que vocês já usam desde o 1º semestre) é mais direto e tem menos camadas de abstração.</div>
+  </div>
+</section>
+
+
+<section id="cap02">
+  <h2 class="chapter-title"><span class="chapter-num">2</span>Instalação e Configuração</h2>
+  <p class="chapter-sub"><span class="pill pill-basico">Básico</span> Fundamentos</p>
+
+  <p class="body">Todo notebook desta apostila usa o mesmo setup das aulas: Google Colab + Ollama Cloud com o modelo <code class="inline">gpt-oss:120b</code>, autenticado via Colab Secrets.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">setup.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Instalação — sempre com -U para pegar a versão mais recente</span>
+!pip install -q -U langchain langchain-core langchain-ollama langgraph
+
+<span class="kw">import</span> os
+<span class="kw">from</span> google.colab <span class="kw">import</span> userdata
+<span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+
+<span class="cm"># A chave fica em Colab Secrets (ícone de chave na barra lateral)</span>
+os.environ[<span class="st">'OLLAMA_HOST'</span>] = <span class="st">'https://ollama.com'</span>
+os.environ[<span class="st">'OLLAMA_API_KEY'</span>] = userdata.get(<span class="st">'OLLAMA_API_KEY'</span>)
+
+<span class="va">MODEL_NAME</span> = <span class="st">'gpt-oss:120b'</span>
+llm = ChatOllama(model=<span class="va">MODEL_NAME</span>, temperature=<span class="num">0.3</span>)
+
+<span class="cm"># Teste rápido</span>
+resposta = llm.invoke(<span class="st">"Em uma frase, o que é LangChain?"</span>)
+<span class="fn">print</span>(resposta.content)</pre>
+    </div>
+  </div>
+
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ Erro comum: OLLAMA_HOST esquecido</div>
+    <div class="callout-body">Se você esquecer de setar <code class="inline">OLLAMA_HOST</code>, o LangChain tenta conectar no Ollama local (<code class="inline">localhost:11434</code>) e trava — o Colab não tem um servidor Ollama rodando localmente. As duas variáveis de ambiente (<code class="inline">OLLAMA_HOST</code> e <code class="inline">OLLAMA_API_KEY</code>) precisam estar setadas <em>antes</em> de instanciar o <code class="inline">ChatOllama</code>.</div>
+  </div>
+
+  <h3>Pacotes por capítulo</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Você vai usar...</th><th>Instale também</th></tr></thead>
+      <tbody>
+        <tr><td>RAG (Cap. 11–12)</td><td><code>langchain-chroma chromadb</code></td></tr>
+        <tr><td>Text splitting (Cap. 10)</td><td>já incluído em <code>langchain</code></td></tr>
+        <tr><td>Tools e Agentes (Cap. 13–14)</td><td>já incluído em <code>langchain-core</code></td></tr>
+        <tr><td>LangGraph (Cap. 15–21)</td><td><code>langgraph</code></td></tr>
+        <tr><td>Interface web (fora do escopo desta apostila)</td><td><code>gradio</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<section id="cap03">
+  <h2 class="chapter-title"><span class="chapter-num">3</span>Chat Models</h2>
+  <p class="chapter-sub"><span class="pill pill-basico">Básico</span> Fundamentos</p>
+
+  <p class="body">Um Chat Model é a interface padronizada do LangChain para conversar com um LLM. Não importa se por baixo é Ollama, OpenAI ou Anthropic — o código que você escreve é o mesmo. Isso é chamado de <strong>interface unificada</strong>.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">chat_models.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.messages <span class="kw">import</span> HumanMessage, SystemMessage, AIMessage
+
+<span class="cm"># Forma 1 — string direta</span>
+resposta = llm.invoke(<span class="st">"O que é RAG?"</span>)
+
+<span class="cm"># Forma 2 — lista de mensagens tipadas (recomendado)</span>
+mensagens = [
+    SystemMessage(content=<span class="st">"Você é um assistente técnico conciso."</span>),
+    HumanMessage(content=<span class="st">"O que é RAG?"</span>),
+]
+resposta = llm.invoke(mensagens)
+
+<span class="fn">print</span>(resposta.content)       <span class="cm"># o texto da resposta</span>
+<span class="fn">print</span>(resposta.response_metadata)  <span class="cm"># tokens, modelo usado, etc.</span></pre>
+    </div>
+  </div>
+
+  <h3>Parâmetros importantes</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Parâmetro</th><th>Efeito</th><th>Valor típico</th></tr></thead>
+      <tbody>
+        <tr><td><code>temperature</code></td><td>Aleatoriedade da resposta. 0 = determinístico, 1.5 = muito criativo</td><td>0.0–0.3 para tarefas precisas · 0.7+ para criativas</td></tr>
+        <tr><td><code>model</code></td><td>Qual modelo usar</td><td><code>gpt-oss:120b</code> neste curso</td></tr>
+        <tr><td><code>num_predict</code></td><td>Limite de tokens gerados (equivalente a <code>max_tokens</code>)</td><td>200–500 para respostas curtas</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Streaming — respostas token a token</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">streaming.py</span></div>
+    <div class="code-body"><pre><span class="kw">for</span> chunk <span class="kw">in</span> llm.stream(<span class="st">"Explique embeddings em 3 frases"</span>):
+    <span class="fn">print</span>(chunk.content, end=<span class="st">""</span>, flush=<span class="kw">True</span>)</pre>
+    </div>
+  </div>
+  <p class="body">Útil em interfaces (como Gradio) onde você quer mostrar a resposta sendo "digitada" em tempo real, em vez de esperar a resposta completa.</p>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique</div>
+    <div class="exercise-body">Crie um <code class="inline">SystemMessage</code> com uma persona do domínio do seu grupo (saúde, educação, finanças...) e teste com 3 perguntas diferentes usando <code class="inline">temperature=0.0</code> e depois <code class="inline">temperature=1.0</code> — compare como a mesma pergunta gera respostas diferentes.</div>
+  </div>
+</section>
+
+
+<section id="cap04">
+  <h2 class="chapter-title"><span class="chapter-num">4</span>Prompt Templates</h2>
+  <p class="chapter-sub"><span class="pill pill-basico">Básico</span> Fundamentos</p>
+
+  <p class="body">Escrever prompts como f-strings soltas funciona para testes rápidos, mas não escala: fica difícil reutilizar, versionar ou trocar variáveis com segurança. <code class="inline">ChatPromptTemplate</code> resolve isso.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">prompt_templates.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate
+
+template = ChatPromptTemplate.from_messages([
+    (<span class="st">"system"</span>, <span class="st">"Você é especialista em {dominio}. Seja direto e use exemplos."</span>),
+    (<span class="st">"human"</span>, <span class="st">"{pergunta}"</span>),
+])
+
+<span class="cm"># .invoke() do template só monta as mensagens — ainda não chama o LLM</span>
+mensagens_prontas = template.invoke({
+    <span class="st">"dominio"</span>: <span class="st">"cardiologia"</span>,
+    <span class="st">"pergunta"</span>: <span class="st">"O que é arritmia?"</span>
+})
+
+<span class="cm"># Para chamar o modelo, combine com o LLM (veremos isso melhor no Cap. 6 — LCEL)</span>
+resposta = llm.invoke(mensagens_prontas)</pre>
+    </div>
+  </div>
+
+  <h3>Templates com histórico de mensagens</h3>
+  <p class="body">Um padrão muito comum é reservar um "espaço" no template para o histórico de conversa, usando <code class="inline">MessagesPlaceholder</code>:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">placeholder.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate, MessagesPlaceholder
+
+template = ChatPromptTemplate.from_messages([
+    (<span class="st">"system"</span>, <span class="st">"Você é um assistente útil."</span>),
+    MessagesPlaceholder(variable_name=<span class="st">"historico"</span>),
+    (<span class="st">"human"</span>, <span class="st">"{pergunta}"</span>),
+])
+
+<span class="cm"># historico é uma lista de HumanMessage/AIMessage — veremos isso no Cap. 8 (Memória)</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <div class="callout-title">from_template vs. from_messages</div>
+    <div class="callout-body"><code class="inline">PromptTemplate.from_template("...")</code> é para modelos de texto puro (legado). <code class="inline">ChatPromptTemplate.from_messages([...])</code> é o padrão atual — todo Chat Model moderno (incluindo Ollama) espera uma lista de mensagens com role definido, não um texto solto.</div>
+  </div>
+</section>
+
+
+<section id="cap05">
+  <h2 class="chapter-title"><span class="chapter-num">5</span>Output Parsers</h2>
+  <p class="chapter-sub"><span class="pill pill-basico">Básico</span> Fundamentos</p>
+
+  <p class="body">Por padrão, o LLM retorna um objeto <code class="inline">AIMessage</code> — você precisa acessar <code class="inline">.content</code> toda vez. Um Output Parser automatiza essa extração e pode até validar o formato.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">output_parsers.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser, JsonOutputParser
+
+<span class="cm"># StrOutputParser — extrai só o texto (o mais usado)</span>
+parser = StrOutputParser()
+
+<span class="cm"># JsonOutputParser — tenta parsear a resposta como JSON</span>
+json_parser = JsonOutputParser()</pre>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Parser</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td><code>StrOutputParser</code></td><td>Você só quer o texto puro da resposta — o caso mais comum</td></tr>
+        <tr><td><code>JsonOutputParser</code></td><td>Você pediu ao modelo para responder em JSON e quer o dict Python já parseado</td></tr>
+        <tr><td><code>with_structured_output()</code></td><td>Você quer um objeto Pydantic validado — mais robusto que JsonOutputParser. Ver Capítulo 9.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ JsonOutputParser pode falhar</div>
+    <div class="callout-body">Se o modelo "conversar" antes do JSON (ex.: "Claro! Aqui está: {...}"), o <code class="inline">JsonOutputParser</code> pode quebrar. Para isso ser confiável, instrua explicitamente no system prompt: <em>"Responda APENAS com JSON válido, sem texto antes ou depois."</em> Para produção, prefira <code class="inline">with_structured_output()</code> (Capítulo 9), que é mais robusto.</div>
+  </div>
+</section>
+
+
+<section id="cap06">
+  <h2 class="chapter-title"><span class="chapter-num">6</span>LCEL — o Operador Pipe</h2>
+  <p class="chapter-sub"><span class="pill pill-basico">Básico</span> Fundamentos · O conceito mais importante desta apostila</p>
+
+  <p class="body">LCEL (LangChain Expression Language) é a forma padrão de compor chains: <strong>template | modelo | parser</strong>. O operador <code class="inline">|</code> (pipe) conecta cada etapa — a saída de uma vira a entrada da próxima, exatamente como pipes no terminal Linux.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">lcel_basico.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate
+<span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser
+
+template = ChatPromptTemplate.from_messages([
+    (<span class="st">"system"</span>, <span class="st">"Você é especialista em {dominio}."</span>),
+    (<span class="st">"human"</span>, <span class="st">"{pergunta}"</span>),
+])
+
+<span class="cm"># A chain inteira em uma linha</span>
+chain = template | llm | StrOutputParser()
+
+<span class="cm"># .invoke() roda o pipeline inteiro de uma vez</span>
+resposta = chain.invoke({
+    <span class="st">"dominio"</span>: <span class="st">"nutrição"</span>,
+    <span class="st">"pergunta"</span>: <span class="st">"Quantas calorias tem uma banana?"</span>
+})
+<span class="fn">print</span>(resposta)  <span class="cm"># já é string pura, graças ao StrOutputParser</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <div class="callout-title">Por que isso importa</div>
+    <div class="callout-body">Sem LCEL, você escreveria manualmente: montar o prompt → chamar <code class="inline">.invoke()</code> no modelo → extrair <code class="inline">.content</code> → validar formato. Com LCEL, isso é uma linha (<code class="inline">chain = template | llm | parser</code>) e o LangChain cuida da "cola" entre as etapas. É a mesma lógica de um pipeline Unix: <code class="inline">cat arquivo.txt | grep erro | wc -l</code>.</div>
+  </div>
+
+  <h3>Chains com múltiplas etapas</h3>
+  <p class="body">LCEL não se limita a 3 etapas — você pode encadear quantas quiser, inclusive misturando funções Python comuns com <code class="inline">RunnableLambda</code>:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">chain_multietapas.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.runnables <span class="kw">import</span> RunnableLambda
+
+<span class="kw">def</span> <span class="fn">contar_palavras</span>(texto: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    <span class="kw">return</span> <span class="st">f"{texto}\n\n[Resposta tem {len(texto.split())} palavras]"</span>
+
+<span class="cm"># Insere uma função Python comum no meio do pipeline</span>
+chain = template | llm | StrOutputParser() | RunnableLambda(contar_palavras)
+
+resultado = chain.invoke({<span class="st">"dominio"</span>: <span class="st">"história"</span>, <span class="st">"pergunta"</span>: <span class="st">"Quando foi a Revolução Francesa?"</span>})
+<span class="fn">print</span>(resultado)</pre>
+    </div>
+  </div>
+
+  <h3>invoke, batch e stream — os 3 modos de execução</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Método</th><th>Uso</th></tr></thead>
+      <tbody>
+        <tr><td><code>chain.invoke(x)</code></td><td>Uma execução, espera a resposta completa. O que você mais vai usar.</td></tr>
+        <tr><td><code>chain.batch([x1, x2, x3])</code></td><td>Roda múltiplas entradas em paralelo — muito mais rápido que um loop com <code>invoke</code>.</td></tr>
+        <tr><td><code>chain.stream(x)</code></td><td>Retorna um generator que produz pedaços da resposta conforme chegam.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">batch.py</span></div>
+    <div class="code-body"><pre><span class="cm"># batch: 3 perguntas em paralelo, não sequencialmente</span>
+perguntas = [
+    {<span class="st">"dominio"</span>: <span class="st">"saúde"</span>, <span class="st">"pergunta"</span>: <span class="st">"O que é febre?"</span>},
+    {<span class="st">"dominio"</span>: <span class="st">"saúde"</span>, <span class="st">"pergunta"</span>: <span class="st">"O que é hipertensão?"</span>},
+    {<span class="st">"dominio"</span>: <span class="st">"saúde"</span>, <span class="st">"pergunta"</span>: <span class="st">"O que é diabetes?"</span>},
+]
+respostas = chain.batch(perguntas)
+<span class="kw">for</span> r <span class="kw">in</span> respostas:
+    <span class="fn">print</span>(r[:<span class="num">80</span>])</pre>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique</div>
+    <div class="exercise-body">Monte uma chain LCEL de 4 etapas: template → llm → StrOutputParser → uma função sua que formata a resposta em maiúsculas ou adiciona um emoji. Teste com <code class="inline">.batch()</code> passando 3 perguntas diferentes do domínio do seu grupo.</div>
+  </div>
+</section>
+
+
+<section id="cap07">
+  <h2 class="chapter-title"><span class="chapter-num">7</span>Runnables</h2>
+  <p class="chapter-sub"><span class="pill pill-basico">Básico</span> Fundamentos</p>
+
+  <p class="body">Todo componente que você viu até agora — <code class="inline">ChatPromptTemplate</code>, <code class="inline">ChatOllama</code>, <code class="inline">StrOutputParser</code> — implementa a mesma interface: <strong>Runnable</strong>. É por isso que todos aceitam <code class="inline">.invoke()</code>, <code class="inline">.batch()</code> e <code class="inline">.stream()</code>, e é por isso que o operador <code class="inline">|</code> funciona entre eles.</p>
+
+  <div class="callout callout-purple" style="border-left-color:var(--purple)">
+    <div class="callout-title" style="color:var(--purple)">A regra de ouro do LCEL</div>
+    <div class="callout-body">Se algo implementa <code class="inline">.invoke()</code>, é um Runnable — e pode entrar no pipe. Isso vale para templates, modelos, parsers, retrievers (Cap. 11), <em>e para funções Python suas</em> (via <code class="inline">RunnableLambda</code>). Uma vez que você entende isso, LCEL para de parecer mágica.</div>
+  </div>
+
+  <h3>RunnableParallel — rodando etapas em paralelo</h3>
+  <p class="body">Às vezes você quer rodar 2+ etapas ao mesmo tempo e combinar os resultados — por exemplo, buscar contexto em uma base <em>e</em> reformular a pergunta do usuário, simultaneamente:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">runnable_parallel.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.runnables <span class="kw">import</span> RunnableParallel, RunnablePassthrough
+
+<span class="cm"># RunnablePassthrough repassa a entrada original sem alterar</span>
+chain_paralela = RunnableParallel(
+    original=RunnablePassthrough(),
+    maiusculas=RunnableLambda(<span class="kw">lambda</span> x: x.upper()),
+    tamanho=RunnableLambda(<span class="kw">lambda</span> x: <span class="fn">len</span>(x)),
+)
+
+resultado = chain_paralela.invoke(<span class="st">"prompt engineering"</span>)
+<span class="cm"># {'original': 'prompt engineering', 'maiusculas': 'PROMPT ENGINEERING', 'tamanho': 19}</span></pre>
+    </div>
+  </div>
+  <p class="body">Este padrão é exatamente o que você vai usar no Capítulo 12 (RAG) para buscar o contexto <em>e</em> passar a pergunta original ao mesmo tempo para o prompt final.</p>
+
+  <h3>RunnableLambda — sua função vira um Runnable</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">runnable_lambda.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.runnables <span class="kw">import</span> RunnableLambda
+
+<span class="kw">def</span> <span class="fn">validar_tamanho</span>(texto: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    <span class="kw">if</span> <span class="fn">len</span>(texto) > <span class="num">500</span>:
+        <span class="kw">return</span> texto[:<span class="num">500</span>] + <span class="st">"... [truncado]"</span>
+    <span class="kw">return</span> texto
+
+<span class="cm"># Agora pode entrar em qualquer chain com |</span>
+chain = template | llm | StrOutputParser() | RunnableLambda(validar_tamanho)</pre>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Runnable</th><th>Para quê</th></tr></thead>
+      <tbody>
+        <tr><td><code>RunnableLambda</code></td><td>Transforma qualquer função Python num Runnable que entra no pipe</td></tr>
+        <tr><td><code>RunnableParallel</code></td><td>Roda múltiplos Runnables ao mesmo tempo, combina os resultados num dict</td></tr>
+        <tr><td><code>RunnablePassthrough</code></td><td>Repassa a entrada sem modificar — útil dentro de um RunnableParallel</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<div class="part-divider">
+  <div class="part-num">Parte 2 de 3</div>
+  <h2>Intermediário</h2>
+  <p>Memória, saída estruturada, RAG completo, ferramentas e o caminho do agente manual até <code style="color:#f0abc4">create_agent</code>.</p>
+</div>
+
+
+<section id="cap08">
+  <h2 class="chapter-title"><span class="chapter-num">8</span>Memória Conversacional</h2>
+  <p class="chapter-sub"><span class="pill pill-inter">Intermediário</span> Corresponde à Aula 02</p>
+
+  <p class="body">Um Chat Model, por si só, não lembra nada entre chamadas — cada <code class="inline">.invoke()</code> é isolado. "Memória" é você (ou o LangChain) reenviando o histórico relevante a cada novo turno.</p>
+
+  <h3>A abordagem mais simples: lista de mensagens</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">memoria_buffer.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.messages <span class="kw">import</span> HumanMessage, AIMessage, SystemMessage
+
+<span class="kw">class</span> <span class="fn">ChatbotComMemoria</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, system_prompt):
+        self.historico = [SystemMessage(content=system_prompt)]
+
+    <span class="kw">def</span> <span class="fn">chat</span>(self, mensagem):
+        self.historico.append(HumanMessage(content=mensagem))
+        resposta = llm.invoke(self.historico)
+        self.historico.append(AIMessage(content=resposta.content))
+        <span class="kw">return</span> resposta.content
+
+bot = ChatbotComMemoria(<span class="st">"Você é um tutor de matemática paciente."</span>)
+<span class="fn">print</span>(bot.chat(<span class="st">"O que é uma fração?"</span>))
+<span class="fn">print</span>(bot.chat(<span class="st">"E como eu somo duas frações?"</span>))  <span class="cm"># lembra do contexto anterior</span></pre>
+    </div>
+  </div>
+
+  <p class="body">Isso é o que chamamos de <strong>Buffer Memory</strong>: guardar tudo. Funciona bem no início, mas o histórico cresce sem limite — e cresce o custo de tokens em cada chamada junto com ele.</p>
+
+  <h3>As 3 estratégias que vocês já praticaram</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Estratégia</th><th>Como funciona</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Buffer</strong></td><td>Guarda o histórico completo</td><td>Conversas curtas, onde custo não é problema</td></tr>
+        <tr><td><strong>Window</strong></td><td>Guarda só as últimas N mensagens</td><td>Conversas longas onde só o contexto recente importa</td></tr>
+        <tr><td><strong>Summary</strong></td><td>Resume o histórico antigo em texto curto, mantém as últimas mensagens completas</td><td>Conversas muito longas, quando fatos antigos ainda importam</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">memoria_window.py</span></div>
+    <div class="code-body"><pre><span class="kw">class</span> <span class="fn">ChatbotWindow</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, system_prompt, window_size=<span class="num">6</span>):
+        self.system = system_prompt
+        self.window_size = window_size
+        self.historico = []  <span class="cm"># lista de tuplas (user, ai)</span>
+
+    <span class="kw">def</span> <span class="fn">chat</span>(self, mensagem):
+        <span class="cm"># só as últimas window_size trocas entram no contexto</span>
+        janela = self.historico[-self.window_size:]
+        mensagens = [SystemMessage(content=self.system)]
+        <span class="kw">for</span> u, a <span class="kw">in</span> janela:
+            mensagens += [HumanMessage(content=u), AIMessage(content=a)]
+        mensagens.append(HumanMessage(content=mensagem))
+
+        resposta = llm.invoke(mensagens)
+        self.historico.append((mensagem, resposta.content))
+        <span class="kw">return</span> resposta.content</pre>
+    </div>
+  </div>
+
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ Nota sobre a API de Memory do LangChain</div>
+    <div class="callout-body">Versões antigas do LangChain tinham classes prontas como <code class="inline">ConversationBufferMemory</code> — hoje deprecadas. A abordagem atual (e a que vocês usam no curso) é gerenciar o histórico manualmente com uma lista de mensagens, como nos exemplos acima, ou — em LangGraph — usar um <code class="inline">checkpointer</code> (Capítulo 18), que é a forma recomendada para produção.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique</div>
+    <div class="exercise-body">Implemente a estratégia Summary: quando o histórico passar de 8 mensagens, chame o LLM para resumir as mais antigas em 2 frases, mantenha só as últimas 4 completas + o resumo como uma <code class="inline">SystemMessage</code> extra.</div>
+  </div>
+</section>
+
+
+<section id="cap09">
+  <h2 class="chapter-title"><span class="chapter-num">9</span>Structured Output + Pydantic v2</h2>
+  <p class="chapter-sub"><span class="pill pill-inter">Intermediário</span> Corresponde à Aula 03</p>
+
+  <p class="body">Pedir "responda em JSON" no prompt funciona às vezes. <code class="inline">with_structured_output()</code> é a forma robusta: você define um schema Pydantic, o LangChain garante que a resposta seja validada contra ele.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">structured_output.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+<span class="kw">from</span> typing <span class="kw">import</span> Literal
+
+<span class="kw">class</span> <span class="fn">AnaliseSentimento</span>(BaseModel):
+    sentimento: Literal[<span class="st">'positivo'</span>, <span class="st">'negativo'</span>, <span class="st">'neutro'</span>]
+    confianca: <span class="nb">float</span> = Field(ge=<span class="num">0.0</span>, le=<span class="num">1.0</span>)
+    palavras_chave: <span class="nb">list</span>[<span class="nb">str</span>] = Field(description=<span class="st">"até 3 palavras que justificam a análise"</span>)
+
+<span class="cm"># Vincula o schema ao modelo</span>
+llm_estruturado = llm.with_structured_output(AnaliseSentimento)
+
+resultado = llm_estruturado.invoke(<span class="st">"O atendimento foi péssimo, esperei 40 minutos."</span>)
+<span class="fn">print</span>(resultado.sentimento)      <span class="cm"># 'negativo' — já é um objeto Python, não um dict</span>
+<span class="fn">print</span>(resultado.confianca)       <span class="cm"># 0.92 (exemplo)</span>
+<span class="fn">print</span>(<span class="fn">type</span>(resultado))          <span class="cm"># &lt;class 'AnaliseSentimento'&gt;</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <div class="callout-title">Por que isso é melhor que JsonOutputParser</div>
+    <div class="callout-body"><code class="inline">with_structured_output()</code> valida os tipos (o <code class="inline">Literal</code> garante que só um dos 3 valores é aceito, o <code class="inline">Field(ge=0, le=1)</code> garante o range numérico) e retorna um objeto Python tipado — com autocomplete no editor — em vez de um dict genérico que pode ter qualquer coisa dentro.</div>
+  </div>
+
+  <h3>Combinando com LCEL</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">structured_lcel.py</span></div>
+    <div class="code-body"><pre>chain = template | llm.with_structured_output(AnaliseSentimento)
+
+resultado = chain.invoke({<span class="st">"dominio"</span>: <span class="st">"atendimento"</span>, <span class="st">"pergunta"</span>: <span class="st">"..."</span>})
+<span class="cm"># resultado já é um objeto AnaliseSentimento — sem parser adicional</span></pre>
+    </div>
+  </div>
+
+  <h3>field_validator — validação customizada</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">field_validator.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, field_validator
+
+<span class="kw">class</span> <span class="fn">Contato</span>(BaseModel):
+    email: <span class="nb">str</span>
+
+    <span class="op">@field_validator</span>(<span class="st">'email'</span>)
+    <span class="op">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">validar_email</span>(cls, v):
+        <span class="kw">if</span> <span class="st">'@'</span> <span class="kw">not in</span> v:
+            <span class="kw">raise</span> ValueError(<span class="st">'Email inválido'</span>)
+        <span class="kw">return</span> v.lower().strip()</pre>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique</div>
+    <div class="exercise-body">Crie um schema Pydantic para um caso do domínio do seu grupo (ex.: <code class="inline">TriagemPaciente</code>, <code class="inline">AnaliseContrato</code>) com pelo menos 4 campos e 1 <code class="inline">field_validator</code>. Teste com 3 inputs diferentes.</div>
+  </div>
+</section>
+
+
+<section id="cap10">
+  <h2 class="chapter-title"><span class="chapter-num">10</span>Document Loaders e Text Splitters</h2>
+  <p class="chapter-sub"><span class="pill pill-inter">Intermediário</span> Corresponde à Aula 05</p>
+
+  <p class="body">Antes de indexar qualquer documento numa base vetorial, ele precisa ser: carregado, dividido em pedaços (<em>chunks</em>) de tamanho gerenciável.</p>
+
+  <h3>Text Splitting</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">text_splitter.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain.text_splitter <span class="kw">import</span> RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=<span class="num">500</span>,        <span class="cm"># tamanho alvo de cada chunk, em caracteres</span>
+    chunk_overlap=<span class="num">80</span>,       <span class="cm"># sobreposição entre chunks consecutivos</span>
+    separators=[<span class="st">'\n\n'</span>, <span class="st">'\n'</span>, <span class="st">'. '</span>, <span class="st">' '</span>],  <span class="cm"># tenta quebrar nesta ordem de preferência</span>
+)
+
+texto = (<span class="st">"Documento longo aqui...\n\n"</span>
+         <span class="st">"com múltiplos parágrafos..."</span>)
+
+chunks = splitter.split_text(texto)
+<span class="fn">print</span>(<span class="fn">f"Gerados {len(chunks)} chunks"</span>)</pre>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <div class="callout-title">Por que "Recursive"?</div>
+    <div class="callout-body">O splitter tenta quebrar primeiro nos separadores "mais fortes" (parágrafos <code class="inline">\n\n</code>), e só recorre a separadores mais fracos (frase, espaço) se o chunk ainda estiver grande demais. Isso preserva unidades semânticas completas sempre que possível — em vez de cortar uma frase no meio.</div>
+  </div>
+
+  <h3>Chunk size — o trade-off central</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Chunk pequeno (200-300)</th><th>Chunk grande (1000+)</th></tr></thead>
+      <tbody>
+        <tr><td>Busca mais precisa (menos ruído)</td><td>Mais contexto por resultado</td></tr>
+        <tr><td>Pode perder contexto ao redor</td><td>Busca menos precisa (mais ruído misturado)</td></tr>
+        <tr><td>Mais chunks = mais tempo de indexação</td><td>Menos chunks = indexação mais rápida</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="body">Não existe valor universal certo — o CKP02 pede exatamente que vocês comparem 2+ configurações com métricas RAGAS (Capítulo 12) em vez de adivinhar.</p>
+</section>
+
+
+<section id="cap11">
+  <h2 class="chapter-title"><span class="chapter-num">11</span>Embeddings e Vector Stores</h2>
+  <p class="chapter-sub"><span class="pill pill-inter">Intermediário</span> Corresponde à Aula 05</p>
+
+  <p class="body">Embedding é a representação de um texto como um vetor de números — textos com significado parecido geram vetores próximos no espaço. É isso que permite "busca por significado" em vez de busca por palavra-chave exata.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">embeddings.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> ollama <span class="kw">import</span> Client
+
+client = Client(host=<span class="st">'https://ollama.com'</span>, headers={<span class="st">'Authorization'</span>: <span class="st">'Bearer '</span> + userdata.get(<span class="st">'OLLAMA_API_KEY'</span>)})
+
+<span class="kw">def</span> <span class="fn">embedding</span>(texto):
+    <span class="kw">return</span> client.embeddings(model=<span class="st">'nomic-embed-text'</span>, prompt=texto)[<span class="st">'embedding'</span>]
+
+vetor = embedding(<span class="st">"O que é hipertensão?"</span>)
+<span class="fn">print</span>(<span class="fn">len</span>(vetor))  <span class="cm"># 768 dimensões, típico do nomic-embed-text</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ nomic-embed-text é o único modelo de embedding aprovado no curso</div>
+    <div class="callout-body">Gratuito via Ollama Cloud, consistente em todos os notebooks. Não misture modelos de embedding diferentes no mesmo índice — os espaços vetoriais não são compatíveis entre modelos.</div>
+  </div>
+
+  <h3>ChromaDB — indexação e busca</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">chromadb_basico.py</span></div>
+    <div class="code-body"><pre>!pip install -q chromadb
+<span class="kw">import</span> chromadb
+
+chroma = chromadb.Client()  <span class="cm"># em memória — some ao reiniciar o Colab</span>
+<span class="cm"># chroma = chromadb.PersistentClient(path="./minha_base")  # persiste em disco</span>
+
+colecao = chroma.create_collection(<span class="st">"documentos_dominio"</span>)
+
+documentos = [<span class="st">"Protocolo de triagem para febre alta."</span>, <span class="st">"Diretriz de hidratação em pacientes idosos."</span>]
+colecao.add(
+    documents=documentos,
+    ids=[<span class="fn">f"doc{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(documentos))],
+    embeddings=[embedding(d) <span class="kw">for</span> d <span class="kw">in</span> documentos],
+)
+
+<span class="cm"># Busca por similaridade — retorna os N mais próximos semanticamente</span>
+resultado = colecao.query(query_embeddings=[embedding(<span class="st">"o que fazer com febre?"</span>)], n_results=<span class="num">2</span>)
+<span class="fn">print</span>(resultado[<span class="st">'documents'</span>][<span class="num">0</span>])</pre>
+    </div>
+  </div>
+
+  <h3>Similaridade cosseno — o que acontece por dentro</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">cosine_similarity.py</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">cosine_sim</span>(a, b):
+    dot = <span class="fn">sum</span>(x*y <span class="kw">for</span> x, y <span class="kw">in</span> <span class="fn">zip</span>(a, b))
+    norma_a = math.sqrt(<span class="fn">sum</span>(x*x <span class="kw">for</span> x <span class="kw">in</span> a))
+    norma_b = math.sqrt(<span class="fn">sum</span>(x*x <span class="kw">for</span> x <span class="kw">in</span> b))
+    <span class="kw">return</span> dot / (norma_a * norma_b)
+
+<span class="cm"># Resultado entre -1 e 1. Próximo de 1 = muito similar semanticamente.</span></pre>
+    </div>
+  </div>
+  <p class="body">O ChromaDB faz isso internamente e de forma otimizada — mas entender a matemática por baixo ajuda a debugar quando a busca "não está encontrando o óbvio".</p>
+</section>
+
+
+<section id="cap12">
+  <h2 class="chapter-title"><span class="chapter-num">12</span>RAG Completo</h2>
+  <p class="chapter-sub"><span class="pill pill-inter">Intermediário</span> Corresponde às Aulas 06–07 · CKP02</p>
+
+  <p class="body">RAG (Retrieval-Augmented Generation) junta tudo dos Capítulos 10–11 num pipeline: busca documentos relevantes → injeta como contexto no prompt → o LLM responde fundamentado nesse contexto, não só no que já "sabe".</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">rag_pipeline.py</span></div>
+    <div class="code-body"><pre><span class="kw">def</span> <span class="fn">rag</span>(pergunta, k=<span class="num">3</span>):
+    <span class="cm"># 1. RETRIEVE — busca os k chunks mais relevantes</span>
+    resultado = colecao.query(query_embeddings=[embedding(pergunta)], n_results=k)
+    contexto = <span class="st">'\n---\n'</span>.join(resultado[<span class="st">'documents'</span>][<span class="num">0</span>])
+
+    <span class="cm"># 2. AUGMENT — injeta o contexto no prompt</span>
+    prompt = (
+        <span class="fn">f"Responda com base APENAS no contexto abaixo. "</span>
+        <span class="fn">f"Se não souber, diga que não encontrou a informação.\n\n"</span>
+        <span class="fn">f"Contexto:\n{contexto}\n\nPergunta: {pergunta}"</span>
+    )
+
+    <span class="cm"># 3. GENERATE — o LLM responde fundamentado</span>
+    resposta = llm.invoke(prompt, temperature=<span class="num">0.1</span>)  <span class="cm"># temperatura baixa = menos invenção</span>
+    <span class="kw">return</span> resposta.content, resultado[<span class="st">'documents'</span>][<span class="num">0</span>]
+
+resposta, fontes = rag(<span class="st">"Qual o protocolo para febre alta?"</span>)
+<span class="fn">print</span>(resposta)</pre>
+    </div>
+  </div>
+
+  <h3>RAG com LCEL — a versão idiomática</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">rag_lcel.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.runnables <span class="kw">import</span> RunnableParallel, RunnablePassthrough
+<span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser
+
+<span class="kw">def</span> <span class="fn">buscar_contexto</span>(pergunta: <span class="nb">str</span>) -> <span class="nb">str</span>:
+    res = colecao.query(query_embeddings=[embedding(pergunta)], n_results=<span class="num">3</span>)
+    <span class="kw">return</span> <span class="st">'\n---\n'</span>.join(res[<span class="st">'documents'</span>][<span class="num">0</span>])
+
+template_rag = ChatPromptTemplate.from_messages([
+    (<span class="st">"system"</span>, <span class="st">"Responda com base no contexto. Se não souber, diga que não encontrou."</span>),
+    (<span class="st">"human"</span>, <span class="st">"Contexto:\n{contexto}\n\nPergunta: {pergunta}"</span>),
+])
+
+<span class="cm"># RunnableParallel monta o dict {contexto, pergunta} que o template espera</span>
+rag_chain = (
+    RunnableParallel(
+        contexto=RunnableLambda(buscar_contexto),
+        pergunta=RunnablePassthrough(),
+    )
+    | template_rag
+    | llm
+    | StrOutputParser()
+)
+
+resposta = rag_chain.invoke(<span class="st">"Qual o protocolo para febre alta?"</span>)</pre>
+    </div>
+  </div>
+
+  <h3>Avaliação com RAGAS</h3>
+  <p class="body">Como saber se o RAG está bom? As duas métricas centrais que vocês usam no CKP02:</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Métrica</th><th>Pergunta que responde</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Faithfulness</strong></td><td>A resposta está realmente fundamentada no contexto recuperado, ou o modelo "inventou" (alucinou)?</td></tr>
+        <tr><td><strong>Answer Relevancy</strong></td><td>A resposta de fato responde à pergunta feita, ou desviou do assunto?</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">avaliacao_simplificada.py</span></div>
+    <div class="code-body"><pre><span class="kw">def</span> <span class="fn">faithfulness</span>(resposta, contextos):
+    v = llm.invoke(<span class="fn">f"A resposta é suportada pelo contexto? Contexto: {contextos}\nResposta: {resposta}\nSIM ou NAO"</span>)
+    <span class="kw">return</span> <span class="st">'SIM'</span> <span class="kw">in</span> v.content.upper()</pre>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique — direto para o CKP02</div>
+    <div class="exercise-body">Compare <code class="inline">chunk_size=300</code> vs. <code class="inline">chunk_size=800</code> na sua base de documentos. Rode as mesmas 5 perguntas nas duas configurações e calcule faithfulness médio. A configuração com score mais alto é a que você documenta no CKP02.</div>
+  </div>
+</section>
+
+
+<section id="cap13">
+  <h2 class="chapter-title"><span class="chapter-num">13</span>Tools</h2>
+  <p class="chapter-sub"><span class="pill pill-inter">Intermediário</span> Corresponde à Aula 09</p>
+
+  <p class="body">Uma Tool é uma função Python que um agente pode <em>decidir</em> chamar. Você escreve a função normalmente e decora com <code class="inline">@tool</code> — o LangChain usa o docstring e as anotações de tipo para o LLM entender quando e como usar.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">tools.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.tools <span class="kw">import</span> tool
+<span class="kw">import</span> math
+
+<span class="op">@tool</span>
+<span class="kw">def</span> <span class="fn">calcular_imc</span>(peso_kg: <span class="nb">float</span>, altura_m: <span class="nb">float</span>) -> <span class="nb">str</span>:
+    <span class="st">"""Calcula o IMC (Índice de Massa Corporal) e retorna a classificação."""</span>
+    imc = peso_kg / (altura_m ** <span class="num">2</span>)
+    categoria = <span class="st">'abaixo do peso'</span> <span class="kw">if</span> imc < <span class="num">18.5</span> <span class="kw">else</span> <span class="st">'normal'</span> <span class="kw">if</span> imc < <span class="num">25</span> <span class="kw">else</span> <span class="st">'sobrepeso'</span>
+    <span class="kw">return</span> <span class="fn">f"IMC: {imc:.1f} ({categoria})"</span>
+
+<span class="cm"># Testando a tool diretamente, sem passar pelo LLM</span>
+<span class="fn">print</span>(calcular_imc.invoke({<span class="st">'peso_kg'</span>: <span class="num">70.0</span>, <span class="st">'altura_m'</span>: <span class="num">1.75</span>}))
+<span class="fn">print</span>(calcular_imc.name)          <span class="cm"># 'calcular_imc'</span>
+<span class="fn">print</span>(calcular_imc.description)   <span class="cm"># o docstring vira a descrição que o LLM lê</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ O docstring não é decoração — é a interface</div>
+    <div class="callout-body">O LLM decide se e quando chamar sua tool <strong>lendo o docstring</strong>. Um docstring vago ("faz um cálculo") gera decisões erradas. Seja específico: o que a função faz, quando usá-la, o que ela NÃO faz.</div>
+  </div>
+
+  <h3>Vinculando tools a um modelo</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">bind_tools.py</span></div>
+    <div class="code-body"><pre>tools = [calcular_imc]
+llm_com_tools = llm.bind_tools(tools)
+
+resposta = llm_com_tools.invoke(<span class="st">"Qual o IMC de alguém com 80kg e 1.80m?"</span>)
+
+<span class="cm"># O modelo NÃO executa a tool sozinho — ele só *pede* para executar</span>
+<span class="fn">print</span>(resposta.tool_calls)
+<span class="cm"># [{'name': 'calcular_imc', 'args': {'peso_kg': 80.0, 'altura_m': 1.8}, 'id': '...'}]</span>
+
+<span class="cm"># Você (ou um agente) precisa executar de fato e devolver o resultado</span>
+<span class="kw">for</span> chamada <span class="kw">in</span> resposta.tool_calls:
+    resultado = calcular_imc.invoke(chamada[<span class="st">'args'</span>])
+    <span class="fn">print</span>(resultado)</pre>
+    </div>
+  </div>
+  <p class="body">Esse "pedir mas não executar" é o ponto-chave: o LLM decide <em>qual</em> tool chamar e <em>com quais argumentos</em>, mas quem executa o código de fato é o seu programa (ou o loop de um agente — Capítulo 14).</p>
+</section>
+
+
+<section id="cap14">
+  <h2 class="chapter-title"><span class="chapter-num">14</span>Agentes — do Manual ao create_agent</h2>
+  <p class="chapter-sub"><span class="pill pill-inter">Intermediário</span> Corresponde às Aulas 09–11 · CKP03</p>
+
+  <p class="body">Um agente repete o ciclo <strong>Reason → Act → Observe</strong> (ReAct): o LLM raciocina sobre o que fazer, chama uma tool, observa o resultado, e decide se precisa de mais uma chamada ou se já pode responder.</p>
+
+  <h3>Nível 1 — o loop ReAct manual</h3>
+  <p class="body">Entender o loop manualmente antes de usar atalhos é o que separa quem sabe debugar um agente de quem só copia código:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">agente_manual.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_core.messages <span class="kw">import</span> HumanMessage, SystemMessage, ToolMessage
+
+tools_map = {t.name: t <span class="kw">for</span> t <span class="kw">in</span> tools}
+
+<span class="kw">def</span> <span class="fn">agente_react</span>(pergunta, max_steps=<span class="num">5</span>):
+    mensagens = [
+        SystemMessage(content=<span class="st">"Use as tools disponíveis quando necessário."</span>),
+        HumanMessage(content=pergunta),
+    ]
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(max_steps):
+        resposta = llm_com_tools.invoke(mensagens)
+
+        <span class="cm"># Sem tool_calls = o modelo decidiu que já pode responder</span>
+        <span class="kw">if</span> <span class="kw">not</span> resposta.tool_calls:
+            <span class="kw">return</span> resposta.content
+
+        mensagens.append(resposta)
+        <span class="kw">for</span> chamada <span class="kw">in</span> resposta.tool_calls:
+            resultado = tools_map[chamada[<span class="st">'name'</span>]].invoke(chamada[<span class="st">'args'</span>])
+            mensagens.append(ToolMessage(content=<span class="fn">str</span>(resultado), tool_call_id=chamada[<span class="st">'id'</span>]))
+
+    <span class="kw">return</span> <span class="st">"Limite de passos atingido"</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <div class="callout-title">Este é exatamente o loop dos notebooks do curso</div>
+    <div class="callout-body">O padrão acima é o mesmo usado nas Aulas 09–11: <code class="inline">bind_tools</code> + loop manual verificando <code class="inline">tool_calls</code>. É deliberadamente de baixo nível — para vocês entenderem o mecanismo antes de usar abstrações prontas.</div>
+  </div>
+
+  <h3>Nível 2 — create_agent (a API atual do LangChain)</h3>
+  <p class="body">A documentação oficial (2026) recomenda <code class="inline">create_agent</code> como o ponto de entrada padrão para construir agentes — ele encapsula exatamente o loop acima, já pronto e testado, e é construído sobre LangGraph por baixo dos panos (o que veremos na Parte 3).</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">create_agent.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain.agents <span class="kw">import</span> create_agent
+
+agente = create_agent(
+    model=llm,
+    tools=[calcular_imc],
+    system_prompt=<span class="st">"Você é um assistente de saúde. Use as tools quando precisar calcular algo."</span>,
+)
+
+<span class="cm"># invoke espera um dict com 'messages'</span>
+resultado = agente.invoke({<span class="st">"messages"</span>: [HumanMessage(content=<span class="st">"IMC de alguém com 90kg e 1.70m?"</span>)]})
+<span class="fn">print</span>(resultado[<span class="st">"messages"</span>][-<span class="num">1</span>].content)</pre>
+    </div>
+  </div>
+
+  <h3>create_agent com memória — thread_id</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">create_agent_memoria.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langgraph.checkpoint.memory <span class="kw">import</span> InMemorySaver
+
+agente = create_agent(
+    model=llm,
+    tools=[calcular_imc],
+    checkpointer=InMemorySaver(),   <span class="cm"># memória persistente entre chamadas</span>
+)
+
+config = {<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: <span class="st">"paciente-001"</span>}}
+
+agente.invoke({<span class="st">"messages"</span>: [HumanMessage(content=<span class="st">"Meu peso é 75kg e altura 1.65m."</span>)]}, config)
+r = agente.invoke({<span class="st">"messages"</span>: [HumanMessage(content=<span class="st">"Qual é o meu IMC?"</span>)]}, config)
+<span class="cm"># O agente lembra o peso/altura da mensagem anterior — mesmo thread_id</span></pre>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Abordagem</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Loop manual</strong></td><td>Aprendizado — entender o mecanismo. Controle total sobre cada passo.</td></tr>
+        <tr><td><strong><code>create_agent</code></strong></td><td>Produção — menos código, testado pela comunidade, já vem com memória, structured output (<code>response_format=</code>) e middleware prontos.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ create_tool_calling_agent + AgentExecutor — API legada</div>
+    <div class="callout-body">Se você encontrar tutoriais usando <code class="inline">from langchain.agents import AgentExecutor, create_tool_calling_agent</code> ou <code class="inline">hub.pull("hwchase17/react")</code>, são de versões anteriores a 2025. Ainda funcionam, mas <code class="inline">create_agent</code> é o caminho atual recomendado pela documentação oficial.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique — direto para o CKP03</div>
+    <div class="exercise-body">Pegue o agente manual que vocês construíram na Aula 10 e reescreva usando <code class="inline">create_agent</code> com as mesmas tools. Compare: quantas linhas a menos? O comportamento é idêntico?</div>
+  </div>
+</section>
+
+
+<div class="part-divider">
+  <div class="part-num">Parte 3 de 3</div>
+  <h2>LangGraph</h2>
+  <p>A camada por baixo do capô de <code style="color:#f0abc4">create_agent</code>: grafos de estado, roteamento condicional, memória persistente e aprovação humana.</p>
+</div>
+
+
+<section id="cap15">
+  <h2 class="chapter-title"><span class="chapter-num">15</span>Por que LangGraph</h2>
+  <p class="chapter-sub"><span class="pill pill-graph">LangGraph</span> Corresponde à Aula 12</p>
+
+  <p class="body">LCEL é ótimo para pipelines lineares: A → B → C, sempre na mesma ordem. Mas casos reais raramente são lineares:</p>
+  <ul class="body-list">
+    <li>"Se a pergunta for sobre X, vá para o nó A; se for sobre Y, vá para o nó B" — <strong>roteamento condicional</strong></li>
+    <li>"Pause aqui e espere um humano aprovar antes de continuar" — <strong>human-in-the-loop</strong></li>
+    <li>"Lembre o que aconteceu há 10 mensagens, mesmo se o processo reiniciar" — <strong>memória persistente entre sessões</strong></li>
+    <li>"Volte para um passo anterior se a validação falhar" — <strong>loops</strong></li>
+  </ul>
+  <p class="body">Nenhum desses padrões é natural em LCEL puro (que é uma cadeia linear). LangGraph resolve isso modelando o fluxo como um <strong>grafo de estado</strong>: nós (funções) conectados por arestas (que podem ser condicionais), operando sobre um estado compartilhado.</p>
+
+  <div class="callout callout-purple" style="border-left-color:var(--purple)">
+    <div class="callout-title" style="color:var(--purple)">create_agent JÁ é um grafo</div>
+    <div class="callout-body">Quando vocês usaram <code class="inline">create_agent</code> no Capítulo 14, por baixo dos panos ele monta exatamente um StateGraph com um nó de modelo e um nó de tools, conectados por uma aresta condicional — o mesmo que vocês vão construir manualmente neste capítulo. Entender LangGraph explica o que <code class="inline">create_agent</code> faz por vocês.</div>
+  </div>
+</section>
+
+
+<section id="cap16">
+  <h2 class="chapter-title"><span class="chapter-num">16</span>StateGraph — Nodes e Edges</h2>
+  <p class="chapter-sub"><span class="pill pill-graph">LangGraph</span> Corresponde à Aula 13</p>
+
+  <p class="body">Três peças constroem qualquer grafo LangGraph: <strong>State</strong> (o que é compartilhado entre os nós), <strong>Node</strong> (uma função que lê e atualiza o estado) e <strong>Edge</strong> (a conexão entre nós).</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">stategraph_basico.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> typing <span class="kw">import</span> TypedDict, Annotated, Sequence
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> BaseMessage, HumanMessage
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, START, END
+<span class="kw">import</span> operator
+
+<span class="cm"># 1. STATE — um TypedDict define o formato dos dados que fluem pelo grafo</span>
+<span class="kw">class</span> <span class="fn">EstadoSimples</span>(TypedDict):
+    mensagens: Annotated[Sequence[BaseMessage], operator.add]  <span class="cm"># operator.add = acumula, não sobrescreve</span>
+
+<span class="cm"># 2. NODE — uma função que recebe o estado e retorna a atualização</span>
+<span class="kw">def</span> <span class="fn">no_assistente</span>(estado):
+    resposta = llm.invoke(estado[<span class="st">'mensagens'</span>])
+    <span class="kw">return</span> {<span class="st">'mensagens'</span>: [resposta]}
+
+<span class="cm"># 3. MONTAR O GRAFO</span>
+builder = StateGraph(EstadoSimples)
+builder.add_node(<span class="st">'assistente'</span>, no_assistente)
+builder.add_edge(START, <span class="st">'assistente'</span>)
+builder.add_edge(<span class="st">'assistente'</span>, END)
+
+grafo = builder.compile()  <span class="cm"># só depois de compilado o grafo pode rodar</span>
+
+resultado = grafo.invoke({<span class="st">'mensagens'</span>: [HumanMessage(content=<span class="st">'O que é LangGraph?'</span>)]})
+<span class="fn">print</span>(resultado[<span class="st">'mensagens'</span>][-<span class="num">1</span>].content)</pre>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <div class="callout-title">Por que Annotated[..., operator.add]?</div>
+    <div class="callout-body">Por padrão, quando um nó retorna um campo do estado, o LangGraph <strong>sobrescreve</strong> o valor antigo. Com <code class="inline">operator.add</code> como "reducer", o novo valor é <strong>concatenado</strong> à lista existente em vez de substituí-la — essencial para o campo de mensagens, onde cada nó adiciona à conversa em vez de apagar o histórico.</div>
+  </div>
+
+  <h3>Grafo com múltiplos nós em sequência</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">grafo_sequencial.py</span></div>
+    <div class="code-body"><pre><span class="kw">class</span> <span class="fn">EstadoPipeline</span>(TypedDict):
+    pergunta: <span class="nb">str</span>
+    rascunho: <span class="nb">str</span>
+    resposta_final: <span class="nb">str</span>
+
+<span class="kw">def</span> <span class="fn">gerar</span>(estado):
+    r = llm.invoke(estado[<span class="st">'pergunta'</span>])
+    <span class="kw">return</span> {<span class="st">'rascunho'</span>: r.content}
+
+<span class="kw">def</span> <span class="fn">revisar</span>(estado):
+    r = llm.invoke(<span class="fn">f"Revise e melhore: {estado['rascunho']}"</span>)
+    <span class="kw">return</span> {<span class="st">'resposta_final'</span>: r.content}
+
+builder = StateGraph(EstadoPipeline)
+builder.add_node(<span class="st">'gerar'</span>, gerar)
+builder.add_node(<span class="st">'revisar'</span>, revisar)
+builder.add_edge(START, <span class="st">'gerar'</span>)
+builder.add_edge(<span class="st">'gerar'</span>, <span class="st">'revisar'</span>)   <span class="cm"># sequência fixa: sempre gerar → revisar</span>
+builder.add_edge(<span class="st">'revisar'</span>, END)
+
+grafo = builder.compile()</pre>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique</div>
+    <div class="exercise-body">Construa um grafo de 3 nós em sequência: <code class="inline">classificar</code> (identifica o tipo da pergunta) → <code class="inline">buscar_contexto</code> (usa seu RAG do Capítulo 12) → <code class="inline">responder</code>.</div>
+  </div>
+</section>
+
+
+<section id="cap17">
+  <h2 class="chapter-title"><span class="chapter-num">17</span>Conditional Edges</h2>
+  <p class="chapter-sub"><span class="pill pill-graph">LangGraph</span> Corresponde à Aula 13</p>
+
+  <p class="body">Uma aresta condicional decide dinamicamente qual nó executar a seguir, baseada no estado atual — é isso que torna um grafo diferente de um pipeline linear.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conditional_edges.py</span></div>
+    <div class="code-body"><pre><span class="kw">class</span> <span class="fn">EstadoAgente</span>(TypedDict):
+    mensagens: Annotated[Sequence[BaseMessage], operator.add]
+
+<span class="kw">def</span> <span class="fn">no_agente</span>(estado):
+    resposta = llm_com_tools.invoke(estado[<span class="st">'mensagens'</span>])
+    <span class="kw">return</span> {<span class="st">'mensagens'</span>: [resposta]}
+
+<span class="kw">def</span> <span class="fn">no_tools</span>(estado):
+    ultima = estado[<span class="st">'mensagens'</span>][-<span class="num">1</span>]
+    resultados = []
+    <span class="kw">for</span> chamada <span class="kw">in</span> ultima.tool_calls:
+        r = tools_map[chamada[<span class="st">'name'</span>]].invoke(chamada[<span class="st">'args'</span>])
+        resultados.append(ToolMessage(content=<span class="fn">str</span>(r), tool_call_id=chamada[<span class="st">'id'</span>]))
+    <span class="kw">return</span> {<span class="st">'mensagens'</span>: resultados}
+
+<span class="cm"># A FUNÇÃO DE DECISÃO — retorna o NOME do próximo nó como string</span>
+<span class="kw">def</span> <span class="fn">decidir_proximo_no</span>(estado):
+    ultima = estado[<span class="st">'mensagens'</span>][-<span class="num">1</span>]
+    <span class="kw">if</span> <span class="fn">hasattr</span>(ultima, <span class="st">'tool_calls'</span>) <span class="kw">and</span> ultima.tool_calls:
+        <span class="kw">return</span> <span class="st">'tools'</span>     <span class="cm"># precisa executar uma tool</span>
+    <span class="kw">return</span> END          <span class="cm"># já tem resposta final</span>
+
+builder = StateGraph(EstadoAgente)
+builder.add_node(<span class="st">'agente'</span>, no_agente)
+builder.add_node(<span class="st">'tools'</span>, no_tools)
+builder.set_entry_point(<span class="st">'agente'</span>)
+builder.add_conditional_edges(<span class="st">'agente'</span>, decidir_proximo_no)  <span class="cm"># ramifica com base na decisão</span>
+builder.add_edge(<span class="st">'tools'</span>, <span class="st">'agente'</span>)  <span class="cm"># após executar a tool, volta ao agente — LOOP</span>
+
+grafo_react = builder.compile()</pre>
+    </div>
+  </div>
+
+  <p class="body">Este é o mesmo padrão ReAct do Capítulo 14 — mas agora como um grafo explícito, com o <strong>loop visível</strong> (<code class="inline">tools → agente</code>) em vez de escondido dentro de um <code class="inline">while</code>.</p>
+
+  <h3>Roteamento com múltiplos destinos</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">router_multiplo.py</span></div>
+    <div class="code-body"><pre><span class="kw">def</span> <span class="fn">classificar_categoria</span>(estado):
+    <span class="kw">if</span> <span class="st">'urgente'</span> <span class="kw">in</span> estado[<span class="st">'categoria'</span>]:
+        <span class="kw">return</span> <span class="st">'urgente'</span>
+    <span class="kw">elif</span> <span class="st">'financeiro'</span> <span class="kw">in</span> estado[<span class="st">'categoria'</span>]:
+        <span class="kw">return</span> <span class="st">'financeiro'</span>
+    <span class="kw">return</span> <span class="st">'geral'</span>
+
+<span class="cm"># O dict mapeia o retorno da função para o nome real do nó</span>
+builder.add_conditional_edges(
+    <span class="st">'classificar'</span>,
+    classificar_categoria,
+    {<span class="st">'urgente'</span>: <span class="st">'no_urgente'</span>, <span class="st">'financeiro'</span>: <span class="st">'no_financeiro'</span>, <span class="st">'geral'</span>: <span class="st">'no_geral'</span>},
+)</pre>
+    </div>
+  </div>
+</section>
+
+
+<section id="cap18">
+  <h2 class="chapter-title"><span class="chapter-num">18</span>Checkpointer e Memória Persistente</h2>
+  <p class="chapter-sub"><span class="pill pill-graph">LangGraph</span> Corresponde à Aula 13</p>
+
+  <p class="body">Um <strong>checkpointer</strong> salva o estado do grafo a cada passo, associado a um <code class="inline">thread_id</code>. Isso permite retomar exatamente de onde parou — mesmo em uma nova chamada de <code class="inline">.invoke()</code>, mesmo depois de reiniciar o processo (se usar um checkpointer persistente em disco/banco).</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">checkpointer.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langgraph.checkpoint.memory <span class="kw">import</span> InMemorySaver
+<span class="cm"># Alias comum em código mais antigo: MemorySaver — mesmo conceito</span>
+
+memory = InMemorySaver()
+grafo_com_memoria = builder.compile(checkpointer=memory)
+
+config = {<span class="st">'configurable'</span>: {<span class="st">'thread_id'</span>: <span class="st">'usuario-alice'</span>}}
+
+<span class="cm"># Primeira chamada</span>
+grafo_com_memoria.invoke({<span class="st">'mensagens'</span>: [HumanMessage(content=<span class="st">'Meu nome é Alice.'</span>)]}, config)
+
+<span class="cm"># Segunda chamada, MESMO thread_id — lembra da primeira</span>
+r = grafo_com_memoria.invoke({<span class="st">'mensagens'</span>: [HumanMessage(content=<span class="st">'Qual é o meu nome?'</span>)]}, config)
+<span class="fn">print</span>(r[<span class="st">'mensagens'</span>][-<span class="num">1</span>].content)  <span class="cm"># "Seu nome é Alice"</span>
+
+<span class="cm"># thread_id DIFERENTE = conversa completamente isolada</span>
+config_bob = {<span class="st">'configurable'</span>: {<span class="st">'thread_id'</span>: <span class="st">'usuario-bob'</span>}}
+r2 = grafo_com_memoria.invoke({<span class="st">'mensagens'</span>: [HumanMessage(content=<span class="st">'Qual é o meu nome?'</span>)]}, config_bob)
+<span class="cm"># Bob não tem contexto de Alice — thread_id separa sessões de usuários diferentes</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <div class="callout-title">thread_id = 1 sessão de usuário</div>
+    <div class="callout-body">Na prática (e no CKP03), cada usuário da sua interface Gradio deve ter um <code class="inline">thread_id</code> único e estável — pode ser o ID de sessão do Gradio, um UUID gerado no início da conversa, ou o ID do usuário logado.</div>
+  </div>
+
+  <h3>InMemorySaver vs. persistência real</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Checkpointer</th><th>Persiste onde</th><th>Sobrevive a reinício do Colab?</th></tr></thead>
+      <tbody>
+        <tr><td><code>InMemorySaver</code></td><td>RAM do processo</td><td>Não — usado nos notebooks do curso</td></tr>
+        <tr><td><code>SqliteSaver</code></td><td>Arquivo SQLite local</td><td>Sim, se o arquivo persistir</td></tr>
+        <tr><td><code>PostgresSaver</code></td><td>Banco Postgres</td><td>Sim — usado em produção real</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<section id="cap19">
+  <h2 class="chapter-title"><span class="chapter-num">19</span>Human-in-the-Loop</h2>
+  <p class="chapter-sub"><span class="pill pill-graph">LangGraph</span> Corresponde à Aula 13</p>
+
+  <p class="body">Nem toda decisão de um agente deveria ser automática. HITL (Human-in-the-Loop) pausa o grafo antes de uma ação crítica e espera aprovação humana antes de continuar.</p>
+
+  <h3>Abordagem 1 — interrupt_before (mais simples)</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">interrupt_before.py</span></div>
+    <div class="code-body"><pre>memory = InMemorySaver()
+
+<span class="cm"># O grafo PAUSA automaticamente antes do nó 'executar'</span>
+grafo_hitl = builder.compile(checkpointer=memory, interrupt_before=[<span class="st">'executar'</span>])
+
+config = {<span class="st">'configurable'</span>: {<span class="st">'thread_id'</span>: <span class="st">'aprovacao-001'</span>}}
+
+<span class="cm"># PASSO 1 — roda até parar antes de 'executar'</span>
+r = grafo_hitl.invoke({<span class="st">'solicitacao'</span>: <span class="st">'Enviar 500 emails de marketing'</span>, <span class="st">'aprovado'</span>: <span class="kw">False</span>}, config)
+<span class="fn">print</span>(<span class="st">'[PAUSADO — aguardando aprovação humana]'</span>)
+
+<span class="cm"># PASSO 2 — humano aprova (ex.: um botão na interface)</span>
+grafo_hitl.update_state(config, {<span class="st">'aprovado'</span>: <span class="kw">True</span>})
+
+<span class="cm"># PASSO 3 — retoma de onde parou (None = continua sem nova entrada)</span>
+r2 = grafo_hitl.invoke(<span class="kw">None</span>, config=config)</pre>
+    </div>
+  </div>
+
+  <h3>Abordagem 2 — interrupt() dentro do nó (mais flexível)</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">interrupt_dinamico.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langgraph.types <span class="kw">import</span> interrupt, Command
+
+<span class="kw">def</span> <span class="fn">no_revisao_humana</span>(estado):
+    <span class="cm"># A execução PARA aqui e devolve esta pergunta para quem chamou</span>
+    resposta = interrupt(<span class="st">'Aprova o envio dos 500 emails? (sim/não)'</span>)
+    <span class="kw">return</span> {<span class="st">'aprovado'</span>: resposta == <span class="st">'sim'</span>}
+
+<span class="cm"># Para retomar depois do interrupt, usa Command(resume=...)</span>
+grafo.invoke(Command(resume=<span class="st">'sim'</span>), config=config)</pre>
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Abordagem</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td><code>interrupt_before</code></td><td>Pausa sempre no mesmo nó, de forma previsível — mais simples de entender</td></tr>
+        <tr><td><code>interrupt()</code> dentro do nó</td><td>A pausa é condicional (só interrompe às vezes) ou precisa levar uma pergunta específica ao humano</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-title">✏️ Pratique</div>
+    <div class="exercise-body">No agente do seu CKP03, identifique 1 ação que deveria pedir aprovação humana antes de executar (ex.: enviar algo, deletar algo, confirmar um valor alto) e implemente com <code class="inline">interrupt_before</code>.</div>
+  </div>
+</section>
+
+
+<section id="cap20">
+  <h2 class="chapter-title"><span class="chapter-num">20</span>Multiagentes</h2>
+  <p class="chapter-sub"><span class="pill pill-graph">LangGraph</span> Avançado — não obrigatório no CKP03</p>
+
+  <p class="body">Em vez de um único agente generalista, o padrão <strong>supervisor/worker</strong> divide responsabilidades: um nó supervisor decide qual agente especializado (worker) deve agir, cada worker é especialista em uma coisa só.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">supervisor_worker.py</span></div>
+    <div class="code-body"><pre><span class="kw">class</span> <span class="fn">EstadoMultiagente</span>(TypedDict):
+    mensagens: Annotated[Sequence[BaseMessage], operator.add]
+    proximo: <span class="nb">str</span>
+
+<span class="kw">def</span> <span class="fn">supervisor</span>(estado):
+    <span class="cm"># O supervisor só decide QUEM age, não age ele mesmo</span>
+    decisao = llm.invoke(
+        <span class="fn">f"Classifique em: rag, calculo ou geral. Só a palavra.\n{estado['mensagens'][-1].content}"</span>
+    )
+    <span class="kw">return</span> {<span class="st">'proximo'</span>: decisao.content.strip().lower()}
+
+<span class="kw">def</span> <span class="fn">worker_rag</span>(estado):
+    resposta, _ = rag(estado[<span class="st">'mensagens'</span>][-<span class="num">1</span>].content)  <span class="cm"># do Capítulo 12</span>
+    <span class="kw">return</span> {<span class="st">'mensagens'</span>: [AIMessage(content=resposta)]}
+
+<span class="kw">def</span> <span class="fn">worker_calculo</span>(estado):
+    resposta = llm_com_tools.invoke(estado[<span class="st">'mensagens'</span>])
+    <span class="kw">return</span> {<span class="st">'mensagens'</span>: [resposta]}
+
+builder = StateGraph(EstadoMultiagente)
+builder.add_node(<span class="st">'supervisor'</span>, supervisor)
+builder.add_node(<span class="st">'worker_rag'</span>, worker_rag)
+builder.add_node(<span class="st">'worker_calculo'</span>, worker_calculo)
+builder.set_entry_point(<span class="st">'supervisor'</span>)
+builder.add_conditional_edges(
+    <span class="st">'supervisor'</span>,
+    <span class="kw">lambda</span> estado: estado[<span class="st">'proximo'</span>],
+    {<span class="st">'rag'</span>: <span class="st">'worker_rag'</span>, <span class="st">'calculo'</span>: <span class="st">'worker_calculo'</span>, <span class="st">'geral'</span>: END},
+)
+builder.add_edge(<span class="st">'worker_rag'</span>, END)
+builder.add_edge(<span class="st">'worker_calculo'</span>, END)</pre>
+    </div>
+  </div>
+
+  <div class="callout callout-cyan">
+    <div class="callout-title">Quando vale a pena</div>
+    <div class="callout-body">Multiagentes ajudam quando um único system prompt "faz tudo" fica confuso demais ou quando você quer isolar o contexto de cada especialidade (ex.: worker jurídico não precisa ver o histórico do worker técnico). Para a maioria dos projetos de CKP03, um único agente com boas tools já é suficiente — considere multiagentes só se sentir o system prompt ficando genérico demais.</div>
+  </div>
+</section>
+
+
+<section id="cap21">
+  <h2 class="chapter-title"><span class="chapter-num">21</span>create_agent por Dentro</h2>
+  <p class="chapter-sub"><span class="pill pill-graph">LangGraph</span> Fechamento — conectando tudo</p>
+
+  <p class="body">Voltando ao Capítulo 14: agora que vocês conhecem StateGraph, conditional edges e checkpointer, o que <code class="inline">create_agent</code> faz fica transparente. Ele monta, automaticamente, o mesmo grafo do Capítulo 17:</p>
+
+  <div class="mini-cards">
+    <div class="mini-card">
+      <div class="mini-card-title">1. Um nó de modelo</div>
+      <div class="mini-card-body">Equivalente ao <code class="inline">no_agente</code> — chama o LLM com as tools vinculadas.</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-card-title">2. Um nó de tools</div>
+      <div class="mini-card-body">Equivalente ao <code class="inline">no_tools</code> — executa as chamadas pedidas pelo modelo.</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-card-title">3. Uma aresta condicional</div>
+      <div class="mini-card-body">Equivalente ao <code class="inline">decidir_proximo_no</code> — decide entre tools e END.</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-card-title">4. checkpointer= plugado direto</div>
+      <div class="mini-card-body">O parâmetro <code class="inline">checkpointer=</code> do Capítulo 14 é literalmente o mesmo do Capítulo 18.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-purple" style="border-left-color:var(--purple)">
+    <div class="callout-title" style="color:var(--purple)">Por que isso importa na prática</div>
+    <div class="callout-body">Quando o comportamento padrão de <code class="inline">create_agent</code> não for suficiente para o seu CKP03 — por exemplo, você precisa de um passo extra de validação antes de responder, ou de roteamento entre 2 personas diferentes — você sabe exatamente onde "abrir o capô" e escrever seu próprio StateGraph em vez de forçar o caso dentro de <code class="inline">create_agent</code>.</div>
+  </div>
+
+  <h3>Regra prática de decisão</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Situação</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>Agente com tools, sem fluxo especial</td><td><code>create_agent</code></td></tr>
+        <tr><td>Precisa de roteamento condicional customizado, múltiplos agentes, ou HITL em pontos específicos</td><td>StateGraph manual</td></tr>
+        <tr><td>Quer entender o que está acontecendo por dentro</td><td>StateGraph manual — pelo menos uma vez</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<div class="part-divider" style="background:linear-gradient(135deg,#1a1b2f 0%,#1f2937 100%)">
+  <div class="part-num">Apêndice</div>
+  <h2>Referência Rápida</h2>
+  <p>Glossário, cheatsheet, erros comuns e onde continuar aprendendo.</p>
+</div>
+
+<section id="glossario">
+  <h2 class="chapter-title">📖 Glossário</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Termo</th><th>Definição curta</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Runnable</strong></td><td>Interface que todo componente LangChain implementa (invoke/batch/stream) — é o que permite o operador <code>|</code></td></tr>
+        <tr><td><strong>LCEL</strong></td><td>LangChain Expression Language — a sintaxe de composição com <code>|</code></td></tr>
+        <tr><td><strong>Chain</strong></td><td>Uma sequência de Runnables compostos com <code>|</code></td></tr>
+        <tr><td><strong>Chunk</strong></td><td>Um pedaço de texto após o text splitting, pronto para ser indexado</td></tr>
+        <tr><td><strong>Embedding</strong></td><td>Representação vetorial de um texto, usada para busca semântica</td></tr>
+        <tr><td><strong>Retriever</strong></td><td>Componente que busca documentos relevantes numa base vetorial</td></tr>
+        <tr><td><strong>Tool</strong></td><td>Função Python que um agente pode decidir chamar</td></tr>
+        <tr><td><strong>Tool call</strong></td><td>O pedido do LLM para executar uma tool com argumentos específicos</td></tr>
+        <tr><td><strong>Agent</strong></td><td>Modelo + tools + loop de decisão (ReAct)</td></tr>
+        <tr><td><strong>State</strong></td><td>Os dados compartilhados entre os nós de um grafo LangGraph</td></tr>
+        <tr><td><strong>Node</strong></td><td>Uma função que lê e atualiza o estado do grafo</td></tr>
+        <tr><td><strong>Edge</strong></td><td>A conexão entre dois nós — fixa ou condicional</td></tr>
+        <tr><td><strong>Checkpointer</strong></td><td>Componente que salva o estado do grafo, associado a um thread_id</td></tr>
+        <tr><td><strong>thread_id</strong></td><td>Identificador único de uma sessão/conversa persistida pelo checkpointer</td></tr>
+        <tr><td><strong>HITL</strong></td><td>Human-in-the-Loop — pausa do grafo para aprovação humana</td></tr>
+        <tr><td><strong>Reducer</strong></td><td>Função (ex.: <code>operator.add</code>) que define como um campo do estado é atualizado — acumula em vez de sobrescrever</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<section id="cheatsheet">
+  <h2 class="chapter-title">⚡ Cheatsheet Rápido</h2>
+
+  <h3>Imports mais usados</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">imports.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> langchain_ollama <span class="kw">import</span> ChatOllama
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> HumanMessage, SystemMessage, AIMessage, ToolMessage
+<span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate, MessagesPlaceholder
+<span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser, JsonOutputParser
+<span class="kw">from</span> langchain_core.runnables <span class="kw">import</span> RunnableLambda, RunnableParallel, RunnablePassthrough
+<span class="kw">from</span> langchain_core.tools <span class="kw">import</span> tool
+<span class="kw">from</span> langchain.agents <span class="kw">import</span> create_agent
+<span class="kw">from</span> langchain.text_splitter <span class="kw">import</span> RecursiveCharacterTextSplitter
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, START, END
+<span class="kw">from</span> langgraph.checkpoint.memory <span class="kw">import</span> InMemorySaver
+<span class="kw">from</span> langgraph.types <span class="kw">import</span> interrupt, Command
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator</pre>
+    </div>
+  </div>
+
+  <h3>Tabela de decisão — "o que eu uso aqui?"</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Preciso de...</th><th>Uso</th><th>Capítulo</th></tr></thead>
+      <tbody>
+        <tr><td>Só chamar o LLM uma vez</td><td><code>llm.invoke(texto)</code></td><td>3</td></tr>
+        <tr><td>Compor prompt + modelo + parser</td><td><code>template | llm | parser</code></td><td>6</td></tr>
+        <tr><td>Lembrar da conversa</td><td>Lista de mensagens manual, ou <code>checkpointer</code> se usar LangGraph</td><td>8, 18</td></tr>
+        <tr><td>Resposta em formato garantido</td><td><code>llm.with_structured_output(Schema)</code></td><td>9</td></tr>
+        <tr><td>Responder com base em documentos</td><td>Pipeline RAG (retrieve → augment → generate)</td><td>12</td></tr>
+        <tr><td>Modelo decidir chamar uma função</td><td><code>@tool</code> + <code>bind_tools</code></td><td>13</td></tr>
+        <tr><td>Agente simples com tools</td><td><code>create_agent</code></td><td>14</td></tr>
+        <tr><td>Fluxo com decisão condicional</td><td><code>StateGraph</code> + <code>add_conditional_edges</code></td><td>17</td></tr>
+        <tr><td>Pausar para aprovação humana</td><td><code>interrupt_before</code> ou <code>interrupt()</code></td><td>19</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<section id="erros">
+  <h2 class="chapter-title">🐛 Erros Comuns</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Erro</th><th>Causa provável</th><th>Solução</th></tr></thead>
+      <tbody>
+        <tr><td><code>ConnectionError</code> ao chamar o modelo</td><td><code>OLLAMA_HOST</code> não foi setado antes de instanciar <code>ChatOllama</code></td><td>Setar as variáveis de ambiente <em>antes</em> de criar o objeto <code>llm</code></td></tr>
+        <tr><td>Agente nunca chama a tool</td><td>Docstring vago, ou a tool não foi passada em <code>bind_tools</code>/<code>tools=</code></td><td>Reescreva o docstring sendo específico sobre quando usar</td></tr>
+        <tr><td><code>KeyError</code> no state do grafo</td><td>Um nó tentou ler um campo que ainda não existe no TypedDict</td><td>Use <code>NotRequired</code> ou garanta um valor inicial para todos os campos ao invocar</td></tr>
+        <tr><td>Estado "reseta" a cada chamada</td><td>Esqueceu de passar o mesmo <code>thread_id</code> no <code>config</code></td><td>Reutilize o mesmo <code>config</code> entre chamadas da mesma sessão</td></tr>
+        <tr><td><code>JsonOutputParser</code> quebra às vezes</td><td>O modelo escreveu texto antes/depois do JSON</td><td>Troque por <code>with_structured_output()</code> (Cap. 9) — mais robusto</td></tr>
+        <tr><td>RAG "inventa" (alucina)</td><td>Contexto recuperado é irrelevante, ou o prompt não restringe a resposta ao contexto</td><td>Aumente k, ajuste chunk_size, e seja explícito no prompt: "responda APENAS com base no contexto"</td></tr>
+        <tr><td>Grafo trava sem erro</td><td>Loop infinito entre dois nós sem condição de saída</td><td>Confira se a aresta condicional sempre tem um caminho até <code>END</code></td></tr>
+        <tr><td><code>Graph not compiled</code></td><td>Tentou invocar o <code>builder</code> em vez do grafo compilado</td><td>Sempre chame <code>.compile()</code> e use o retorno, não o <code>builder</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<section id="referencias" style="border-bottom:none">
+  <h2 class="chapter-title">🔗 Referências</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Fonte</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr><td>Documentação oficial (a única atual — não use python.langchain.com)</td><td><a href="https://docs.langchain.com" target="_blank">docs.langchain.com</a></td></tr>
+        <tr><td>Referência de API completa (LangChain + LangGraph)</td><td><a href="https://reference.langchain.com" target="_blank">reference.langchain.com</a></td></tr>
+        <tr><td>Visão geral de agentes e <code>create_agent</code></td><td><a href="https://docs.langchain.com/oss/python/langchain/agents" target="_blank">docs.langchain.com/oss/python/langchain/agents</a></td></tr>
+        <tr><td>Graph API do LangGraph</td><td><a href="https://docs.langchain.com/oss/python/langgraph/graph-api" target="_blank">docs.langchain.com/oss/python/langgraph/graph-api</a></td></tr>
+        <tr><td>LangChain Academy — cursos gratuitos</td><td><a href="https://academy.langchain.com" target="_blank">academy.langchain.com</a></td></tr>
+        <tr><td>Fórum da comunidade</td><td><a href="https://forum.langchain.com" target="_blank">forum.langchain.com</a></td></tr>
+        <tr><td>ChromaDB — documentação</td><td><a href="https://docs.trychroma.com" target="_blank">docs.trychroma.com</a></td></tr>
+        <tr><td>Ollama Cloud</td><td><a href="https://ollama.com" target="_blank">ollama.com</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-orange" style="margin-top:20px">
+    <div class="callout-title">Como identificar um tutorial desatualizado</div>
+    <div class="callout-body">Se você ver <code class="inline">from langchain.agents import initialize_agent</code>, <code class="inline">ConversationBufferMemory</code>, ou <code class="inline">hub.pull("hwchase17/react")</code>, o material é de 2023–2024 e usa padrões legados. Prefira sempre conferir a data e o domínio (<code class="inline">docs.langchain.com</code>, não <code class="inline">python.langchain.com</code>).</div>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:var(--text)">Apostila de LangChain — FIAP · Prompt Engineering and Artificial Intelligence · 2026</strong><br>
+  Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br<br>
+  <span style="margin-top:6px;display:block">Baseado em docs.langchain.com · Exemplos com Ollama Cloud (gpt-oss:120b) — o mesmo stack usado nas aulas</span>
+</footer>
+</div>
+</div>
+
+<script>
+  const btn=document.createElement('div');btn.id='toTop';btn.innerHTML='&#8593;';document.body.appendChild(btn);
+  btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  window.addEventListener('scroll',()=>{btn.classList.toggle('show',window.scrollY>600);});
+</script>
+
+</body>
+</html>
