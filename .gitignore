@@ -225,3 +225,10 @@ Ebooks/
 aulas/projetos_langchain_local/
 aulas/Checkpoints/
 aulas/fichas_professor_2SEM/
+
+.omc/*
+
+.ipynb_checkpoints/
+
+Apostila_LangChain_Basico_Intermediario_LangGraph.html
+Plano_2Sem_ComBase_2026.html
