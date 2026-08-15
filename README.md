@@ -16,12 +16,13 @@ infraestrutura Docker para laboratório local e ebooks de referência.
 4. [Notebooks das aulas](#4-notebooks-das-aulas)
 5. [Projetos LangChain — Professor vs Aluno](#5-projetos-langchain--professor-vs-aluno)
 6. [Infraestrutura Docker](#6-infraestrutura-docker)
-7. [Ebooks de referência](#7-ebooks-de-referência)
-8. [Como usar — rápido](#8-como-usar--rápido)
-9. [Stack tecnológico aprovado](#9-stack-tecnológico-aprovado)
-10. [Modelos proibidos](#10-modelos-proibidos)
-11. [Referências acadêmicas](#11-referências-acadêmicas)
-12. [Troubleshooting](#12-troubleshooting)
+7. [Arquivos ignorados](#7-arquivos-ignorados-mantidos-apenas-localmente)
+8. [Ebooks de referência](#8-ebooks-de-referência)
+9. [Como usar — rápido](#9-como-usar--rápido)
+10. [Stack tecnológico aprovado](#10-stack-tecnológico-aprovado)
+11. [Modelos proibidos](#11-modelos-proibidos)
+12. [Referências acadêmicas](#12-referências-acadêmicas)
+13. [Troubleshooting](#13-troubleshooting)
 
 ---
 
@@ -100,6 +101,9 @@ infraestrutura Docker para laboratório local e ebooks de referência.
 │   ├── Prompt Engineering.pdf
 │   ├── RAG with Python Cookbook.pdf
 │   └── ... (15 ebooks no total)
+│
+├── Apostila_LangChain_Basico_Intermediario_LangGraph.html  # Apostila (ignorada pelo git)
+├── Plano_2Sem_ComBase_2026.html                             # Plano do semestre (ignorado pelo git)
 │
 └── .gitignore
 ```
@@ -265,7 +269,21 @@ make up-profile-minimum
 
 ---
 
-## 7. Ebooks de referência
+## 7. Arquivos ignorados (mantidos apenas localmente)
+
+Alguns arquivos grandes ou específicos do professor são mantidos apenas localmente
+e **não são commitados** no repositório:
+
+| Arquivo | Descrição |
+|---|---|
+| `Apostila_LangChain_Basico_Intermediario_LangGraph.html` | Apostila completa de LangChain (básico → intermediário) com foco em LangGraph |
+| `Plano_2Sem_ComBase_2026.html` | Plano detalhado do 2º semestre 2026 (HTML interativo) |
+
+> Esses arquivos estão listados no `.gitignore`. Para acessá-los, peça ao professor.
+
+---
+
+## 8. Ebooks de referência
 
 A pasta `Ebooks/` contém **15 livros** em PDF para consulta:
 
@@ -289,7 +307,7 @@ A pasta `Ebooks/` contém **15 livros** em PDF para consulta:
 
 ---
 
-## 8. Como usar — rápido
+## 9. Como usar — rápido
 
 ### Opção 1: Notebooks (Google Colab)
 
@@ -349,7 +367,7 @@ cd projetos_langchain_local_aluno/Aula_01_Revisao_LangChain_LCEL_ChatOllama
 
 ---
 
-## 9. Stack tecnológico aprovado
+## 10. Stack tecnológico aprovado
 
 ### Modelos (via Ollama Cloud API)
 
@@ -385,7 +403,7 @@ Streamlit       → apps web com estado
 
 ---
 
-## 10. Modelos proibidos
+## 11. Modelos proibidos
 
 Os seguintes modelos **não devem ser usados** em código ou exemplos:
 
@@ -397,7 +415,7 @@ GPT-3, GPT-3.5, Claude 1, Claude 2, LLaMA 1, LLaMA 2, BERT, GPT-2
 
 ---
 
-## 11. Referências acadêmicas
+## 12. Referências acadêmicas
 
 ### Livros
 
@@ -429,7 +447,7 @@ GPT-3, GPT-3.5, Claude 1, Claude 2, LLaMA 1, LLaMA 2, BERT, GPT-2
 
 ---
 
-## 12. Troubleshooting
+## 13. Troubleshooting
 
 ### Ollama não responde
 
