@@ -1,0 +1,10 @@
+# Dependências do projeto — Pipeline RAG Completo
+# Instale com:  pip install -r requirements.txt
+
+langchain
+langchain-community
+langchain-ollama
+pymupdf
+chromadb
+langchain-text-splitters
+python-dotenv

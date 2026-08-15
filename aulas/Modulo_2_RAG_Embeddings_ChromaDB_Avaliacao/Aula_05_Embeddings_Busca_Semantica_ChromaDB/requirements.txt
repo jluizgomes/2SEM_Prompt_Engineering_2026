@@ -1,0 +1,8 @@
+# Dependências do projeto — Embeddings e Busca Semântica com ChromaDB
+# Instale com:  pip install -r requirements.txt
+
+langchain-ollama
+langchain-community
+chromadb
+numpy
+python-dotenv

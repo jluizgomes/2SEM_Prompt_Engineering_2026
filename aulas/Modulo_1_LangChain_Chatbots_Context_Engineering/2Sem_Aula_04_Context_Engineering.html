@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 04 — Context Engineering</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(237,20,91,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:42px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:800px}
+  .cover-subtitle{font-size:18px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.25);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-pink);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:28px;font-weight:800;color:var(--fiap-white);margin-bottom:32px;padding-bottom:12px;border-bottom:2px solid var(--fiap-pink);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:20px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:12px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-pink);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:12px 18px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:20px 24px;margin:20px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-pink);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-blue{border-left-color:var(--fiap-blue)}.callout-blue .callout-title{color:var(--fiap-blue)}
+  .callout-purple{border-left-color:var(--fiap-purple)}.callout-purple .callout-title{color:var(--fiap-purple)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:20px 0}
+  .agenda-item{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:10px}
+  .agenda-num{width:32px;height:32px;background:rgba(237,20,91,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--fiap-pink);flex-shrink:0}
+  .agenda-text{font-size:14px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:12px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:4px 10px;border-radius:6px}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#ecfdf5 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:20px;font-size:13px;line-height:1.9}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .xml-tag{color:#e06c75}.xml-attr{color:#e5c07b}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .exercise{background:linear-gradient(135deg,rgba(41,175,140,.06),rgba(61,156,204,.06));border:1px solid rgba(41,175,140,.2);border-radius:14px;padding:28px;margin:20px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-green);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:16px}
+  .exercise-steps{padding-left:20px;margin-bottom:16px}
+  .exercise-steps li{color:var(--fiap-text);font-size:14px;margin-bottom:8px;line-height:1.6}
+  /* context budget visual */
+  .ctx-budget{display:flex;flex-direction:column;gap:4px;margin:16px 0}
+  .ctx-row{display:flex;align-items:center;gap:12px}
+  .ctx-label{font-size:12px;font-weight:600;color:var(--fiap-muted);width:140px;flex-shrink:0}
+  .ctx-bar{flex:1;height:28px;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:11px;font-weight:700;color:#fff}
+  .ctx-pct{font-size:12px;font-weight:700;color:var(--fiap-muted);width:40px;text-align:right}
+  /* CKP rubric */
+  .ckp-box{background:rgba(124,96,198,.04);border:2px solid rgba(124,96,198,.25);border-radius:14px;padding:24px;margin:16px 0}
+  .ckp-req{display:flex;gap:10px;padding:10px 14px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;margin-bottom:8px;font-size:13px;align-items:flex-start}
+  .ckp-check{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Context Engineering<br>De prompt para contexto</div>
+  <div class="cover-subtitle">Aula 04/14 — Módulo 1: LangChain Foundations · 🏁 Entrega CKP01</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">⏱️ 1h40min</div>
+    <div class="cover-meta-item">🧠 Context rot · XML tagging · Meta prompting</div>
+    <div class="cover-meta-item">🏁 CKP01 entrega</div>
+  </div>
+  <div class="slide-number">01 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">De prompt engineering a context engineering — a mudança de paradigma (Anthropic, 2025)</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">O que vai no contexto — system · tools · dados · histórico · orçamento de tokens</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">Context rot — como a qualidade degrada com janelas longas</div><div class="agenda-time">10 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">XML tagging + meta prompting — estruturar e otimizar o contexto</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">🚀 Demo — medir tokens antes e depois de aplicar context engineering</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">💻 Lab — refatorar o chatbot do grupo com context engineering (50% lacunas)</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">7</div><div class="agenda-text">🏁 CKP01 — entrega + alinhamento final com o grupo</div><div class="agenda-time">10 min</div></div>
+  <div class="callout callout-purple" style="margin-top:12px">
+    <div class="callout-title">🎯 Objetivo da aula</div>
+    <div class="callout-body">Entender que o contexto é um recurso finito e caro — e aprender a preenchê-lo intencionalmente: certas informações no lugar certo, na hora certa, com o mínimo de tokens necessário. Aplicar isso ao CKP01.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário da Aula 04</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">Context engineering</div>
+      <div class="gl-def">Prática de curar deliberadamente tudo que entra na janela de contexto do LLM — system prompt, histórico, documentos, definição de ferramentas — para maximizar qualidade e minimizar tokens desperdiçados.</div>
+      <div class="gl-analogy">Analogia: prompt engineering escreve a frase certa; context engineering organiza a mesa de trabalho inteira antes de escrever qualquer frase.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Context window (janela de contexto)</div>
+      <div class="gl-def">Quantidade máxima de tokens que um modelo consegue processar de uma vez, somando system prompt, histórico, documentos injetados e a resposta gerada.</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">Context rot</div>
+      <div class="gl-def">Degradação na qualidade de atenção do modelo conforme o contexto cresce — instruções no meio de janelas longas são seguidas com menos consistência que as do início ou do fim.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">XML tagging</div>
+      <div class="gl-def">Técnica de estruturar o system prompt em seções delimitadas por tags (ex: persona, restrições, formato), facilitando o processamento independente de cada bloco de instrução pelo modelo.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">Token</div>
+      <div class="gl-def">Unidade mínima de texto processada pelo modelo — pode ser uma palavra inteira, parte de uma palavra ou um sinal de pontuação. É a unidade usada para medir custo e limite de contexto.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">Tiktoken / BPE</div>
+      <div class="gl-def">Biblioteca de tokenização que implementa Byte Pair Encoding (BPE), o algoritmo de tokenização usado pela maioria dos LLMs modernos. Serve como aproximação de contagem de tokens mesmo para modelos que não a usam nativamente.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Meta prompting</div>
+      <div class="gl-def">Uso do próprio LLM para otimizar, reescrever ou gerar prompts — uma chain recebe um prompt em rascunho e devolve uma versão mais enxuta e eficaz.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">Context caching</div>
+      <div class="gl-def">Técnica de reaproveitar o processamento de um prefixo de contexto que se repete entre chamadas (como o system prompt), reduzindo latência e custo em conversas longas ou com muitas chamadas sequenciais.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">De prompt<br>a context engineering</div>
+  <div class="section-desc">Anthropic, 2025: "The art of filling the context window with just the right information at the right time in the right format." O paradigma mudou — e o CKP01 é a primeira aplicação.</div>
+  <div class="slide-number">04 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>A evolução: prompt → context engineering</h2>
+  <p>Em 2023–2024, o foco era otimizar o <em>texto</em> do prompt. Em 2025, com modelos de janelas de 128k–1M tokens, o desafio mudou:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:20px 0">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;position:relative;overflow:visible">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--fiap-muted);opacity:.3"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">2022–2023</div>
+      <div style="font-size:16px;font-weight:800;color:var(--fiap-white);margin-bottom:8px">Prompt Engineering</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.7">Foco no texto do prompt. Técnicas: few-shot, CoT, role prompting. Janela pequena (~4k tokens) — cada palavra importava.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;position:relative;overflow:visible">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--fiap-blue)"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">2024</div>
+      <div style="font-size:16px;font-weight:800;color:var(--fiap-white);margin-bottom:8px">RAG + Memória</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.7">O contexto começou a ser <em>construído</em> dinamicamente: recuperar documentos relevantes, gerenciar histórico. Janelas maiores (~32k) permitiram isso.</div>
+    </div>
+    <div style="background:rgba(124,96,198,.05);border:2px solid rgba(124,96,198,.3);border-radius:12px;padding:20px;position:relative;overflow:visible">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--fiap-purple)"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">2025 — Hoje</div>
+      <div style="font-size:16px;font-weight:800;color:var(--fiap-white);margin-bottom:8px">Context Engineering</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.7">Gerenciar <strong>todo o contexto</strong> como recurso: system, tools, dados, histórico. Janelas de 128k–1M tokens — o desafio não é o que cabe, mas o que deve entrar.</div>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">📖 Fonte: Anthropic, 2025</div>
+    <div class="callout-body">"Context engineering is the art of filling the context window with just the right information at the right time in the right format to give the model the best possible chance of completing the task." — Anthropic Engineering Blog, setembro de 2025.</div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Context Engineering na prática</div>
+    <div class="callout-body">Gullí (<em>Agentic Design Patterns</em>, 2025) descreve context engineering como o processo estratégico de selecionar, empacotar e gerenciar a informação mais relevante para cada etapa de um agente — não o texto do prompt como um todo, mas o que efetivamente chega ao modelo em cada chamada. O exemplo do autor: um agente que busca uma cafeteria entre dois endereços primeiro consulta um mapa, depois <em>engenharia</em> essa saída bruta — reduzindo para uma lista curta de nomes de rua — antes de repassar para a próxima tool, evitando sobrecarga cognitiva no passo seguinte. É a mesma lógica por trás das 4 camadas desta aula: cada camada existe para curar o que entra no contexto, não para maximizar quanto entra.</div>
+  </div>
+  <div class="callout callout-green" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Por que é um salto de nível, não só mais contexto</div>
+    <div class="callout-body">Gullí propõe uma escala de maturidade de agentes em 4 níveis. No <strong>Level 1</strong> ("Connected Problem-Solver"), o agente já usa tools e RAG — exatamente o card "RAG + Memória" acima. O salto para o <strong>Level 2</strong> ("Strategic Problem-Solver") não vem de mais tokens de janela de contexto, e sim de context engineering como habilidade central: o agente resolve problemas multi-etapa porque cada etapa recebe só o contexto que ela precisa, não todo o histórico disponível. É a diferença entre um agente que <em>tem acesso</em> a RAG e memória (Level 1) e um agente que sabe <em>curar o que passa adiante</em> em cada chamada (Level 2) — a mesma distinção que separa as duas colunas desta linha do tempo.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vai no contexto — as 4 camadas</h2>
+  <p>Em qualquer chamada a um LLM, o contexto tem 4 camadas. Cada uma compete pelo mesmo espaço finito:</p>
+  <div class="ctx-budget">
+    <div class="ctx-row">
+      <div class="ctx-label">System prompt</div>
+      <div class="ctx-bar" style="background:linear-gradient(90deg,var(--fiap-purple),rgba(124,96,198,.7));width:80%">Persona · instruções · restrições · formato da resposta</div>
+      <div class="ctx-pct">~10%</div>
+    </div>
+    <div class="ctx-row">
+      <div class="ctx-label">Tools / functions</div>
+      <div class="ctx-bar" style="background:linear-gradient(90deg,var(--fiap-blue),rgba(61,156,204,.7));width:50%">Definição de ferramentas disponíveis ao agente</div>
+      <div class="ctx-pct">~5–15%</div>
+    </div>
+    <div class="ctx-row">
+      <div class="ctx-label">Dados / RAG</div>
+      <div class="ctx-bar" style="background:linear-gradient(90deg,var(--fiap-orange),rgba(213,140,46,.7));width:90%">Documentos recuperados · contexto externo · exemplos few-shot</div>
+      <div class="ctx-pct">~40–60%</div>
+    </div>
+    <div class="ctx-row">
+      <div class="ctx-label">Histórico</div>
+      <div class="ctx-bar" style="background:linear-gradient(90deg,var(--fiap-green),rgba(41,175,140,.7));width:70%">Mensagens anteriores (limitado pela memória escolhida)</div>
+      <div class="ctx-pct">~20–30%</div>
+    </div>
+    <div class="ctx-row">
+      <div class="ctx-label">Input atual</div>
+      <div class="ctx-bar" style="background:linear-gradient(90deg,var(--fiap-pink),rgba(237,20,91,.7));width:20%">A pergunta do usuário</div>
+      <div class="ctx-pct">~5%</div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ A pergunta do usuário ocupa ~5% do contexto</div>
+    <div class="callout-body">O input do usuário — o que parece ser o mais importante — é uma fração minúscula do contexto. Os outros 95% são controlados por você. Context engineering é a disciplina de usar esses 95% de forma intencional.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#fff1f0 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">Context rot</div>
+  <div class="section-desc">Como a qualidade do modelo degrada com contextos longos — e por que "mais contexto" nem sempre é melhor.</div>
+  <div class="slide-number">07 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Context rot — a degradação silenciosa</h2>
+  <p><strong>Context rot</strong> é o fenômeno em que a qualidade das respostas do LLM degrada à medida que o contexto cresce — mesmo que todas as informações sejam relevantes:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="padding:14px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-green);margin-bottom:6px">✅ Contexto de 500 tokens</div>
+        <div style="font-size:13px;color:var(--fiap-text)">Modelo "vê" todas as instruções com atenção distribuída uniforme. Resposta precisa e focada.</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(213,140,46,.06);border:1px solid rgba(213,140,46,.2);border-radius:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);margin-bottom:6px">⚠️ Contexto de 3.000 tokens</div>
+        <div style="font-size:13px;color:var(--fiap-text)">Instruções do início do system prompt começam a perder peso. Modelo pode "esquecer" restrições definidas no começo.</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(201,73,44,.06);border:1px solid rgba(201,73,44,.2);border-radius:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-red);margin-bottom:6px">❌ Contexto de 10.000+ tokens</div>
+        <div style="font-size:13px;color:var(--fiap-text)">Fenômeno "lost in the middle": informações no meio do contexto são sub-representadas. Qualidade cai significativamente.</div>
+      </div>
+    </div>
+    <div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">Qualidade da resposta vs. tamanho do contexto</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:11px;color:var(--fiap-muted);width:60px;text-align:right">500 tok</div>
+            <div style="flex:1;background:var(--fiap-surface2);border-radius:4px;height:16px;overflow:hidden"><div style="width:95%;height:100%;background:var(--fiap-green);border-radius:4px"></div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--fiap-green);width:30px">95%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:11px;color:var(--fiap-muted);width:60px;text-align:right">2k tok</div>
+            <div style="flex:1;background:var(--fiap-surface2);border-radius:4px;height:16px;overflow:hidden"><div style="width:85%;height:100%;background:var(--fiap-blue);border-radius:4px"></div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);width:30px">85%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:11px;color:var(--fiap-muted);width:60px;text-align:right">5k tok</div>
+            <div style="flex:1;background:var(--fiap-surface2);border-radius:4px;height:16px;overflow:hidden"><div style="width:72%;height:100%;background:var(--fiap-orange);border-radius:4px"></div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);width:30px">72%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:11px;color:var(--fiap-muted);width:60px;text-align:right">10k tok</div>
+            <div style="flex:1;background:var(--fiap-surface2);border-radius:4px;height:16px;overflow:hidden"><div style="width:55%;height:100%;background:var(--fiap-red);border-radius:4px"></div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--fiap-red);width:30px">55%</div>
+          </div>
+          <div style="font-size:10px;color:var(--fiap-muted);margin-top:8px">*Estimativa ilustrativa baseada em Liu et al. (2023) "Lost in the Middle"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">💡 Consequência prática para o CKP01</div>
+    <div class="callout-body">O system prompt deve ter as instruções mais críticas no <strong>início e no final</strong> — não no meio. Informações enterradas no centro do contexto são sub-representadas pelos mecanismos de atenção.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">XML tagging<br>e meta prompting</div>
+  <div class="section-desc">Estruturar o contexto com tags XML para que o modelo processe seções de forma independente — e usar o modelo para otimizar seus próprios prompts.</div>
+  <div class="slide-number">09 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>XML tagging — estruturar o contexto em seções</h2>
+  <p>Tags XML ajudam o modelo a identificar e priorizar seções do contexto. A Anthropic documenta isso como uma das técnicas mais eficazes:</p>
+  <div class="two-col">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">❌ System prompt sem estrutura</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">sem_xml.txt</span></div>
+        <div class="code-body"><pre style="font-size:11px;color:#abb2bf">Você é um assistente de culinária
+brasileira. Responda sempre em
+português. Não fale sobre outros
+assuntos. Se o usuário perguntar
+sobre outro tema, redirecione. Seja
+amigável e use emojis. Mencione
+ingredientes locais. Limite respostas
+a 3 parágrafos. Não use markdown.
+Cite fontes quando possível...
+
+<span class="cm"># 8 instruções misturadas num bloco</span>
+<span class="cm"># O modelo tende a priorizar as primeiras</span>
+<span class="cm"># e "esquecer" as do meio e do fim</span></pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">✅ System prompt com XML tagging</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">com_xml.txt</span></div>
+        <div class="code-body"><pre style="font-size:11px;color:#abb2bf"><span class="xml-tag">&lt;persona&gt;</span>
+  Assistente de culinária brasileira.
+  Tom amigável com emojis moderados.
+<span class="xml-tag">&lt;/persona&gt;</span>
+
+<span class="xml-tag">&lt;restricoes&gt;</span>
+  - Somente tópicos de culinária
+  - Redirecionar outros assuntos
+  - Máximo 3 parágrafos por resposta
+<span class="xml-tag">&lt;/restricoes&gt;</span>
+
+<span class="xml-tag">&lt;formato&gt;</span>
+  Sem markdown. Sem headers.
+  Ingredientes em listas simples.
+<span class="xml-tag">&lt;/formato&gt;</span>
+
+<span class="cm"># Cada seção é processada como unidade</span>
+<span class="cm"># Mais fácil de atualizar e depurar</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">✅ Por que XML e não Markdown (#, ##, **)?</div>
+    <div class="callout-body">Tags XML formam estrutura hierárquica clara com abertura e fechamento explícitos. Markdown foi treinado como formato de <em>saída</em> — usar markdown no prompt pode fazer o modelo confundir instruções com conteúdo a ser formatado. XML delimita seções com precisão cirúrgica.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">10 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Meta prompting — o modelo que melhora seus próprios prompts</h2>
+  <p><strong>Meta prompting</strong> é usar o LLM para otimizar ou gerar prompts melhores para si mesmo. É uma aplicação direta de context engineering:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">meta_prompting.py</span></div>
+    <div class="code-body"><pre><span class="va">PROMPT_OTIMIZADOR</span> <span class="op">=</span> <span class="st">"""
+&lt;tarefa&gt;
+Você é um especialista em context engineering.
+Analise o system prompt abaixo e reescreva-o aplicando:
+- XML tagging para separar seções
+- Instruções críticas no início e no final
+- Remoção de redundâncias
+- Clareza nas restrições
+&lt;/tarefa&gt;
+
+&lt;prompt_original&gt;
+{prompt_original}
+&lt;/prompt_original&gt;
+
+&lt;formato_saida&gt;
+Retorne o prompt otimizado entre tags &lt;prompt_otimizado&gt;...&lt;/prompt_otimizado&gt;
+Depois explique em 3 bullet points as principais mudanças feitas.
+&lt;/formato_saida&gt;
+"""</span>
+
+<span class="cm"># Chain de meta prompting</span>
+<span class="va">chain_otimizador</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="va">PROMPT_OTIMIZADOR</span><span class="op">)</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="cm"># Usar: mandar o system prompt atual para ser melhorado</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">chain_otimizador</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span>
+    <span class="st">"prompt_original"</span><span class="op">:</span> <span class="va">MEU_SYSTEM_PROMPT_ATUAL</span>
+<span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resultado</span><span class="op">)</span>  <span class="cm"># → versão melhorada + explicação das mudanças</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">🔮 Meta prompting no M3 — Agentes</div>
+    <div class="callout-body">Na Aula 09, agentes usam meta prompting internamente: o planner cria sub-tarefas, cada sub-tarefa tem um mini-prompt gerado dinamicamente. O que você aprendeu aqui é a base desse comportamento autônomo.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">11 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Medir tokens — quanto o contexto está custando</h2>
+  <p>Antes de otimizar, precisa medir. O LangChain e o tiktoken permitem contar tokens antes de enviar ao modelo:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">medir_tokens.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install tiktoken <span class="op">-</span>q
+
+<span class="kw">import</span> <span class="va">tiktoken</span>
+
+<span class="kw">def</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">texto</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">modelo</span><span class="op">:</span> <span class="nb">str</span> <span class="op">=</span> <span class="st">"gpt-4"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">int</span><span class="op">:</span>
+    <span class="st">"""Conta tokens usando o tokenizador do modelo especificado."""</span>
+    <span class="va">enc</span> <span class="op">=</span> <span class="va">tiktoken</span><span class="op">.</span><span class="fn">encoding_for_model</span><span class="op">(</span><span class="va">modelo</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="nb">len</span><span class="op">(</span><span class="va">enc</span><span class="op">.</span><span class="fn">encode</span><span class="op">(</span><span class="va">texto</span><span class="op">))</span>
+
+<span class="cm"># Comparar system prompt antes e depois de context engineering</span>
+<span class="va">ANTES</span> <span class="op">=</span> <span class="st">"""Você é um assistente especializado em culinária brasileira.
+Responda sempre em português do Brasil com um tom amigável e use emojis
+moderadamente. Não fale sobre assuntos não relacionados a culinária.
+Se o usuário perguntar sobre outro assunto, redirecione gentilmente.
+Limite suas respostas a no máximo 3 parágrafos. Não use markdown.
+Mencione ingredientes e técnicas tradicionais brasileiras sempre que
+possível. Cite a região de origem dos pratos quando souber..."""</span>
+
+<span class="va">DEPOIS</span> <span class="op">=</span> <span class="st">"""&lt;persona&gt;Chef assistente de culinária brasileira. Tom amigável, emojis moderados.&lt;/persona&gt;
+&lt;restricoes&gt;Somente culinária. Redirecionar outros temas. Máximo 3 parágrafos. Sem markdown.&lt;/restricoes&gt;
+&lt;contexto&gt;Priorizar ingredientes e técnicas regionais brasileiras.&lt;/contexto&gt;"""</span>
+
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Antes:  {contar_tokens(ANTES)} tokens"</span><span class="op">)</span>   <span class="cm"># → ~90 tokens</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Depois: {contar_tokens(DEPOIS)} tokens"</span><span class="op">)</span>  <span class="cm"># → ~50 tokens</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução: {(1 - contar_tokens(DEPOIS)/contar_tokens(ANTES))*100:.0f}%"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">🎯 Meta: reduzir tokens sem perder qualidade</div>
+    <div class="callout-body">O objetivo não é o menor prompt possível — é o prompt com <strong>maior densidade de informação por token</strong>. Eliminar redundâncias e ambiguidades, manter instruções precisas. A demo vai mostrar que o prompt reduzido mantém a qualidade de resposta.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">50% de lacunas — refatorar o system prompt do chatbot do grupo com XML tagging e medir a diferença em tokens.</div>
+  <div class="slide-number">13 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 50% de lacunas</h2>
+  <p>Refatorar o system prompt do chatbot do grupo. Medir tokens antes e depois. Este notebook é o <strong>R4 do CKP01</strong>.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_04_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama tiktoken <span class="op">-</span>q
+
+<span class="kw">import</span> <span class="va">tiktoken</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">)</span>
+
+<span class="kw">def</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">texto</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">modelo</span><span class="op">:</span> <span class="nb">str</span> <span class="op">=</span> <span class="st">"gpt-4"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">int</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="nb">len</span><span class="op">(</span><span class="va">tiktoken</span><span class="op">.</span><span class="fn">encoding_for_model</span><span class="op">(</span><span class="va">modelo</span><span class="op">).</span><span class="fn">encode</span><span class="op">(</span><span class="va">texto</span><span class="op">))</span>
+
+<span class="cm"># 👉 LACUNA 1: cole aqui o system prompt original do grupo (Aulas 01–03)</span>
+<span class="va">SYSTEM_ORIGINAL</span> <span class="op">=</span> <span class="gap">___</span>
+
+<span class="cm"># 👉 LACUNA 2: reescreva com XML tagging — persona, restricoes, formato</span>
+<span class="va">SYSTEM_OTIMIZADO</span> <span class="op">=</span> <span class="gap">___</span>  <span class="cm"># use &lt;persona&gt;, &lt;restricoes&gt;, &lt;formato&gt;</span>
+
+<span class="cm"># Medição automática</span>
+<span class="va">tok_antes</span>  <span class="op">=</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">SYSTEM_ORIGINAL</span><span class="op">)</span>
+<span class="va">tok_depois</span> <span class="op">=</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">SYSTEM_OTIMIZADO</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Antes:  {tok_antes} tokens"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Depois: {tok_depois} tokens"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução: {(1-tok_depois/tok_antes)*100:.1f}%"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 3: crie 2 chains (antes e depois) e teste com a mesma pergunta</span>
+<span class="va">chain_antes</span>  <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="va">SYSTEM_ORIGINAL</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="gap">___</span><span class="op">),</span>
+<span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="va">chain_depois</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="va">SYSTEM_OTIMIZADO</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="gap">___</span><span class="op">),</span>
+<span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="cm"># 👉 LACUNA 4: invoke com a mesma pergunta de teste para comparar saídas</span>
+<span class="va">pergunta_teste</span> <span class="op">=</span> <span class="gap">___</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">"=== ANTES ===\n"</span><span class="op">,</span> <span class="va">chain_antes</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="gap">___</span><span class="op">:</span> <span class="va">pergunta_teste</span><span class="op">}))</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">"=== DEPOIS ===\n"</span><span class="op">,</span> <span class="va">chain_depois</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="gap">___</span><span class="op">:</span> <span class="va">pergunta_teste</span><span class="op">}))</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,rgba(124,58,237,.08) 100%)">
+  <div class="section-number">06</div>
+  <div class="section-title">🏁 Entrega<br>CKP01</div>
+  <div class="section-desc">Chatbot Profissional com LangChain — LCEL + memória + Pydantic + context engineering. Grupos de 3–4. Estimativa: 3–4 horas de trabalho total.</div>
+  <div class="slide-number">15 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>CKP01 — Chatbot Profissional · Rubrica completa</h2>
+  <div class="ckp-box">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">🏁 CKP01 · Grupo 3–4 · Entrega esta aula · Estimativa: 3–4h</div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R1 — Chain LCEL (30%):</strong> ChatOllama + ChatPromptTemplate + StrOutputParser. Chain funcional que responde sobre o domínio escolhido.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R2 — Memória (25%):</strong> ConversationChain com 1 tipo de memória escolhido e <em>justificado em comentário</em>. Demonstrar com 5+ turnos de conversa coerente.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R3 — Pydantic (25%):</strong> PydanticOutputParser com schema do domínio (mínimo 4 campos tipados). Demonstrar saída via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.model_dump()</code> e try/except capturando ValidationError.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R4 — Context Engineering (20%):</strong> System prompt refatorado com XML tagging. Medição de tokens antes/depois documentada. Redução mínima de 15%.</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📦 Entregável</div>
+      <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">1 notebook <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ipynb</code> com os 4 requisitos integrados. Nome do arquivo: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">CKP01_[dominio]_grupo.ipynb</code>. Link do Colab compartilhado <strong>com permissão de leitura</strong>.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">⭐ Diferencial</div>
+      <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">Adicionar meta prompting: uma célula que usa o LLM para gerar 3 variações do system prompt e compara tokens. Não obrigatório mas conta como ponto extra.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Checklist do CKP01 — revisar antes de entregar</h2>
+  <table class="data-table">
+    <thead><tr><th>Item</th><th>O que verificar</th><th>Onde aparece no notebook</th></tr></thead>
+    <tbody>
+      <tr><td>✅ ChatOllama configurado</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">os.environ["OLLAMA_HOST"]</code> definido antes do <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ChatOllama()</code></td><td>Célula de setup</td></tr>
+      <tr><td>✅ Chain LCEL funcionando</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">chain.invoke()</code> retorna string sem erro</td><td>Célula R1</td></tr>
+      <tr><td>✅ Memória implementada</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">chat.predict()</code> com 5+ turnos e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">load_memory_variables({})</code> impresso</td><td>Célula R2</td></tr>
+      <tr><td>✅ Schema Pydantic</td><td>Classe com 4+ campos, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.model_dump()</code> impresso, try/except presente</td><td>Célula R3</td></tr>
+      <tr><td>✅ Context engineering</td><td>SYSTEM_ORIGINAL e SYSTEM_OTIMIZADO definidos, contagem de tokens antes/depois</td><td>Célula R4</td></tr>
+      <tr><td>✅ Domínio documentado</td><td>Célula markdown no início explicando o domínio escolhido e por que</td><td>Célula de introdução</td></tr>
+      <tr><td>✅ Justificativa de memória</td><td>Comentário explicando qual tipo de memória e por que faz sentido para o domínio</td><td>Célula R2</td></tr>
+      <tr><td>✅ Notebook rodável</td><td>Todas as células executam em sequência sem erro em ambiente limpo</td><td>Runtime → Run all</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Context caching — próximo nível do context engineering</h2>
+  <p>Context caching é uma técnica em que partes fixas do contexto (system prompt longo, documentos de referência) são pré-computadas e reutilizadas entre chamadas — eliminando o custo de reprocessar o mesmo conteúdo:</p>
+  <div class="two-col">
+    <div>
+      <div style="background:rgba(201,73,44,.05);border:1px solid rgba(201,73,44,.2);border-radius:10px;padding:16px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;margin-bottom:8px">❌ Sem caching (padrão atual)</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">Cada chamada ao LLM reprocessa o contexto inteiro — system prompt, documents, histórico — do zero. Em 100 calls com um system prompt de 2.000 tokens: 200.000 tokens de processamento.</div>
+      </div>
+      <div style="background:rgba(41,175,140,.05);border:1px solid rgba(41,175,140,.2);border-radius:10px;padding:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;margin-bottom:8px">✅ Com caching</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">O system prompt é processado uma vez e cacheado. Calls subsequentes só processam a parte nova (input do usuário). 100 calls: 2.000 tokens de setup + 100 × input.</div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-blue">
+        <div class="callout-title">📌 Context caching em 2026</div>
+        <div class="callout-body">
+          <strong>Anthropic (Claude):</strong> cache de até 1 hora para prefixes do contexto.<br>
+          <strong>Google (Gemini):</strong> caching com TTL configurável.<br>
+          <strong>OpenAI:</strong> automatic prompt caching para prefixes acima de 1.024 tokens.<br><br>
+          Com Ollama local/Cloud: não há caching automático ainda — mas a técnica de minimizar o system prompt (context engineering) é o equivalente prático.
+        </div>
+      </div>
+      <div class="callout callout-purple" style="margin-top:12px">
+        <div class="callout-title">🔮 Onde isso aparece no semestre</div>
+        <div class="callout-body">Na Aula 07 (RAG avançado), o contexto cresce com os chunks de documento. O caching seria a forma de escalar. Na Aula 09 (Agentes), cada tool call adiciona ao contexto — context engineering é ainda mais crítico.</div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 04 — e do Módulo 1</h2>
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Context engineering é a evolução do prompt engineering.</strong> O contexto é um recurso finito — preenchê-lo com intenção é a diferença entre um protótipo e um produto.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Context rot:</strong> qualidade degrada com janelas longas. Instruções críticas no início e no final — nunca enterradas no meio.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>XML tagging</strong> estrutura o contexto em seções processadas independentemente. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;persona&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;restricoes&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;formato&gt;</code> — e a medição de tokens comprova a eficiência.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Meta prompting:</strong> o LLM pode otimizar seus próprios prompts — uma chain que recebe um prompt ruim e entrega um melhor, com justificativa.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(124,96,198,.05);border:2px solid rgba(124,96,198,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🏁</div>
+      <div style="font-size:14px"><strong>CKP01 entregue — Módulo 1 concluído.</strong> Você domina LangChain LCEL, memória, structured output e context engineering. O Módulo 2 começa agora: RAG.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Qualquer modelo entende XML? Ou só o Claude?"</strong></td><td>Modelos treinados com RLHF e grandes volumes de dados (GPT-4, Gemini, Claude, Qwen) entendem estrutura XML naturalmente — foi parte do treinamento. A Anthropic é mais explícita na documentação, mas o benefício se aplica a todos. O gpt-oss:120b do semestre responde bem a XML tagging.</td></tr>
+      <tr><td><strong>"Como sei se meu system prompt tem context rot?"</strong></td><td>Teste de aderência: inclua 10 instruções e pergunte ao modelo sobre cada uma depois de uma conversa longa. Se instruções do meio forem ignoradas mais que as do início/fim, há context rot. O teste da demo desta aula mostra isso empiricamente.</td></tr>
+      <tr><td><strong>"Posso usar markdown e XML juntos no mesmo prompt?"</strong></td><td>Sim — use XML para estruturar seções do system prompt e markdown para formatar o conteúdo dentro das seções. A recomendação é não usar markdown para estruturar o prompt em si (headers, bold para instruções) — isso pode confundir o modelo sobre o que é instrução e o que é conteúdo.</td></tr>
+      <tr><td><strong>"tiktoken é do OpenAI — funciona para o Ollama?"</strong></td><td>Tiktoken é baseado em BPE (Byte Pair Encoding), o tokenizador padrão de praticamente todos os LLMs modernos. Os números não serão exatos para o gpt-oss:120b, mas são uma boa aproximação (±15%). Para o objetivo desta aula (comparar antes/depois), a aproximação é suficiente.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula04_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. tiktoken — contar tokens antes de enviar ao modelo</span>
+<span class="kw">import</span> <span class="va">tiktoken</span>
+<span class="va">enc</span> <span class="op">=</span> <span class="va">tiktoken</span><span class="op">.</span><span class="fn">encoding_for_model</span><span class="op">(</span><span class="st">"gpt-4"</span><span class="op">)</span>
+<span class="va">tokens</span> <span class="op">=</span> <span class="va">enc</span><span class="op">.</span><span class="fn">encode</span><span class="op">(</span><span class="st">"Meu texto aqui"</span><span class="op">)</span>  <span class="cm"># lista de IDs</span>
+<span class="nb">len</span><span class="op">(</span><span class="va">tokens</span><span class="op">)</span>                              <span class="cm"># número de tokens</span>
+
+<span class="cm"># 2. Strings multilinha com XML (melhor legibilidade)</span>
+<span class="va">SYSTEM</span> <span class="op">=</span> <span class="st">"""&lt;persona&gt;
+Chef de culinária. Tom amigável.
+&lt;/persona&gt;
+&lt;restricoes&gt;
+Somente culinária. Máximo 3 parágrafos.
+&lt;/restricoes&gt;"""</span>
+
+<span class="cm"># 3. f-string com cálculo percentual inline</span>
+<span class="va">reducao</span> <span class="op">=</span> <span class="op">(</span><span class="num">1</span> <span class="op">-</span> <span class="va">depois</span> <span class="op">/</span> <span class="va">antes</span><span class="op">)</span> <span class="op">*</span> <span class="num">100</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução: {reducao:.1f}%"</span><span class="op">)</span>  <span class="cm"># :1f → 1 casa decimal</span>
+
+<span class="cm"># 4. from_template() — para prompts sem roles</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"""
+Reescreva este prompt com XML tagging:
+{prompt_original}
+"""</span><span class="op">)</span>  <span class="cm"># sem roles — tratado como HumanMessage</span>
+
+<span class="cm"># 5. Função com type annotation de retorno (-> int)</span>
+<span class="kw">def</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">texto</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">int</span><span class="op">:</span>
+    <span class="st">"""Documenta: recebe str, retorna int."""</span>
+    <span class="kw">return</span> <span class="nb">len</span><span class="op">(</span><span class="va">enc</span><span class="op">.</span><span class="fn">encode</span><span class="op">(</span><span class="va">texto</span><span class="op">))</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Próximo: Módulo 2 — RAG</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(41,175,140,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>Módulo 1 concluído:</strong> LCEL · Memória · Pydantic · Context Engineering · CKP01 entregue</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:16px;background:rgba(61,156,204,.05);border:2px solid rgba(61,156,204,.2);border-radius:8px;align-items:flex-start;margin-top:8px">
+      <div style="width:32px;height:32px;background:rgba(61,156,204,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🗃️</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Módulo 2 — RAG: Embeddings, ChromaDB e Avaliação</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <div style="width:22px;height:22px;background:rgba(61,156,204,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#3D9CCC;flex-shrink:0">A5</div>
+            <div style="font-size:13px;color:var(--fiap-muted)">Embeddings e busca semântica — <code style="font-family:'JetBrains Mono',monospace;font-size:11px">nomic-embed-text</code> via Ollama · ChromaDB · similaridade coseno</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <div style="width:22px;height:22px;background:rgba(61,156,204,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#3D9CCC;flex-shrink:0">A6</div>
+            <div style="font-size:13px;color:var(--fiap-muted)">Pipeline RAG completo — load → split → embed → store → retrieve → generate</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <div style="width:22px;height:22px;background:rgba(61,156,204,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#3D9CCC;flex-shrink:0">A7</div>
+            <div style="font-size:13px;color:var(--fiap-muted)">RAG avançado — chunking estratégico · reranking · avaliação com RAGAS · <strong>CKP02</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">📌 Prepare-se para a Aula 05</div>
+    <div class="callout-body">Você vai precisar de <strong>PDFs do domínio do grupo</strong> (manuais, artigos, regulamentos, receitas — qualquer documento real). Separe 2–3 PDFs com pelo menos 5 páginas cada. Eles serão a base do CKP02 (RAG sobre documentos do domínio).</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Mais dúvidas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Context engineering se aplica só ao system prompt?"</strong></td><td>Não — aplica-se a todo o contexto: system prompt, os documentos que você injeta via RAG, o histórico que você mantém em memória, e até os exemplos few-shot. Em agentes, inclui a definição das ferramentas. Qualquer token no contexto é recurso a ser gerenciado.</td></tr>
+      <tr><td><strong>"XML tagging melhora para todos os LLMs ou só o Claude?"</strong></td><td>A Anthropic é mais explícita no suporte a XML, mas os benefícios se aplicam a qualquer LLM de grande porte treinado com dados da web (que contém muito XML/HTML). O gpt-oss:120b entende bem XML tagging — a demo confirma empiricamente.</td></tr>
+      <tr><td><strong>"Devo reescrever todos os prompts do semestre com XML tagging?"</strong></td><td>Para prompts simples (1–2 instruções), não vale a pena. Para system prompts do chatbot (5+ instruções) — sim. A regra prática: se o prompt tem mais de 100 tokens e mais de 3 instruções distintas, XML tagging ajuda.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 05 — Embeddings e busca semântica</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-blue">
+        <div class="callout-title">🔮 O problema que a Aula 05 resolve</div>
+        <div class="callout-body">O chatbot de hoje responde com o que o modelo sabe do treinamento. Para responder sobre documentos específicos (manual da empresa, regulamento, receitas de um livro), ele precisa <em>buscar</em> informação — não só gerar.<br><br>
+        Embeddings são a tecnologia que permite comparar "pergunta" com "trecho de documento" sem palavras em comum.</div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-green">
+        <div class="callout-title">🎯 O que você vai aprender</div>
+        <div class="callout-body">
+          · O que é um embedding — vetor numérico de significado<br>
+          · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nomic-embed-text</code> via Ollama (gratuito, local)<br>
+          · ChromaDB — vector store local e persistente<br>
+          · Busca por similaridade coseno — o coração do RAG<br>
+          · Por que "bolo de cenoura" e "receita de cenoura com trigo" têm alta similaridade mesmo sem palavras em comum
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;font-size:13px">
+    <strong>📌 Antes da Aula 05:</strong> separe 2–3 PDFs do domínio do grupo (mínimo 5 páginas cada). Não precisa ser perfeito — qualquer documento real funciona. Ele será o corpus do CKP02.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Medir tokens antes e depois de context engineering. O mesmo modelo, o mesmo comportamento — com 40% menos tokens no contexto.</div>
+  <div class="slide-number">25 / 29</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor roda ao vivo o mesmo chatbot em 3 versões de system prompt, sempre com a mesma pergunta de teste. A turma acompanha a contagem de tokens caindo e a aderência às restrições melhorando a cada versão.</p>
+  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
+    <div class="callout callout-red" style="margin:0">
+      <div class="callout-title">1. v1 — Sem engenharia</div>
+      <div class="callout-body">Parágrafo corrido com todas as instruções misturadas. <strong>~280 tokens</strong> no system. Na pergunta de teste (que mistura o domínio com uma pergunta fora de escopo), às vezes ignora a restrição por ela estar enterrada no meio do texto.</div>
+    </div>
+    <div class="callout callout-orange" style="margin:0">
+      <div class="callout-title">2. v2 — XML tagging</div>
+      <div class="callout-body">Instruções organizadas em tags <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;persona&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;restricoes&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;formato&gt;</code>. <strong>~190 tokens</strong>. Segue todas as restrições de forma consistente.</div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">3. v3 — XML + compactação</div>
+      <div class="callout-body">Mesmas tags, redundâncias eliminadas e instruções reescritas na forma imperativa. <strong>~120 tokens</strong> — 57% a menos que v1, com o mesmo comportamento observado em v2.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
+    <div class="callout-title">🧱 Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gpt-oss:120b</code> · biblioteca <code style="font-family:'JetBrains Mono',monospace;font-size:12px">tiktoken</code> para medir tokens antes/depois</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 04 · 2º Semestre · CKP01 R4</div>
+    <div class="exercise-title">Context engineering no chatbot do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Cole o system prompt original</strong> do chatbot do grupo (das Aulas 01–03) na Lacuna 1.</li>
+      <li><strong>Reescreva com XML tagging</strong> na Lacuna 2: use pelo menos 3 tags (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;persona&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;restricoes&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;formato&gt;</code>). Elimine redundâncias.</li>
+      <li><strong>Meça e documente:</strong> a célula de medição mostra a redução em tokens automaticamente. Cole o resultado no notebook como comentário.</li>
+      <li><strong>Teste de aderência:</strong> use uma pergunta fora do domínio misturada com uma do domínio (ex: "Me explique X. E qual é a capital do Brasil?"). Observe se ambas as versões redirecionam corretamente.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(237,20,91,.06);border-left:3px solid var(--fiap-pink);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12.5px;color:var(--fiap-muted);line-height:1.9">
+        <strong>Lacuna 1:</strong> o system prompt atual do grupo, colado exatamente como está desde as Aulas 01–03.<br>
+        <strong>Lacuna 2:</strong> a versão reescrita usando no mínimo as tags de persona, restrições e formato — mais uma tag de contexto, se fizer sentido para o domínio do grupo.<br>
+        <strong>Lacuna 3:</strong> a mensagem humana de cada chain repete o mesmo placeholder de pergunta usado desde a Aula 01, na mesma estrutura de papel e template — idêntica nas duas chains.<br>
+        <strong>Lacuna 4:</strong> a pergunta de teste fica guardada em uma única variável e é usada como valor da mesma chave de entrada nas duas chamadas de invoke, garantindo que antes e depois recebam exatamente a mesma pergunta.
+      </div>
+    </div>
+    <div style="background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-blue)">
+      💡 <strong>Dica de compactação:</strong> instruções na forma imperativa usam menos tokens. "Seja sempre amigável com o usuário" → "Tom amigável". "Não fale sobre assuntos não relacionados" → "Somente [domínio]".
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Blog</span><div class="ref-text"><strong>Anthropic Engineering</strong> — "Effective Context Engineering for AI Agents" (setembro, 2025). A fonte primária do termo e das técnicas desta aula. <a href="https://www.anthropic.com/engineering/building-effective-agents" style="color:var(--fiap-blue)">anthropic.com/engineering/building-effective-agents</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Paper</span><div class="ref-text"><strong>Liu, N. et al.</strong> — "Lost in the Middle: How Language Models Use Long Contexts." EMNLP, 2023. Base empírica do context rot. <a href="https://arxiv.org/abs/2307.03172" style="color:var(--fiap-blue)">arxiv.org/abs/2307.03172</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>Anthropic</strong> — Prompt Library e guia de XML tagging. <a href="https://docs.anthropic.com/pt/docs/build-with-claude/prompt-engineering/use-xml-tags" style="color:var(--fiap-blue)">docs.anthropic.com/pt/docs/build-with-claude/prompt-engineering/use-xml-tags</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>tiktoken</strong> — Biblioteca de tokenização da OpenAI. Funciona como aproximação para qualquer modelo baseado em BPE. <a href="https://github.com/openai/tiktoken" style="color:var(--fiap-blue)">github.com/openai/tiktoken</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Russell, S.; Norvig, P.</strong> — Inteligência Artificial. 3ª ed. Pearson, 2016. Cap. 22 — A importância do contexto na inferência linguística: a base teórica de por que o contexto é informação.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Módulo 1 concluído 🏁</div>
+  <div style="font-size:16px;color:var(--fiap-muted);margin-bottom:12px;max-width:540px">LangChain LCEL · Memória · Pydantic · Context Engineering — você tem um chatbot profissional entregue. Próximo: fazer esse chatbot responder sobre <em>seus</em> documentos.</div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:32px;text-align:left;max-width:600px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:8px">→ Próxima Aula — Aula 05 · 31/08</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Embeddings e busca semântica com ChromaDB</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">Transformar texto em vetores e buscar por similaridade. A fundação do RAG começa aqui.</div>
+  </div>
+  <div style="margin-top:20px;padding:14px 24px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;max-width:540px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:#3D9CCC;margin-bottom:4px">📌 Ação antes da A05</div>
+    <div style="font-size:13px;color:var(--fiap-muted)">Separe 2–3 PDFs do domínio do grupo (mín. 5 páginas cada). Eles serão o corpus do CKP02.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">29 / 29</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

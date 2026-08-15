@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 14 — Spec-Driven Development e Encerramento</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(124,96,198,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:37px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:820px}
+  .cover-subtitle{font-size:17px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(124,96,198,.1);border:1px solid rgba(124,96,198,.3);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-purple);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:27px;font-weight:800;color:var(--fiap-white);margin-bottom:28px;padding-bottom:12px;border-bottom:2px solid var(--fiap-purple);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:16px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-purple);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:11px 16px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-purple);border-radius:0 10px 10px 0;padding:18px 22px;margin:16px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-purple);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-teal{border-left-color:var(--fiap-blue)}.callout-teal .callout-title{color:var(--fiap-blue)}
+  .callout-pink{border-left-color:var(--fiap-pink)}.callout-pink .callout-title{color:var(--fiap-pink)}
+  .callout-gold{border-left-color:var(--fiap-orange)}.callout-gold .callout-title{color:var(--fiap-orange)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:16px 0}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-tag-blog{background:rgba(41,175,140,.12);color:#29AF8C}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:14px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:18px 20px;font-size:12px;line-height:1.85}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .timeline-item{display:flex;gap:18px;padding:12px 0;border-bottom:1px solid var(--fiap-border)}
+  .timeline-year{font-size:13px;font-weight:800;color:var(--fiap-purple);width:52px;flex-shrink:0;padding-top:2px}
+  .timeline-content{font-size:13px;color:var(--fiap-text);line-height:1.6}
+  .retro-card{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px}
+  .retro-module{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .retro-title{font-size:14px;font-weight:700;color:var(--fiap-white)}
+  .retro-tag{font-size:11px;color:var(--fiap-muted)}
+  .agenda-item{display:flex;align-items:center;gap:14px;padding:11px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:8px}
+  .agenda-num{width:28px;height:28px;background:rgba(124,96,198,.12);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--fiap-purple);flex-shrink:0}
+  .agenda-text{font-size:13px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:11px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:3px 9px;border-radius:5px}
+  .exercise{background:linear-gradient(135deg,rgba(124,96,198,.06),rgba(61,156,204,.04));border:1px solid rgba(124,96,198,.2);border-radius:14px;padding:24px;margin:16px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-purple);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:14px}
+  .exercise-steps{padding-left:20px;margin-bottom:14px}
+  .exercise-steps li{color:var(--fiap-text);font-size:13px;margin-bottom:8px;line-height:1.6}
+  .exercise-hint{background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:8px;padding:12px 16px;margin-top:16px;font-size:13px;color:var(--fiap-blue)}
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Spec-Driven Development<br>e Encerramento do Semestre</div>
+  <div class="cover-subtitle">Aula 14/14 — Última aula · Sem entrega avaliada</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">1h40min</div>
+    <div class="cover-meta-item">A fronteira atual do código assistido por IA</div>
+    <div class="cover-meta-item" style="background:rgba(213,140,46,.12);border-color:rgba(213,140,46,.35);color:var(--fiap-orange)">Sem notebook — aula conceitual e demonstrativa</div>
+  </div>
+  <div class="slide-number">01 / 28</div>
+</div>
+
+<!-- S02 AGENDA -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">Retrospectiva — a progressão completa do semestre</div><div class="agenda-time">8 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">O que é Spec-Driven Development — e por que surgiu agora</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">SDD vs. Vibe Coding vs. Prompt Engineering direto</div><div class="agenda-time">10 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">O fluxo: spec → plano → tasks → implementação → revisão humana</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">Ferramentas: GitHub Spec Kit, Claude Code, Kiro</div><div class="agenda-time">10 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">Demo ao vivo — de uma spec real ao código gerado</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">7</div><div class="agenda-text">Exercício — escreva sua primeira spec.md</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">8</div><div class="agenda-text">Próximos passos na carreira + CKPs como portfólio</div><div class="agenda-time">11 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">9</div><div class="agenda-text">Discussão final + encerramento</div><div class="agenda-time">10 min</div></div>
+  <div class="callout callout-gold" style="margin-top:10px">
+    <div class="callout-title">Objetivo da aula</div>
+    <div class="callout-body">Encerrar o semestre com a fronteira mais atual do desenvolvimento assistido por IA. Não há entrega avaliada — a aula é conceitual e demonstrativa. O conteúdo crítico da disciplina foi todo coberto nas aulas 01–13.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">Spec-Driven Development (SDD)</div>
+      <div class="gl-def">Abordagem onde uma especificação estruturada — não o prompt solto nem o código direto — é o artefato central e a fonte de verdade do desenvolvimento assistido por agentes.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Vibe coding</div>
+      <div class="gl-def">Pedir a um agente de código para implementar algo a partir de uma descrição solta, sem spec estruturada — rápido para protótipos, arriscado em produção pela falta de rastreabilidade.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">spec.md</div>
+      <div class="gl-def">Arquivo que documenta requisito, critérios de aceite e o que fica fora do escopo de uma feature — o ponto de partida do fluxo de Spec-Driven Development.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">plan.md</div>
+      <div class="gl-def">Decomposição técnica da spec: arquitetura, arquivos afetados e dependências — a etapa entre a spec e a lista de tasks.</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">Tasks</div>
+      <div class="gl-def">Lista de tarefas atômicas e testáveis, geradas a partir do plano técnico, que o agente executa uma a uma.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">GitHub Spec Kit</div>
+      <div class="gl-def">Projeto open-source que formaliza o workflow spec → plan → tasks, compatível com qualquer agente de código.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Kiro</div>
+      <div class="gl-def">IDE spec-first da AWS onde a especificação vive lado a lado com o código, versionada, guiando a geração desde o design inicial.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">LangSmith</div>
+      <div class="gl-def">Plataforma de observabilidade da LangChain que registra cada chamada ao LLM, tool call e caminho de grafo percorrido — essencial para debugar agentes em produção.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S03 SECAO 01 RETROSPECTIVA -->
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">Retrospectiva<br>do semestre</div>
+  <div class="section-desc">Do primeiro chain de 5 linhas ao agente com StateGraph, checkpointing e HITL. A progressão não foi linear — foi deliberada.</div>
+  <div class="slide-number">04 / 28</div>
+</div>
+
+<!-- S04 RETRO MODULOS -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>A progressão do semestre — 14 aulas, 4 módulos</h2>
+  <div class="three-col" style="grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+    <div class="retro-card" style="border-top:3px solid var(--fiap-pink)">
+      <div class="retro-module" style="color:var(--fiap-pink)">M1 — Aulas 01–04</div>
+      <div class="retro-title">LangChain LCEL</div>
+      <div class="retro-tag">LCEL · ChatOllama · StrOutputParser · JsonOutputParser · ChatPromptTemplate · Memória conversacional · Pydantic v2 · with_structured_output · Context Engineering</div>
+      <div style="margin-top:auto;padding-top:10px;font-size:12px;font-weight:700;color:var(--fiap-pink)">CKP01 ✓ Chatbot profissional</div>
+    </div>
+    <div class="retro-card" style="border-top:3px solid var(--fiap-blue)">
+      <div class="retro-module" style="color:var(--fiap-blue)">M2 — Aulas 05–07</div>
+      <div class="retro-title">RAG</div>
+      <div class="retro-tag">nomic-embed-text · ChromaDB · cosine similarity · pipeline RAG completo · chunking strategies · RAGAS · faithfulness · answer relevancy · Gradio + Streamlit</div>
+      <div style="margin-top:auto;padding-top:10px;font-size:12px;font-weight:700;color:var(--fiap-blue)">CKP02 ✓ DocMind RAG</div>
+    </div>
+    <div class="retro-card" style="border-top:3px solid var(--fiap-green)">
+      <div class="retro-module" style="color:var(--fiap-green)">M3 — Aulas 09–11</div>
+      <div class="retro-title">Agentes ReAct</div>
+      <div class="retro-tag">@tool decorator · AgentExecutor · ReAct loop · hub.pull("hwchase17/react") · context rot · tiktoken · compressão de observations · MCP overview · memória episódica</div>
+      <div style="margin-top:auto;padding-top:10px;font-size:12px;font-weight:700;color:var(--fiap-green)">CKP03 ✓ Agente + Gradio público</div>
+    </div>
+    <div class="retro-card" style="border-top:3px solid var(--fiap-purple)">
+      <div class="retro-module" style="color:var(--fiap-purple)">M4 — Aulas 12–14</div>
+      <div class="retro-title">LangGraph</div>
+      <div class="retro-tag">Router Chain · RunnableLambda · StateGraph · TypedDict · add_messages reducer · conditional edges · draw_mermaid · MemorySaver · thread_id · HITL · interrupt_before · update_state</div>
+      <div style="margin-top:auto;padding-top:10px;font-size:12px;font-weight:700;color:var(--fiap-purple)">Sem entrega — buffer de seguranca</div>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">A linha vermelha do semestre</div>
+    <div class="callout-body">Cada módulo resolveu a limitação do anterior. Chain não busca documentos → RAG. RAG não decide qual ferramenta usar → Agente. Agente não tem estado persistente nem pausa para humano → LangGraph. Cada passo foi motivado por um problema real.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">05 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S05 LINHA DO TEMPO CONCEITUAL -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Do primeiro prompt ao agente com HITL</h2>
+  <div style="margin:14px 0">
+    <div class="timeline-item">
+      <div class="timeline-year" style="color:var(--fiap-pink)">A01</div>
+      <div class="timeline-content"><strong>Revisão LCEL:</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:11px">prompt | llm | parser</code> — a pipe notation que une tudo. ChatOllama + ChatPromptTemplate + StrOutputParser em 5 linhas funcionais.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year" style="color:var(--fiap-pink)">A02</div>
+      <div class="timeline-content"><strong>Memória:</strong> ConversationBufferMemory, WindowMemory, SummaryMemory. O chatbot passou a lembrar o que foi dito antes.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year" style="color:var(--fiap-pink)">A03</div>
+      <div class="timeline-content"><strong>Pydantic v2:</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:11px">with_structured_output()</code> + BaseModel. O LLM passou a retornar dados tipados, validados e fáceis de processar.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year" style="color:var(--fiap-pink)">A04</div>
+      <div class="timeline-content"><strong>Context Engineering:</strong> window deslizante, system prompt eficiente, temperatura e parâmetros. O CKP01 entregou um chatbot profissional real.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year" style="color:var(--fiap-blue)">A05–07</div>
+      <div class="timeline-content"><strong>RAG completo:</strong> embed → ChromaDB → retrieve → augment → generate. Chunking por token, RAGAS para avaliação. O chatbot passou a responder com base em documentos reais.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year" style="color:var(--fiap-green)">A09–11</div>
+      <div class="timeline-content"><strong>Agentes ReAct:</strong> @tool + AgentExecutor + loop Thought/Action/Observation. O sistema passou a <em>decidir</em> qual ferramenta usar em vez de seguir um fluxo fixo.</div>
+    </div>
+    <div class="timeline-item" style="border-bottom:none">
+      <div class="timeline-year" style="color:var(--fiap-purple)">A12–13</div>
+      <div class="timeline-content"><strong>LangGraph:</strong> StateGraph + conditional edges + MemorySaver + HITL. O fluxo tornou-se explícito, auditável, persistente e com pausa para aprovação humana.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">06 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S06 SECAO 02 SDD FUNDAMENTOS -->
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">Spec-Driven Development<br>— Fundamentos</div>
+  <div class="section-desc">A especificação estruturada — não o prompt solto, não o código direto — como artefato central do desenvolvimento assistido por agentes.</div>
+  <div class="slide-number">07 / 28</div>
+</div>
+
+<!-- S07 O QUE E SDD -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que é Spec-Driven Development</h2>
+  <p>Em 2025–2026, times de engenharia perceberam um padrão: pedir a um agente de código para "só fazer" (o chamado <strong>vibe coding</strong>) funciona para protótipos descartáveis, mas quebra em produção. Spec-Driven Development (SDD) inverte a lógica:</p>
+  <div class="two-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:18px">
+      <div style="font-size:13px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Antes (vibe coding)</div>
+      <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">Humano descreve em linguagem solta → agente interpreta → gera código → humano descobre depois que o agente entendeu errado → retrabalho.</div>
+    </div>
+    <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.25);border-radius:10px;padding:18px">
+      <div style="font-size:13px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Agora (spec-driven)</div>
+      <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">Humano escreve uma <strong>spec estruturada</strong> (requisitos, critérios de aceite, casos de borda) → agente planeja → agente implementa → humano revisa contra a spec, não contra a memória do que pediu.</div>
+    </div>
+  </div>
+  <div class="callout callout-teal">
+    <div class="callout-title">A spec é a fonte de verdade</div>
+    <div class="callout-body">Em SDD, o código é derivável da spec — se o agente errar, você corrige a spec e regenera, em vez de remendar o código. Isso muda o que se revisa, o que se versiona e o que se discute em code review.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">08 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S08 SDD VS VIBE VS PE -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>SDD vs. Vibe Coding vs. Prompt Engineering direto</h2>
+  <table class="data-table">
+    <thead><tr><th>Abordagem</th><th>Quando usar</th><th>Risco principal</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Vibe coding</strong><br><span style="font-size:11px;color:var(--fiap-muted)">prompt solto, sem estrutura</span></td><td>Protótipo descartável, exploração rápida, script de uso único</td><td>Sem rastreabilidade da decisão · difícil revisar · não escala em time</td></tr>
+      <tr><td><strong>Prompt engineering direto</strong><br><span style="font-size:11px;color:var(--fiap-muted)">o que vocês praticaram o ano todo</span></td><td>Tarefas pontuais, análises, geração de conteúdo, scripts pequenos</td><td>Ainda depende do humano manter todo o contexto na cabeça</td></tr>
+      <tr style="background:rgba(124,96,198,.04)"><td><strong>Spec-Driven Development</strong><br><span style="font-size:11px;color:var(--fiap-muted)">a fronteira atual</span></td><td>Features de produto, código que precisa ser mantido, times trabalhando junto com agentes</td><td>Overhead de escrever a spec antes — mas paga-se com muito menos retrabalho depois</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-green">
+    <div class="callout-title">Não é substituição — é escala</div>
+    <div class="callout-body">SDD não descarta o que vocês aprenderam sobre prompt engineering — a spec bem escrita <em>é</em> um exercício de context engineering aplicado a código. A diferença é o nível de estrutura e o fato de a spec virar um artefato persistente, revisável e versionado — não só uma mensagem de chat que desaparece.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">09 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S09 FLUXO SDD -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O fluxo do Spec-Driven Development</h2>
+  <div style="display:flex;flex-direction:column;gap:0;margin:16px 0">
+    <div class="timeline-item"><div class="timeline-year" style="color:var(--fiap-pink)">1</div><div class="timeline-content"><strong>Escrever a spec</strong> — o quê, não o como: requisitos, critérios de aceite, casos de borda, restrições. Em linguagem natural estruturada (spec.md).</div></div>
+    <div class="timeline-item"><div class="timeline-year" style="color:var(--fiap-blue)">2</div><div class="timeline-content"><strong>Plano técnico</strong> — o agente (ou o humano) decompõe a spec em etapas técnicas: arquitetura, arquivos afetados, dependências.</div></div>
+    <div class="timeline-item"><div class="timeline-year" style="color:var(--fiap-green)">3</div><div class="timeline-content"><strong>Tasks</strong> — lista de tarefas atômicas e testáveis, geradas a partir do plano.</div></div>
+    <div class="timeline-item"><div class="timeline-year" style="color:var(--fiap-orange)">4</div><div class="timeline-content"><strong>Implementação pelo agente</strong> — Claude Code, Copilot Workspace ou similar executa as tasks, editando arquivos reais do repositório.</div></div>
+    <div class="timeline-item" style="border-bottom:none"><div class="timeline-year" style="color:var(--fiap-purple)">5</div><div class="timeline-content"><strong>Revisão humana</strong> — humano compara o resultado contra a spec (não contra a memória do pedido), aprova ou volta para o passo 1 com a spec refinada.</div></div>
+  </div>
+  <div class="callout callout-pink">
+    <div class="callout-title">O loop é o ponto</div>
+    <div class="callout-body">Quando a revisão reprova, o ajuste entra na <strong>spec</strong>, não direto no código gerado — assim a próxima geração já nasce corrigida, e a spec continua sendo a fonte de verdade auditável.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">10 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S10 SECAO 03 SDD NA PRATICA -->
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">Spec-Driven<br>na prática</div>
+  <div class="section-desc">Ferramentas reais, uma demo ao vivo e onde o mercado já adotou SDD em produção.</div>
+  <div class="slide-number">11 / 28</div>
+</div>
+
+<!-- S11 FERRAMENTAS SDD -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Ferramentas de Spec-Driven Development</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:10px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--fiap-purple);margin-bottom:6px">GitHub Spec Kit</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.6">Open-source. Workflow <code style="font-size:11px">spec.md → plan.md → tasks.md</code>. Funciona com qualquer agente de código compatível. Gratuito.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-orange);border-radius:10px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--fiap-orange);margin-bottom:6px">Claude Code</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.6">Lê <code style="font-size:11px">CLAUDE.md</code> do repositório como spec persistente do projeto. Planeja, edita arquivos, roda testes, itera até passar.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:10px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--fiap-blue);margin-bottom:6px">Kiro (AWS)</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.6">IDE spec-first: a spec vive lado a lado com o código, versionada, e guia a geração desde o design inicial.</div>
+    </div>
+  </div>
+  <div class="callout callout-gold" style="margin-top:8px">
+    <div class="callout-title">Vocês já viram isso funcionando</div>
+    <div class="callout-body">Os arquivos <code style="font-size:11px">SOUL.md</code>, <code style="font-size:11px">CLAUDE.md</code> e <code style="font-size:11px">CLAUDE_NOTEBOOKS.md</code> usados para gerar o material deste curso são exemplos reais de spec guiando um agente de código em produção — não é teoria, é como este próprio material foi construído.</div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Planning mode: a separação spec-execução é tecnicamente forçada</div>
+    <div class="callout-body">Marco (<em>Agentic Coding with Claude Code</em>, Packt Publishing, 2025) detalha o mecanismo por trás do card do Claude Code acima: o modo <code style="font-family:'JetBrains Mono',monospace;font-size:12px">/plan</code> não é apenas uma convenção de processo — é uma restrição técnica. Durante o planning mode, o agente fica limitado a operações somente leitura (ler arquivos, analisar o código-base, consultar documentação) e não pode editar, criar ou deletar arquivos, fazer commit ou instalar pacotes até que o plano seja revisado e aprovado explicitamente. O autor conecta essa restrição ao motivo pelo qual SDD funciona na prática: uma especificação bem definida delimita o espaço do problema para o modelo, estabelece fronteiras claras e reduz alucinação, evitando efeitos colaterais como edições em arquivos fora do escopo. É o mesmo raciocínio por trás da linha "overhead de escrever a spec antes" da tabela do slide anterior — aqui com o mecanismo técnico que o sustenta.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S12 DEMO PRATICA -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Adoção no mercado</h2>
+  <div class="two-col">
+    <div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-purple);border-radius:0 10px 10px 0;padding:14px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--fiap-purple);margin-bottom:6px">Iniciativas open-source</div>
+        <div style="font-size:13px;color:var(--fiap-muted)">Um projeto open-source oficial (Spec Kit) formalizou o workflow spec → plan → tasks para uso com qualquer agente compatível.</div>
+      </div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-orange);border-radius:0 10px 10px 0;padding:14px">
+        <div style="font-size:13px;font-weight:700;color:var(--fiap-orange);margin-bottom:6px">Documentação de engenharia</div>
+        <div style="font-size:13px;color:var(--fiap-muted)">Blogs de engenharia documentam como equipes internas usam agentes de código guiados por especificações persistentes (arquivos tipo CLAUDE.md) em repositórios de produção.</div>
+      </div>
+    </div>
+    <div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-blue);border-radius:0 10px 10px 0;padding:14px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--fiap-blue)">Ferramentas de IDE agêntica</div>
+        <div style="font-size:13px;color:var(--fiap-muted);margin-top:6px">Ferramentas comerciais de desenvolvimento agêntico nasceram de observar que times perdiam mais tempo corrigindo código mal especificado do que escrevendo specs completas de início.</div>
+      </div>
+      <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.2);border-radius:10px;padding:14px;margin-top:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">No mercado de trabalho</div>
+        <div style="font-size:13px;color:var(--fiap-muted)">"Escrever specs claras para agentes de código" já aparece como habilidade em vagas de engenharia — é a evolução natural do que vocês praticaram o ano todo em prompt e context engineering.</div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">13 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S14 SECAO 04 PROXIMOS PASSOS CARREIRA -->
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Próximos passos<br>na carreira</div>
+  <div class="section-desc">Você aprendeu os primitivos. O que fazer agora? Trilhas concretas baseadas no que o mercado de 2026 está pedindo.</div>
+  <div class="slide-number">14 / 28</div>
+</div>
+
+<!-- S15 O QUE APRENDER DEPOIS -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que aprender depois deste semestre</h2>
+  <div class="two-col">
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Trilha Engenharia de IA</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="padding:10px 14px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-green);border-radius:0 8px 8px 0">
+          <div style="font-size:12px;font-weight:700;color:var(--fiap-green)">Imediato (0-3 meses)</div>
+          <div style="font-size:12px;color:var(--fiap-muted);margin-top:4px">LangSmith para observabilidade · SqliteSaver/PostgresSaver para produção · FastAPI para servir agentes · Docker para containerizar</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-orange);border-radius:0 8px 8px 0">
+          <div style="font-size:12px;font-weight:700;color:var(--fiap-orange)">Médio prazo (3-6 meses)</div>
+          <div style="font-size:12px;color:var(--fiap-muted);margin-top:4px">LangGraph Platform · CrewAI ou Autogen · LoRA/QLoRA fine-tuning · Construção de MCP servers próprios</div>
+        </div>
+        <div style="padding:10px 14px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-purple);border-radius:0 8px 8px 0">
+          <div style="font-size:12px;font-weight:700;color:var(--fiap-purple)">Longo prazo (6+ meses)</div>
+          <div style="font-size:12px;color:var(--fiap-muted);margin-top:4px">MLOps para agentes · Eval frameworks (RAGAS, Braintrust) · Contribuição open source · Publicação de papers ou blog técnico</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Recursos recomendados</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="padding:10px 12px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;font-size:12px">
+          <div style="font-weight:700;color:var(--fiap-white);margin-bottom:3px">DeepLearning.AI Short Courses</div>
+          <div style="color:var(--fiap-muted)">Cursos de 1–4h sobre LangChain, LangGraph, RAG, Agentes, Fine-tuning. Gratuitos ou barato. <a href="https://learn.deeplearning.ai" style="color:var(--fiap-purple)">learn.deeplearning.ai</a></div>
+        </div>
+        <div style="padding:10px 12px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;font-size:12px">
+          <div style="font-weight:700;color:var(--fiap-white);margin-bottom:3px">LangChain Blog e Documentacao</div>
+          <div style="color:var(--fiap-muted)">Tutoriais oficiais sempre atualizados. <a href="https://blog.langchain.dev" style="color:var(--fiap-purple)">blog.langchain.dev</a></div>
+        </div>
+        <div style="padding:10px 12px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;font-size:12px">
+          <div style="font-weight:700;color:var(--fiap-white);margin-bottom:3px">Anthropic Engineering Blog</div>
+          <div style="color:var(--fiap-muted)">"Building Effective Agents" e outros artigos de produção. <a href="https://www.anthropic.com/engineering" style="color:var(--fiap-purple)">anthropic.com/engineering</a></div>
+        </div>
+        <div style="padding:10px 12px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;font-size:12px">
+          <div style="font-weight:700;color:var(--fiap-white);margin-bottom:3px">Hugging Face Learn</div>
+          <div style="color:var(--fiap-muted)">Fine-tuning, PEFT, LoRA, datasets. <a href="https://huggingface.co/learn" style="color:var(--fiap-purple)">huggingface.co/learn</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — a ferramenta não substitui quem decide o quê construir</div>
+    <div class="callout-body">Avila (<em>Architecting AI Software Systems</em>, Packt, 2025, cap. 8 — Insights and Future Directions) fecha o livro com um aviso direto para quem está entrando no mercado: ferramentas de desenvolvimento por IA são poderosas, economizam tempo e trazem insights, mas <strong>não substituem o pensamento cognitivo de alto nível de um arquiteto</strong>. É a mesma mensagem central desta aula, vista do lado da carreira — Spec-Driven Development não elimina a necessidade de alguém decidir o quê construir e por quê, apenas desloca o trabalho humano de escrever cada linha de código para escrever a especificação que guia o agente. O autor também projeta o próximo passo: agentes deixando de ser automação simples para coordenar entre si e atingir objetivos complexos — exatamente a direção dos frameworks multi-agente (CrewAI, Autogen) na trilha de médio prazo ao lado.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S16 LANGSMITH -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>LangSmith — observabilidade para agentes em produção</h2>
+  <p>A maior dificuldade em produção não é construir o agente — é debugar <em>por que</em> ele tomou uma decisão errada. LangSmith resolve isso:</p>
+  <div class="two-col">
+    <div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;margin-bottom:8px">O que o LangSmith mostra</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--fiap-text)">
+          <div>• Cada chamada ao LLM: prompt exato, resposta, tokens, latencia</div>
+          <div>• Cada tool call: input e output de cada ferramenta</div>
+          <div>• Cada conditional edge: qual caminho foi tomado e por que</div>
+          <div>• Arvore de execução completa do grafo LangGraph</div>
+          <div>• Custo estimado por execução</div>
+          <div>• Comparacao A/B entre versoes de prompt</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">langsmith_setup.py</span></div>
+        <div class="code-body"><pre><span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+
+<span class="cm"># Habilitar LangSmith — basta setar env vars</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"LANGCHAIN_TRACING_V2"</span><span class="op">]</span> <span class="op">=</span> <span class="st">"true"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"LANGCHAIN_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"LANGSMITH_KEY"</span><span class="op">)</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"LANGCHAIN_PROJECT"</span><span class="op">]</span> <span class="op">=</span> <span class="st">"agente-ckp03"</span>
+
+<span class="cm"># A partir daqui: QUALQUER invoke() e tracado</span>
+<span class="cm"># automaticamente. Zero mudanca no codigo.</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">agente</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="op">...</span><span class="op">})</span>
+<span class="cm"># → trace disponivel em smith.langchain.com</span>
+<span class="cm"># → ver todos os passos, tools, decisoes</span>
+
+<span class="cm"># Free tier: 5.000 traces/mes — suficiente</span>
+<span class="cm"># para desenvolvimento e demos</span></pre>
+        </div>
+      </div>
+      <a href="https://smith.langchain.com" style="font-size:12px;color:var(--fiap-purple)">smith.langchain.com — free tier disponivel</a>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S17 FAQ CARREIRA -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes sobre carreira em IA</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta honesta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Preciso saber matemática avançada para trabalhar com IA?"</strong></td><td>Para usar modelos (90% do mercado): não. Para pesquisa e treinamento de modelos do zero: sim (álgebra linear, cálculo, probabilidade). A maioria das vagas de engenharia de IA em 2026 exige saber usar e integrar modelos — não construir.</td></tr>
+      <tr><td><strong>"Python é suficiente?"</strong></td><td>Para IA generativa, sim. Para MLOps e infra: adicionar Docker, Kubernetes, cloud (AWS/GCP/Azure). Para data engineering que alimenta sistemas de IA: SQL é tão importante quanto Python.</td></tr>
+      <tr><td><strong>"O LangChain vai ser substituído?"</strong></td><td>Frameworks surgem e somem. O que não muda: entender os primitivos (chain, retriever, agent, graph). Quem entende os conceitos aprende o próximo framework em dias. Quem só decorou a API fica perdido quando o framework muda.</td></tr>
+      <tr><td><strong>"Vale mais o portfólio ou o diploma?"</strong></td><td>Os dois. O diploma abre a porta; o portfólio no GitHub demonstra o que você sabe fazer. Os CKPs deste semestre, bem documentados com README e exemplos rodando, já são um portfólio inicial sólido.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S18 CKPS COMO PORTFOLIO -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Seus CKPs como portfólio — como apresentar no GitHub</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-gold">
+        <div class="callout-title">O que todo recrutador olha no GitHub</div>
+        <div class="callout-body">
+          <strong>README.md completo:</strong> O que faz, como rodar, print da tela funcionando<br><br>
+          <strong>Demonstração rodando:</strong> Link do Gradio (share=True) ou GIF da tela<br><br>
+          <strong>Código limpo:</strong> docstrings, comentarios, sem credenciais expostas<br><br>
+          <strong>Estrutura de arquivos:</strong> não um notebook gigante, mas módulos organizados
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">README.md (estrutura recomendada)</span></div>
+        <div class="code-body"><pre><span class="cm"># CKP03 — Agente Inteligente: [Dominio]</span>
+
+<span class="cm">## Demo ao vivo</span>
+<span class="st">[![Open in Gradio](badge-url)](gradio-link)</span>
+
+<span class="cm">## O que o agente faz</span>
+<span class="cm">- Busca em documentos do dominio (RAG)</span>
+<span class="cm">- Pesquisa na web (DuckDuckGo)</span>
+<span class="cm">- Calcula metricas do dominio</span>
+
+<span class="cm">## Stack</span>
+<span class="cm">LangChain 0.3 | ChromaDB | Gradio | Ollama</span>
+
+<span class="cm">## Como rodar no Colab</span>
+<span class="st">[![Open in Colab](colab-badge)](colab-link)</span>
+
+<span class="cm">## Exemplos de uso</span>
+<span class="cm">Q: "Quais os prazos do contrato?"</span>
+<span class="cm">A: [screenshot da resposta]</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S19 SECAO 05 ENCERRAMENTO SEMESTRE -->
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Encerramento<br>do semestre</div>
+  <div class="section-desc">O arco completo de 2026, o stack que você domina, e o que fica depois que a última aula terminar.</div>
+  <div class="slide-number">19 / 28</div>
+</div>
+
+<!-- S20 O ANO COMPLETO -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O ano completo — 1º e 2º semestre juntos</h2>
+  <table class="data-table">
+    <thead><tr><th>Semestre</th><th>Foco</th><th>Tecnologia central</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--fiap-blue)">1º semestre</strong></td>
+        <td>Fundamentos de IA · Transformers · Prompt engineering · Fine-tuning conceitual · Hugging Face · Ética e LGPD</td>
+        <td>Python basics · Hugging Face Transformers · requests · gradio simples</td>
+        <td>Entender como LLMs funcionam e como interagir via prompt</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--fiap-purple)">2º semestre</strong></td>
+        <td>LangChain LCEL · Memória · Pydantic · RAG · Agentes ReAct · LangGraph</td>
+        <td>LangChain 0.3 · ChromaDB · RAGAS · AgentExecutor · StateGraph · Gradio ChatInterface</td>
+        <td>Construir sistemas de IA completos, avaliáveis e com aprovação humana</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.2);border-radius:12px;padding:16px;margin-top:14px">
+    <div style="font-size:13px;font-weight:700;color:var(--fiap-purple);margin-bottom:8px">Da teoria à produção — o arco completo</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px">
+      <span style="padding:4px 10px;background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:5px">"O que é um token?"</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="padding:4px 10px;background:rgba(237,20,91,.08);border:1px solid rgba(237,20,91,.2);border-radius:5px">Chain LCEL</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="padding:4px 10px;background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:5px">RAG com avaliação</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="padding:4px 10px;background:rgba(41,175,140,.08);border:1px solid rgba(41,175,140,.2);border-radius:5px">Agente com URL pública</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="padding:4px 10px;background:rgba(124,96,198,.1);border:2px solid rgba(124,96,198,.35);border-radius:5px;font-weight:700;color:var(--fiap-purple)">StateGraph + HITL</span>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S21 LINHA DO TEMPO IA GENERATIVA -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>A linha do tempo da IA generativa — de onde vocês vieram</h2>
+  <div style="margin:14px 0">
+    <div class="timeline-item">
+      <div class="timeline-year">2017</div><div class="timeline-content"><strong>Attention Is All You Need</strong> — Vaswani et al. O paper que criou a arquitetura transformer. Nada do que foi feito neste semestre existiria sem ele.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2020</div><div class="timeline-content"><strong>GPT-3</strong> — OpenAI. 175B parâmetros, few-shot learning. Mostrou que escala funciona. Base do paper "Language Models are Few-Shot Learners" (Brown et al.).</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2022</div><div class="timeline-content"><strong>ChatGPT</strong> — Interface conversacional para o grande público. 100M usuários em 2 meses. Prompt engineering vira habilidade valorizada no mercado.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2023</div><div class="timeline-content"><strong>LangChain · GPT-4 · LLaMA</strong> — Frameworks de orquestração, modelos melhores, modelos open-source. A era das aplicações começa.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2024</div><div class="timeline-content"><strong>Agentes · RAG maduro · MCP · LangGraph</strong> — Da cadeia ao agente. Sistemas que dêcide, busca, age e aprende com o resultado. O foco deste semestre.</div>
+    </div>
+    <div class="timeline-item" style="border-bottom:none">
+      <div class="timeline-year" style="color:var(--fiap-purple);font-weight:900">2026</div><div class="timeline-content"><strong>Deep Agents · Multiagentes · LangGraph Platform</strong> — Agentes em produção, operando por horas, com HITL, avaliacao automatizada e orquestração multi-LLM. <strong style="color:var(--fiap-purple)">Vocês estão aqui.</strong></div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S22 STACK COMPLETO -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O stack que você domina ao final do semestre</h2>
+  <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:20px;margin:12px 0">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-pink);flex-shrink:0;min-width:90px;text-align:center">LLM<br>RUNTIME</div>
+        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>ChatOllama</strong> via Ollama Cloud API · gpt-oss:120b · gpt-oss:120b · nomic-embed-text · temperature, top_p, num_predict</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="background:rgba(61,156,204,.1);border:1px solid rgba(61,156,204,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-blue);flex-shrink:0;min-width:90px;text-align:center">LCEL<br>CHAINS</div>
+        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>LangChain 0.3+</strong> · pipe notation (|) · ChatPromptTemplate · StrOutputParser · JsonOutputParser · with_structured_output(Pydantic) · RunnableLambda · RunnablePassthrough</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="background:rgba(41,175,140,.1);border:1px solid rgba(41,175,140,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-green);flex-shrink:0;min-width:90px;text-align:center">RAG<br>STACK</div>
+        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>ChromaDB</strong> + nomic-embed-text · RecursiveCharacterTextSplitter · as_retriever() · RAGAS (faithfulness, answer_relevancy, context_precision) · create_retriever_tool()</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="background:rgba(213,140,46,.1);border:1px solid rgba(213,140,46,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-orange);flex-shrink:0;min-width:90px;text-align:center">AGENTES<br>REACT</div>
+        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>AgentExecutor</strong> · @tool decorator · hub.pull("hwchase17/react") · verbose=True · max_iterations · DuckDuckGoSearchRun · tiktoken · compressão de observations</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="background:rgba(124,96,198,.1);border:1px solid rgba(124,96,198,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-purple);flex-shrink:0;min-width:90px;text-align:center">LANG<br>GRAPH</div>
+        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>StateGraph</strong> · TypedDict + Annotated[list, add_messages] · add_conditional_edges · MemorySaver · thread_id · interrupt_before · update_state · draw_mermaid() · invoke(None)</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="background:rgba(61,156,204,.1);border:1px solid rgba(61,156,204,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-blue);flex-shrink:0;min-width:90px;text-align:center">UI &<br>DEPLOY</div>
+        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>Gradio</strong> ChatInterface + streaming · share=True (URL pública) · Streamlit basics · Google Colab como ambiente de produção para demos</div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S23 DEBATE FINAL -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Debate final — perguntas para a turma</h2>
+  <div style="display:flex;flex-direction:column;gap:12px;margin:16px 0">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:4px solid var(--fiap-pink);border-radius:0 12px 12px 0;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-pink);text-transform:uppercase;margin-bottom:6px">Questão 1 — Reflexao pessoal</div>
+      <div style="font-size:15px;font-weight:600;color:var(--fiap-white)">Qual foi o conceito mais surpreendente do semestre? Algo que mudou sua forma de enxergar IA?</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:4px solid var(--fiap-blue);border-radius:0 12px 12px 0;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:6px">Questão 2 — Aplicação prática</div>
+      <div style="font-size:15px;font-weight:600;color:var(--fiap-white)">Se você pudesse usar o que aprendeu em um problema real hoje — pessoal, familiar ou da cidade — qual seria?</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:4px solid var(--fiap-orange);border-radius:0 12px 12px 0;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;margin-bottom:6px">Questão 3 — Mercado</div>
+      <div style="font-size:15px;font-weight:600;color:var(--fiap-white)">Você consegue imaginar uma empresa que ainda não usa agentes de IA mas que poderia se beneficiar muito? Qual problema resolveriam?</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:4px solid var(--fiap-purple);border-radius:0 12px 12px 0;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;margin-bottom:6px">Questão 4 — Ética</div>
+      <div style="font-size:15px;font-weight:600;color:var(--fiap-white)">Qual limite você não daria a um agente autônomo, mesmo com HITL? Há ações que LLMs nunca deveriam poder iniciar?</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S24 EXERCICIO -->
+
+
+<div class="slide slide-content" style="justify-content:center;align-items:center;text-align:center">
+  <div style="max-width:700px">
+    <div style="font-size:48px;margin-bottom:24px">🎉</div>
+    <h2 style="border-bottom:none;font-size:30px;margin-bottom:14px">Parabéns pela jornada</h2>
+    <p style="font-size:16px;color:var(--fiap-muted);margin-bottom:24px;max-width:600px;margin-left:auto;margin-right:auto">Em 14 aulas, vocês saíram de chains simples para sistemas com estado persistente, ferramentas reais, avaliação automática e aprovação humana antes de acoes irreversíveis. Isso não é tutorial — é o que a indústria usa.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px 20px;text-align:center">
+        <div style="font-size:24px;font-weight:900;color:var(--fiap-purple)">3</div>
+        <div style="font-size:11px;font-weight:600;color:var(--fiap-muted)">CKPs entregues</div>
+      </div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px 20px;text-align:center">
+        <div style="font-size:24px;font-weight:900;color:var(--fiap-blue)">4</div>
+        <div style="font-size:11px;font-weight:600;color:var(--fiap-muted)">Módulos dominados</div>
+      </div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px 20px;text-align:center">
+        <div style="font-size:24px;font-weight:900;color:var(--fiap-green)">1</div>
+        <div style="font-size:11px;font-weight:600;color:var(--fiap-muted)">Agente público no ar</div>
+      </div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px 20px;text-align:center">
+        <div style="font-size:24px;font-weight:900;color:var(--fiap-orange)">∞</div>
+        <div style="font-size:11px;font-weight:600;color:var(--fiap-muted)">Aplicações possíveis</div>
+      </div>
+    </div>
+    <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.2);border-radius:10px;padding:14px 20px;font-size:14px;color:var(--fiap-text)">
+      <strong>Dúvidas, projetos futuros ou só para trocar ideia:</strong><br>
+      <a href="mailto:profjorge.gomes@fiap.com.br" style="color:var(--fiap-purple);font-weight:700">profjorge.gomes@fiap.com.br</a>
+    </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S27 REFERENCIAS -->
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none">Demo Prática ao Vivo</h2>
+  <p style="max-width:720px">Escrever uma spec curta — requisito, critérios de aceite e o que fica fora do escopo — e usar um agente de código disponível gratuitamente para implementá-la, revisando o diff gerado contra a spec, não contra a memória do que foi pedido.</p>
+  <div class="three-col" style="text-align:left;width:100%;max-width:950px">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--fiap-purple);margin-bottom:6px">1. Escrever a spec</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.6">Requisito, critérios de aceite e o que fica fora do escopo — linguagem natural estruturada, sem código.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--fiap-blue);margin-bottom:6px">2. Agente implementa</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.6">O agente propõe um plano, gera o diff e explica as decisões tomadas a partir da spec.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--fiap-green);margin-bottom:6px">3. Revisão contra a spec</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.6">A turma compara o resultado com os critérios de aceite originais — não com a lembrança do pedido.</div>
+    </div>
+  </div>
+  <div class="callout callout-gold" style="text-align:left;max-width:950px;width:100%">
+    <div class="callout-title">Stack da demo</div>
+    <div class="callout-body">Editor de texto simples para a spec · agente de código gratuito disponível (Claude Code ou equivalente) · repositório de exemplo já preparado</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S13 ADOCAO MERCADO -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Exercício da Aula 14 · 15 minutos · Individual, sem entrega</div>
+    <div class="exercise-title">Escreva sua primeira spec.md</div>
+    <ol class="exercise-steps">
+      <li><strong>Escolha uma ideia</strong> — uma melhoria no seu agente do CKP03, uma feature nova ou qualquer problema pequeno que você queira resolver com código.</li>
+      <li><strong>Escreva o Requisito</strong> em 2–3 frases: o que o sistema deve fazer, sem mencionar como implementar.</li>
+      <li><strong>Liste 3–4 Critérios de aceite</strong> — condições objetivas que provam que a implementação está correta (formato "se X, então Y").</li>
+      <li><strong>Defina o que fica Fora do escopo</strong> — o que deliberadamente não será tratado agora, para não inflar a spec.</li>
+      <li><strong>Troque com um colega</strong> — ele tenta achar um caso de borda que sua spec não cobre. Essa é a revisão que, num fluxo real, aconteceria contra o código gerado.</li>
+    </ol>
+    <div class="exercise-hint">💡 Não existe spec perfeita na primeira versão — o ganho está em achar a ambiguidade antes de um agente (ou colega) interpretá-la do jeito errado.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S26 AGRADECIMENTO -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Ferramenta</span><div>GitHub Spec Kit — <a href="https://github.com/github/spec-kit" style="color:var(--fiap-purple)">github.com/github/spec-kit</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-blog">Blog</span><div>Anthropic Engineering — Claude Code e desenvolvimento agentic. <a href="https://www.anthropic.com/engineering" style="color:var(--fiap-purple)">anthropic.com/engineering</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Ferramenta</span><div>Kiro (AWS) — IDE spec-first. <a href="https://kiro.dev" style="color:var(--fiap-purple)">kiro.dev</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-blog">Blog</span><div>LangChain Blog e Documentação — tutoriais oficiais sempre atualizados. <a href="https://blog.langchain.dev" style="color:var(--fiap-purple)">blog.langchain.dev</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Curso</span><div>DeepLearning.AI Short Courses — LangChain, LangGraph, RAG, Agentes. <a href="https://learn.deeplearning.ai" style="color:var(--fiap-purple)">learn.deeplearning.ai</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Curso</span><div>Hugging Face Learn — fine-tuning, PEFT, LoRA, datasets. <a href="https://huggingface.co/learn" style="color:var(--fiap-purple)">huggingface.co/learn</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div><strong>Marco, E.</strong> — Agentic Coding with Claude Code. Packt Publishing, 2025. O mecanismo técnico do planning mode (/plan) por trás da separação spec-execução desta aula.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div><strong>Avila, R. D.</strong> — Architecting AI Software Systems. Packt, 2025. Cap. 8 — Insights and Future Directions: ferramentas de IA não substituem o pensamento arquitetural de alto nível, base da trilha de carreira desta aula.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S28 ENCERRAMENTO -->
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:30px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Semestre encerrado.</div>
+  <div style="font-size:15px;color:var(--fiap-muted);margin-bottom:24px;max-width:520px">Vocês aprenderam a construir sistemas de IA reais. O que vem a seguir depende de vocês.</div>
+  <div style="display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;justify-content:center">
+    <div style="background:rgba(237,20,91,.08);border:1px solid rgba(237,20,91,.2);border-radius:8px;padding:10px 16px;text-align:center"><div style="font-size:18px;margin-bottom:4px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-pink)">M1 LangChain</div></div>
+    <div style="background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:8px;padding:10px 16px;text-align:center"><div style="font-size:18px;margin-bottom:4px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-blue)">M2 RAG</div></div>
+    <div style="background:rgba(41,175,140,.08);border:1px solid rgba(41,175,140,.2);border-radius:8px;padding:10px 16px;text-align:center"><div style="font-size:18px;margin-bottom:4px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-green)">M3 Agentes</div></div>
+    <div style="background:rgba(124,96,198,.1);border:2px solid rgba(124,96,198,.35);border-radius:8px;padding:10px 16px;text-align:center"><div style="font-size:18px;margin-bottom:4px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-purple)">M4 LangGraph</div></div>
+  </div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:20px 28px;text-align:left;max-width:520px;margin-top:20px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-orange);margin-bottom:8px">→ Depois desta aula</div>
+    <div class="next-title" style="font-size:16px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Não há próxima aula — o semestre está completo</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">Seus próximos passos: consolide os 3 CKPs como portfólio, escolha uma trilha de aprofundamento (observabilidade, multiagentes ou fine-tuning) e continue construindo. A jornada de Prompt & Context Engineering não termina aqui.</div>
+  </div>
+  <div style="margin-top:20px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">28 / 28</div>
+</div>
+
+
+</div>
+</body>
+</html>

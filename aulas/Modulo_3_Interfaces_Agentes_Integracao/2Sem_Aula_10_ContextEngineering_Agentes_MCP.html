@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 10 — Context Engineering para agentes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(41,175,140,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:40px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:820px}
+  .cover-subtitle{font-size:18px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(41,175,140,.1);border:1px solid rgba(41,175,140,.25);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-green);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:28px;font-weight:800;color:var(--fiap-white);margin-bottom:32px;padding-bottom:12px;border-bottom:2px solid var(--fiap-green);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:20px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:12px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-green);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:12px 18px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-green);border-radius:0 10px 10px 0;padding:20px 24px;margin:20px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-green);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-teal{border-left-color:var(--fiap-blue)}.callout-teal .callout-title{color:var(--fiap-blue)}
+  .callout-pink{border-left-color:var(--fiap-pink)}.callout-pink .callout-title{color:var(--fiap-pink)}
+  .callout-purple{border-left-color:var(--fiap-purple)}.callout-purple .callout-title{color:var(--fiap-purple)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:20px 0}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
+  .agenda-item{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:10px}
+  .agenda-num{width:32px;height:32px;background:rgba(41,175,140,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--fiap-green);flex-shrink:0}
+  .agenda-text{font-size:14px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:12px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:4px 10px;border-radius:6px}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:20px;font-size:13px;line-height:1.9}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .exercise{background:linear-gradient(135deg,rgba(41,175,140,.06),rgba(61,156,204,.06));border:1px solid rgba(41,175,140,.2);border-radius:14px;padding:28px;margin:20px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-green);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:16px}
+  .exercise-steps{padding-left:20px;margin-bottom:16px}
+  .exercise-steps li{color:var(--fiap-text);font-size:14px;margin-bottom:8px;line-height:1.6}
+  /* memory layers */
+  .mem-layer{display:flex;gap:12px;padding:12px 16px;border-radius:8px;margin-bottom:6px;align-items:flex-start}
+  .mem-badge{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;flex-shrink:0;margin-top:2px;white-space:nowrap}
+  /* quality bar */
+  .qbar-row{display:flex;align-items:center;gap:10px;margin:6px 0}
+  .qbar-label{font-size:11px;color:var(--fiap-muted);width:80px;flex-shrink:0;text-align:right}
+  .qbar-bg{flex:1;height:14px;background:var(--fiap-surface2);border-radius:4px;overflow:hidden}
+  .qbar-fill{height:100%;border-radius:4px}
+  .qbar-val{font-size:11px;font-weight:700;width:34px;flex-shrink:0}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Context Engineering<br>para agentes</div>
+  <div class="cover-subtitle">Aula 10/14 — Módulo 3: curadoria em loop agêntico · MCP overview</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">⏱️ 1h40min</div>
+    <div class="cover-meta-item">🧠 Scratchpad · Context rot · MCP</div>
+    <div class="cover-meta-item">🔁 Andaime 55%</div>
+  </div>
+  <div class="slide-number">01 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">Context em agentes ≠ context em chat — por que o loop cria um problema novo</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">3 tipos de memória agêntica — in-context (scratchpad), external (ChromaDB), episódica</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">Context rot em loop — medir degradação em 5, 10 e 20 turnos</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">Princípio da ação mínima e estratégias de compressão do scratchpad</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">MCP — Model Context Protocol: overview do padrão de 2025</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">🚀 Demo — instrumentar agente para medir qualidade vs. turnos ao vivo</div><div class="agenda-time">14 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">7</div><div class="agenda-text">💻 Lab — compressão do scratchpad e medir diferença (55% lacunas)</div><div class="agenda-time">20 min</div></div>
+  <div class="callout" style="margin-top:10px">
+    <div class="callout-title">🎯 Objetivo da aula</div>
+    <div class="callout-body">Entender por que o contexto em agentes é um recurso ainda mais crítico que em chats simples — e dominar as estratégias de curadoria que mantêm a qualidade do agente em loops longos. Preparar o agente para a integração final da Aula 11.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">Scratchpad</div>
+      <div class="gl-def">Espaço de memória de trabalho onde o agente anota resultados intermediários, planos e observações durante o loop — bloco de notas temporário, descartado ou resumido ao fim da tarefa.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Memória episódica</div>
+      <div class="gl-def">Registro persistente de execuções passadas do agente entre sessões distintas — permite lembrar decisões e resultados de tarefas anteriores, diferente da memória de curto prazo que vive só dentro do loop atual.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">Princípio da ação mínima</div>
+      <div class="gl-def">Regra de design que prioriza reduzir tokens gastos por ação do agente (chamada de tool, observação) mantendo o mesmo resultado — cada token economizado por turno se multiplica ao longo de loops longos.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">Compressão de observations</div>
+      <div class="gl-def">Técnica de resumir o retorno de uma tool antes de inserir no contexto do agente — evita que uma observação verbosa (ex.: HTML bruto de uma página) consuma o context window inteiro.</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">Janela deslizante (sliding window)</div>
+      <div class="gl-def">Estratégia que mantém apenas as N interações mais recentes do loop agêntico no contexto, descartando as mais antigas — garante custo de tokens constante em vez de crescer a cada turno.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">MCP (Model Context Protocol)</div>
+      <div class="gl-def">Protocolo aberto que padroniza como agentes se conectam a tools e fontes de dados externas — permite trocar de cliente ou servidor sem reescrever a integração.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">MCP client / MCP server</div>
+      <div class="gl-def">Arquitetura do MCP: o servidor expõe tools, resources e prompts; o cliente (o agente) descobre e chama essas capacidades via protocolo comum, sem acoplamento direto ao código do servidor.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">Context rot em loop agêntico</div>
+      <div class="gl-def">Degradação de qualidade das respostas do agente conforme o número de turnos cresce e o contexto acumula ruído — medido comparando qualidade da decisão no turno 1 vs. turno N.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">Context em agentes<br>≠ context em chat</div>
+  <div class="section-desc">Em chat, o contexto cresce linear e previsível. Em agentes, o loop gera Thought + Action + Observation a cada iteração — o crescimento é multiplicado e imprevisível.</div>
+  <div class="slide-number">04 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Por que o loop cria um problema de contexto novo</h2>
+  <p>Na Aula 04 (Context Engineering), o sistema prompt tinha ~10% do contexto. Em agentes, o loop gera scratchpad que cresce a cada iteração:</p>
+  <div class="two-col">
+    <div>
+      <div style="background:rgba(61,156,204,.05);border:1px solid rgba(61,156,204,.2);border-radius:10px;padding:16px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:8px">Chat / RAG (Módulos 1–2)</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11px">system (~10%) + contexto RAG (~50%) + histórico (~30%) + input (~10%)</code><br><br>
+          Previsível. Controlado. A cada chamada, o desenvolvedor escolhe o que entra.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="background:rgba(201,73,44,.05);border:1px solid rgba(201,73,44,.2);border-radius:10px;padding:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;margin-bottom:8px">Agente em loop (a partir da Aula 09)</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11px">system + tools_schema + scratchpad_t1 + scratchpad_t2 + ... + scratchpad_tN + input</code><br><br>
+          <strong>O scratchpad cresce a cada iteração.</strong> Em 10 loops com resultados de busca ricos, o contexto pode ultrapassar 32k tokens — e o context rot degrada o raciocínio.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;margin-bottom:10px">Crescimento típico do contexto por iteração (agente RAG + web)</div>
+    <div class="qbar-row"><div class="qbar-label">Iter. 1</div><div class="qbar-bg"><div class="qbar-fill" style="width:12%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">~1.2k</div></div>
+    <div class="qbar-row"><div class="qbar-label">Iter. 3</div><div class="qbar-bg"><div class="qbar-fill" style="width:30%;background:var(--fiap-blue)"></div></div><div class="qbar-val" style="color:var(--fiap-blue)">~3k</div></div>
+    <div class="qbar-row"><div class="qbar-label">Iter. 5</div><div class="qbar-bg"><div class="qbar-fill" style="width:55%;background:var(--fiap-orange)"></div></div><div class="qbar-val" style="color:var(--fiap-orange)">~5.5k</div></div>
+    <div class="qbar-row"><div class="qbar-label">Iter. 10</div><div class="qbar-bg"><div class="qbar-fill" style="width:90%;background:var(--fiap-red)"></div></div><div class="qbar-val" style="color:var(--fiap-red)">~12k+</div></div>
+    <div style="font-size:10px;color:var(--fiap-muted);margin-top:8px">*Estimativa para agente com tools de busca retornando ~800 chars por Observation</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">3 tipos de memória<br>agêntica</div>
+  <div class="section-desc">In-context (scratchpad) · External (ChromaDB) · Episódica (histórico de sessões passadas). Cada uma resolve um problema diferente de persistência e custo.</div>
+  <div class="slide-number">06 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>3 tipos de memória agêntica — quando usar cada um</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Tipo 1</div>
+      <div style="font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">In-context<br>(Scratchpad)</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7;margin-bottom:10px">O Thought/Action/Observation de cada iteração do loop. Vai diretamente no contexto da próxima chamada ao LLM. <strong>Rápido mas finito e caro.</strong></div>
+      <div style="font-size:11px;color:var(--fiap-blue);font-weight:600">Uso: raciocínio corrente (esta sessão)</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Tipo 2</div>
+      <div style="font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">External<br>(ChromaDB)</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7;margin-bottom:10px">Documentos do domínio indexados como embeddings. O agente <em>busca</em> quando precisa — não carrega tudo no contexto. <strong>Ilimitado e econômico.</strong></div>
+      <div style="font-size:11px;color:var(--fiap-green);font-weight:600">Uso: base de conhecimento do domínio</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Tipo 3</div>
+      <div style="font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Episódica<br>(Histórico)</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7;margin-bottom:10px">Resumo das sessões anteriores salvo no ChromaDB ou arquivo. O agente recupera contexto relevante de interações passadas. <strong>Persistente entre sessões.</strong></div>
+      <div style="font-size:11px;color:var(--fiap-purple);font-weight:600">Uso: personalização e continuidade</div>
+    </div>
+  </div>
+  <div class="callout callout-orange" style="margin-top:8px">
+    <div class="callout-title">💡 Analogia com a arquitetura de computadores (Russell & Norvig, 2016)</div>
+    <div class="callout-body">Scratchpad = RAM (rápido, volátil, finito). ChromaDB externo = HD (persistente, barato, requer busca). Memória episódica = cache de sessão (seleciona o mais relevante para carregar na RAM). Um agente bem projetado minimiza o uso de RAM e maximiza a eficiência de busca no HD.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Scratchpad — o contexto de trabalho do agente</h2>
+  <p>O scratchpad é a "área de rascunho" do agente: acumula cada Thought, Action e Observation da sessão corrente. Com verbose=True você já o viu — aqui está sua anatomia:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">scratchpad_anatomia.py</span></div>
+    <div class="code-body"><pre><span class="cm"># O que o AgentExecutor mantém internamente como scratchpad</span>
+<span class="va">scratchpad_turno_1</span> <span class="op">=</span> <span class="st">"""
+Thought: Preciso buscar o prazo de garantia nos documentos.
+Action: buscar_nos_documentos
+Action Input: "prazo de garantia"
+Observation: [manual.pdf, pág.15] O prazo de garantia é de 24 meses...
+"""</span>  <span class="cm"># ~80 tokens</span>
+
+<span class="va">scratchpad_turno_2</span> <span class="op">=</span> <span class="st">"""
+Thought: Encontrei 24 meses. Vou converter para dias.
+Action: calcular
+Action Input: "24 * 30"
+Observation: 720
+"""</span>  <span class="cm"># +40 tokens → total: ~120 tokens</span>
+
+<span class="cm"># Após 10 iterações com resultados de busca ricos:</span>
+<span class="cm"># scratchpad ≈ 10 × 800 chars ≈ ~2.000 tokens só de Observations</span>
+<span class="cm"># + Thoughts (~500 tokens) + system + tools_schema (~1.000 tokens)</span>
+<span class="cm"># Total: ~3.500–5.000 tokens por invocação do agente</span>
+
+<span class="cm"># Inspecionar o scratchpad via intermediate_steps</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">executor</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span> <span class="st">"pergunta"</span><span class="op">})</span>
+<span class="kw">for</span> <span class="va">i</span><span class="op">,</span> <span class="op">(</span><span class="va">action</span><span class="op">,</span> <span class="va">obs</span><span class="op">)</span> <span class="kw">in</span> <span class="nb">enumerate</span><span class="op">(</span><span class="va">resultado</span><span class="op">[</span><span class="st">"intermediate_steps"</span><span class="op">],</span> <span class="num">1</span><span class="op">):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Iteração {i}: tool={action.tool}, obs_len={len(str(obs))} chars"</span><span class="op">)</span>
+<span class="cm"># → Iteração 1: tool=buscar_nos_documentos, obs_len=842 chars</span>
+<span class="cm"># → Iteração 2: tool=calcular, obs_len=3 chars</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — janela de contexto longa não é memória de longo prazo</div>
+    <div class="callout-body">Gullí (<em>Agentic Design Patterns</em>, O'Reilly, 2025, cap. 8 — Memory Management) distingue memória de agente em duas categorias fundamentais: <strong>Short-Term/Contextual</strong> — o que cabe na janela de contexto, existe só durante a chamada atual — e <strong>Long-Term/Persistent</strong> — armazenada fora do processo do agente e recuperada por busca semântica quando necessário. O ponto do autor que vale reforçar aqui: um modelo com janela de contexto maior não substitui memória de longo prazo, ele só aumenta o tamanho do scratchpad acima — que continua efêmero e caro de reprocessar a cada chamada, como os ~3.500–5.000 tokens por invocação que você acabou de ver. É por isso que os Tipos 2 e 3 do slide anterior (ChromaDB externo e memória episódica) existem mesmo em modelos com contexto grande: não é economia de espaço, é persistência real entre sessões.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">Context rot<br>em loop</div>
+  <div class="section-desc">Qualidade degrada com o crescimento do scratchpad — o mesmo fenômeno da Aula 04, mas amplificado pela natureza iterativa do loop agêntico.</div>
+  <div class="slide-number">09 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Medir context rot em agente — qualidade vs. turnos</h2>
+  <p>A demo desta aula instrumenta o agente para medir a qualidade da resposta a cada turno e plotar o gráfico de degradação:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">medir_context_rot.py</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> <span class="va">tiktoken</span><span class="op">,</span> <span class="va">matplotlib</span><span class="op">.</span><span class="va">pyplot</span> <span class="kw">as</span> <span class="va">plt</span>
+
+<span class="va">enc</span> <span class="op">=</span> <span class="va">tiktoken</span><span class="op">.</span><span class="fn">encoding_for_model</span><span class="op">(</span><span class="st">"gpt-4"</span><span class="op">)</span>
+
+<span class="kw">def</span> <span class="fn">contar_tokens_scratchpad</span><span class="op">(</span><span class="va">intermediate_steps</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">int</span><span class="op">:</span>
+    <span class="st">"""Conta tokens acumulados no scratchpad."""</span>
+    <span class="va">texto</span> <span class="op">=</span> <span class="st">""</span>
+    <span class="kw">for</span> <span class="va">action</span><span class="op">,</span> <span class="va">obs</span> <span class="kw">in</span> <span class="va">intermediate_steps</span><span class="op">:</span>
+        <span class="va">texto</span> <span class="op">+=</span> <span class="st">f"{action.log}\n{obs}\n"</span>
+    <span class="kw">return</span> <span class="nb">len</span><span class="op">(</span><span class="va">enc</span><span class="op">.</span><span class="fn">encode</span><span class="op">(</span><span class="va">texto</span><span class="op">))</span>
+
+<span class="cm"># Simular conversação longa — 15 perguntas em sequência</span>
+<span class="va">historico_scratchpad</span> <span class="op">= []</span>  <span class="cm"># acumula manualmente para simular o contexto crescente</span>
+<span class="va">tokens_por_turno</span>      <span class="op">= []</span>
+<span class="va">qualidade_por_turno</span>   <span class="op">= []</span>
+
+<span class="kw">for</span> <span class="va">i</span><span class="op">,</span> <span class="va">pergunta</span> <span class="kw">in</span> <span class="nb">enumerate</span><span class="op">(</span><span class="va">PERGUNTAS_TESTE</span><span class="op">,</span> <span class="num">1</span><span class="op">):</span>
+    <span class="va">resultado</span> <span class="op">=</span> <span class="va">executor</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span> <span class="va">pergunta</span><span class="op">})</span>
+    <span class="va">steps</span>    <span class="op">=</span> <span class="va">resultado</span><span class="op">[</span><span class="st">"intermediate_steps"</span><span class="op">]</span>
+    <span class="va">tokens</span>   <span class="op">=</span> <span class="fn">contar_tokens_scratchpad</span><span class="op">(</span><span class="va">steps</span><span class="op">)</span>
+
+    <span class="cm"># Avaliar qualidade com LLM-as-judge (Aula 07)</span>
+    <span class="va">qualidade</span> <span class="op">=</span> <span class="fn">faithfulness_manual</span><span class="op">(</span><span class="va">pergunta</span><span class="op">,</span> <span class="va">resultado</span><span class="op">[</span><span class="st">"output"</span><span class="op">],</span>
+                                     <span class="st">"\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span><span class="nb">str</span><span class="op">(</span><span class="va">o</span><span class="op">)</span> <span class="kw">for</span> <span class="va">_</span><span class="op">,</span><span class="va">o</span> <span class="kw">in</span> <span class="va">steps</span><span class="op">))</span>
+    <span class="va">tokens_por_turno</span><span class="op">.</span><span class="fn">append</span><span class="op">(</span><span class="va">tokens</span><span class="op">)</span>
+    <span class="va">qualidade_por_turno</span><span class="op">.</span><span class="fn">append</span><span class="op">(</span><span class="va">qualidade</span><span class="op">)</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Turno {i:2d}: {tokens:5d} tokens · qualidade={qualidade:.2f}"</span><span class="op">)</span>
+
+<span class="cm"># Plotar context rot</span>
+<span class="va">fig</span><span class="op">,</span> <span class="va">ax1</span> <span class="op">=</span> <span class="va">plt</span><span class="op">.</span><span class="fn">subplots</span><span class="op">(</span><span class="va">figsize</span><span class="op">=(</span><span class="num">9</span><span class="op">,</span><span class="num">4</span><span class="op">))</span>
+<span class="va">ax2</span> <span class="op">=</span> <span class="va">ax1</span><span class="op">.</span><span class="fn">twinx</span><span class="op">()</span>
+<span class="va">ax1</span><span class="op">.</span><span class="fn">bar</span><span class="op">(</span><span class="nb">range</span><span class="op">(</span><span class="nb">len</span><span class="op">(</span><span class="va">tokens_por_turno</span><span class="op">)),</span> <span class="va">tokens_por_turno</span><span class="op">,</span> <span class="va">alpha</span><span class="op">=</span><span class="num">.4</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"steelblue"</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"Tokens"</span><span class="op">)</span>
+<span class="va">ax2</span><span class="op">.</span><span class="fn">plot</span><span class="op">(</span><span class="va">qualidade_por_turno</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"#ED145B"</span><span class="op">,</span> <span class="va">marker</span><span class="op">=</span><span class="st">"o"</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"Qualidade"</span><span class="op">)</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">title</span><span class="op">(</span><span class="st">"Context rot — tokens vs. qualidade por turno"</span><span class="op">)</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">show</span><span class="op">()</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">10 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Curadoria do<br>scratchpad</div>
+  <div class="section-desc">Princípio da ação mínima · compressão de Observations · janela deslizante · resumo episódico. Manter o agente eficaz em loops longos.</div>
+  <div class="slide-number">11 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Princípio da ação mínima — menos tokens, mesmo resultado</h2>
+  <p>Cada token no scratchpad é custo de processamento e risco de context rot. O princípio da ação mínima diz: <strong>fazer o mínimo necessário para avançar na tarefa</strong>:</p>
+  <table class="data-table">
+    <thead><tr><th>Anti-padrão</th><th>Padrão mínimo</th><th>Economia de tokens</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Buscar 10 chunks no RAG quando 3 bastam</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">as_retriever(search_kwargs={"k": 3})</code></td>
+        <td>~70% dos tokens de Observation</td>
+      </tr>
+      <tr>
+        <td>Retornar o texto completo da busca web (500+ chars)</td>
+        <td>Resumir a Observation antes de inserir no scratchpad</td>
+        <td>~60% dos tokens de Observation</td>
+      </tr>
+      <tr>
+        <td>Manter todas as iterações anteriores no scratchpad</td>
+        <td>Janela deslizante: manter apenas as últimas N iterações</td>
+        <td>Custo fixo independente do número de turnos</td>
+      </tr>
+      <tr>
+        <td>System prompt com 500 tokens de instruções genéricas</td>
+        <td>System prompt XML taggeado e compactado (Aula 04)</td>
+        <td>40–60% do system prompt</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout callout-purple">
+    <div class="callout-title">📖 Anthropic Context Engineering for AI Agents (set/2025)</div>
+    <div class="callout-body">"Agents should do the minimum necessary work to accomplish the task. Every unnecessary token in the scratchpad is a tax on reasoning quality in future steps." A ação mínima não é preguiça — é engenharia de qualidade.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Compressão de Observations — resumir antes de inserir</h2>
+  <p>A maior fonte de tokens no scratchpad são as Observations (resultados das tools). Uma tool wrapper que resume antes de retornar reduz drasticamente o scratchpad:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">tool_compressao.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Tool wrapper que comprime a Observation antes de retornar ao scratchpad</span>
+<span class="kw">from</span> <span class="va">langchain_core.tools</span> <span class="kw">import</span> <span class="va">tool</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+
+<span class="va">llm_mini</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+
+<span class="va">chain_resumir</span> <span class="op">=</span> <span class="op">(</span>
+    <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span>
+        <span class="st">"Resuma o texto abaixo em no máximo 3 frases, mantendo APENAS os fatos essenciais:\n\n{texto}"</span>
+    <span class="op">)</span>
+    <span class="op">|</span> <span class="va">llm_mini</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+<span class="op">)</span>
+
+<span class="op">@</span><span class="va">tool</span>
+<span class="kw">def</span> <span class="fn">buscar_na_web_comprimida</span><span class="op">(</span><span class="va">query</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="st">"""Use para buscar informações atuais na web. Retorna um resumo conciso dos resultados."""</span>
+    <span class="va">resultado_bruto</span> <span class="op">=</span> <span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="va">query</span><span class="op">)</span>
+
+    <span class="cm"># Comprime ANTES de retornar ao scratchpad</span>
+    <span class="kw">if</span> <span class="nb">len</span><span class="op">(</span><span class="va">resultado_bruto</span><span class="op">)</span> <span class="op">&gt;</span> <span class="num">500</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="va">chain_resumir</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"texto"</span><span class="op">:</span> <span class="va">resultado_bruto</span><span class="op">})</span>
+    <span class="kw">return</span> <span class="va">resultado_bruto</span>  <span class="cm"># já curto — não precisa resumir</span>
+
+<span class="cm"># Diferença típica:</span>
+<span class="cm"># Sem compressão: Observation = 800–1200 chars (~250 tokens)</span>
+<span class="cm"># Com compressão: Observation = 150–250 chars (~55 tokens)</span>
+<span class="cm"># Redução: ~78% dos tokens de Observation</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">13 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Janela deslizante — custo fixo em loops longos</h2>
+  <p>Em vez de acumular todo o scratchpad, manter apenas as últimas N iterações garante custo fixo independente da duração do loop:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">janela_deslizante.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain.agents</span> <span class="kw">import</span> <span class="va">AgentExecutor</span><span class="op">,</span> <span class="va">create_react_agent</span>
+<span class="kw">from</span> <span class="va">langchain_core.messages</span> <span class="kw">import</span> <span class="va">trim_messages</span>
+
+<span class="cm"># Estratégia 1 — limitar via max_iterations (simples)</span>
+<span class="va">executor_limitado</span> <span class="op">=</span> <span class="va">AgentExecutor</span><span class="op">(</span>
+    <span class="va">agent</span><span class="op">=</span><span class="va">agente</span><span class="op">,</span>
+    <span class="va">tools</span><span class="op">=</span><span class="va">tools</span><span class="op">,</span>
+    <span class="va">max_iterations</span><span class="op">=</span><span class="num">5</span><span class="op">,</span>       <span class="cm"># mantém no máximo 5 iterações no scratchpad</span>
+    <span class="va">max_execution_time</span><span class="op">=</span><span class="num">60</span><span class="op">,</span>  <span class="cm"># para após 60 segundos (fallback de segurança)</span>
+    <span class="va">verbose</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># Estratégia 2 — resumo episódico entre turnos (avançado)</span>
+<span class="kw">def</span> <span class="fn">resumir_scratchpad</span><span class="op">(</span><span class="va">intermediate_steps</span><span class="op">:</span> <span class="nb">list</span><span class="op">,</span> <span class="va">max_steps</span><span class="op">:</span> <span class="nb">int</span> <span class="op">=</span> <span class="num">3</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">list</span><span class="op">:</span>
+    <span class="st">"""Mantém as últimas max_steps iterações e resume o resto."""</span>
+    <span class="kw">if</span> <span class="nb">len</span><span class="op">(</span><span class="va">intermediate_steps</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">max_steps</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="va">intermediate_steps</span>
+
+    <span class="va">antigas</span>   <span class="op">=</span> <span class="va">intermediate_steps</span><span class="op">[:-</span><span class="va">max_steps</span><span class="op">]</span>
+    <span class="va">recentes</span>  <span class="op">=</span> <span class="va">intermediate_steps</span><span class="op">[-</span><span class="va">max_steps</span><span class="op">:]</span>
+
+    <span class="cm"># Resumir as iterações antigas em uma linha</span>
+    <span class="va">resumo</span> <span class="op">=</span> <span class="st">", "</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span><span class="st">f"{a.tool}→{str(o)[:50]}"</span> <span class="kw">for</span> <span class="va">a</span><span class="op">,</span><span class="va">o</span> <span class="kw">in</span> <span class="va">antigas</span><span class="op">)</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"[Resumo de {len(antigas)} iterações anteriores: {resumo}]"</span><span class="op">)</span>
+
+    <span class="cm"># Retorna só as recentes — scratchpad compacto</span>
+    <span class="kw">return</span> <span class="va">recentes</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-teal">
+    <div class="callout-title">⚡ max_execution_time — o seguro de prazo</div>
+    <div class="callout-body">Em produção, além de max_iterations, defina max_execution_time em segundos. Um agente travado em uma tool que não responde não vai loop infinito — vai parar após o timeout e retornar o que tem. Para o CKP03, max_iterations=5 e max_execution_time=120 são boas práticas.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Memória episódica — persistir entre sessões</h2>
+  <p>O scratchpad some quando a sessão termina. Memória episódica salva o resumo da sessão no ChromaDB para recuperar contexto relevante em sessões futuras:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">memoria_episodica.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="va">Chroma</span>
+<span class="kw">from</span> <span class="va">langchain_core.documents</span> <span class="kw">import</span> <span class="va">Document</span>
+<span class="kw">from</span> <span class="va">datetime</span> <span class="kw">import</span> <span class="va">datetime</span>
+
+<span class="cm"># Salvar resumo da sessão ao encerrar</span>
+<span class="kw">def</span> <span class="fn">salvar_sessao</span><span class="op">(</span><span class="va">pergunta</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">resposta</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">session_id</span><span class="op">:</span> <span class="nb">str</span><span class="op">):</span>
+    <span class="st">"""Persiste o par (pergunta, resposta) como memória episódica."""</span>
+    <span class="va">db_episodico</span><span class="op">.</span><span class="fn">add_documents</span><span class="op">([</span><span class="va">Document</span><span class="op">(</span>
+        <span class="va">page_content</span><span class="op">=</span><span class="st">f"Pergunta: {pergunta}\nResposta: {resposta}"</span><span class="op">,</span>
+        <span class="va">metadata</span><span class="op">={</span>
+            <span class="st">"session_id"</span><span class="op">:</span> <span class="va">session_id</span><span class="op">,</span>
+            <span class="st">"timestamp"</span><span class="op">:</span> <span class="va">datetime</span><span class="op">.</span><span class="fn">now</span><span class="op">().</span><span class="fn">isoformat</span><span class="op">(),</span>
+            <span class="st">"tipo"</span><span class="op">:</span> <span class="st">"episodio"</span><span class="op">,</span>
+        <span class="op">},</span>
+    <span class="op">)])</span>
+
+<span class="cm"># Recuperar contexto de sessões anteriores (memória episódica como tool)</span>
+<span class="op">@</span><span class="va">tool</span>
+<span class="kw">def</span> <span class="fn">lembrar_sessoes_anteriores</span><span class="op">(</span><span class="va">query</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="st">"""Use quando o usuário se referir a algo discutido em conversa anterior.
+    Retorna resumos de interações passadas relevantes para a query."""</span>
+    <span class="va">docs</span> <span class="op">=</span> <span class="va">db_episodico</span><span class="op">.</span><span class="fn">similarity_search</span><span class="op">(</span><span class="va">query</span><span class="op">,</span> <span class="va">k</span><span class="op">=</span><span class="num">2</span><span class="op">,</span>
+                                          <span class="va">filter</span><span class="op">={</span><span class="st">"tipo"</span><span class="op">:</span> <span class="st">"episodio"</span><span class="op">})</span>
+    <span class="kw">return</span> <span class="st">"\n\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span><span class="va">d</span><span class="op">.</span><span class="va">page_content</span> <span class="kw">for</span> <span class="va">d</span> <span class="kw">in</span> <span class="va">docs</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Model Context<br>Protocol (MCP)</div>
+  <div class="section-desc">O padrão aberto de 2024–2025 para conectar agentes a ferramentas externas. USB-C para integrações de IA.</div>
+  <div class="slide-number">16 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>MCP — Model Context Protocol</h2>
+  <p>Criado pela Anthropic em novembro de 2024, o MCP padroniza como agentes de IA se conectam a ferramentas e fontes de dados externas:</p>
+  <div class="two-col">
+    <div>
+      <div style="background:rgba(201,73,44,.05);border:1px solid rgba(201,73,44,.2);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;margin-bottom:8px">❌ Antes do MCP — N×M integrações</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">Cada agente precisava de código customizado para integrar com cada ferramenta. 5 agentes × 10 ferramentas = 50 integrações diferentes para manter. Mudança na API de uma ferramenta quebra todos os agentes.</div>
+      </div>
+      <div style="background:rgba(41,175,140,.05);border:1px solid rgba(41,175,140,.2);border-radius:10px;padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;margin-bottom:8px">✅ Com MCP — N+M integrações</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.7">Cada ferramenta expõe um servidor MCP. Cada agente é um cliente MCP. 5 agentes + 10 ferramentas = 15 implementações. Adicionar uma nova ferramenta não requer mudar os agentes.</div>
+      </div>
+    </div>
+    <div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;margin-bottom:12px">Arquitetura MCP</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:rgba(124,96,198,.1);border-radius:6px;padding:10px 12px;font-size:12px"><strong>MCP Host</strong> (Claude, Cursor, seu agente) — executa as requests</div>
+          <div style="text-align:center;font-size:18px;color:var(--fiap-purple)">⇅ JSON-RPC 2.0</div>
+          <div style="background:rgba(41,175,140,.1);border-radius:6px;padding:10px 12px;font-size:12px"><strong>MCP Server</strong> (sua ferramenta) — expõe tools, resources, prompts</div>
+          <div style="text-align:center;font-size:18px;color:var(--fiap-purple)">⇅ HTTP / SSE / stdio</div>
+          <div style="background:rgba(61,156,204,.1);border-radius:6px;padding:10px 12px;font-size:12px"><strong>Data Source</strong> (BD, API, arquivo, ChromaDB)</div>
+        </div>
+        <div style="font-size:11px;color:var(--fiap-muted);margin-top:12px">Protocolo aberto · Suportado por Anthropic, OpenAI, Google, Microsoft, Cursor, n8n, e 3000+ ferramentas</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Quando vale a pena usar MCP (e o custo de segurança)</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) reforça a analogia desta aula com uma comparação direta: o MCP funciona para ferramentas de agente como o HTTP funciona para navegadores — um protocolo comum que evita integração sob medida a cada combinação de agente e ferramenta. Mas o autor também marca o limite dessa vantagem: para um agente simples e de propósito único, com tools fortemente acopladas à própria lógica do agente, a camada extra do protocolo não compensa — o ganho de reuso só aparece quando várias equipes ou frameworks precisam compartilhar a mesma ferramenta. Há ainda um custo de segurança que esta aula não cobriu até aqui: cada MCP Server aceita requisições de rede, então expande a superfície de ataque do sistema e exige autenticação, autorização e validação de input próprios — diferente de uma function call local, que roda no mesmo processo confiável do agente.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>MCP na prática — o seu agente como cliente MCP</h2>
+  <p>O LangChain suporta MCP via pacote <code style="font-family:'JetBrains Mono',monospace;font-size:13px">langchain-mcp-adapters</code>. Suas tools @tool viram compatíveis com qualquer servidor MCP:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">mcp_langchain.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain-mcp-adapters <span class="op">-</span>q  <span class="cm"># adaptador oficial LangChain ↔ MCP</span>
+
+<span class="kw">from</span> <span class="va">langchain_mcp_adapters.tools</span> <span class="kw">import</span> <span class="va">load_mcp_tools</span>
+<span class="kw">from</span> <span class="va">mcp</span> <span class="kw">import</span> <span class="va">ClientSession</span>
+<span class="kw">from</span> <span class="va">mcp.client.stdio</span> <span class="kw">import</span> <span class="va">stdio_client</span>
+
+<span class="cm"># Conectar a um servidor MCP local (ex: servidor de filesystem)</span>
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">conectar_mcp</span><span class="op">():</span>
+    <span class="kw">async</span> <span class="kw">with</span> <span class="va">stdio_client</span><span class="op">(</span>
+        <span class="op">{</span><span class="st">"command"</span><span class="op">:</span> <span class="st">"npx"</span><span class="op">,</span> <span class="st">"args"</span><span class="op">: [</span><span class="st">"@modelcontextprotocol/server-filesystem"</span><span class="op">,</span> <span class="st">"/content"</span><span class="op">]}</span>
+    <span class="op">)</span> <span class="kw">as</span> <span class="op">(</span><span class="va">read</span><span class="op">,</span> <span class="va">write</span><span class="op">):</span>
+        <span class="kw">async</span> <span class="kw">with</span> <span class="va">ClientSession</span><span class="op">(</span><span class="va">read</span><span class="op">,</span> <span class="va">write</span><span class="op">)</span> <span class="kw">as</span> <span class="va">session</span><span class="op">:</span>
+            <span class="kw">await</span> <span class="va">session</span><span class="op">.</span><span class="fn">initialize</span><span class="op">()</span>
+            <span class="cm"># Carrega tools do servidor MCP como tools LangChain</span>
+            <span class="va">mcp_tools</span> <span class="op">=</span> <span class="kw">await</span> <span class="fn">load_mcp_tools</span><span class="op">(</span><span class="va">session</span><span class="op">)</span>
+            <span class="cm"># → lista de ferramentas prontas para o AgentExecutor</span>
+            <span class="kw">return</span> <span class="va">mcp_tools</span>
+
+<span class="cm"># Servidores MCP gratuitos disponíveis hoje:</span>
+<span class="cm"># @modelcontextprotocol/server-filesystem  — ler/escrever arquivos</span>
+<span class="cm"># @modelcontextprotocol/server-brave-search — busca web</span>
+<span class="cm"># mcp-server-fetch                          — fazer requisições HTTP</span>
+<span class="cm"># mcp-server-sqlite                         — consultar SQLite</span>
+<span class="cm"># Catálogo: github.com/modelcontextprotocol/servers</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">📌 MCP no contexto do curso</div>
+    <div class="callout-body">Para o CKP03, você não precisa implementar um servidor MCP — use tools @tool (mais simples). O MCP é o futuro da interoperabilidade de agentes: em 2026, a maioria das integrações enterprise já usa MCP. Entender o protocolo é parte da formação de um engenheiro de IA.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 55% de lacunas</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_10_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama langchain-community duckduckgo-search tiktoken matplotlib <span class="op">-</span>q
+
+<span class="kw">import</span> <span class="va">tiktoken</span><span class="op">,</span> <span class="va">matplotlib</span><span class="op">.</span><span class="va">pyplot</span> <span class="kw">as</span> <span class="va">plt</span>
+<span class="kw">from</span> <span class="va">langchain_core.tools</span> <span class="kw">import</span> <span class="va">tool</span>
+<span class="kw">from</span> <span class="va">langchain_community.tools</span> <span class="kw">import</span> <span class="va">DuckDuckGoSearchRun</span>
+
+<span class="va">enc</span> <span class="op">=</span> <span class="va">tiktoken</span><span class="op">.</span><span class="fn">encoding_for_model</span><span class="op">(</span><span class="st">"gpt-4"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: implemente contar_tokens_scratchpad</span>
+<span class="kw">def</span> <span class="fn">contar_tokens_scratchpad</span><span class="op">(</span><span class="va">steps</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">int</span><span class="op">:</span>
+    <span class="st">"""Soma os tokens de todos os Thoughts + Observations."""</span>
+    <span class="va">texto</span> <span class="op">=</span> <span class="st">""</span>
+    <span class="kw">for</span> <span class="va">action</span><span class="op">,</span> <span class="va">obs</span> <span class="kw">in</span> <span class="va">steps</span><span class="op">:</span>
+        <span class="va">texto</span> <span class="op">+=</span> <span class="gap">___</span>  <span class="cm"># concatene action.log e obs</span>
+    <span class="kw">return</span> <span class="nb">len</span><span class="op">(</span><span class="va">enc</span><span class="op">.</span><span class="fn">encode</span><span class="op">(</span><span class="gap">___</span><span class="op">))</span>
+
+<span class="cm"># 👉 LACUNA 2: implemente a tool de busca com compressão de Observation</span>
+<span class="op">@</span><span class="va">tool</span>
+<span class="kw">def</span> <span class="fn">buscar_na_web_comprimida</span><span class="op">(</span><span class="va">query</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="st">"""Use para buscar informações atuais. Retorna resumo conciso."""</span>
+    <span class="va">bruto</span> <span class="op">=</span> <span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="va">query</span><span class="op">)</span>
+    <span class="kw">if</span> <span class="nb">len</span><span class="op">(</span><span class="va">bruto</span><span class="op">)</span> <span class="op">&gt;</span> <span class="num">500</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="va">chain_resumir</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="gap">___</span><span class="op">:</span> <span class="va">bruto</span><span class="op">})</span>  <span class="cm"># invocar chain de resumo</span>
+    <span class="kw">return</span> <span class="va">bruto</span>
+
+<span class="cm"># 👉 LACUNA 3: rodar as duas versões (sem e com compressão) com 5 perguntas cada</span>
+<span class="va">PERGUNTAS</span> <span class="op">= [</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">]</span>  <span class="cm"># 5 perguntas reais do domínio</span>
+
+<span class="va">tok_sem</span><span class="op">, </span><span class="va">tok_com</span> <span class="op">= [], []</span>
+<span class="kw">for</span> <span class="va">q</span> <span class="kw">in</span> <span class="va">PERGUNTAS</span><span class="op">:</span>
+    <span class="va">r_sem</span> <span class="op">=</span> <span class="va">executor_sem</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span><span class="va">q</span><span class="op">})</span>  <span class="cm"># sem compressão (Aula 09)</span>
+    <span class="va">r_com</span> <span class="op">=</span> <span class="va">executor_com</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span><span class="va">q</span><span class="op">})</span>  <span class="cm"># com compressão (esta aula)</span>
+    <span class="va">tok_sem</span><span class="op">.</span><span class="fn">append</span><span class="op">(</span><span class="fn">contar_tokens_scratchpad</span><span class="op">(</span><span class="va">r_sem</span><span class="op">[</span><span class="st">"intermediate_steps"</span><span class="op">]))</span>
+    <span class="va">tok_com</span><span class="op">.</span><span class="fn">append</span><span class="op">(</span><span class="fn">contar_tokens_scratchpad</span><span class="op">(</span><span class="gap">___</span><span class="op">))</span>
+
+<span class="cm"># 👉 LACUNA 4: plotar comparação tokens sem vs. com compressão</span>
+<span class="va">x</span> <span class="op">=</span> <span class="nb">range</span><span class="op">(</span><span class="nb">len</span><span class="op">(</span><span class="va">PERGUNTAS</span><span class="op">))</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">-</span><span class="num">.2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="gap">___</span><span class="op">,</span> <span class="num">.4</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"Sem compressão"</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"salmon"</span><span class="op">)</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">+</span><span class="num">.2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="gap">___</span><span class="op">,</span> <span class="num">.4</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"Com compressão"</span><span class="op">,</span>  <span class="va">color</span><span class="op">=</span><span class="st">"steelblue"</span><span class="op">)</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">legend</span><span class="op">()</span><span class="op">;</span> <span class="va">plt</span><span class="op">.</span><span class="fn">xlabel</span><span class="op">(</span><span class="st">"Pergunta"</span><span class="op">)</span><span class="op">;</span> <span class="va">plt</span><span class="op">.</span><span class="fn">ylabel</span><span class="op">(</span><span class="st">"Tokens no scratchpad"</span><span class="op">)</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">title</span><span class="op">(</span><span class="st">"Impacto da compressão de Observations no scratchpad"</span><span class="op">)</span><span class="op">;</span> <span class="va">plt</span><span class="op">.</span><span class="fn">show</span><span class="op">()</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 10</h2>
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Contexto em agentes cresce em loop.</strong> Cada Thought+Action+Observation adiciona tokens ao scratchpad. Sem curadoria, context rot degrada o raciocínio a partir do turno ~5–8.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>3 tipos de memória:</strong> scratchpad (RAM — rápido, finito) · ChromaDB externo (HD — ilimitado) · episódica (cache de sessões passadas — personalização).</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Compressão de Observations</strong> reduz ~78% dos tokens de scratchpad. Resumir o resultado da tool antes de retornar ao loop mantém a qualidade em 0.85+ após 10 turnos.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>MCP</strong> é o padrão aberto para interoperabilidade de agentes. N+M integrações em vez de N×M — o USB-C da IA.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(237,20,91,.05);border:2px solid rgba(237,20,91,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🔜</div>
+      <div style="font-size:14px"><strong>Aula 11 — Integradora:</strong> agente completo (RAG como tool + web + calculadora) + compressão + Gradio URL pública. Tudo que você construiu de A08 a A10 junto. <strong>CKP03 entregue.</strong></div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Comprimir a Observation não perde informação importante?"</strong></td><td>Potencialmente sim — por isso a compressão deve ser contextual, não genérica. O resumo de 3 frases mantém os fatos essenciais para o raciocínio. Para casos críticos (documentos jurídicos, laudos), considere comprimir só as Observations de web search e manter integrais as do RAG (que já são chunks pequenos).</td></tr>
+      <tr><td><strong>"Por que o MCP usa JSON-RPC e não REST?"</strong></td><td>JSON-RPC é bidirecional — permite que o servidor notifique o cliente de eventos assíncronos (ex: atualização de dados). REST é request-response unidirecional. Para agentes que precisam reagir a eventos externos em tempo real, a bidirecionalidade do JSON-RPC é essencial. Além disso, JSON-RPC tem overhead menor que REST para chamadas frequentes de tools.</td></tr>
+      <tr><td><strong>"Memória episódica vs. ConversationBufferMemory — qual a diferença?"</strong></td><td>ConversationBufferMemory (Aula 02) mantém o histórico da conversa corrente no contexto. Memória episódica mantém um banco de sessões passadas no ChromaDB — persistente entre reinicializações. Para um agente comercial, você usaria ambas: buffer para a sessão atual + episódica para personalização entre sessões de dias diferentes.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula10_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. ax.twinx() — segundo eixo Y no mesmo gráfico matplotlib</span>
+<span class="va">fig</span><span class="op">,</span> <span class="va">ax1</span> <span class="op">=</span> <span class="va">plt</span><span class="op">.</span><span class="fn">subplots</span><span class="op">()</span>
+<span class="va">ax2</span> <span class="op">=</span> <span class="va">ax1</span><span class="op">.</span><span class="fn">twinx</span><span class="op">()</span>          <span class="cm"># eixo direito — mesmo x, y diferente</span>
+<span class="va">ax1</span><span class="op">.</span><span class="fn">bar</span><span class="op">(</span><span class="va">x</span><span class="op">,</span> <span class="va">tokens</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"steelblue"</span><span class="op">,</span> <span class="va">alpha</span><span class="op">=</span><span class="num">.5</span><span class="op">)</span>  <span class="cm"># barras no eixo esquerdo</span>
+<span class="va">ax2</span><span class="op">.</span><span class="fn">plot</span><span class="op">(</span><span class="va">qualidade</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"#ED145B"</span><span class="op">,</span> <span class="va">marker</span><span class="op">=</span><span class="st">"o"</span><span class="op">)</span>  <span class="cm"># linha no eixo direito</span>
+
+<span class="cm"># 2. list slice negativo — últimas N iterações</span>
+<span class="va">steps</span>   <span class="op">= [</span><span class="st">"a"</span><span class="op">,</span><span class="st">"b"</span><span class="op">,</span><span class="st">"c"</span><span class="op">,</span><span class="st">"d"</span><span class="op">,</span><span class="st">"e"</span><span class="op">]</span>
+<span class="va">recentes</span> <span class="op">=</span> <span class="va">steps</span><span class="op">[-</span><span class="num">3</span><span class="op">:]</span>   <span class="cm"># → ["c", "d", "e"] (últimas 3)</span>
+<span class="va">antigas</span>  <span class="op">=</span> <span class="va">steps</span><span class="op">[:-</span><span class="num">3</span><span class="op">]</span>   <span class="cm"># → ["a", "b"] (exceto as últimas 3)</span>
+
+<span class="cm"># 3. datetime.now().isoformat() — timestamp para metadados</span>
+<span class="kw">from</span> <span class="va">datetime</span> <span class="kw">import</span> <span class="va">datetime</span>
+<span class="va">ts</span> <span class="op">=</span> <span class="va">datetime</span><span class="op">.</span><span class="fn">now</span><span class="op">().</span><span class="fn">isoformat</span><span class="op">()</span>  <span class="cm"># → "2026-07-13T14:35:22.123456"</span>
+
+<span class="cm"># 4. plt.bar com offset para barras lado a lado</span>
+<span class="va">x</span>     <span class="op">=</span> <span class="nb">range</span><span class="op">(</span><span class="num">5</span><span class="op">)</span>       <span class="cm"># posições 0, 1, 2, 3, 4</span>
+<span class="va">width</span> <span class="op">=</span> <span class="num">0.4</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">-</span><span class="va">width</span><span class="op">/</span><span class="num">2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="va">vals_a</span><span class="op">,</span> <span class="va">width</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"A"</span><span class="op">)</span>  <span class="cm"># deslocado -0.2</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">+</span><span class="va">width</span><span class="op">/</span><span class="num">2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="va">vals_b</span><span class="op">,</span> <span class="va">width</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"B"</span><span class="op">)</span>  <span class="cm"># deslocado +0.2</span>
+
+<span class="cm"># 5. statistics.mean() para calcular redução média</span>
+<span class="kw">import</span> <span class="va">statistics</span>
+<span class="va">reducao_pct</span> <span class="op">=</span> <span class="op">(</span><span class="num">1</span> <span class="op">-</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">(</span><span class="va">tok_com</span><span class="op">)</span> <span class="op">/</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">(</span><span class="va">tok_sem</span><span class="op">))</span> <span class="op">*</span> <span class="num">100</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução média: {reducao_pct:.1f}%"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Context engineering para agentes em produção</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Agentes de visão de tela</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Screenshots como memória</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Agentes que operam por captura de tela veem cada passo como imagem (Observation). Para não acumular dezenas de screenshots no contexto, extraem apenas texto relevante antes de inserir no scratchpad — compressão visual de Observations.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">IDEs com agente embutido</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">MCP para contexto de código</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">IDEs com agente de código embutido usam MCP para conectar o agente ao repositório, ao terminal e ao rastreador de issues. Cada ferramenta é um servidor MCP independente — o agente decide qual usar baseado na tarefa, sem acumular o repositório inteiro no contexto.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-orange);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Plataformas no-code de agentes</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Memória externa no nó</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Plataformas no-code de automação oferecem nó nativo de memória vetorial (bancos como Pinecone, Qdrant, pgvector). O agente recupera contexto de execuções anteriores a partir dessa memória externa — o mesmo padrão episódico desta aula, aplicado a workflows no-code.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 11 — Integradora + CKP03</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-pink">
+        <div class="callout-title">🎯 A "vitória visível" do semestre</div>
+        <div class="callout-body">A Aula 11 é a aula integradora — tudo que foi construído de A08 a A10 junto pela primeira vez:<br><br>
+        <strong>Agente completo:</strong> RAG do grupo como tool + DuckDuckGo + calculadora + memória episódica<br>
+        <strong>+ Compressão de Observations</strong> (esta aula)<br>
+        <strong>+ Interface Gradio ao vivo</strong> (Aula 08)<br>
+        <strong>= CKP03 entregue</strong>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-orange">
+        <div class="callout-title">📦 O que preparar</div>
+        <div class="callout-body">
+          · Notebook desta aula com compressão funcionando<br>
+          · Retriever do CKP02 disponível (ChromaDB indexado)<br>
+          · Notebook da Aula 08 com Gradio + ngrok<br>
+          · 5 perguntas de teste do domínio para validar o agente integrado<br><br>
+          A Aula 11 é 100% lab — sem slides de teoria. Todo o tempo dedicado a integrar e publicar.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;font-size:13px">
+    <strong>🏁 CKP03 entrega na Aula 11:</strong> Agente inteligente com RAG do domínio como tool, DuckDuckGo para dados em tempo real, calculadora, compressão de Observations e interface Gradio com URL pública. Estimativa: 4–5h de trabalho de grupo.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">06</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Instrumentar o agente da Aula 09 para medir tokens e qualidade por turno. O gráfico de context rot aparece em tempo real.</div>
+  <div class="slide-number">25 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>🚀 Demo Prática ao Vivo — gráfico de context rot ao vivo</h2>
+  <p>O professor roda o agente com 10 perguntas em sequência, plota tokens vs. qualidade e mostra o efeito da compressão de Observations:</p>
+  <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:16px 0">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;margin-bottom:14px">Resultado típico da demo (ilustrativo)</div>
+    <div style="display:flex;gap:16px;margin-bottom:12px">
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-red);margin-bottom:8px">SEM compressão de Observations</div>
+        <div class="qbar-row"><div class="qbar-label">Turno 2</div><div class="qbar-bg"><div class="qbar-fill" style="width:95%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.95</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 5</div><div class="qbar-bg"><div class="qbar-fill" style="width:80%;background:var(--fiap-blue)"></div></div><div class="qbar-val" style="color:var(--fiap-blue)">0.80</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 8</div><div class="qbar-bg"><div class="qbar-fill" style="width:62%;background:var(--fiap-orange)"></div></div><div class="qbar-val" style="color:var(--fiap-orange)">0.62</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 10</div><div class="qbar-bg"><div class="qbar-fill" style="width:45%;background:var(--fiap-red)"></div></div><div class="qbar-val" style="color:var(--fiap-red)">0.45</div></div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-green);margin-bottom:8px">COM compressão de Observations</div>
+        <div class="qbar-row"><div class="qbar-label">Turno 2</div><div class="qbar-bg"><div class="qbar-fill" style="width:93%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.93</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 5</div><div class="qbar-bg"><div class="qbar-fill" style="width:91%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.91</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 8</div><div class="qbar-bg"><div class="qbar-fill" style="width:88%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.88</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 10</div><div class="qbar-bg"><div class="qbar-fill" style="width:85%;background:var(--fiap-blue)"></div></div><div class="qbar-val" style="color:var(--fiap-blue)">0.85</div></div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--fiap-muted)">*Valores ilustrativos. A demo real usa o corpus do domínio do professor com 10 perguntas padronizadas.</div>
+  </div>
+  <div class="callout callout-pink">
+    <div class="callout-title">🎯 O que a demo prova</div>
+    <div class="callout-body">Sem compressão: qualidade cai de 0.95 para 0.45 em 10 turnos (-53%). Com compressão: qualidade se mantém acima de 0.85 mesmo em 10 turnos (-9%). A diferença é resultado de menos tokens de Observation no scratchpad — context rot reduzido.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 10 · 2º Semestre</div>
+    <div class="exercise-title">Compressão do scratchpad e medição de impacto <span style="font-size:14px;color:var(--fiap-orange)">★★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 4 lacunas</strong> — contar_tokens_scratchpad (concatenar action.log + obs), buscar_na_web_comprimida (invocar chain_resumir com a chave correta), 5 perguntas do domínio e os dois argumentos do plt.bar.</li>
+      <li><strong>Analise o gráfico</strong> — em qual pergunta a diferença de tokens foi maior? Por quê? (Dica: resultado de busca web é maior que resultado do RAG)</li>
+      <li><strong>Calcule a redução média</strong> em % de tokens usando a fórmula <code style="font-family:'JetBrains Mono',monospace;font-size:12px">(1 - mean(tok_com)/mean(tok_sem)) * 100</code>. Documente em célula markdown.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(41,175,140,.06);border-left:3px solid var(--fiap-green);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-green);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--fiap-muted);line-height:1.9">
+        Lacuna 1: texto += f"{action.log}\n{obs}\n" ; enc.encode(texto)<br>
+        Lacuna 2: chain_resumir.invoke({"texto": bruto})<br>
+        Lacuna 3: 5 perguntas reais do domínio do grupo<br>
+        Lacuna 4: tok_sem (1º bar) ; tok_com (2º bar)
+      </div>
+    </div>
+    <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-purple)">
+      🚀 <strong>Desafio — memória episódica:</strong> implementar <code style="font-family:'JetBrains Mono',monospace;font-size:12px">salvar_sessao()</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">lembrar_sessoes_anteriores</code> como 4ª tool do agente. Salvar as 5 respostas do lab e depois perguntar ao agente "o que discutimos antes sobre [tema]?" — ele deve recuperar do ChromaDB episódico.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Blog</span><div class="ref-text"><strong>Anthropic Engineering</strong> — "Context Engineering for AI Agents" (setembro 2025). Fonte primária desta aula — princípio da ação mínima, tipos de memória, curadoria de scratchpad. <a href="https://www.anthropic.com/engineering/context-engineering" style="color:var(--fiap-green)">anthropic.com/engineering/context-engineering</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>Model Context Protocol</strong> — Especificação oficial, servidores disponíveis e guia de implementação. <a href="https://modelcontextprotocol.io" style="color:var(--fiap-green)">modelcontextprotocol.io</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Paper</span><div class="ref-text"><strong>Liu, N. et al.</strong> — "Lost in the Middle: How Language Models Use Long Contexts." EMNLP, 2023. A base empírica do context rot em contextos longos. <a href="https://arxiv.org/abs/2307.03172" style="color:var(--fiap-green)">arxiv.org/abs/2307.03172</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain MCP Adapters</strong> — Integrar servidores MCP como tools LangChain. <a href="https://github.com/langchain-ai/langchain-mcp-adapters" style="color:var(--fiap-green)">github.com/langchain-ai/langchain-mcp-adapters</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Russell, S.; Norvig, P.</strong> — Inteligência Artificial. 3ª ed. Pearson, 2016. Cap. 2 — Agentes e ambientes: a analogia memória=RAM / conhecimento=HD que fundamenta os 3 tipos de memória agêntica.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Ebook</span><div class="ref-text"><strong>Gullí, A.</strong> — Agentic Design Patterns. O'Reilly, 2025. Cap. 8: Memory Management — a distinção Short-Term vs. Long-Term por trás do scratchpad e da memória episódica desta aula.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Curadoria que mantém a qualidade 🧠</div>
+  <div style="font-size:16px;color:var(--fiap-muted);margin-bottom:12px;max-width:540px">Context rot medido, compressão implementada. O agente agora mantém qualidade em loops longos. Na Aula 11 tudo isso vira um produto com URL pública.</div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:32px;text-align:left;max-width:600px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-green);margin-bottom:8px">Próxima Aula — Aula 11 · 26/10</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Aula Integradora — Agente com RAG + Gradio ao vivo</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">100% lab. Integrar tudo. Publicar URL pública. Entregar CKP03.</div>
+  </div>
+  <div style="margin-top:20px;padding:14px 24px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;max-width:540px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">🏁 CKP03 — trazer na Aula 11</div>
+    <div style="font-size:13px;color:var(--fiap-muted)">Notebooks de A08, A09 e A10 funcionando. ChromaDB do CKP02 disponível.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">29 / 29</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

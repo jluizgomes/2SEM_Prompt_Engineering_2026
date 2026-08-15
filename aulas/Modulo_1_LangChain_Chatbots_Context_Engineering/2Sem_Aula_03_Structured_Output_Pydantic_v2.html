@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 03 — Structured Output e Pydantic v2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(237,20,91,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:42px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:800px}
+  .cover-subtitle{font-size:18px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.25);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-pink);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:28px;font-weight:800;color:var(--fiap-white);margin-bottom:32px;padding-bottom:12px;border-bottom:2px solid var(--fiap-pink);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:20px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:12px 18px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-pink);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:12px 18px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:20px 24px;margin:20px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-pink);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-blue{border-left-color:var(--fiap-blue)}.callout-blue .callout-title{color:var(--fiap-blue)}
+  .callout-purple{border-left-color:var(--fiap-purple)}.callout-purple .callout-title{color:var(--fiap-purple)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:20px 0}
+  .agenda-item{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:10px}
+  .agenda-num{width:32px;height:32px;background:rgba(237,20,91,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--fiap-pink);flex-shrink:0}
+  .agenda-text{font-size:14px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:12px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:4px 10px;border-radius:6px}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#ecfdf5 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:16px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:20px;font-size:13px;line-height:1.9}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .dec{color:#e5c07b}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .exercise{background:linear-gradient(135deg,rgba(41,175,140,.06),rgba(61,156,204,.06));border:1px solid rgba(41,175,140,.2);border-radius:14px;padding:28px;margin:20px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-green);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:16px}
+  .exercise-steps{padding-left:20px;margin-bottom:16px}
+  .exercise-steps li{color:var(--fiap-text);font-size:14px;margin-bottom:8px;line-height:1.6}
+  /* flow arrow */
+  .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:16px 0}
+  .flow-box{padding:10px 16px;border-radius:8px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600;text-align:center;min-width:100px}
+  .flow-arr{font-size:18px;color:var(--fiap-pink);font-weight:900}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">Structured Output<br>e Pydantic v2</div>
+  <div class="cover-subtitle">Aula 03/14 — Módulo 1: LangChain Foundations</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">⏱️ 1h40min</div>
+    <div class="cover-meta-item">🧱 BaseModel · PydanticOutputParser</div>
+    <div class="cover-meta-item">🔁 Andaime 50%</div>
+  </div>
+  <div class="slide-number">01 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">Por que output estruturado — string livre quebra sistemas integrados</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">Pydantic v2 — <code style="font-family:'JetBrains Mono',monospace;font-size:13px">BaseModel</code>, tipos, validators, <code style="font-family:'JetBrains Mono',monospace;font-size:13px">ValidationError</code></div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">PydanticOutputParser na chain LCEL — integração com LangChain</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">🚀 Demo ao vivo — extrator de currículos: texto livre → JSON validado</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">💻 Lab — schema Pydantic para o domínio do grupo (50% lacunas)</div><div class="agenda-time">20 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">Síntese + preview Aula 04 + CKP01 R3 entregue</div><div class="agenda-time">10 min</div></div>
+  <div class="callout callout-purple" style="margin-top:12px">
+    <div class="callout-title">🎯 Objetivo da aula</div>
+    <div class="callout-body">Fazer o LLM retornar dados num <strong>schema garantido pelo Pydantic</strong> — não em texto livre. Ao final, a chain do grupo aceita um input e retorna um objeto Python com campos validados e tipados.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário da Aula 03</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">Structured output</div>
+      <div class="gl-def">Técnica de forçar o LLM a responder em um formato de dados previsível e validável (ex: JSON com campos fixos) em vez de texto livre não estruturado.</div>
+      <div class="gl-analogy">Analogia: em vez de pedir "descreva o produto" e receber um parágrafo solto, você entrega um formulário com campos obrigatórios para preencher.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Schema</div>
+      <div class="gl-def">Definição formal da estrutura esperada de um dado: quais campos existem, seus tipos e quais são obrigatórios ou opcionais. É o contrato entre o que o LLM gera e o que o código espera receber.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">BaseModel</div>
+      <div class="gl-def">Classe base do Pydantic da qual todo schema herda. Ao declarar uma classe com <code style="font-family:'JetBrains Mono',monospace;font-size:.9em">BaseModel</code>, cada atributo tipado vira um campo validado automaticamente.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">Field</div>
+      <div class="gl-def">Função do Pydantic usada para enriquecer um campo com metadados — valor padrão, descrição, restrições de valor — que também ajudam o LLM a entender o que preencher em cada campo.</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">ValidationError</div>
+      <div class="gl-def">Exceção lançada pelo Pydantic quando os dados recebidos não obedecem ao schema — indica exatamente qual campo falhou e por quê, em vez de travar o programa sem explicação.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">Parser (Output Parser)</div>
+      <div class="gl-def">Componente do LangChain que converte a resposta bruta do LLM (texto ou JSON) em um objeto Python validado, encaixando-se no fim de uma chain LCEL.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">Type hint (anotação de tipo)</div>
+      <div class="gl-def">Sintaxe do Python que declara o tipo esperado de uma variável ou atributo (ex: <code style="font-family:'JetBrains Mono',monospace;font-size:.9em">str</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:.9em">int</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:.9em">List[str]</code>). O Pydantic usa essas anotações para validar os dados em tempo de execução.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">Literal</div>
+      <div class="gl-def">Tipo do módulo <code style="font-family:'JetBrains Mono',monospace;font-size:.9em">typing</code> que restringe um campo a um conjunto fixo e finito de valores aceitos, rejeitando qualquer outro com <code style="font-family:'JetBrains Mono',monospace;font-size:.9em">ValidationError</code>.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Por que string livre quebra sistemas reais</h2>
+  <p>Em produção, o output do LLM raramente é consumido só por humanos — ele alimenta bancos de dados, APIs, interfaces. Texto livre falha silenciosamente:</p>
+  <div class="two-col">
+    <div>
+      <div style="background:rgba(201,73,44,.05);border:1px solid rgba(201,73,44,.2);border-radius:10px;padding:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">❌ Sem structured output</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">
+          Prompt: "Extraia o nome e e-mail deste texto."<br><br>
+          Resposta A: <em>"O nome é João Silva e o e-mail é joao@email.com"</em><br>
+          Resposta B: <em>"Nome: João / E-mail: joao@email.com"</em><br>
+          Resposta C: <em>{"nome": "João Silva", "email": "joao@email.com"}</em><br><br>
+          <strong style="color:var(--fiap-red)">As 3 têm a mesma informação — mas nenhuma chave é garantida.</strong>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="background:rgba(41,175,140,.05);border:1px solid rgba(41,175,140,.2);border-radius:10px;padding:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✅ Com Pydantic + OutputParser</div>
+        <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">
+          Schema definido uma vez:<br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nome: str</code><br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:12px">email: str</code><br><br>
+          Resultado <strong>sempre</strong>:<br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp.nome  → "João Silva"</code><br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp.email → "joao@email.com"</code><br><br>
+          <strong style="color:var(--fiap-green)">Se o modelo não seguir o schema → ValidationError imediato.</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">💡 A regra de ouro</div>
+    <div class="callout-body">Se o output do LLM vai ser consumido por <strong>código</strong> (não por um humano), ele precisa de schema. Structured output é a diferença entre um protótipo e um sistema em produção.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">04 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">Pydantic v2</div>
+  <div class="section-desc">BaseModel · tipos Python → validação automática · ValidationError · Field com metadados — tudo que você precisa para definir um schema de saída de LLM.</div>
+  <div class="slide-number">05 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>BaseModel — definindo um schema em Python</h2>
+  <p>Pydantic v2 usa <code style="font-family:'JetBrains Mono',monospace;font-size:13px">BaseModel</code> para declarar schemas de dados com tipos Python nativos. A validação acontece automaticamente na instanciação:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">basemodel_basico.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install pydantic <span class="op">-</span>q  <span class="cm"># já vem com langchain, mas explicitando</span>
+
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span><span class="op">,</span> <span class="va">Field</span><span class="op">,</span> <span class="va">ValidationError</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">List</span><span class="op">,</span> <span class="va">Optional</span>
+
+<span class="cm"># Schema: cada campo tem tipo e descrição</span>
+<span class="kw">class</span> <span class="fn">Curriculo</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">nome</span><span class="op">:</span>         <span class="nb">str</span>               <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"Nome completo do candidato"</span><span class="op">)</span>
+    <span class="va">email</span><span class="op">:</span>        <span class="nb">str</span>               <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"E-mail do candidato"</span><span class="op">)</span>
+    <span class="va">habilidades</span><span class="op">:</span>  <span class="va">List</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span>         <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"Lista de habilidades técnicas"</span><span class="op">)</span>
+    <span class="va">anos_exp</span><span class="op">:</span>     <span class="nb">int</span>               <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"Anos de experiência profissional"</span><span class="op">)</span>
+    <span class="va">senioridade</span><span class="op">:</span>  <span class="va">Optional</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span>    <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="kw">None</span><span class="op">,</span> <span class="va">description</span><span class="op">=</span><span class="st">"junior/pleno/senior"</span><span class="op">)</span>
+
+<span class="cm"># Instanciar — Pydantic valida os tipos automaticamente</span>
+<span class="va">curriculo</span> <span class="op">=</span> <span class="fn">Curriculo</span><span class="op">(</span>
+    <span class="va">nome</span><span class="op">=</span><span class="st">"Ana Silva"</span><span class="op">,</span>
+    <span class="va">email</span><span class="op">=</span><span class="st">"ana@email.com"</span><span class="op">,</span>
+    <span class="va">habilidades</span><span class="op">=[</span><span class="st">"Python"</span><span class="op">,</span> <span class="st">"LangChain"</span><span class="op">]</span><span class="op">,</span>
+    <span class="va">anos_exp</span><span class="op">=</span><span class="num">3</span><span class="op">,</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">curriculo</span><span class="op">.</span><span class="va">nome</span><span class="op">)</span>        <span class="cm"># → "Ana Silva"</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">curriculo</span><span class="op">.</span><span class="va">habilidades</span><span class="op">)</span>  <span class="cm"># → ["Python", "LangChain"]</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">curriculo</span><span class="op">.</span><span class="fn">model_dump</span><span class="op">())</span>  <span class="cm"># → dict Python (Pydantic v2)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">curriculo</span><span class="op">.</span><span class="fn">model_dump_json</span><span class="op">())</span>  <span class="cm"># → string JSON</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">💡 Pydantic v1 vs. v2 — diferença crítica</div>
+    <div class="callout-body">
+      Pydantic v1 usava <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.dict()</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.json()</code>. Pydantic v2 usa <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.model_dump()</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.model_dump_json()</code>. O LangChain 0.3+ é compatível com v2. Sempre use os métodos <code style="font-family:'JetBrains Mono',monospace;font-size:12px">model_*</code>.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>ValidationError — o Pydantic detecta dados inválidos</h2>
+  <p>Quando o dado não bate com o schema, o Pydantic levanta <code style="font-family:'JetBrains Mono',monospace;font-size:13px">ValidationError</code> com detalhes do problema. Isso é o que protege seu sistema de dados malformados vindos do LLM:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">validation_error.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span><span class="op">,</span> <span class="va">Field</span><span class="op">,</span> <span class="va">ValidationError</span><span class="op">,</span> <span class="va">field_validator</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">List</span><span class="op">,</span> <span class="va">Literal</span>
+
+<span class="kw">class</span> <span class="fn">Curriculo</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">nome</span><span class="op">:</span>        <span class="nb">str</span>
+    <span class="va">anos_exp</span><span class="op">:</span>    <span class="nb">int</span>                           <span class="cm"># Deve ser inteiro</span>
+    <span class="va">senioridade</span><span class="op">:</span> <span class="va">Literal</span><span class="op">[</span><span class="st">"junior"</span><span class="op">,</span><span class="st">"pleno"</span><span class="op">,</span><span class="st">"senior"</span><span class="op">]</span>  <span class="cm"># Enum implícito</span>
+    <span class="va">habilidades</span><span class="op">:</span> <span class="va">List</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span>
+
+    <span class="cm"># Validator customizado — Pydantic v2</span>
+    <span class="dec">@field_validator</span><span class="op">(</span><span class="st">"anos_exp"</span><span class="op">)</span>
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">anos_positivos</span><span class="op">(</span><span class="va">cls</span><span class="op">,</span> <span class="va">v</span><span class="op">):</span>
+        <span class="kw">if</span> <span class="va">v</span> <span class="op">&lt;</span> <span class="num">0</span><span class="op">:</span>
+            <span class="kw">raise</span> <span class="fn">ValueError</span><span class="op">(</span><span class="st">"anos_exp deve ser positivo"</span><span class="op">)</span>
+        <span class="kw">return</span> <span class="va">v</span>
+
+<span class="cm"># Teste de falha — tratar com try/except</span>
+<span class="kw">try</span><span class="op">:</span>
+    <span class="va">c</span> <span class="op">=</span> <span class="fn">Curriculo</span><span class="op">(</span>
+        <span class="va">nome</span><span class="op">=</span><span class="st">"Carlos"</span><span class="op">,</span>
+        <span class="va">anos_exp</span><span class="op">=</span><span class="st">"dez"</span><span class="op">,</span>         <span class="cm"># ❌ str onde int era esperado</span>
+        <span class="va">senioridade</span><span class="op">=</span><span class="st">"ninja"</span><span class="op">,</span>    <span class="cm"># ❌ valor fora do Literal</span>
+        <span class="va">habilidades</span><span class="op">=[</span><span class="st">"Python"</span><span class="op">],</span>
+    <span class="op">)</span>
+<span class="kw">except</span> <span class="va">ValidationError</span> <span class="kw">as</span> <span class="va">e</span><span class="op">:</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Erros encontrados: {e.error_count()}"</span><span class="op">)</span>
+    <span class="kw">for</span> <span class="va">erro</span> <span class="kw">in</span> <span class="va">e</span><span class="op">.</span><span class="fn">errors</span><span class="op">():</span>
+        <span class="nb">print</span><span class="op">(</span><span class="st">f"  Campo: {erro['loc']} | Erro: {erro['msg']}"</span><span class="op">)</span>
+    <span class="cm"># → Campo: ('anos_exp',) | Erro: Input should be a valid integer</span>
+    <span class="cm"># → Campo: ('senioridade',) | Erro: Input should be 'junior', 'pleno' or 'senior'</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Por que validar antes de propagar</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) trata a validação Pydantic como uma barreira de contenção: ela pega tipo errado ou campo faltando na hora, antes que esse dado ruim siga para o resto do sistema sem ninguém perceber. Por isso o autor recomenda structured output sempre que algo depois depende do dado — gravação em banco, chamada de API, decisão automatizada, próximo passo de um agente — e desaconselha em chat exploratório ou geração criativa, onde forçar um schema rígido tira nuance da resposta e ainda soma latência sem ganho real.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">PydanticOutputParser<br>na chain LCEL</div>
+  <div class="section-desc">Conectar o schema Pydantic ao pipeline — o parser instrui o modelo e valida a saída automaticamente.</div>
+  <div class="slide-number">08 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>PydanticOutputParser — schema vira instrução para o modelo</h2>
+  <p>O parser faz duas coisas: (1) gera as instruções de formato para incluir no prompt; (2) valida e parseia o JSON retornado pelo modelo:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">pydantic_output_parser.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">PydanticOutputParser</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span><span class="op">,</span> <span class="va">Field</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">List</span>
+
+<span class="kw">class</span> <span class="fn">Curriculo</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">nome</span><span class="op">:</span>        <span class="nb">str</span>       <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"Nome completo"</span><span class="op">)</span>
+    <span class="va">email</span><span class="op">:</span>       <span class="nb">str</span>       <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"Endereço de e-mail"</span><span class="op">)</span>
+    <span class="va">habilidades</span><span class="op">:</span> <span class="va">List</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span> <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"Habilidades técnicas listadas"</span><span class="op">)</span>
+    <span class="va">anos_exp</span><span class="op">:</span>    <span class="nb">int</span>       <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="st">"Anos de experiência"</span><span class="op">)</span>
+
+<span class="cm"># 1. Criar o parser com o schema</span>
+<span class="va">parser</span> <span class="op">=</span> <span class="va">PydanticOutputParser</span><span class="op">(</span><span class="va">pydantic_object</span><span class="op">=</span><span class="va">Curriculo</span><span class="op">)</span>
+
+<span class="cm"># 2. O parser gera as instruções de formato automaticamente</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">parser</span><span class="op">.</span><span class="fn">get_format_instructions</span><span class="op">())</span>
+<span class="cm"># → "Return a JSON object with the following schema: {nome: ..., email: ...}"</span>
+
+<span class="cm"># 3. Injetar as instruções no prompt com {format_instructions}</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="st">"Você é um extrator de dados de currículos.\n{format_instructions}"</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="st">"Extraia as informações deste currículo:\n{curriculo}"</span><span class="op">),</span>
+<span class="op">])</span><span class="op">.</span><span class="fn">partial</span><span class="op">(</span><span class="va">format_instructions</span><span class="op">=</span><span class="va">parser</span><span class="op">.</span><span class="fn">get_format_instructions</span><span class="op">())</span>
+
+<span class="cm"># 4. Chain completa com PydanticOutputParser no final</span>
+<span class="va">chain</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">parser</span>
+
+<span class="cm"># 5. Invocar — retorna objeto Pydantic, não string</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"curriculo"</span><span class="op">:</span> <span class="st">"João Silva, joao@email.com, 5 anos..."</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="nb">type</span><span class="op">(</span><span class="va">resultado</span><span class="op">))</span>      <span class="cm"># → &lt;class 'Curriculo'&gt;</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resultado</span><span class="op">.</span><span class="va">nome</span><span class="op">)</span>        <span class="cm"># → "João Silva"</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resultado</span><span class="op">.</span><span class="va">anos_exp</span><span class="op">)</span>    <span class="cm"># → 5  (int, não string!)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O método <code style="font-family:'JetBrains Mono',monospace;font-size:22px">.partial()</code> — pré-preenchendo variáveis</h2>
+  <p>A variável <code style="font-family:'JetBrains Mono',monospace;font-size:13px">{format_instructions}</code> no template é fixa — sempre a mesma para o schema. <code style="font-family:'JetBrains Mono',monospace;font-size:13px">.partial()</code> pré-preenche variáveis que não mudam a cada chamada:</p>
+  <div class="two-col">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">❌ Sem .partial() — verboso</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <div class="code-body"><pre style="font-size:11px"><span class="cm"># Precisa passar format_instructions em todo invoke</span>
+<span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span>
+    <span class="st">"curriculo"</span><span class="op">:</span> <span class="st">"texto..."</span><span class="op">,</span>
+    <span class="st">"format_instructions"</span><span class="op">:</span>
+        <span class="va">parser</span><span class="op">.</span><span class="fn">get_format_instructions</span><span class="op">(),</span>
+<span class="op">})</span>
+<span class="cm"># repetitivo e propenso a erros de esquecimento</span></pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">✅ Com .partial() — limpo</div>
+      <div class="code-block" style="margin:0">
+        <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div></div>
+        <div class="code-body"><pre style="font-size:11px"><span class="cm"># .partial() fixa a variável no template</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">...</span><span class="fn">partial</span><span class="op">(</span>
+    <span class="va">format_instructions</span><span class="op">=</span>
+        <span class="va">parser</span><span class="op">.</span><span class="fn">get_format_instructions</span><span class="op">(),</span>
+<span class="op">)</span>
+
+<span class="cm"># Agora invoke só precisa das variáveis dinâmicas</span>
+<span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"curriculo"</span><span class="op">:</span> <span class="st">"texto..."</span><span class="op">})</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <div class="callout-title">💡 Quando usar .partial()</div>
+    <div class="callout-body">Use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.partial()</code> para qualquer variável do template que é <strong>constante entre chamadas</strong>: instruções de formato, a data atual, o nome do sistema, versão da API. Variáveis que mudam a cada chamada vão no <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.invoke()</code>.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">10 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>format="json" nativo do Ollama — alternativa direta</h2>
+  <p>O Ollama tem suporte nativo para forçar saída em JSON no nível do modelo — sem depender só do parser:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">ollama_format_json.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Opção 1: format="json" no ChatOllama</span>
+<span class="cm"># Garante que o modelo retorne JSON válido — mas sem validar o schema</span>
+<span class="va">llm_json</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span>
+    <span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span>
+    <span class="va">format</span><span class="op">=</span><span class="st">"json"</span><span class="op">,</span>   <span class="cm"># Ollama garante JSON válido na saída</span>
+<span class="op">)</span>
+
+<span class="cm"># Com JsonOutputParser — parseia o JSON mas não valida schema</span>
+<span class="va">chain_json</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm_json</span> <span class="op">|</span> <span class="va">JsonOutputParser</span><span class="op">()</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">chain_json</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"curriculo"</span><span class="op">:</span> <span class="st">"texto..."</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="nb">type</span><span class="op">(</span><span class="va">resultado</span><span class="op">))</span>  <span class="cm"># → dict (sem validação de campos)</span>
+
+<span class="cm"># Opção 2: format="json" + PydanticOutputParser (combinação recomendada)</span>
+<span class="va">llm_json</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">format</span><span class="op">=</span><span class="st">"json"</span><span class="op">)</span>
+<span class="va">chain_validado</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">llm_json</span> <span class="op">|</span> <span class="va">parser</span>   <span class="cm"># parser = PydanticOutputParser</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">chain_validado</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"curriculo"</span><span class="op">:</span> <span class="st">"texto..."</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="nb">type</span><span class="op">(</span><span class="va">resultado</span><span class="op">))</span>  <span class="cm"># → &lt;class 'Curriculo'&gt; (objeto Pydantic validado)</span></pre>
+    </div>
+  </div>
+  <table class="data-table" style="margin-top:12px">
+    <thead><tr><th>Abordagem</th><th>JSON válido?</th><th>Schema garantido?</th><th>Objeto Python?</th></tr></thead>
+    <tbody>
+      <tr><td>Só StrOutputParser</td><td style="color:var(--fiap-red)">Não</td><td style="color:var(--fiap-red)">Não</td><td style="color:var(--fiap-red)">Não</td></tr>
+      <tr><td>JsonOutputParser</td><td style="color:var(--fiap-green)">Sim</td><td style="color:var(--fiap-red)">Não</td><td style="color:var(--fiap-orange)">dict</td></tr>
+      <tr><td>format="json" + JsonOutputParser</td><td style="color:var(--fiap-green)">Sim (mais robusto)</td><td style="color:var(--fiap-red)">Não</td><td style="color:var(--fiap-orange)">dict</td></tr>
+      <tr><td><strong>format="json" + PydanticOutputParser</strong></td><td style="color:var(--fiap-green)">Sim</td><td style="color:var(--fiap-green)"><strong>Sim</strong></td><td style="color:var(--fiap-green)"><strong>Objeto tipado</strong></td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">11 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Schemas avançados — tipos Python úteis para LLMs</h2>
+  <p>Além de <code style="font-family:'JetBrains Mono',monospace;font-size:13px">str</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:13px">int</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:13px">List</code>, o Pydantic suporta tipos que mapeiam bem para saídas de LLM:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">schemas_avancados.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span><span class="op">,</span> <span class="va">Field</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">List</span><span class="op">,</span> <span class="va">Optional</span><span class="op">,</span> <span class="va">Literal</span><span class="op">,</span> <span class="va">Dict</span>
+
+<span class="cm"># Caso 1: Classificador de tickets de suporte</span>
+<span class="kw">class</span> <span class="fn">Ticket</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">categoria</span><span class="op">:</span>  <span class="va">Literal</span><span class="op">[</span><span class="st">"bug"</span><span class="op">,</span> <span class="st">"feature"</span><span class="op">,</span> <span class="st">"duvida"</span><span class="op">]</span>
+    <span class="va">urgencia</span><span class="op">:</span>   <span class="va">Literal</span><span class="op">[</span><span class="st">"baixa"</span><span class="op">,</span> <span class="st">"media"</span><span class="op">,</span> <span class="st">"alta"</span><span class="op">]</span>
+    <span class="va">resumo</span><span class="op">:</span>     <span class="nb">str</span>     <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">max_length</span><span class="op">=</span><span class="num">100</span><span class="op">)</span>  <span class="cm"># limite de caracteres</span>
+    <span class="va">confianca</span><span class="op">:</span>  <span class="nb">float</span>   <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">ge</span><span class="op">=</span><span class="num">0</span><span class="op">,</span> <span class="va">le</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>  <span class="cm"># entre 0 e 1</span>
+
+<span class="cm"># Caso 2: Gerador de relatório com objetos aninhados</span>
+<span class="kw">class</span> <span class="fn">Ponto</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">titulo</span><span class="op">:</span>    <span class="nb">str</span>
+    <span class="va">descricao</span><span class="op">:</span> <span class="nb">str</span>
+
+<span class="kw">class</span> <span class="fn">Relatorio</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">titulo</span><span class="op">:</span>        <span class="nb">str</span>
+    <span class="va">pontos_fortes</span><span class="op">:</span> <span class="va">List</span><span class="op">[</span><span class="va">Ponto</span><span class="op">]</span>  <span class="cm"># lista de objetos aninhados</span>
+    <span class="va">pontos_fracos</span><span class="op">:</span> <span class="va">List</span><span class="op">[</span><span class="va">Ponto</span><span class="op">]</span>
+    <span class="va">nota_final</span><span class="op">:</span>    <span class="nb">float</span> <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">ge</span><span class="op">=</span><span class="num">0</span><span class="op">,</span> <span class="va">le</span><span class="op">=</span><span class="num">10</span><span class="op">)</span>
+
+<span class="cm"># Caso 3: Dict com chaves dinâmicas (quando o schema varia)</span>
+<span class="kw">class</span> <span class="fn">Entidades</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">pessoas</span><span class="op">:</span>    <span class="va">List</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span>
+    <span class="va">empresas</span><span class="op">:</span>   <span class="va">List</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span>
+    <span class="va">localizacoes</span><span class="op">:</span> <span class="va">List</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">✅ Dica: Field com ge/le é essencial para notas e probabilidades</div>
+    <div class="callout-body"><code style="font-family:'JetBrains Mono',monospace;font-size:12px">ge=0, le=1</code> (greater or equal / less or equal) garante que o LLM não retorne 1.5 quando você pediu uma probabilidade. Sem isso, o modelo pode retornar qualquer float.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">50% de lacunas — definir o schema Pydantic para o domínio do grupo e integrar à chain LCEL com PydanticOutputParser.</div>
+  <div class="slide-number">13 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 50% de lacunas</h2>
+  <p>Use o domínio escolhido na Aula 01. Defina um schema Pydantic que faça sentido para o seu domínio — pense nos dados que um usuário esperaria extrair de uma consulta.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_03_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama pydantic <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">PydanticOutputParser</span>
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span><span class="op">,</span> <span class="va">Field</span><span class="op">,</span> <span class="va">ValidationError</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">List</span><span class="op">,</span> <span class="va">Optional</span><span class="op">,</span> <span class="va">Literal</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: defina a classe Pydantic para o domínio do grupo</span>
+<span class="cm"># Mínimo 4 campos com tipos variados (str, int, List, Optional, Literal)</span>
+<span class="kw">class</span> <span class="gap">NomeDaClasseDoGrupo</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="gap">campo1</span><span class="op">:</span> <span class="gap">tipo</span> <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+    <span class="gap">campo2</span><span class="op">:</span> <span class="gap">tipo</span> <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+    <span class="gap">campo3</span><span class="op">:</span> <span class="gap">tipo</span> <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="va">description</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+    <span class="gap">campo4</span><span class="op">:</span> <span class="va">Optional</span><span class="op">[</span><span class="gap">tipo</span><span class="op">]</span> <span class="op">=</span> <span class="fn">Field</span><span class="op">(</span><span class="kw">None</span><span class="op">,</span> <span class="va">description</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 2: crie o PydanticOutputParser com sua classe</span>
+<span class="va">parser</span> <span class="op">=</span> <span class="va">PydanticOutputParser</span><span class="op">(</span><span class="va">pydantic_object</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 3: crie o prompt com {format_instructions} e {pergunta}</span>
+<span class="cm"># Use .partial() para pré-preencher format_instructions</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="gap">___</span><span class="op">),</span>
+<span class="op">])</span><span class="op">.</span><span class="fn">partial</span><span class="op">(</span><span class="va">format_instructions</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+
+<span class="va">llm</span>   <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">format</span><span class="op">=</span><span class="st">"json"</span><span class="op">)</span>
+<span class="cm"># 👉 LACUNA 4: monte a chain e invoque com try/except</span>
+<span class="va">chain</span> <span class="op">=</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span>
+
+<span class="kw">try</span><span class="op">:</span>
+    <span class="va">resultado</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="gap">___</span><span class="op">})</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">resultado</span><span class="op">.</span><span class="fn">model_dump</span><span class="op">())</span>
+<span class="kw">except</span> <span class="va">ValidationError</span> <span class="kw">as</span> <span class="va">e</span><span class="op">:</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Erro de schema: {e}"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Integrar structured output com a memória da Aula 02</h2>
+  <p>O CKP01 precisa de memória (Aula 02) <em>e</em> structured output (Aula 03). Como combinar os dois:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">memoria_mais_pydantic.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Estratégia: 2 chains separadas na mesma aplicação</span>
+<span class="cm"># Chain 1: conversa normal com memória (para diálogo)</span>
+<span class="cm"># Chain 2: extração com Pydantic (para quando precisar de dados estruturados)</span>
+
+<span class="cm"># Chain de conversa (Aula 02)</span>
+<span class="va">chat</span> <span class="op">=</span> <span class="va">ConversationChain</span><span class="op">(</span><span class="va">llm</span><span class="op">=</span><span class="va">llm</span><span class="op">,</span> <span class="va">memory</span><span class="op">=</span><span class="va">memoria</span><span class="op">,</span> <span class="va">prompt</span><span class="op">=</span><span class="va">prompt_custom</span><span class="op">)</span>
+
+<span class="cm"># Chain de extração (Aula 03)</span>
+<span class="va">chain_extrator</span> <span class="op">=</span> <span class="va">prompt_pydantic</span> <span class="op">|</span> <span class="va">llm_json</span> <span class="op">|</span> <span class="va">parser</span>
+
+<span class="kw">def</span> <span class="fn">processar_consulta</span><span class="op">(</span><span class="va">entrada</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">modo</span><span class="op">:</span> <span class="nb">str</span> <span class="op">=</span> <span class="st">"chat"</span><span class="op">):</span>
+    <span class="kw">if</span> <span class="va">modo</span> <span class="op">==</span> <span class="st">"chat"</span><span class="op">:</span>
+        <span class="cm"># Diálogo normal com memória</span>
+        <span class="kw">return</span> <span class="va">chat</span><span class="op">.</span><span class="fn">predict</span><span class="op">(</span><span class="va">input</span><span class="op">=</span><span class="va">entrada</span><span class="op">)</span>
+    <span class="kw">elif</span> <span class="va">modo</span> <span class="op">==</span> <span class="st">"extrair"</span><span class="op">:</span>
+        <span class="cm"># Extração estruturada (sem memória — cada extração é independente)</span>
+        <span class="kw">return</span> <span class="va">chain_extrator</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="va">entrada</span><span class="op">})</span>
+
+<span class="cm"># Uso: usuário conversa normalmente, mas pode pedir extração</span>
+<span class="va">resposta_chat</span> <span class="op">=</span> <span class="fn">processar_consulta</span><span class="op">(</span><span class="st">"Me fale sobre feijoada"</span><span class="op">,</span> <span class="st">"chat"</span><span class="op">)</span>
+<span class="va">receita_obj</span>   <span class="op">=</span> <span class="fn">processar_consulta</span><span class="op">(</span><span class="st">"Crie a receita de feijoada"</span><span class="op">,</span> <span class="st">"extrair"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">receita_obj</span><span class="op">.</span><span class="fn">model_dump</span><span class="op">())</span>  <span class="cm"># → dict com campos validados</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">🎯 Esta é a arquitetura do CKP01</div>
+    <div class="callout-body">Chatbot com 2 modos: <strong>chat</strong> (ConversationChain + memória) para o diálogo natural e <strong>extrair</strong> (chain LCEL + Pydantic) quando o usuário pede dados estruturados. R1 + R2 + R3 do CKP01 combinados.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Structured output na prática — padrões por tipo de produto</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:20px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Plataformas de recrutamento e RH</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Extração estruturada + ranking</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Sistemas de triagem usam LLMs para extrair habilidades e experiência de currículos em texto livre, retornando JSON estruturado que alimenta o banco de candidatos. Exatamente o padrão da demo desta aula.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:20px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Apps de delivery e atendimento</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Classificação de pedidos e reclamações</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Ticket de reclamação de usuário → LLM extrai categoria, urgência e produto afetado com schema Pydantic. O resultado alimenta o sistema de roteamento automático — mesma abordagem do schema <code style="font-family:'JetBrains Mono',monospace;font-size:11px">Ticket</code> da aula.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:20px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Sistemas jurídicos e de contratos</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Extração de cláusulas + JSON</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Contratos em PDF → LLM extrai partes, datas, valores e cláusulas específicas em schema estruturado. O JSON alimenta sistemas jurídicos — sem schema garantido, um erro em uma cláusula pode passar despercebido.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-orange);border-radius:12px;padding:20px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Sistemas de saúde e prontuários</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Structured output em saúde</div>
+      <div style="font-size:13px;color:var(--fiap-muted)">Resumos de prontuários em texto livre → schema com diagnóstico, medicamentos e alergias. O schema garante que campos críticos para segurança do paciente nunca ficam ausentes — ValidationError é alerta, não crash.</div>
+    </div>
+  </div>
+  <div class="callout callout-pink" style="margin-top:8px">
+    <div class="callout-title">🔑 Padrão comum</div>
+    <div class="callout-body">Em todos os casos: texto livre e imprevisível entra, schema Pydantic força o formato de saída, e o sistema downstream (banco de dados, fila, dashboard) consome campos garantidos em vez de tentar parsear texto solto.</div>
+  </div>
+  <div class="callout callout-blue" style="margin-top:12px">
+    <div class="callout-title">📖 Fundamentação — Structured output tem custo, não é grátis</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026, seção 2.7) alerta que forçar um schema adiciona <strong>latência</strong> — o modelo precisa gerar JSON válido em conformidade com a estrutura pedida — e pode <strong>constranger respostas úteis</strong> quando o schema não corresponde ao que o modelo precisaria explicar: forçar uma resposta binária quando a resposta correta é "depende" perde nuance. Nos 4 casos acima o custo compensa porque um sistema downstream crítico (banco de candidatos, roteamento, sistema jurídico, prontuário) depende do dado; para extração exploratória ou de baixo risco, o autor recomenda testar se o caso de uso se beneficia mais de estrutura ou de flexibilidade antes de fixar o schema.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Erros comuns com PydanticOutputParser</h2>
+  <table class="data-table">
+    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">OutputParserException</code></td>
+        <td>O modelo retornou texto com markdown antes do JSON — ex: "Aqui está: ```json{...}```"</td>
+        <td>Adicionar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">format="json"</code> no ChatOllama e reforçar no system prompt: "Responda SOMENTE com JSON, sem markdown"</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ValidationError</code> em campo obrigatório</td>
+        <td>O modelo não encontrou o dado e omitiu o campo (ou retornou null)</td>
+        <td>Tornar o campo <code style="font-family:'JetBrains Mono',monospace;font-size:11px">Optional[str] = None</code> ou reforçar no prompt que o campo é obrigatório mesmo que estimado</td>
+      </tr>
+      <tr>
+        <td>Campo <code style="font-family:'JetBrains Mono',monospace;font-size:11px">int</code> chega como <code style="font-family:'JetBrains Mono',monospace;font-size:11px">str</code></td>
+        <td>Modelo retornou <code style="font-family:'JetBrains Mono',monospace;font-size:11px">"anos_exp": "5"</code> (string) em vez de <code style="font-family:'JetBrains Mono',monospace;font-size:11px">"anos_exp": 5</code></td>
+        <td>Pydantic v2 converte automaticamente — mas se falhar, adicionar na description: "número inteiro sem aspas"</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">KeyError: format_instructions</code></td>
+        <td>Esqueceu de chamar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.partial()</code> ou de passar a variável no invoke</td>
+        <td>Usar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">prompt.partial(format_instructions=parser.get_format_instructions())</code> na definição do prompt</td>
+      </tr>
+      <tr>
+        <td>Schema com objetos aninhados falha</td>
+        <td>Modelos menores têm dificuldade com JSON profundamente aninhado</td>
+        <td>Achatar o schema (evitar mais de 2 níveis de aninhamento) ou usar modelos maiores para schemas complexos</td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>CKP01 — R3 entregue. Falta apenas R4</h2>
+  <div style="background:rgba(237,20,91,.04);border:2px solid rgba(237,20,91,.2);border-radius:14px;padding:24px;margin:16px 0">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🏁 CKP01 — Chatbot LangChain · Entrega Aula 04</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:22px;height:22px;background:rgba(41,175,140,.2);border:1px solid rgba(41,175,140,.5);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">✅</div>
+        <div style="font-size:13px"><strong>R1 (A01):</strong> chain LCEL — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatOllama + ChatPromptTemplate + StrOutputParser</code></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:22px;height:22px;background:rgba(41,175,140,.2);border:1px solid rgba(41,175,140,.5);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">✅</div>
+        <div style="font-size:13px"><strong>R2 (A02):</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationChain</code> com tipo de memória escolhido e justificado</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:22px;height:22px;background:rgba(41,175,140,.2);border:1px solid rgba(41,175,140,.5);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">✅</div>
+        <div style="font-size:13px"><strong>R3 (A03 — hoje):</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PydanticOutputParser</code> com schema do domínio + try/except</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:22px;height:22px;background:rgba(213,140,46,.1);border:1px solid rgba(213,140,46,.4);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;color:var(--fiap-orange)">○</div>
+        <div style="font-size:13px;color:var(--fiap-muted)"><strong>R4 (A04):</strong> Context Engineering aplicado ao chatbot + 5 turnos de conversa documentados</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">📋 O que incluir no notebook do CKP01 — R3</div>
+    <div class="callout-body">1. Definição da classe Pydantic com pelo menos 4 campos (mostrar a tipagem). 2. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">parser.get_format_instructions()</code> impresso — mostra o que é enviado ao modelo. 3. Chamada à chain com resultado impresso via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.model_dump()</code>. 4. Bloco try/except demonstrando captura de <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ValidationError</code>.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 03</h2>
+  <div style="display:flex;flex-direction:column;gap:12px;margin:20px 0">
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>String livre não é suficiente para sistemas reais.</strong> Quando outro código vai consumir o output do LLM, o schema Pydantic é a única garantia de que os dados chegaram corretos.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong><code style="font-family:'JetBrains Mono',monospace;font-size:12px">BaseModel</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Field(description=...)</code>.</strong> A description não é documentação — é parte do prompt que vai ao modelo. Descriptions claras geram outputs melhores.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong><code style="font-family:'JetBrains Mono',monospace;font-size:12px">PydanticOutputParser</code> faz duas coisas:</strong> (1) gera as instruções de formato via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">get_format_instructions()</code>; (2) parseia e valida o JSON retornado.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong><code style="font-family:'JetBrains Mono',monospace;font-size:12px">format="json"</code> no ChatOllama + PydanticOutputParser</strong> é a combinação mais robusta — o Ollama garante JSON sintático, o Pydantic garante o schema.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🎯</div>
+      <div style="font-size:14px"><strong>CKP01 — R3 entregue.</strong> A arquitetura final combina ConversationChain (memória, R2) com uma chain LCEL separada para extração estruturada (Pydantic, R3). R4 na Aula 04.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Posso usar with_structured_output() em vez de PydanticOutputParser?"</strong></td><td>Sim — <code style="font-family:'JetBrains Mono',monospace;font-size:11px">llm.with_structured_output(MinhaClasse)</code> é a abordagem mais moderna e funciona com modelos que suportam function calling nativo. Para ChatOllama, ambas funcionam, mas PydanticOutputParser é mais portável.</td></tr>
+      <tr><td><strong>"Se o modelo falhar no schema, devo tentar de novo automaticamente?"</strong></td><td>Sim — o LangChain tem <code style="font-family:'JetBrains Mono',monospace;font-size:11px">OutputFixingParser</code> que envia o erro de volta ao modelo para que ele corrija. Útil em produção. No CKP01, o try/except manual é suficiente.</td></tr>
+      <tr><td><strong>"Pydantic valida e-mails automaticamente?"</strong></td><td>Com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">from pydantic import EmailStr</code> (requer <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pip install email-validator</code>). Para o CKP01, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">str</code> simples é suficiente.</td></tr>
+      <tr><td><strong>"Como faço o modelo retornar uma lista de objetos (não um objeto único)?"</strong></td><td>Crie um schema wrapper: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">class Resultado(BaseModel): itens: List[MinhaClasse]</code>. Use <code style="font-family:'JetBrains Mono',monospace;font-size:11px">PydanticOutputParser(pydantic_object=Resultado)</code>. Acesse com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">resultado.itens</code>.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula03_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. Herança de classe — BaseModel é a classe pai</span>
+<span class="kw">class</span> <span class="fn">MinhaClasse</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>  <span class="cm"># herda validação automática</span>
+    <span class="va">campo</span><span class="op">:</span> <span class="nb">str</span>
+
+<span class="cm"># 2. Type hints avançados</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">List</span><span class="op">,</span> <span class="va">Optional</span><span class="op">,</span> <span class="va">Literal</span>
+<span class="va">campo1</span><span class="op">:</span> <span class="va">List</span><span class="op">[</span><span class="nb">str</span><span class="op">]</span>              <span class="cm"># lista de strings</span>
+<span class="va">campo2</span><span class="op">:</span> <span class="va">Optional</span><span class="op">[</span><span class="nb">int</span><span class="op">]</span> <span class="op">=</span> <span class="kw">None</span>   <span class="cm"># pode ser None</span>
+<span class="va">campo3</span><span class="op">:</span> <span class="va">Literal</span><span class="op">[</span><span class="st">"a"</span><span class="op">,</span><span class="st">"b"</span><span class="op">]</span>       <span class="cm"># enum implícito — só "a" ou "b"</span>
+
+<span class="cm"># 3. Decorador @field_validator (Pydantic v2)</span>
+<span class="dec">@field_validator</span><span class="op">(</span><span class="st">"campo"</span><span class="op">)</span>       <span class="cm"># roda após o campo ser parseado</span>
+<span class="dec">@classmethod</span>
+<span class="kw">def</span> <span class="fn">validar</span><span class="op">(</span><span class="va">cls</span><span class="op">,</span> <span class="va">v</span><span class="op">):</span>
+    <span class="kw">if</span> <span class="va">v</span> <span class="op">&lt;</span> <span class="num">0</span><span class="op">:</span> <span class="kw">raise</span> <span class="fn">ValueError</span><span class="op">(</span><span class="st">"negativo"</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="va">v</span>
+
+<span class="cm"># 4. .model_dump() e .model_dump_json() — Pydantic v2</span>
+<span class="va">obj</span><span class="op">.</span><span class="fn">model_dump</span><span class="op">()</span>       <span class="cm"># → dict Python</span>
+<span class="va">obj</span><span class="op">.</span><span class="fn">model_dump_json</span><span class="op">()</span>  <span class="cm"># → string JSON</span>
+
+<span class="cm"># 5. .partial() em ChatPromptTemplate — pré-preencher variáveis</span>
+<span class="va">prompt</span><span class="op">.</span><span class="fn">partial</span><span class="op">(</span><span class="va">variavel_fixa</span><span class="op">=</span><span class="st">"valor"</span><span class="op">)</span>
+
+<span class="cm"># 6. try/except com tipo específico</span>
+<span class="kw">try</span><span class="op">:</span>
+    <span class="va">resultado</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(...)</span>
+<span class="kw">except</span> <span class="va">ValidationError</span> <span class="kw">as</span> <span class="va">e</span><span class="op">:</span>   <span class="cm"># captura só ValidationError</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">e</span><span class="op">.</span><span class="fn">errors</span><span class="op">())</span>            <span class="cm"># lista de erros detalhados</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Onde estamos — Módulo 1 quase completo</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(41,175,140,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>A01:</strong> LCEL · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | StrOutputParser()</code> · domínio escolhido</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(41,175,140,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>A02:</strong> Memória conversacional · 3 tipos · CKP01 R2</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(41,175,140,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>A03 (hoje):</strong> Pydantic v2 · PydanticOutputParser · CKP01 R3</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(213,140,46,.06);border:1px solid rgba(213,140,46,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(213,140,46,.12);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-orange)">→</div>
+      <div style="font-size:13px"><strong>A04 (próxima):</strong> Context Engineering · CKP01 R4 · <strong style="color:var(--fiap-orange)">ENTREGA DO CKP01</strong></div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A05–07:</strong> RAG — Embeddings · ChromaDB · pipeline · RAGAS · CKP02</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A09–11:</strong> Agentes · ReAct · tools · RAG como tool · Gradio · CKP03</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Mais dúvidas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Devo usar PydanticOutputParser ou with_structured_output()?"</strong></td><td>Para este semestre, use <code style="font-family:'JetBrains Mono',monospace;font-size:11px">PydanticOutputParser</code> — funciona com qualquer LLM, inclusive ChatOllama. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">with_structured_output()</code> é mais elegante mas requer que o modelo suporte function calling nativo.</td></tr>
+      <tr><td><strong>"O Pydantic v2 tem retrocompatibilidade com v1?"</strong></td><td>Parcial — o Pydantic v2 suporta v1 com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">from pydantic.v1 import BaseModel</code>. No LangChain 0.3+, use sempre o v2 nativo (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">model_dump()</code>, não <code style="font-family:'JetBrains Mono',monospace;font-size:11px">dict()</code>).</td></tr>
+      <tr><td><strong>"Como saber se o modelo retornou o schema correto sem olhar?"</strong></td><td>O <code style="font-family:'JetBrains Mono',monospace;font-size:11px">PydanticOutputParser</code> levanta <code style="font-family:'JetBrains Mono',monospace;font-size:11px">OutputParserException</code> ou <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ValidationError</code> automaticamente. Se o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">chain.invoke()</code> retornou sem erro, o schema foi respeitado.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 04 — Context Engineering</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-blue">
+        <div class="callout-title">🔮 Context Engineering</div>
+        <div class="callout-body">A evolução do <em>prompt engineering</em>: em vez de otimizar apenas o texto do prompt, você gerencia <strong>todo o contexto</strong> — system, tools, dados, histórico — como um recurso finito e precioso.<br><br>
+        Anthropic cunhou o termo em 2025: "The art of filling the context window with just the right information."</div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-green">
+        <div class="callout-title">🎯 O que você vai aprender</div>
+        <div class="callout-body">
+          · O que vai no contexto: system + tools + dados + histórico<br>
+          · XML tagging para estruturar seções do contexto<br>
+          · "Context rot": como a qualidade degrada com contextos longos<br>
+          · Meta prompting: o modelo que otimiza seus próprios prompts<br><br>
+          <strong>Na Aula 04 você entrega o CKP01 completo (R4 aplicado).</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;font-size:13px">
+    <strong>📌 Antes da Aula 04:</strong> integre os 3 requisitos do CKP01 num único notebook. A Aula 04 vai adicionar context engineering ao chatbot existente — precisa estar rodando para aplicar.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Extrator de currículos — texto livre de entrada, objeto Pydantic validado de saída. Erros de schema capturados com try/except.</div>
+  <div class="slide-number">25 / 29</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor roda ao vivo o extrator de currículos: texto livre entra, objeto <code style="font-family:'JetBrains Mono',monospace;font-size:13px">Curriculo</code> validado sai. Três cenários mostram onde o schema protege e onde ele estoura.</p>
+  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">1. Currículo bem estruturado</div>
+      <div class="callout-body">Texto claro com nome, e-mail, skills e anos de experiência. O parser preenche os 4 campos do schema <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Curriculo</code> sem erro — a chain devolve direto o objeto Pydantic.</div>
+    </div>
+    <div class="callout callout-blue" style="margin:0">
+      <div class="callout-title">2. Currículo vago</div>
+      <div class="callout-body">Texto incompleto, sem e-mail ou sem anos de experiência claros. Campos <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Optional</code> ficam <code style="font-family:'JetBrains Mono',monospace;font-size:12px">None</code>; o grupo discute como o modelo lida com a ausência.</div>
+    </div>
+    <div class="callout callout-orange" style="margin:0">
+      <div class="callout-title">3. Forçando o erro</div>
+      <div class="callout-body">O professor pede um valor fora do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Literal</code> aceito. O bloco <code style="font-family:'JetBrains Mono',monospace;font-size:12px">try/except ValidationError</code> captura o erro e mostra o campo exato que falhou.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
+    <div class="callout-title">🧱 Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gpt-oss:120b</code> (format="json") · LangChain <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PydanticOutputParser</code></div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 03 · 2º Semestre</div>
+    <div class="exercise-title">Schema Pydantic para o domínio do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Defina o schema</strong> com pelo menos 4 campos: mínimo 1 <code style="font-family:'JetBrains Mono',monospace;font-size:12px">str</code>, 1 numérico (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">int</code> ou <code style="font-family:'JetBrains Mono',monospace;font-size:12px">float</code>), 1 <code style="font-family:'JetBrains Mono',monospace;font-size:12px">List[str]</code> e 1 <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Optional</code>.</li>
+      <li><strong>Complete as 4 lacunas</strong> — classe Pydantic, parser, prompt com .partial() e chain com try/except.</li>
+      <li><strong>Teste com 2 inputs diferentes</strong> — um bem estruturado e um vago (ex: "não sei bem"). Observe como o modelo preenche campos opcionais.</li>
+      <li><strong>Provoque um ValidationError</strong>: modifique o schema para incluir um <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Literal</code> com valores específicos. Peça ao modelo algo fora dos valores aceitos e observe o erro capturado.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(237,20,91,.06);border-left:3px solid var(--fiap-pink);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">🎯 Orientação das lacunas (exemplo — domínio culinária)</div>
+      <div style="font-size:13px;color:var(--fiap-muted);line-height:1.8">
+        <strong>Lacuna 1:</strong> a classe do schema precisa de nome do prato, porções (numérico), lista de ingredientes, tempo de preparo (numérico) e um campo opcional de dificuldade restrito a 3 valores fixos.<br>
+        <strong>Lacuna 2:</strong> o parser é instanciado passando a própria classe do schema como argumento.<br>
+        <strong>Lacuna 3:</strong> o prompt define o papel de chef no system message, inclui a pergunta do usuário no human message, e fixa as instruções de formato do parser com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.partial()</code>.<br>
+        <strong>Lacuna 4:</strong> a chain conecta, nesta ordem, o prompt, o modelo e o parser.
+      </div>
+    </div>
+    <div style="background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-blue)">
+      💡 <strong>Dica:</strong> as descriptions do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Field</code> são inseridas nas instruções que o parser gera — quanto mais claras, menor a chance do modelo errar o schema.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referências</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>Pydantic</strong> — BaseModel, Field, ValidationError (v2). <a href="https://docs.pydantic.dev/latest/concepts/models/" style="color:var(--fiap-blue)">docs.pydantic.dev/latest/concepts/models</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — PydanticOutputParser: integração com Pydantic para saídas estruturadas. <a href="https://python.langchain.com/docs/modules/model_io/output_parsers/types/pydantic" style="color:var(--fiap-blue)">python.langchain.com/docs/modules/model_io/output_parsers/types/pydantic</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangChain</strong> — Structured output com with_structured_output() (abordagem alternativa moderna). <a href="https://python.langchain.com/docs/concepts/structured_outputs" style="color:var(--fiap-blue)">python.langchain.com/docs/concepts/structured_outputs</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>Ollama</strong> — Structured outputs com format="json". <a href="https://ollama.com/blog/structured-outputs" style="color:var(--fiap-blue)">ollama.com/blog/structured-outputs</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Russell, S.; Norvig, P.</strong> — Inteligência Artificial. 3ª ed. Pearson, 2016. Cap. 22 — processamento de linguagem natural: a diferença entre extrair informação estruturada e gerar texto livre.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Aula 03 concluída 🧱</div>
+  <div style="font-size:16px;color:var(--fiap-muted);margin-bottom:12px;max-width:540px">A chain agora retorna objetos Python com tipos garantidos. Na Aula 04 você aplica context engineering e entrega o CKP01 completo.</div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:32px 48px;margin-top:32px;text-align:left;max-width:600px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:8px">→ Próxima Aula — Aula 04 · 24/08</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Context Engineering — de prompt engineering para context engineering</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">Gerenciar o contexto como recurso. CKP01 R4 + entrega.</div>
+  </div>
+  <div style="margin-top:20px;padding:14px 24px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;max-width:540px;text-align:left">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);margin-bottom:4px">📌 CKP01 — 3/4 requisitos concluídos</div>
+    <div style="font-size:13px;color:var(--fiap-muted)">R1 ✅ · R2 ✅ · R3 ✅ · R4 → Aula 04. Integre os 3 num notebook único antes da próxima aula.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">29 / 29</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

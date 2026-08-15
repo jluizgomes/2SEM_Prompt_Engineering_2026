@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 13 — LangGraph: StateGraph, nodes, edges, conditional routing e HITL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--fiap-pink:#ED145B;--fiap-dark:#f5f6fa;--fiap-surface:#ffffff;--fiap-surface2:#f0f1f5;--fiap-border:#e2e4ec;--fiap-text:#1a1b2f;--fiap-muted:#4e4e68;--fiap-white:#1a1b2f;--fiap-green:#29AF8C;--fiap-blue:#3D9CCC;--fiap-purple:#7C60C6;--fiap-orange:#D58C2E;--fiap-red:#C9492C;--code-bg:#1e293b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--fiap-dark);color:var(--fiap-text);line-height:1.7;font-size:15px}
+  .slide{width:100%;min-height:100vh;padding:60px 80px;position:relative;border-bottom:1px solid var(--fiap-border);display:flex;flex-direction:column;overflow:visible}
+  .slide::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(124,96,198,.04) 0%,transparent 70%);pointer-events:none}
+  .slide-number{position:absolute;bottom:30px;right:40px;font-size:12px;color:var(--fiap-muted);font-weight:500;letter-spacing:1px}
+  .slide-footer{position:absolute;bottom:30px;left:80px;font-size:11px;color:rgba(78,78,104,.6)}
+  .slide-cover{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center;padding:60px}
+  .cover-course{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--fiap-pink);margin-bottom:20px}
+  .cover-title{font-size:37px;font-weight:800;color:var(--fiap-white);line-height:1.15;margin-bottom:16px;max-width:820px}
+  .cover-subtitle{font-size:17px;color:var(--fiap-muted);margin-bottom:40px}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+  .cover-meta-item{background:rgba(124,96,198,.1);border:1px solid rgba(124,96,198,.3);padding:8px 18px;border-radius:8px;font-size:13px;color:var(--fiap-text);font-weight:500}
+  .slide-section{justify-content:center;align-items:flex-start;padding:80px 100px}
+  .section-number{font-size:72px;font-weight:900;color:var(--fiap-purple);opacity:.25;line-height:1;margin-bottom:10px}
+  .section-title{font-size:38px;font-weight:800;color:var(--fiap-white);line-height:1.2;margin-bottom:16px}
+  .section-desc{font-size:16px;color:var(--fiap-muted);max-width:600px}
+  .slide-content{background:var(--fiap-dark);padding-top:50px}
+  .slide-content h2{font-size:27px;font-weight:800;color:var(--fiap-white);margin-bottom:28px;padding-bottom:12px;border-bottom:2px solid var(--fiap-purple);display:inline-block}
+  .slide-content p{color:var(--fiap-text);margin-bottom:16px;max-width:950px}
+  .slide-content strong{color:var(--fiap-white)}
+  .data-table{width:100%;border-collapse:collapse;margin:16px 0;background:var(--fiap-surface);border-radius:12px;overflow:hidden;border:1px solid var(--fiap-border)}
+  .data-table th{background:var(--fiap-surface2);padding:11px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fiap-purple);border-bottom:1px solid var(--fiap-border)}
+  .data-table td{padding:11px 16px;font-size:13px;color:var(--fiap-text);border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top}
+  .data-table tr:last-child td{border-bottom:none}
+  .callout{background:var(--fiap-surface);border-left:4px solid var(--fiap-purple);border-radius:0 10px 10px 0;padding:18px 22px;margin:16px 0}
+  .callout-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fiap-purple);margin-bottom:8px}
+  .callout-body{font-size:14px;color:var(--fiap-muted);line-height:1.6}
+  .callout-green{border-left-color:var(--fiap-green)}.callout-green .callout-title{color:var(--fiap-green)}
+  .callout-teal{border-left-color:var(--fiap-blue)}.callout-teal .callout-title{color:var(--fiap-blue)}
+  .callout-pink{border-left-color:var(--fiap-pink)}.callout-pink .callout-title{color:var(--fiap-pink)}
+  .callout-gold{border-left-color:var(--fiap-orange)}.callout-gold .callout-title{color:var(--fiap-orange)}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:16px 0}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}
+  .slide-closing{background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 50%,#eff6ff 100%);justify-content:center;align-items:center;text-align:center}
+  .ref-list{margin:16px 0}
+  .ref-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+  .ref-tag{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap;margin-top:2px;flex-shrink:0}
+  .ref-tag-doc{background:rgba(255,209,102,.12);color:#c9930a}
+  .ref-tag-book{background:rgba(108,99,255,.15);color:#a89cff}
+  .ref-text{font-size:12px;color:var(--fiap-muted);line-height:1.5}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;margin:14px 0;overflow:visible;font-family:'JetBrains Mono',monospace}
+  .code-header{background:#0f172a;padding:10px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #334155}
+  .code-dot{width:10px;height:10px;border-radius:50%}
+  .code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+  .code-filename{font-size:12px;color:#94a3b8;margin-left:8px}
+  .code-body{padding:18px 20px;font-size:12px;line-height:1.85}
+  .code-body pre{margin:0;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible}
+  .kw{color:#c678dd}.fn{color:#61afef}.st{color:#98c379}.cm{color:#94a3b8;font-style:italic}
+  .nb{color:#e5c07b}.num{color:#d19a66}.op{color:#56b6c2}.va{color:#e06c75}
+  .gap{background:rgba(237,20,91,.15);border:1px dashed rgba(237,20,91,.5);border-radius:4px;padding:0 6px;color:#ED145B;font-style:italic;font-family:'JetBrains Mono',monospace;font-size:11px}
+  .exercise{background:linear-gradient(135deg,rgba(124,96,198,.06),rgba(61,156,204,.04));border:1px solid rgba(124,96,198,.2);border-radius:14px;padding:24px;margin:16px 0}
+  .exercise-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-purple);margin-bottom:6px}
+  .exercise-title{font-size:17px;font-weight:700;color:var(--fiap-white);margin-bottom:14px}
+  .exercise-steps{padding-left:20px;margin-bottom:14px}
+  .exercise-steps li{color:var(--fiap-text);font-size:13px;margin-bottom:8px;line-height:1.6}
+  .gnode{display:inline-flex;align-items:center;justify-content:center;padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;line-height:1.3}
+  .agenda-item{display:flex;align-items:center;gap:14px;padding:11px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;margin-bottom:8px}
+  .agenda-num{width:28px;height:28px;background:rgba(124,96,198,.12);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--fiap-purple);flex-shrink:0}
+  .agenda-text{font-size:13px;font-weight:600;color:var(--fiap-white);flex:1}
+  .agenda-time{font-size:11px;font-weight:600;color:var(--fiap-muted);background:var(--fiap-surface2);padding:3px 9px;border-radius:5px}
+/* ===== SCROLL-SUAVE-2026 ===== */
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{scroll-behavior:smooth}
+  .slide{scroll-margin-top:0}
+  @media (prefers-reduced-motion:reduce){html,body{scroll-behavior:auto}}
+
+/* ===== ADDON-FIAP-2026 ===== */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:20px 0}
+  .gl-item{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:14px 18px}
+  .gl-item.gl-blue{border-left-color:var(--fiap-blue)}
+  .gl-item.gl-green{border-left-color:var(--fiap-green)}
+  .gl-item.gl-purple{border-left-color:var(--fiap-purple)}
+  .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
+  .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
+  .gl-pron{font-size:11px;font-weight:500;color:var(--fiap-muted);font-style:italic;margin-left:6px}
+  .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+  .gl-analogy{font-size:12px;color:var(--fiap-blue);margin-top:6px;padding-top:6px;border-top:1px dashed var(--fiap-border)}
+  .code-block{background:var(--code-bg);border:1px solid #334155;border-radius:10px;overflow:visible;margin:18px 0}
+  .code-header{background:#0f172a;padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:12px}
+  .code-body{padding:16px 18px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:#e2e8f0;overflow:visible;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  .code-body .kw{color:#c678dd}.code-body .fn{color:#61afef}.code-body .st{color:#98c379}
+  .code-body .cm{color:#94a3b8;font-style:italic}.code-body .nb{color:#e5c07b}
+  .code-body .num{color:#d19a66}.code-body .op{color:#56b6c2}.code-body .tx{color:#e2e8f0}
+  .diagram{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:20px 0;overflow-x:auto}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-cap{font-size:11.5px;color:var(--fiap-muted);text-align:center;margin-top:10px;font-style:italic}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:20px 0}
+  .metric{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px;text-align:center}
+  .metric-val{font-size:26px;font-weight:900;color:var(--fiap-pink);line-height:1}
+  .metric-lbl{font-size:11px;color:var(--fiap-muted);margin-top:6px;line-height:1.4}
+  .prompt-box{border-radius:10px;padding:16px 18px;margin:14px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+  .prompt-good{background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.3);color:var(--fiap-text)}
+  .prompt-bad{background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.3);color:var(--fiap-text)}
+  .prompt-label{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'Inter',sans-serif}
+  .prompt-good .prompt-label{color:var(--fiap-green)}.prompt-bad .prompt-label{color:var(--fiap-red)}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .callout-orange{border-left-color:var(--fiap-orange)}.callout-orange .callout-title{color:var(--fiap-orange)}
+  .callout-red{border-left-color:var(--fiap-red)}.callout-red .callout-title{color:var(--fiap-red)}
+  .ref-tag-law{background:rgba(41,175,140,.15);color:#1f8f72}
+  .checklist{list-style:none;margin:16px 0}
+  .checklist li{padding:7px 0 7px 28px;position:relative;font-size:13.5px;color:var(--fiap-text)}
+  .checklist li::before{content:'\2713';position:absolute;left:0;color:var(--fiap-green);font-weight:800}
+  .pause{background:rgba(213,140,46,.08);border:1px dashed rgba(213,140,46,.45);border-radius:10px;padding:12px 18px;margin:18px 0;font-size:13px;color:#a8701f;font-weight:600}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .kpi{background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--fiap-text)}
+  .data-table td code,.gl-def code,.callout-body code,.slide-content p code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:var(--fiap-surface2);padding:1px 5px;border-radius:4px;color:#b3186a}
+  /* ---- graficos interativos ---- */
+  .chart{background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:18px 20px 14px;margin:20px 0}
+  .chart-title{font-size:13px;font-weight:800;color:var(--fiap-white);margin-bottom:2px}
+  .chart-sub{font-size:11.5px;color:var(--fiap-muted);margin-bottom:12px}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chart-key{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fiap-muted);background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-radius:20px;padding:4px 11px;cursor:pointer;user-select:none;transition:opacity .15s}
+  .chart-key.off{opacity:.35}
+  .chart-key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .chart-hint{font-size:11px;color:var(--fiap-muted);font-style:italic;margin-top:10px;text-align:center}
+  .fq-bar,.fq-dot,.fq-seg{cursor:pointer;transition:opacity .15s,transform .15s}
+  .fq-bar:hover,.fq-dot:hover,.fq-seg:hover{opacity:.78}
+  .fq-tip{position:fixed;z-index:9999;pointer-events:none;background:#1a1b2f;color:#fff;font-family:'Inter',sans-serif;font-size:12px;line-height:1.5;padding:9px 13px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:290px;opacity:0;transition:opacity .12s}
+  .fq-tip.on{opacity:1}
+  .fq-tip b{color:#ff7aa8;display:block;margin-bottom:3px;font-size:12.5px}
+  /* ---- diagramas com hotspot clicavel ---- */
+  .diagram [data-info]{cursor:pointer}
+  .diagram [data-info]:hover{filter:brightness(.94)}
+  .diagram-info{margin-top:12px;background:var(--fiap-surface2);border:1px solid var(--fiap-border);border-left:3px solid var(--fiap-pink);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--fiap-muted);line-height:1.6;min-height:52px}
+  .diagram-info b{color:var(--fiap-white);display:block;margin-bottom:3px;font-size:13px}
+  /* ---- slider interativo ---- */
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 4px}
+  .ctrl label{font-size:12px;font-weight:700;color:var(--fiap-text)}
+  .ctrl input[type=range]{flex:1;min-width:180px;accent-color:var(--fiap-pink)}
+  .ctrl output{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--fiap-pink);min-width:44px;text-align:right}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 10px}
+  .tab{font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--fiap-border);background:var(--fiap-surface2);color:var(--fiap-muted);cursor:pointer;user-select:none;transition:all .15s}
+  .tab.on{background:var(--fiap-pink);border-color:var(--fiap-pink);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.on{display:block}
+
+</style>
+
+<style id="slide-nav-style">
+  html, body { overflow: visible !important; height: auto !important; scroll-behavior: smooth; }
+  .slide { height: auto !important; min-height: 100vh; max-height: none !important; overflow: visible !important; }
+  @media print {
+    .slide { page-break-after: always; min-height: auto; padding: 30px 40px; }
+    .slide-number, .slide-footer { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="slide-viewport">
+
+
+<!-- S01 CAPA -->
+<div class="slide slide-cover">
+  <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
+  <div class="cover-title">LangGraph — StateGraph, nodes,<br>conditional edges e HITL</div>
+  <div class="cover-subtitle">Aula 13/14 — Módulo 4 · Grafos de estado em código</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">Prof. Jorge Luiz Gomes</div>
+    <div class="cover-meta-item">1h40min</div>
+    <div class="cover-meta-item">StateGraph · MemorySaver · HITL · draw_mermaid</div>
+    <div class="cover-meta-item">Andaime 60%</div>
+  </div>
+  <div class="slide-number">01 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Agenda da Aula</h2>
+  <div class="agenda-item"><div class="agenda-num">1</div><div class="agenda-text">Do diagrama da Aula 12 ao codigo: TypedDict, add_node, add_edge, compile</div><div class="agenda-time">10 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">2</div><div class="agenda-text">add_conditional_edges — o ponto onde o grafo decide o proximo passo</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">3</div><div class="agenda-text">draw_mermaid() — visualizar o grafo, incluindo loops</div><div class="agenda-time">8 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">4</div><div class="agenda-text">MemorySaver + checkpointing — thread_id, get_state, estado persistente</div><div class="agenda-time">12 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">5</div><div class="agenda-text">HITL com interrupt_before — pausar para aprovacao humana antes de acao irreversivel</div><div class="agenda-time">13 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">6</div><div class="agenda-text">Demo ao vivo — agente pesquisador com loop condicional (buscar→avaliar→decidir)</div><div class="agenda-time">15 min</div></div>
+  <div class="agenda-item"><div class="agenda-num">7</div><div class="agenda-text">Lab — grafo pesquisador para o dominio do grupo (60% lacunas)</div><div class="agenda-time">30 min</div></div>
+  <div class="callout" style="margin-top:10px">
+    <div class="callout-title">Objetivo da aula</div>
+    <div class="callout-body">Implementar em codigo o modelo mental de grafo da Aula 12. Entender como StateGraph, conditional edges, MemorySaver e HITL se encaixam. Construir um agente pesquisador com loop de avaliacao de qualidade e visualizar o grafo com draw_mermaid().</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Glossário</h2>
+  <div class="glossary">
+    <div class="gl-item">
+      <div class="gl-term">StateGraph</div>
+      <div class="gl-def">Classe do LangGraph que representa o grafo como objeto: recebe um schema de estado (TypedDict), agrega nodes com add_node() e edges com add_edge()/add_conditional_edges(), e compila em um grafo executável.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">TypedDict (estado do grafo)</div>
+      <div class="gl-def">Estrutura tipada que define os campos do estado compartilhado entre nodes — cada node lê parte dela e retorna um dicionário parcial de atualização.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">add_conditional_edges()</div>
+      <div class="gl-def">Método que registra uma aresta cujo próximo node é escolhido em tempo de execução por uma função de roteamento, permitindo loops e desvios condicionais no grafo.</div>
+    </div>
+    <div class="gl-item gl-purple">
+      <div class="gl-term">draw_mermaid()</div>
+      <div class="gl-def">Método que gera automaticamente o diagrama Mermaid do grafo compilado — código e documentação visual nunca dessincronizam, pois vêm da mesma fonte.</div>
+    </div>
+    <div class="gl-item gl-orange">
+      <div class="gl-term">MemorySaver</div>
+      <div class="gl-def">Checkpointer do LangGraph que persiste o estado do grafo por thread_id, permitindo retomar uma execução exatamente de onde parou.</div>
+    </div>
+    <div class="gl-item">
+      <div class="gl-term">thread_id</div>
+      <div class="gl-def">Identificador usado pelo MemorySaver para isolar o histórico de estado de execuções distintas do mesmo grafo — equivalente ao session_id de uma conversa.</div>
+    </div>
+    <div class="gl-item gl-blue">
+      <div class="gl-term">interrupt_before</div>
+      <div class="gl-def">Parâmetro de compilação que pausa a execução do grafo antes de um node específico, esperando aprovação humana antes de prosseguir — mecanismo central do HITL.</div>
+    </div>
+    <div class="gl-item gl-green">
+      <div class="gl-term">HITL (Human-in-the-loop)</div>
+      <div class="gl-def">Padrão onde a execução automática é interrompida em pontos críticos para que uma pessoa revise ou aprove antes de uma ação irreversível continuar.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">01</div>
+  <div class="section-title">Do diagrama ao codigo</div>
+  <div class="section-desc">Cada elemento do diagrama mental da Aula 12 tem um equivalente direto na API LangGraph. Estado, nodes, arestas fixas, arestas condicionais, START e END.</div>
+  <div class="slide-number">04 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Mapeamento: diagrama → API LangGraph</h2>
+  <table class="data-table">
+    <thead><tr><th>Elemento do diagrama (A12)</th><th>Equivalente LangGraph</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Estado (caixas de dados)</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">TypedDict com Annotated[list, add_messages]</code></td><td>Dict compartilhado. Qualquer node pode ler e escrever. O grafo faz merge automatico dos updates.</td></tr>
+      <tr><td><strong>Nodes (retangulos)</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">graph.add_node("nome", funcao)</code></td><td>Registra uma funcao Python como no do grafo. A funcao recebe o estado e retorna um dict com as mudancas.</td></tr>
+      <tr><td><strong>Arestas fixas (setas simples)</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">graph.add_edge("no_A", "no_B")</code></td><td>No A sempre vai para No B. Equivalente ao fluxo linear das chains LCEL.</td></tr>
+      <tr><td><strong>Arestas condicionais (ramificada)</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">graph.add_conditional_edges("no", fn, {"a":"no_A","b":"no_B"})</code></td><td>Chama fn(state) para decidir o proximo no. O dict traduz o retorno da funcao para o nome do proximo no.</td></tr>
+      <tr><td><strong>START / END</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">from langgraph.graph import START, END</code></td><td>Nos especiais: START injeta o input no estado; END finaliza e retorna o estado final.</td></tr>
+      <tr><td><strong>Compilar o grafo</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">app = graph.compile()</code></td><td>Valida a estrutura e retorna um Runnable compativel com .invoke(), .stream(), .ainvoke().</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-green">
+    <div class="callout-title">Tudo que voce ja sabe continua funcionando</div>
+    <div class="callout-body">O grafo compilado e um Runnable LangChain. Voce pode chamar com app.invoke(), fazer streaming com app.stream() e conectar ao Gradio da Aula 08. LangGraph nao substitui nada — adiciona estrutura ao que ja existe.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">02</div>
+  <div class="section-title">StateGraph em codigo</div>
+  <div class="section-desc">TypedDict define o contrato do estado. add_node() e add_edge() constroem o grafo. compile() valida e retorna um Runnable.</div>
+  <div class="slide-number">06 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>StateGraph — estrutura minima funcional</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">stategraph_basico.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langgraph langchain-ollama <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langgraph.graph</span> <span class="kw">import</span> <span class="va">StateGraph</span><span class="op">,</span> <span class="va">START</span><span class="op">,</span> <span class="va">END</span>
+<span class="kw">from</span> <span class="va">langgraph.graph.message</span> <span class="kw">import</span> <span class="va">add_messages</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">TypedDict</span><span class="op">,</span> <span class="va">Annotated</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.messages</span> <span class="kw">import</span> <span class="va">HumanMessage</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+
+<span class="cm"># 1. Definir o Estado com TypedDict</span>
+<span class="kw">class</span> <span class="fn">Estado</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
+    <span class="cm"># Annotated[list, add_messages] usa reducer que ACUMULA (nao substitui)</span>
+    <span class="va">mensagens</span><span class="op">:</span> <span class="va">Annotated</span><span class="op">[</span><span class="nb">list</span><span class="op">,</span> <span class="va">add_messages</span><span class="op">]</span>
+    <span class="va">iteracoes</span><span class="op">:</span> <span class="nb">int</span>   <span class="cm"># campo simples — substituido a cada update</span>
+    <span class="va">rota</span><span class="op">:</span> <span class="nb">str</span>         <span class="cm"># campo simples — a decisao do classificador</span>
+
+<span class="cm"># 2. Definir Nodes — funcoes que recebem state e retornam dict</span>
+<span class="kw">def</span> <span class="fn">node_responder</span><span class="op">(</span><span class="va">state</span><span class="op">:</span> <span class="va">Estado</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">dict</span><span class="op">:</span>
+    <span class="va">resposta</span> <span class="op">=</span> <span class="va">llm</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="va">state</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">])</span>
+    <span class="kw">return</span> <span class="op">{</span>
+        <span class="st">"mensagens"</span><span class="op">: [</span><span class="va">resposta</span><span class="op">],</span>  <span class="cm"># add_messages ACUMULA — nao substitui</span>
+        <span class="st">"iteracoes"</span><span class="op">:</span> <span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span> <span class="op">+</span> <span class="num">1</span><span class="op">,</span>
+    <span class="op">}</span>
+
+<span class="cm"># 3. Construir o Grafo</span>
+<span class="va">builder</span> <span class="op">=</span> <span class="va">StateGraph</span><span class="op">(</span><span class="va">Estado</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span> <span class="va">node_responder</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="va">START</span><span class="op">,</span> <span class="st">"responder"</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span> <span class="va">END</span><span class="op">)</span>
+
+<span class="cm"># 4. Compilar — valida e retorna Runnable</span>
+<span class="va">app</span> <span class="op">=</span> <span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">()</span>
+
+<span class="cm"># 5. Invocar como qualquer chain LCEL</span>
+<span class="va">resultado</span> <span class="op">=</span> <span class="va">app</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"mensagens"</span><span class="op">: [</span><span class="va">HumanMessage</span><span class="op">(</span><span class="st">"Oi!"</span><span class="op">)],</span> <span class="st">"iteracoes"</span><span class="op">:</span> <span class="num">0</span><span class="op">,</span> <span class="st">"rota"</span><span class="op">:</span> <span class="st">""</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resultado</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">][-</span><span class="num">1</span><span class="op">].</span><span class="va">content</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">03</div>
+  <div class="section-title">add_conditional_edges()</div>
+  <div class="section-desc">O ponto onde o grafo decide o proximo passo. Uma funcao le o estado e retorna uma string; o dict de mapeamento traduz para o nome do proximo no.</div>
+  <div class="slide-number">08 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>add_conditional_edges() — o superpoder do LangGraph</h2>
+  <p>O Router da Aula 12 em codigo Python. Com LangGraph, a condicao fica <strong>explicita no grafo</strong> — visivel, testavel e visualizavel com draw_mermaid():</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conditional_edges.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langgraph.graph</span> <span class="kw">import</span> <span class="va">StateGraph</span><span class="op">,</span> <span class="va">START</span><span class="op">,</span> <span class="va">END</span>
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">TypedDict</span><span class="op">,</span> <span class="va">Annotated</span><span class="op">,</span> <span class="va">Literal</span>
+<span class="kw">from</span> <span class="va">langgraph.graph.message</span> <span class="kw">import</span> <span class="va">add_messages</span>
+
+<span class="kw">class</span> <span class="fn">Estado</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
+    <span class="va">mensagens</span><span class="op">:</span> <span class="va">Annotated</span><span class="op">[</span><span class="nb">list</span><span class="op">,</span> <span class="va">add_messages</span><span class="op">]</span>
+    <span class="va">rota</span><span class="op">:</span> <span class="nb">str</span>
+    <span class="va">iteracoes</span><span class="op">:</span> <span class="nb">int</span>
+
+<span class="kw">class</span> <span class="fn">Rota</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">destino</span><span class="op">:</span> <span class="va">Literal</span><span class="op">[</span><span class="st">"rag"</span><span class="op">,</span> <span class="st">"calculadora"</span><span class="op">,</span> <span class="st">"conversa"</span><span class="op">]</span>
+
+<span class="cm"># Node: classifica a intencao e escreve "rota" no estado</span>
+<span class="kw">def</span> <span class="fn">node_classificar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span> <span class="va">Estado</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">dict</span><span class="op">:</span>
+    <span class="va">ultima_msg</span> <span class="op">=</span> <span class="va">state</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">][-</span><span class="num">1</span><span class="op">].</span><span class="va">content</span>
+    <span class="va">rota_obj</span>   <span class="op">=</span> <span class="va">chain_clf</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span> <span class="va">ultima_msg</span><span class="op">})</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"rota"</span><span class="op">:</span> <span class="va">rota_obj</span><span class="op">.</span><span class="va">destino</span><span class="op">}</span>
+
+<span class="cm"># Funcao de roteamento — le o estado e retorna string</span>
+<span class="kw">def</span> <span class="fn">decidir_rota</span><span class="op">(</span><span class="va">state</span><span class="op">:</span> <span class="va">Estado</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="va">state</span><span class="op">[</span><span class="st">"rota"</span><span class="op">]</span>  <span class="cm"># deve retornar uma das chaves do mapa abaixo</span>
+
+<span class="va">builder</span> <span class="op">=</span> <span class="va">StateGraph</span><span class="op">(</span><span class="va">Estado</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"classificar"</span><span class="op">,</span> <span class="va">node_classificar</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"rag"</span><span class="op">,</span>         <span class="va">node_rag</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"calculadora"</span><span class="op">,</span> <span class="va">node_calc</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"conversa"</span><span class="op">,</span>    <span class="va">node_chat</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="va">START</span><span class="op">,</span> <span class="st">"classificar"</span><span class="op">)</span>
+
+<span class="cm"># add_conditional_edges(no_origem, fn_rota, {retorno_fn: nome_no_destino})</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_conditional_edges</span><span class="op">(</span>
+    <span class="st">"classificar"</span><span class="op">,</span>
+    <span class="va">decidir_rota</span><span class="op">,</span>
+    <span class="op">{</span><span class="st">"rag"</span><span class="op">:</span><span class="st">"rag"</span><span class="op">,</span> <span class="st">"calculadora"</span><span class="op">:</span><span class="st">"calculadora"</span><span class="op">,</span> <span class="st">"conversa"</span><span class="op">:</span><span class="st">"conversa"</span><span class="op">},</span>
+<span class="op">)</span>
+<span class="kw">for</span> <span class="va">no</span> <span class="kw">in</span> <span class="op">[</span><span class="st">"rag"</span><span class="op">,</span> <span class="st">"calculadora"</span><span class="op">,</span> <span class="st">"conversa"</span><span class="op">]:</span>
+    <span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="va">no</span><span class="op">,</span> <span class="va">END</span><span class="op">)</span>
+<span class="va">app</span> <span class="op">=</span> <span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">()</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>draw_mermaid() — o grafo se auto-documenta</h2>
+  <p>Um dos maiores beneficios do LangGraph: o grafo pode se auto-documentar em formato Mermaid — o mesmo que o GitHub renderiza em Markdown:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">draw_mermaid.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">IPython.display</span> <span class="kw">import</span> <span class="va">Image</span><span class="op">,</span> <span class="va">display</span>
+
+<span class="cm"># Renderizar como imagem PNG</span>
+<span class="kw">try</span><span class="op">:</span>
+    <span class="fn">display</span><span class="op">(</span><span class="va">Image</span><span class="op">(</span><span class="va">app</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid_png</span><span class="op">()))</span>
+<span class="kw">except</span> <span class="va">Exception</span><span class="op">:</span>
+    <span class="cm"># Fallback: imprimir codigo Mermaid (colar em mermaid.live)</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">app</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid</span><span class="op">())</span>
+
+<span class="cm"># Saida do draw_mermaid() para o Router desta aula:</span>
+<span class="cm"># graph TD</span>
+<span class="cm">#     __start__([start]) --&gt; classificar</span>
+<span class="cm">#     classificar --&gt; rag</span>
+<span class="cm">#     classificar --&gt; calculadora</span>
+<span class="cm">#     classificar --&gt; conversa</span>
+<span class="cm">#     rag --&gt; __end__([end])</span>
+<span class="cm">#     calculadora --&gt; __end__([end])</span>
+<span class="cm">#     conversa --&gt; __end__([end])</span>
+<span class="cm"># Cole em https://mermaid.live para visualizar</span>
+
+<span class="cm"># Inspecionar nos executados com stream()</span>
+<span class="kw">for</span> <span class="va">evento</span> <span class="kw">in</span> <span class="va">app</span><span class="op">.</span><span class="fn">stream</span><span class="op">({</span><span class="st">"mensagens"</span><span class="op">: [</span><span class="va">HumanMessage</span><span class="op">(</span><span class="st">"Qual o prazo?"</span><span class="op">)],</span>
+                           <span class="st">"rota"</span><span class="op">:</span><span class="st">""</span><span class="op">,</span> <span class="st">"iteracoes"</span><span class="op">:</span><span class="num">0</span><span class="op">}):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"No executado: {list(evento.keys())}"</span><span class="op">)</span>
+<span class="cm"># → No executado: ['classificar']</span>
+<span class="cm"># → No executado: ['rag']</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-teal">
+    <div class="callout-title">Por que draw_mermaid() importa alem da visualizacao</div>
+    <div class="callout-body">Em sistemas em producao, a capacidade de auto-documentar o fluxo de execucao e essencial para auditoria. Um grafo LangGraph pode ser exportado como Mermaid, incluido no README e renderizado automaticamente pelo GitHub — o diagrama fica sempre sincronizado com o codigo.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">10 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">MemorySaver<br>e checkpointing</div>
+  <div class="section-desc">Salvar e retomar o estado entre chamadas. Thread IDs permitem conversas paralelas sem interferencia. Essencial para HITL.</div>
+  <div class="slide-number">11 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>MemorySaver — estado persistente por thread_id</h2>
+  <p>Sem MemorySaver, cada app.invoke() comeca do zero. Com MemorySaver, o estado e salvo por <strong>thread_id</strong> e recuperado na proxima chamada:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">memorysaver.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langgraph.checkpoint.memory</span> <span class="kw">import</span> <span class="va">MemorySaver</span>
+
+<span class="va">checkpointer</span> <span class="op">=</span> <span class="va">MemorySaver</span><span class="op">()</span>
+
+<span class="cm"># Compilar COM checkpointer — habilita persistencia e HITL</span>
+<span class="va">app</span> <span class="op">=</span> <span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">(</span><span class="va">checkpointer</span><span class="op">=</span><span class="va">checkpointer</span><span class="op">)</span>
+
+<span class="cm"># thread_id identifica a "sessao" — cada usuario tem seu proprio thread</span>
+<span class="va">config_u1</span> <span class="op">= {</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"thread_id"</span><span class="op">:</span> <span class="st">"usuario_01"</span><span class="op">}}</span>
+<span class="va">config_u2</span> <span class="op">= {</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"thread_id"</span><span class="op">:</span> <span class="st">"usuario_02"</span><span class="op">}}</span>
+
+<span class="cm"># Chamada 1 — usuario 01</span>
+<span class="va">app</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span>
+    <span class="op">{</span><span class="st">"mensagens"</span><span class="op">: [</span><span class="va">HumanMessage</span><span class="op">(</span><span class="st">"Qual o prazo de garantia?"</span><span class="op">)],</span>
+     <span class="st">"rota"</span><span class="op">:</span><span class="st">""</span><span class="op">,</span> <span class="st">"iteracoes"</span><span class="op">:</span><span class="num">0</span><span class="op">},</span>
+    <span class="va">config</span><span class="op">=</span><span class="va">config_u1</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># Chamada 2 — mesmo usuario 01 — historico preservado</span>
+<span class="va">r</span> <span class="op">=</span> <span class="va">app</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span>
+    <span class="op">{</span><span class="st">"mensagens"</span><span class="op">: [</span><span class="va">HumanMessage</span><span class="op">(</span><span class="st">"E a multa por rescisao?"</span><span class="op">)]},</span>
+    <span class="va">config</span><span class="op">=</span><span class="va">config_u1</span><span class="op">,</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="nb">len</span><span class="op">(</span><span class="va">r</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">]))</span>  <span class="cm"># → 4 (2 Human + 2 AI acumulados)</span>
+
+<span class="cm"># Inspecionar o estado salvo</span>
+<span class="va">snapshot</span> <span class="op">=</span> <span class="va">app</span><span class="op">.</span><span class="fn">get_state</span><span class="op">(</span><span class="va">config_u1</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Iteracoes: {snapshot.values['iteracoes']}"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Proximo no: {snapshot.next}"</span><span class="op">)</span>  <span class="cm"># [] se terminou, ['nome'] se pausado</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">MemorySaver vs ConversationBufferMemory (Aula 02)</div>
+    <div class="callout-body">ConversationBufferMemory guarda apenas mensagens para 1 conversa por vez. MemorySaver guarda todo o estado do grafo (incluindo campos customizados) e suporta multiplas sessoes paralelas por thread_id. Para producao real, usar SqliteSaver ou PostgresSaver (a API e identica, so troca o checkpointer).</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Human-in-the-Loop<br>(HITL)</div>
+  <div class="section-desc">interrupt_before pausa o grafo antes de um no especifico. O estado e salvo. O humano aprova (ou modifica) e o grafo continua de onde parou — impossivel com AgentExecutor.</div>
+  <div class="slide-number">13 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>HITL com interrupt_before — aprovacao antes de acao irreversivel</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">hitl.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langgraph.checkpoint.memory</span> <span class="kw">import</span> <span class="va">MemorySaver</span>
+
+<span class="cm"># Compilar COM interrupt_before — pausa ANTES do no especificado</span>
+<span class="va">app_hitl</span> <span class="op">=</span> <span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">(</span>
+    <span class="va">checkpointer</span><span class="op">=</span><span class="va">MemorySaver</span><span class="op">(),</span>
+    <span class="va">interrupt_before</span><span class="op">=[</span><span class="st">"enviar_email"</span><span class="op">],</span>  <span class="cm"># pausa ANTES deste no</span>
+<span class="op">)</span>
+
+<span class="va">config</span> <span class="op">= {</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"thread_id"</span><span class="op">:</span> <span class="st">"tarefa_01"</span><span class="op">}}</span>
+
+<span class="cm"># FASE 1 — rodar ate a pausa</span>
+<span class="va">app_hitl</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span>
+    <span class="op">{</span><span class="st">"mensagens"</span><span class="op">: [</span><span class="va">HumanMessage</span><span class="op">(</span><span class="st">"Gere um rascunho de email"</span><span class="op">)]}</span><span class="op">,</span>
+    <span class="va">config</span><span class="op">=</span><span class="va">config</span><span class="op">,</span>
+<span class="op">)</span>
+<span class="cm"># → nos anteriores executaram, PAUSOU antes de "enviar_email"</span>
+<span class="cm"># → estado salvo no MemorySaver — thread "suspensa"</span>
+
+<span class="cm"># FASE 2 — humano le o rascunho</span>
+<span class="va">snapshot</span> <span class="op">=</span> <span class="va">app_hitl</span><span class="op">.</span><span class="fn">get_state</span><span class="op">(</span><span class="va">config</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Rascunho: {snapshot.values['mensagens'][-1].content}"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"No suspenso: {snapshot.next}"</span><span class="op">)</span>  <span class="cm"># → ('enviar_email',)</span>
+
+<span class="cm"># FASE 3a — humano aprova → continuar (input=None)</span>
+<span class="va">aprovado</span> <span class="op">=</span> <span class="nb">input</span><span class="op">(</span><span class="st">"Aprovar envio? (s/n): "</span><span class="op">)</span>
+<span class="kw">if</span> <span class="va">aprovado</span><span class="op">.</span><span class="fn">lower</span><span class="op">()</span> <span class="op">==</span> <span class="st">"s"</span><span class="op">:</span>
+    <span class="va">app_hitl</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="kw">None</span><span class="op">,</span> <span class="va">config</span><span class="op">=</span><span class="va">config</span><span class="op">)</span>  <span class="cm"># None = retomar sem novo input</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">"Email enviado!"</span><span class="op">)</span>
+<span class="cm"># FASE 3b — humano edita → update_state() antes de retomar</span>
+<span class="kw">else</span><span class="op">:</span>
+    <span class="va">nova_msg</span> <span class="op">=</span> <span class="va">HumanMessage</span><span class="op">(</span><span class="nb">input</span><span class="op">(</span><span class="st">"Editar rascunho: "</span><span class="op">))</span>
+    <span class="va">app_hitl</span><span class="op">.</span><span class="fn">update_state</span><span class="op">(</span><span class="va">config</span><span class="op">,</span> <span class="op">{</span><span class="st">"mensagens"</span><span class="op">: [</span><span class="va">nova_msg</span><span class="op">]})</span>
+    <span class="va">app_hitl</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="kw">None</span><span class="op">,</span> <span class="va">config</span><span class="op">=</span><span class="va">config</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  <div class="callout-pink callout">
+    <div class="callout-title">Por que HITL e essencial em producao</div>
+    <div class="callout-body">Acoes irreversiveis (enviar email, debitar conta, publicar post, deletar registro) nunca devem ser executadas autonomamente sem revisao humana. interrupt_before garante que o humano sempre aprova antes de agir — independentemente do que o LLM decidiu. Essa e a diferenca entre um sistema confiavel e um risco operacional.</div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — HITL como fase de confiança, não trava permanente</div>
+    <div class="callout-body">Bornet e Wirtz (<em>Agentic Artificial Intelligence</em>, World Scientific, 2025) descrevem human-in-the-loop com uma analogia direta: trate o agente como um funcionário recém-contratado — ninguém deixa uma contratação recente operar sem supervisão, e o mesmo vale para um agente de IA. Os autores enquadram HITL como algo especialmente importante nas fases iniciais de adoção, não como trava permanente: a colaboração funciona quando o humano mantém controle sobre metas e revisa decisões críticas, sobretudo em áreas de risco alto como financeiro ou saúde. Essa é uma camada que complementa o critério desta aula: além de "essa ação pode ser desfeita?", vale perguntar "quanto esse agente já provou ser confiável nessa tarefa?" — o mesmo nó pode justificar <code style="font-family:'JetBrains Mono',monospace;font-size:12px">interrupt_before</code> hoje e dispensá-lo depois de meses de execução sem erro.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>HITL — o fluxo temporal com pausa</h2>
+  <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:12px 0">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.2)">
+        <div style="font-size:12px;font-weight:800;color:var(--fiap-green);width:80px;flex-shrink:0">FASE 1</div>
+        <div style="font-size:13px;color:var(--fiap-text)"><strong>invoke(input)</strong> — grafo roda ate o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">interrupt_before=["enviar_email"]</code>. Execucao SUSPENSA. Estado salvo.</div>
+      </div>
+      <div style="margin-left:44px;font-size:14px;color:var(--fiap-muted)">↓ estado salvo</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;background:rgba(124,96,198,.07);border:1px solid rgba(124,96,198,.2)">
+        <div style="font-size:12px;font-weight:800;color:var(--fiap-purple);width:80px;flex-shrink:0">FASE 2</div>
+        <div style="font-size:13px;color:var(--fiap-text)"><strong>get_state(config)</strong> — humano le o rascunho. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">snapshot.next == ('enviar_email',)</code></div>
+      </div>
+      <div style="margin-left:44px;font-size:14px;color:var(--fiap-muted)">↓ humano decide</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;padding:10px 12px;border-radius:8px;background:rgba(41,175,140,.07);border:1px solid rgba(41,175,140,.2)">
+          <div style="font-size:11px;font-weight:800;color:var(--fiap-green);margin-bottom:4px">APROVADO</div>
+          <div style="font-size:12px;color:var(--fiap-text)"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">invoke(None, config)</code> → retoma do no suspenso → email enviado → END</div>
+        </div>
+        <div style="flex:1;padding:10px 12px;border-radius:8px;background:rgba(213,140,46,.07);border:1px solid rgba(213,140,46,.2)">
+          <div style="font-size:11px;font-weight:800;color:var(--fiap-orange);margin-bottom:4px">EDITAR</div>
+          <div style="font-size:12px;color:var(--fiap-text)"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">update_state()</code> → modifica estado → <code style="font-family:'JetBrains Mono',monospace;font-size:11px">invoke(None)</code></div>
+        </div>
+        <div style="flex:1;padding:10px 12px;border-radius:8px;background:rgba(201,73,44,.07);border:1px solid rgba(201,73,44,.2)">
+          <div style="font-size:11px;font-weight:800;color:var(--fiap-red);margin-bottom:4px">CANCELAR</div>
+          <div style="font-size:12px;color:var(--fiap-text)">Nao chamar invoke(None) — a thread fica suspensa ate expirar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O grafo pesquisador — loop visivel no draw_mermaid()</h2>
+  <p>A aresta de volta <strong>avaliar → buscar</strong> cria um ciclo — impossivel em chains LCEL, explicito em LangGraph e visivel no diagrama Mermaid:</p>
+  <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:12px 0">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div class="gnode" style="background:rgba(61,156,204,.1);border:2px solid rgba(61,156,204,.3);color:var(--fiap-blue)">__start__</div>
+      <div style="font-size:18px;color:var(--fiap-muted)">↓</div>
+      <div class="gnode" style="background:rgba(41,175,140,.1);border:2px solid rgba(41,175,140,.3);color:var(--fiap-green)">buscar<br><span style="font-size:9px;font-weight:400">DuckDuckGo · incrementa iteracoes</span></div>
+      <div style="font-size:18px;color:var(--fiap-muted)">↓</div>
+      <div class="gnode" style="background:rgba(213,140,46,.1);border:2px solid rgba(213,140,46,.3);color:var(--fiap-orange)">avaliar<br><span style="font-size:9px;font-weight:400">LLM-as-judge · grava qualidade</span></div>
+      <div style="display:flex;gap:40px;margin-top:4px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="font-size:10px;color:var(--fiap-green);font-weight:600">qualidade≥0.7 ou iter≥3</div>
+          <div style="font-size:16px;color:var(--fiap-muted)">↓</div>
+          <div class="gnode" style="background:rgba(124,96,198,.1);border:2px solid rgba(124,96,198,.3);color:var(--fiap-purple)">responder</div>
+          <div style="font-size:16px;color:var(--fiap-muted)">↓</div>
+          <div class="gnode" style="background:rgba(201,73,44,.1);border:2px solid rgba(201,73,44,.3);color:var(--fiap-red)">__end__</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px">
+          <div style="font-size:10px;color:var(--fiap-red);font-weight:600">qualidade&lt;0.7 e iter&lt;3</div>
+          <div style="font-size:22px;color:var(--fiap-muted)">↺</div>
+          <div style="font-size:11px;color:var(--fiap-muted);text-align:center">volta para<br>buscar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">O ciclo e o diferencial — e o risco</div>
+    <div class="callout-body">A aresta <code style="font-family:'JetBrains Mono',monospace;font-size:12px">avaliar → buscar</code> cria um ciclo. Sem o limite MAX_ITER, o grafo poderia executar infinitamente. Sempre incluir uma condicao de saida baseada em contagem de iteracoes — nunca confiar so na qualidade para parar o loop.</div>
+  </div>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Producer-Critic, não autoavaliação</div>
+    <div class="callout-body">Gullí (<em>Agentic Design Patterns</em>, O'Reilly, 2025, cap. 4 — Reflection) nomeia o padrão deste grafo: um agente que avalia a própria saída e usa essa avaliação para refinar o resultado, em vez de aceitar a primeira tentativa. O autor recomenda especificamente separar quem gera de quem avalia — o modelo "Producer-Critic" — porque pedir que o mesmo agente critique seu próprio trabalho carrega um viés cognitivo: o crítico tende a ser mais complacente com o que ele mesmo acabou de produzir. O grafo pesquisador já segue essa recomendação por construção, já que <code style="font-family:'JetBrains Mono',monospace;font-size:12px">buscar</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">avaliar</code> são nós distintos, não uma única chamada fazendo as duas coisas. O autor também liga Reflection a memória (cap. 8): sem lembrar as tentativas anteriores do loop, o agente pode repetir a mesma busca malsucedida a cada iteração em vez de tentar uma estratégia diferente.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">07</div>
+  <div class="section-title">Lab — Notebook Aluno<br>(25 min)</div>
+  <div class="section-desc">60% de lacunas — construir o grafo pesquisador para o dominio do grupo. Minimo: 3 nodes + 1 conditional edge + draw_mermaid() mostrando o loop.</div>
+  <div class="slide-number">17 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Notebook Aluno — 60% de lacunas</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_13_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langgraph langchain-ollama langchain-community duckduckgo-search <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langgraph.graph</span> <span class="kw">import</span> <span class="va">StateGraph</span><span class="op">,</span> <span class="va">START</span><span class="op">,</span> <span class="va">END</span>
+<span class="kw">from</span> <span class="va">langgraph.graph.message</span> <span class="kw">import</span> <span class="va">add_messages</span>
+<span class="kw">from</span> <span class="va">langgraph.checkpoint.memory</span> <span class="kw">import</span> <span class="va">MemorySaver</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">TypedDict</span><span class="op">,</span> <span class="va">Annotated</span>
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
+<span class="kw">from</span> <span class="va">langchain_core.messages</span> <span class="kw">import</span> <span class="va">HumanMessage</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_community.tools</span> <span class="kw">import</span> <span class="va">DuckDuckGoSearchRun</span>
+<span class="kw">from</span> <span class="va">IPython.display</span> <span class="kw">import</span> <span class="va">Image</span><span class="op">,</span> <span class="va">display</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span><span class="op">=</span><span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span><span class="op">=</span><span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+<span class="va">llm</span><span class="op">=</span><span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span><span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+
+<span class="cm"># LACUNA 1: Estado com TypedDict</span>
+<span class="kw">class</span> <span class="fn">Estado</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
+    <span class="va">mensagens</span><span class="op">:</span> <span class="va">Annotated</span><span class="op">[</span><span class="nb">list</span><span class="op">,</span> <span class="gap">___</span><span class="op">]</span>  <span class="cm"># usar add_messages</span>
+    <span class="va">resultados_busca</span><span class="op">:</span> <span class="nb">str</span>
+    <span class="va">qualidade</span><span class="op">:</span> <span class="gap">___</span>  <span class="cm"># float</span>
+    <span class="va">iteracoes</span><span class="op">:</span> <span class="gap">___</span>  <span class="cm"># int</span>
+
+<span class="kw">class</span> <span class="fn">Qualidade</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">score</span><span class="op">:</span><span class="nb">float</span><span class="op">;</span> <span class="va">suficiente</span><span class="op">:</span><span class="nb">bool</span>
+
+<span class="cm"># LACUNA 2: node_buscar</span>
+<span class="kw">def</span> <span class="fn">node_buscar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>
+    <span class="va">bruto</span><span class="op">=</span><span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="gap">___</span><span class="op">)</span>  <span class="cm"># query = mensagens[0].content</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"resultados_busca"</span><span class="op">:</span><span class="va">bruto</span><span class="op">[:</span><span class="num">1500</span><span class="op">],</span><span class="st">"iteracoes"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span><span class="op">+</span><span class="num">1</span><span class="op">}</span>
+
+<span class="kw">def</span> <span class="fn">node_avaliar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>  <span class="cm"># PRONTO</span>
+    <span class="va">q</span><span class="op">=</span><span class="op">(</span><span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"P:{p}\nR:{r}\nScore:"</span><span class="op">)</span>
+       <span class="op">|</span><span class="va">llm</span><span class="op">.</span><span class="fn">with_structured_output</span><span class="op">(</span><span class="va">Qualidade</span><span class="op">)).</span><span class="fn">invoke</span><span class="op">(</span>
+        <span class="op">{</span><span class="st">"p"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">][</span><span class="num">0</span><span class="op">].</span><span class="va">content</span><span class="op">,</span><span class="st">"r"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"resultados_busca"</span><span class="op">]}</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"qualidade"</span><span class="op">:</span><span class="va">q</span><span class="op">.</span><span class="va">score</span><span class="op">}</span>
+
+<span class="cm"># LACUNA 3: node_responder</span>
+<span class="kw">def</span> <span class="fn">node_responder</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>
+    <span class="va">resp</span><span class="op">=</span><span class="va">llm</span><span class="op">.</span><span class="fn">invoke</span><span class="op">([</span><span class="va">HumanMessage</span><span class="op">(</span>
+        <span class="st">f"P:{state['mensagens'][0].content}\nFonte:{state[</span><span class="gap">___</span><span class="st">]}"</span>
+    <span class="op">)])</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"mensagens"</span><span class="op">:[</span><span class="va">resp</span><span class="op">]}</span>
+
+<span class="cm"># LACUNA 4: decidir_continuar (threshold 0.7, MAX 3)</span>
+<span class="kw">def</span> <span class="fn">decidir_continuar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">str</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="va">state</span><span class="op">[</span><span class="st">"qualidade"</span><span class="op">]</span><span class="op">&gt;=</span><span class="gap">___</span> <span class="kw">or</span> <span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span><span class="op">&gt;=</span><span class="gap">___</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="gap">___</span>  <span class="cm"># "responder"</span>
+    <span class="kw">return</span> <span class="gap">___</span>      <span class="cm"># "buscar"</span>
+
+<span class="cm"># LACUNA 5: montar grafo</span>
+<span class="va">builder</span><span class="op">=</span><span class="va">StateGraph</span><span class="op">(</span><span class="va">Estado</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="gap">___</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="gap">___</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="gap">___</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="va">START</span><span class="op">,</span><span class="st">"buscar"</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="gap">___</span><span class="op">)</span>  <span class="cm"># → avaliar</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_conditional_edges</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="gap">___</span><span class="op">,</span><span class="op">{</span><span class="st">"buscar"</span><span class="op">:</span><span class="st">"buscar"</span><span class="op">,</span><span class="st">"responder"</span><span class="op">:</span><span class="st">"responder"</span><span class="op">})</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="va">END</span><span class="op">)</span>
+<span class="va">pesquisador</span><span class="op">=</span><span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">(</span><span class="va">checkpointer</span><span class="op">=</span><span class="va">MemorySaver</span><span class="op">())</span>
+<span class="kw">try</span><span class="op">:</span> <span class="fn">display</span><span class="op">(</span><span class="va">Image</span><span class="op">(</span><span class="va">pesquisador</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid_png</span><span class="op">()))</span>
+<span class="kw">except</span><span class="op">:</span> <span class="nb">print</span><span class="op">(</span><span class="va">pesquisador</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid</span><span class="op">())</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Sintese da Aula 13</h2>
+  <div style="display:flex;flex-direction:column;gap:9px;margin:14px 0">
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>StateGraph = TypedDict + Nodes + Edges.</strong> O estado e o dict compartilhado; nodes retornam apenas o que mudou; compile() valida e retorna Runnable.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>add_conditional_edges() torna a decisao explicita e visivel.</strong> A funcao de roteamento le o estado; o dict mapeia o retorno para o proximo no. draw_mermaid() mostra o grafo incluindo loops.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>MemorySaver habilita estado persistente por thread_id.</strong> Multiplas sessoes paralelas sem interferencia. get_state() inspeciona o estado salvo a qualquer momento.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>HITL com interrupt_before</strong> pausa antes de acoes irreversiveis. invoke(None) retoma; update_state() permite editar antes de continuar.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:rgba(213,140,46,.06);border:2px solid rgba(213,140,46,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">→</div>
+      <div style="font-size:14px"><strong>Aula 14 — Encerramento:</strong> tendencias 2026, LangGraph Platform, proximos passos na carreira e retrospectiva do semestre.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Por que Annotated[list, add_messages] em vez de list simples?"</strong></td><td>Com list simples, cada update de node substitui a lista inteira, perdendo o historico. Annotated[list, add_messages] usa um reducer que acumula: quando um node retorna {"mensagens": [nova_msg]}, o LangGraph faz merge, adicionando a lista existente. Campos sem reducer (int, str, float) sao sempre substituidos pelo ultimo update.</td></tr>
+      <tr><td><strong>"MemorySaver em producao e seguro?"</strong></td><td>Nao — MemorySaver e in-memory e perde tudo ao reiniciar. Para producao usar SqliteSaver (arquivo local) ou PostgresSaver (banco de dados). A API e identica — so troca o checkpointer no compile(). Para CKP e demos, MemorySaver e suficiente.</td></tr>
+      <tr><td><strong>"draw_mermaid_png() deu erro no Colab — como resolver?"</strong></td><td>Requer playwright: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">!pip install playwright &amp;&amp; playwright install chromium</code>. Alternativa sem instalacao: usar draw_mermaid() e colar o output em mermaid.live. Renderiza online instantaneamente.</td></tr>
+      <tr><td><strong>"O grafo pode ter multiplos interrupt_before?"</strong></td><td>Sim — interrupt_before=["no_A", "no_B"] pausa antes de qualquer um dos dois. Tambem existe interrupt_after — pausa depois do no (o no executa, mas o proximo fica suspenso). Para pipelines com multiplos checkpoints de aprovacao, usar lista de nos.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula13_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. TypedDict — dicionario com tipos declarados</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">TypedDict</span><span class="op">,</span> <span class="va">Annotated</span>
+<span class="kw">from</span> <span class="va">langgraph.graph.message</span> <span class="kw">import</span> <span class="va">add_messages</span>
+
+<span class="kw">class</span> <span class="fn">Estado</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
+    <span class="va">mensagens</span><span class="op">:</span> <span class="va">Annotated</span><span class="op">[</span><span class="nb">list</span><span class="op">,</span> <span class="va">add_messages</span><span class="op">]</span>  <span class="cm"># reducer: acumula</span>
+    <span class="va">contador</span><span class="op">:</span> <span class="nb">int</span>    <span class="cm"># sem reducer: substituido no update</span>
+
+<span class="cm"># 2. app.get_state(config) — inspecionar estado salvo</span>
+<span class="va">snapshot</span> <span class="op">=</span> <span class="va">app</span><span class="op">.</span><span class="fn">get_state</span><span class="op">({</span><span class="st">"configurable"</span><span class="op">:{</span><span class="st">"thread_id"</span><span class="op">:</span><span class="st">"abc"</span><span class="op">}})</span>
+<span class="va">snapshot</span><span class="op">.</span><span class="va">values</span>    <span class="cm"># → dict com estado atual</span>
+<span class="va">snapshot</span><span class="op">.</span><span class="va">next</span>      <span class="cm"># → () se terminou, ('nome_no',) se pausado</span>
+
+<span class="cm"># 3. app.update_state(config, values) — editar estado antes de retomar</span>
+<span class="va">app</span><span class="op">.</span><span class="fn">update_state</span><span class="op">(</span>
+    <span class="op">{</span><span class="st">"configurable"</span><span class="op">:{</span><span class="st">"thread_id"</span><span class="op">:</span><span class="st">"abc"</span><span class="op">}},</span>
+    <span class="op">{</span><span class="st">"mensagens"</span><span class="op">:[</span><span class="va">HumanMessage</span><span class="op">(</span><span class="st">"versao editada"</span><span class="op">)]},</span>
+<span class="op">)</span>
+
+<span class="cm"># 4. app.invoke(None, config) — retomar grafo pausado</span>
+<span class="va">app</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="kw">None</span><span class="op">,</span> <span class="va">config</span><span class="op">=</span><span class="va">config</span><span class="op">)</span>
+<span class="cm"># None = continuar do ponto suspenso sem novo input</span>
+
+<span class="cm"># 5. pesquisador.get_graph().draw_mermaid() — auto-documentacao</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">pesquisador</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid</span><span class="op">())</span>
+<span class="cm"># retorna string Mermaid — colar em mermaid.live para visualizar</span>
+<span class="cm"># ou usar draw_mermaid_png() para renderizar inline no Colab</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>LangGraph em producao — padroes de grafo</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;margin-bottom:6px">Plataformas de recrutamento</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Agente de recrutamento</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Agente com LangGraph e loop de avaliacao de curriculo: buscar candidatos → avaliar fit → se score baixo, reformular criterios e buscar de novo → se score alto, agendar entrevista (HITL antes do contato). O padrao desta aula em escala.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:6px">Agentes de codificacao autonoma</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Coding loop</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Grafo com loop: gerar codigo → rodar testes → se falhou (conditional edge) → corrigir e rodar de novo → se passou → entregar. O ciclo roda ate os testes passarem ou atingir o limite de tentativas.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-orange);border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;margin-bottom:6px">CRMs com IA</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Grafo de vendas</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Funil de vendas como grafo de estado: qualificar lead → proposta → negociacao → fechamento. Conditional edges decidem se avanca, volta ou escalona para humano. Estado persistido por oportunidade no CRM.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Mapa completo do 2º semestre</h2>
+  <table class="data-table">
+    <thead><tr><th>Modulo</th><th>Aulas</th><th>Conceito central</th><th>CKP</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--fiap-pink)">M1 LangChain</strong></td><td>01–04</td><td>LCEL, ChatOllama, Memoria, Pydantic v2, Context Engineering</td><td>CKP01 ✓</td></tr>
+      <tr><td><strong style="color:var(--fiap-blue)">M2 RAG</strong></td><td>05–07</td><td>Embeddings, ChromaDB, Pipeline RAG, Chunking, RAGAS</td><td>CKP02 ✓</td></tr>
+      <tr><td><strong style="color:var(--fiap-green)">M3 Agentes</strong></td><td>08–11</td><td>Gradio, ReAct, AgentExecutor, Context rot, Integracao</td><td>CKP03 ✓</td></tr>
+      <tr><td><strong style="color:var(--fiap-orange)">M4 LangGraph</strong></td><td>12–14</td><td>Router Chain, StateGraph, Conditional edges, MemorySaver, HITL</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.2);border-radius:10px;padding:14px;margin-top:12px">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;margin-bottom:8px">A progressao do semestre</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px">
+      <span style="background:rgba(237,20,91,.08);border:1px solid rgba(237,20,91,.2);padding:4px 10px;border-radius:6px">Chain LCEL</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);padding:4px 10px;border-radius:6px">RAG</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="background:rgba(41,175,140,.08);border:1px solid rgba(41,175,140,.2);padding:4px 10px;border-radius:6px">Agente ReAct</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="background:rgba(213,140,46,.08);border:1px solid rgba(213,140,46,.2);padding:4px 10px;border-radius:6px">Router</span>
+      <span style="color:var(--fiap-muted)">→</span>
+      <span style="background:rgba(124,96,198,.1);border:1px solid rgba(124,96,198,.3);padding:4px 10px;border-radius:6px;font-weight:700;color:var(--fiap-purple)">StateGraph + HITL</span>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Preview — Aula 14: Encerramento</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-gold">
+        <div class="callout-title">Conteudo da Aula 14</div>
+        <div class="callout-body">
+          <strong>Tendencias 2026:</strong> LangGraph Platform, multi-agent, observabilidade com LangSmith<br><br>
+          <strong>Proximos passos na carreira:</strong> MLOps para agentes, contribuicao open source, o que aprender depois<br><br>
+          <strong>Retrospectiva:</strong> do chain de 5 linhas ao agente com HITL — a progressao completa<br><br>
+          <em>Aula leve e descartavel — pode ser pulada se o semestre atrasou</em>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;margin-bottom:10px">Para onde o LangGraph esta indo</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:14px;flex-shrink:0">🏗</span><div style="font-size:13px"><strong>LangGraph Platform</strong> — deploy na nuvem com autoscaling e API REST automatica</div></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:14px;flex-shrink:0">🤝</span><div style="font-size:13px"><strong>Multi-agent</strong> — grafos onde cada no e um agente especializado, coordenados por supervisor</div></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:14px;flex-shrink:0">🔭</span><div style="font-size:13px"><strong>LangSmith</strong> — trace cada execucao do grafo, debugar conditional edges, medir latencia</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">06</div>
+  <div class="section-title">Demo — Agente pesquisador<br>com loop condicional</div>
+  <div class="section-desc">buscar → avaliar qualidade → decidir: buscar mais (loop) ou responder (END). Maximo 3 iteracoes. O loop aparece no draw_mermaid().</div>
+  <div class="slide-number">25 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Demo Prática ao Vivo — agente pesquisador com loop condicional</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">agente_pesquisador.py</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> <span class="va">langgraph.graph</span> <span class="kw">import</span> <span class="va">StateGraph</span><span class="op">,</span> <span class="va">START</span><span class="op">,</span> <span class="va">END</span>
+<span class="kw">from</span> <span class="va">langchain_community.tools</span> <span class="kw">import</span> <span class="va">DuckDuckGoSearchRun</span>
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">TypedDict</span><span class="op">,</span> <span class="va">Annotated</span>
+<span class="kw">from</span> <span class="va">langgraph.graph.message</span> <span class="kw">import</span> <span class="va">add_messages</span>
+<span class="kw">from</span> <span class="va">langchain_core.messages</span> <span class="kw">import</span> <span class="va">HumanMessage</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+
+<span class="kw">class</span> <span class="fn">EstadoPesquisa</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
+    <span class="va">mensagens</span><span class="op">:</span> <span class="va">Annotated</span><span class="op">[</span><span class="nb">list</span><span class="op">,</span> <span class="va">add_messages</span><span class="op">]</span>
+    <span class="va">resultados_busca</span><span class="op">:</span> <span class="nb">str</span>
+    <span class="va">qualidade</span><span class="op">:</span> <span class="nb">float</span>
+    <span class="va">iteracoes</span><span class="op">:</span> <span class="nb">int</span>
+
+<span class="kw">class</span> <span class="fn">Qualidade</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">score</span><span class="op">:</span> <span class="nb">float</span><span class="op">;</span> <span class="va">suficiente</span><span class="op">:</span> <span class="nb">bool</span>
+
+<span class="kw">def</span> <span class="fn">node_buscar</span><span class="op">(</span><span class="va">state</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">dict</span><span class="op">:</span>
+    <span class="va">bruto</span> <span class="op">=</span> <span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="va">state</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">][</span><span class="num">0</span><span class="op">].</span><span class="va">content</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"resultados_busca"</span><span class="op">:</span><span class="va">bruto</span><span class="op">[:</span><span class="num">1500</span><span class="op">],</span> <span class="st">"iteracoes"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span><span class="op">+</span><span class="num">1</span><span class="op">}</span>
+
+<span class="kw">def</span> <span class="fn">node_avaliar</span><span class="op">(</span><span class="va">state</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">dict</span><span class="op">:</span>
+    <span class="va">q</span> <span class="op">=</span> <span class="op">(</span><span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span>
+        <span class="st">"Pergunta:{p}\nResultado:{r}\nScore suficiencia 0.0-1.0:"</span>
+    <span class="op">)</span> <span class="op">|</span> <span class="va">llm</span><span class="op">.</span><span class="fn">with_structured_output</span><span class="op">(</span><span class="va">Qualidade</span><span class="op">)).</span><span class="fn">invoke</span><span class="op">(</span>
+        <span class="op">{</span><span class="st">"p"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">][</span><span class="num">0</span><span class="op">].</span><span class="va">content</span><span class="op">,</span> <span class="st">"r"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"resultados_busca"</span><span class="op">]}</span>
+    <span class="op">)</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"qualidade"</span><span class="op">:</span> <span class="va">q</span><span class="op">.</span><span class="va">score</span><span class="op">}</span>
+
+<span class="kw">def</span> <span class="fn">node_responder</span><span class="op">(</span><span class="va">state</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">dict</span><span class="op">:</span>
+    <span class="va">resp</span> <span class="op">=</span> <span class="va">llm</span><span class="op">.</span><span class="fn">invoke</span><span class="op">([</span><span class="va">HumanMessage</span><span class="op">(</span>
+        <span class="st">f"Pergunta:{state['mensagens'][0].content}\nFonte:{state['resultados_busca']}"</span>
+    <span class="op">)])</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"mensagens"</span><span class="op">:[</span><span class="va">resp</span><span class="op">]}</span>
+
+<span class="kw">def</span> <span class="fn">decidir_continuar</span><span class="op">(</span><span class="va">state</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="cm"># Para se qualidade OK ou atingiu limite de 3 iteracoes</span>
+    <span class="kw">if</span> <span class="va">state</span><span class="op">[</span><span class="st">"qualidade"</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="num">0.7</span> <span class="kw">or</span> <span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="num">3</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"responder"</span>
+    <span class="kw">return</span> <span class="st">"buscar"</span>  <span class="cm"># loop de volta</span>
+
+<span class="va">builder</span> <span class="op">=</span> <span class="va">StateGraph</span><span class="op">(</span><span class="va">EstadoPesquisa</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="va">node_buscar</span><span class="op">);</span> <span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="va">node_avaliar</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="va">node_responder</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="va">START</span><span class="op">,</span><span class="st">"buscar"</span><span class="op">);</span> <span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="st">"avaliar"</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_conditional_edges</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="va">decidir_continuar</span><span class="op">,</span>
+                              <span class="op">{</span><span class="st">"buscar"</span><span class="op">:</span><span class="st">"buscar"</span><span class="op">,</span><span class="st">"responder"</span><span class="op">:</span><span class="st">"responder"</span><span class="op">})</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="va">END</span><span class="op">)</span>
+<span class="va">pesquisador</span> <span class="op">=</span> <span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">(</span><span class="va">checkpointer</span><span class="op">=</span><span class="va">MemorySaver</span><span class="op">())</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 13 · 2º Semestre</div>
+    <div class="exercise-title">Grafo pesquisador com loop condicional para o dominio <span style="font-size:14px;color:var(--fiap-orange)">★★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:12px"><strong>Grupo 3–4 · 25 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 5 lacunas</strong> — TypedDict com add_messages + tipos; node_buscar com DuckDuckGo; node_responder usando resultados_busca; decidir_continuar com threshold 0.7 e MAX 3; montar o grafo com add_node, add_edge e add_conditional_edges.</li>
+      <li><strong>Visualize o grafo</strong> com draw_mermaid() — confirmar que a aresta de volta (avaliar → buscar) aparece no diagrama.</li>
+      <li><strong>Execute 2 perguntas do dominio</strong> e observe: quantas iteracoes foram necessarias? O threshold 0.7 foi atingido antes do limite 3 ou precisou do MAX?</li>
+      <li><strong>Experimento com threshold</strong>: mudar para 0.5 e 0.9 e documentar a diferenca no numero de iteracoes em celula markdown.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(124,96,198,.06);border-left:3px solid var(--fiap-purple);border-radius:0 8px 8px 0;margin:10px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);margin-bottom:4px">Gabarito das lacunas</div>
+      <div style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--fiap-muted);line-height:1.9">
+        L1: add_messages ; float ; int<br>
+        L2: state["mensagens"][0].content<br>
+        L3: state["resultados_busca"]<br>
+        L4: 0.7 ; 3 ; "responder" ; "buscar"<br>
+        L5: node_buscar ; node_avaliar ; node_responder ; "avaliar" ; decidir_continuar
+      </div>
+    </div>
+    <div style="background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-pink)">
+      <strong>Desafio — HITL no pesquisador:</strong> adicionar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">interrupt_before=["responder"]</code> para que o humano aprove antes da resposta final. Testar: o grafo pausa? get_state() mostra o no suspenso? invoke(None) retoma?
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Referencias</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangGraph</strong> — Guia completo: StateGraph, checkpointing, HITL. <a href="https://langchain-ai.github.io/langgraph/tutorials/introduction" style="color:var(--fiap-purple)">langchain-ai.github.io/langgraph/tutorials/introduction</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Docs</span><div class="ref-text"><strong>LangGraph HITL</strong> — interrupt_before, update_state, invoke(None). <a href="https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop" style="color:var(--fiap-purple)">langchain-ai.github.io/langgraph/concepts/human_in_the_loop</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Blog</span><div class="ref-text"><strong>Anthropic Engineering</strong> — "Building Effective Agents" (2025). Secao sobre checkpointing e revisao humana. <a href="https://www.anthropic.com/engineering/building-effective-agents" style="color:var(--fiap-purple)">anthropic.com/engineering/building-effective-agents</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-doc">Tool</span><div class="ref-text"><strong>Mermaid Live Editor</strong> — Para visualizar o output de draw_mermaid() sem instalar playwright. <a href="https://mermaid.live" style="color:var(--fiap-purple)">mermaid.live</a></div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Russell, S.; Norvig, P.</strong> — Inteligencia Artificial. 3ª ed. Pearson, 2016. Cap. 3 — Resolucao de problemas como busca: base conceitual dos grafos de estado no LangGraph.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Bornet, P.; Wirtz, J. et al.</strong> — Agentic Artificial Intelligence. World Scientific, 2025. A analogia do "funcionário recém-contratado" e HITL como fase de confiança, não trava permanente — a fundamentação por trás do interrupt_before desta aula.</div></div>
+    <div class="ref-item"><span class="ref-tag ref-tag-book">Livro</span><div class="ref-text"><strong>Gullí, A.</strong> — Agentic Design Patterns. O'Reilly, 2025. Cap. 4 — Reflection: o modelo Producer-Critic que justifica separar os nós buscar e avaliar no grafo pesquisador desta aula.</div></div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">28 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-closing">
+  <svg width="120" height="30" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
+  <div style="font-size:32px;font-weight:800;color:var(--fiap-white);margin:24px 0 8px">Grafos em codigo</div>
+  <div style="font-size:15px;color:var(--fiap-muted);margin-bottom:16px;max-width:520px">StateGraph, conditional edges, MemorySaver e HITL. O fluxo e agora explicito, auditavel e pode pausar para o humano aprovar. Semestre quase encerrado.</div>
+  <div style="display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;justify-content:center">
+    <div style="background:rgba(237,20,91,.08);border:1px solid rgba(237,20,91,.2);border-radius:8px;padding:10px 14px;text-align:center"><div style="font-size:16px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-pink)">M1</div></div>
+    <div style="background:rgba(61,156,204,.08);border:1px solid rgba(61,156,204,.2);border-radius:8px;padding:10px 14px;text-align:center"><div style="font-size:16px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-blue)">M2</div></div>
+    <div style="background:rgba(41,175,140,.08);border:1px solid rgba(41,175,140,.2);border-radius:8px;padding:10px 14px;text-align:center"><div style="font-size:16px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-green)">M3</div></div>
+    <div style="background:rgba(124,96,198,.1);border:2px solid rgba(124,96,198,.35);border-radius:8px;padding:10px 14px;text-align:center"><div style="font-size:16px">✓</div><div style="font-size:11px;font-weight:700;color:var(--fiap-purple)">M4</div></div>
+  </div>
+  <div class="next-class" style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:14px;padding:28px 40px;text-align:left;max-width:560px">
+    <div class="next-label" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fiap-orange);margin-bottom:8px">Proxima Aula — Aula 14 (ultima)</div>
+    <div class="next-title" style="font-size:18px;font-weight:700;color:var(--fiap-white);margin-bottom:6px">Spec-Driven Development e Encerramento</div>
+    <div class="next-desc" style="font-size:13px;color:var(--fiap-muted)">Retrospectiva do semestre · Spec-Driven Development · LangSmith · Proximos passos na carreira · Encerramento.</div>
+  </div>
+  <div style="margin-top:24px;font-size:12px;color:var(--fiap-muted)">Copyright © 2026 Prof. Jorge Luiz Gomes · profjorge.gomes@fiap.com.br · FIAP · Todos os direitos reservados.</div>
+  <div class="slide-number">29 / 29</div>
+</div>
+
+
+
+</div>
+<script>
+/* ===== FIAPCHART-2026 ===== */
+(function(){
+  var PAL=['#ED145B','#3D9CCC','#29AF8C','#7C60C6','#D58C2E','#C9492C','#4e4e68'];
+  var tip=document.createElement('div');tip.className='fq-tip';document.body.appendChild(tip);
+  function showTip(e,html){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+  function moveTip(e){
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+300>window.innerWidth)x=e.clientX-tip.offsetWidth-14;
+    if(y+tip.offsetHeight+10>window.innerHeight)y=e.clientY-tip.offsetHeight-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  function hideTip(){tip.classList.remove('on');}
+  function bind(el,html){
+    el.addEventListener('mouseenter',function(e){showTip(e,html);});
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',function(e){showTip(e,html);});
+  }
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function ns(t){return document.createElementNS('http://www.w3.org/2000/svg',t);}
+  function at(el,o){for(var k in o)el.setAttribute(k,o[k]);return el;}
+  function txt(x,y,s,o){var t=at(ns('text'),o||{});t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('font-family','Inter,sans-serif');t.textContent=s;return t;}
+  function split(s){return (s||'').split('|').map(function(v){return v.trim();});}
+  function nums(s){return split(s).map(parseFloat);}
+
+  /* ---------- grafico de barras (horizontal ou vertical) ---------- */
+  function bar(box){
+    var labels=split(box.dataset.labels),vals=nums(box.dataset.values),
+        notes=box.dataset.notes?split(box.dataset.notes):[],
+        unit=box.dataset.unit||'',horiz=box.dataset.orient!=='v',
+        max=Math.max.apply(null,vals)*1.02,
+        svg=ns('svg'),W=760,rowH=horiz?34:0,H=horiz?labels.length*rowH+16:250;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    if(horiz){
+      var lw=Math.min(230,10+Math.max.apply(null,labels.map(function(l){return l.length*6.6;})));
+      labels.forEach(function(lb,i){
+        var y=i*rowH+8,w=Math.max(3,(vals[i]/max)*(W-lw-92)),c=PAL[i%PAL.length];
+        svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+        var r=at(ns('rect'),{x:lw,y:y+5,width:w,height:19,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(lw+w+9,y+19,vals[i]+unit,{'font-size':'11.5','font-weight':'700',fill:c}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }else{
+      var bw=(W-60)/labels.length,base=205;
+      svg.appendChild(at(ns('line'),{x1:44,y1:base,x2:W-6,y2:base,stroke:'#e2e4ec','stroke-width':1.5}));
+      labels.forEach(function(lb,i){
+        var h=Math.max(2,(vals[i]/max)*168),x=52+i*bw,c=PAL[i%PAL.length];
+        var r=at(ns('rect'),{x:x,y:base-h,width:bw*.6,height:h,rx:5,fill:c,class:'fq-bar'});
+        svg.appendChild(r);
+        svg.appendChild(txt(x+bw*.3,base-h-7,vals[i]+unit,{'font-size':'11','font-weight':'700',fill:c,'text-anchor':'middle'}));
+        svg.appendChild(txt(x+bw*.3,base+17,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));
+        bind(r,'<b>'+esc(lb)+'</b>'+esc(vals[i]+unit)+(notes[i]?'<br>'+esc(notes[i]):''));
+      });
+    }
+    return svg;
+  }
+
+  /* ---------- grafico de linhas multi-serie ---------- */
+  function line(box){
+    var xs=split(box.dataset.x),
+        series=JSON.parse(box.dataset.series),
+        unit=box.dataset.unit||'',logY=box.dataset.scale==='log',
+        W=760,H=260,L=52,R=14,T=14,B=38,
+        all=series.reduce(function(a,s){return a.concat(s.values);},[]),
+        mx=Math.max.apply(null,all),mn=logY?Math.max(0.0001,Math.min.apply(null,all)):0,
+        svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    function px(i){return L+i*((W-L-R)/Math.max(1,xs.length-1));}
+    function py(v){
+      var f=logY?(Math.log(Math.max(v,mn))-Math.log(mn))/(Math.log(mx)-Math.log(mn)):v/mx;
+      return H-B-f*(H-B-T);
+    }
+    for(var g=0;g<=4;g++){
+      var y=T+g*((H-B-T)/4);
+      svg.appendChild(at(ns('line'),{x1:L,y1:y,x2:W-R,y2:y,stroke:'#eef0f5','stroke-width':1}));
+    }
+    xs.forEach(function(lb,i){svg.appendChild(txt(px(i),H-B+19,lb,{'font-size':'11',fill:'#4e4e68','text-anchor':'middle'}));});
+    series.forEach(function(s,k){
+      var c=s.color||PAL[k%PAL.length],d='';
+      s.values.forEach(function(v,i){d+=(i?' L ':'M ')+px(i).toFixed(1)+' '+py(v).toFixed(1);});
+      var path=at(ns('path'),{d:d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-linejoin':'round','data-key':s.name});
+      svg.appendChild(path);
+      s.values.forEach(function(v,i){
+        var dot=at(ns('circle'),{cx:px(i),cy:py(v),r:5,fill:c,class:'fq-dot','data-key':s.name});
+        svg.appendChild(dot);
+        bind(dot,'<b>'+esc(s.name)+'</b>'+esc(xs[i])+': '+esc(v+unit)+(s.notes&&s.notes[i]?'<br>'+esc(s.notes[i]):''));
+      });
+    });
+    return svg;
+  }
+
+  /* ---------- barra empilhada 100% ---------- */
+  function stack(box){
+    var segs=JSON.parse(box.dataset.segments),W=760,H=64,
+        tot=segs.reduce(function(a,s){return a+s.value;},0),x=0,svg=ns('svg');
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':box.dataset.title||'gráfico'});
+    segs.forEach(function(s,k){
+      var w=(s.value/tot)*W,c=s.color||PAL[k%PAL.length];
+      var r=at(ns('rect'),{x:x,y:8,width:Math.max(1,w-2),height:30,rx:4,fill:c,class:'fq-seg'});
+      svg.appendChild(r);
+      if(w>54)svg.appendChild(txt(x+w/2,28,Math.round(s.value/tot*100)+'%',
+        {'font-size':'12','font-weight':'800',fill:'#fff','text-anchor':'middle'}));
+      svg.appendChild(txt(x+2,54,s.name,{'font-size':'10.5',fill:'#4e4e68'}));
+      bind(r,'<b>'+esc(s.name)+'</b>'+esc(s.value)+' ('+Math.round(s.value/tot*100)+'%)'+(s.note?'<br>'+esc(s.note):''));
+      x+=w;
+    });
+    return svg;
+  }
+
+  /* ---------- softmax com slider de temperatura ---------- */
+  function soft(box){
+    var labels=split(box.dataset.labels),logits=nums(box.dataset.logits),
+        T=parseFloat(box.dataset.temp||'1'),W=760,rowH=30,H=labels.length*rowH+10,
+        svg=ns('svg'),bars=[],pcts=[],lw=190;
+    at(svg,{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'distribuição de probabilidade'});
+    labels.forEach(function(lb,i){
+      var y=i*rowH+6,c=i===0?'#ED145B':(i<3?'#7C60C6':'#94a3b8');
+      svg.appendChild(txt(lw-10,y+18,lb,{'font-size':'12','font-weight':'600',fill:'#1a1b2f','text-anchor':'end'}));
+      var r=at(ns('rect'),{x:lw,y:y+5,width:1,height:17,rx:4,fill:c,class:'fq-bar'});
+      svg.appendChild(r);bars.push(r);
+      var p=txt(lw+8,y+18,'',{'font-size':'11.5','font-weight':'700',fill:c});
+      svg.appendChild(p);pcts.push(p);
+    });
+    function draw(t){
+      var e=logits.map(function(l){return Math.exp(l/t);}),
+          s=e.reduce(function(a,b){return a+b;},0),max=Math.max.apply(null,e)/s;
+      e.forEach(function(v,i){
+        var pr=v/s,w=Math.max(2,(pr/max)*(W-lw-72));
+        bars[i].setAttribute('width',w);
+        pcts[i].setAttribute('x',lw+w+9);
+        pcts[i].textContent=(pr*100).toFixed(1)+'%';
+        bars[i].__tip='<b>'+esc(labels[i])+'</b>logit '+logits[i].toFixed(1)+
+          ' · probabilidade '+(pr*100).toFixed(1)+'% com temperatura '+t.toFixed(2);
+      });
+    }
+    bars.forEach(function(r){
+      r.addEventListener('mouseenter',function(e){showTip(e,r.__tip);});
+      r.addEventListener('mousemove',moveTip);
+      r.addEventListener('mouseleave',hideTip);
+      r.addEventListener('click',function(e){showTip(e,r.__tip);});
+    });
+    var ctrl=document.createElement('div');ctrl.className='ctrl';
+    ctrl.innerHTML='<label>Temperatura</label>'+
+      '<input type="range" min="0.05" max="2" step="0.05" value="'+T+'"><output>'+T.toFixed(2)+'</output>';
+    var rg=ctrl.querySelector('input'),ou=ctrl.querySelector('output');
+    rg.addEventListener('input',function(){var v=parseFloat(rg.value);ou.textContent=v.toFixed(2);draw(v);});
+    box.appendChild(ctrl);
+    setTimeout(function(){draw(T);},0);
+    return svg;
+  }
+
+  var KIND={bar:bar,line:line,stack:stack,soft:soft};
+
+  document.querySelectorAll('.chart[data-chart]').forEach(function(box){
+    var fn=KIND[box.dataset.chart];if(!fn)return;
+    var svg;try{svg=fn(box);}catch(e){return;}
+    box.insertBefore(svg,box.querySelector('.chart-legend,.ctrl'));
+    /* legenda clicavel liga/desliga serie */
+    box.querySelectorAll('.chart-key[data-key]').forEach(function(key){
+      key.addEventListener('click',function(){
+        key.classList.toggle('off');
+        var off=key.classList.contains('off');
+        svg.querySelectorAll('[data-key="'+key.dataset.key+'"]').forEach(function(el){
+          el.style.display=off?'none':'';
+        });
+      });
+    });
+    if(!box.querySelector('.chart-hint')){
+      var h=document.createElement('div');h.className='chart-hint';
+      h.textContent='Passe o mouse (ou toque) sobre os elementos do gráfico para ver os detalhes.';
+      box.appendChild(h);
+    }
+  });
+
+  /* ---------- hotspots em diagramas SVG ---------- */
+  document.querySelectorAll('.diagram').forEach(function(dg){
+    var spots=dg.querySelectorAll('[data-info]');if(!spots.length)return;
+    var panel=dg.querySelector('.diagram-info');
+    if(!panel){panel=document.createElement('div');panel.className='diagram-info';
+      panel.innerHTML='<b>Diagrama interativo</b>Clique em qualquer bloco para ver a explicação detalhada.';
+      dg.appendChild(panel);}
+    var base=panel.innerHTML;
+    spots.forEach(function(s){
+      var title=s.getAttribute('data-title')||'Detalhe';
+      function open(){
+        spots.forEach(function(o){o.style.strokeWidth='';});
+        s.style.strokeWidth='4';
+        panel.innerHTML='<b>'+esc(title)+'</b>'+s.getAttribute('data-info');
+      }
+      s.addEventListener('click',open);
+      s.addEventListener('mouseenter',open);
+    });
+    dg.addEventListener('mouseleave',function(){
+      spots.forEach(function(o){o.style.strokeWidth='';});panel.innerHTML=base;
+    });
+  });
+
+  /* ---------- abas ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('.tab'),panels=group.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        tabs.forEach(function(o){o.classList.remove('on');});
+        panels.forEach(function(o){o.classList.remove('on');});
+        t.classList.add('on');if(panels[i])panels[i].classList.add('on');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
