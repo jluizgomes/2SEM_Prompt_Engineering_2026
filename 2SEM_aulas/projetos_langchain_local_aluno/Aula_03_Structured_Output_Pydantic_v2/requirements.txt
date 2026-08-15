@@ -1,7 +1,0 @@
-# Dependências do projeto — Structured Output com Pydantic v2
-# Instale com:  pip install -r requirements.txt
-
-langchain
-langchain-ollama
-pydantic
-python-dotenv

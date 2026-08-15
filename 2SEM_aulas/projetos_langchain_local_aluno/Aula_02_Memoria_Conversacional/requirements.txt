@@ -1,7 +1,0 @@
-# Dependências do projeto — Memória Conversacional (Buffer, Summary, TokenBuffer)
-# Instale com:  pip install -r requirements.txt
-
-langchain
-langchain-ollama
-langchain-classic
-python-dotenv

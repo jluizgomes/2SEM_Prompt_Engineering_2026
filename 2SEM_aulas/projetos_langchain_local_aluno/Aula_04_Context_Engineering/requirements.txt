@@ -1,7 +1,0 @@
-# Dependências do projeto — Context Engineering
-# Instale com:  pip install -r requirements.txt
-
-langchain
-langchain-ollama
-tiktoken
-python-dotenv

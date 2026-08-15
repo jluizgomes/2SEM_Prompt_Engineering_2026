@@ -219,3 +219,9 @@ __marimo__/
 
 # PDF files (too large for GitHub, kept locally only)
 *.pdf
+
+Ebooks/
+
+aulas/projetos_langchain_local/
+aulas/Checkpoints/
+aulas/fichas_professor_2SEM/
