@@ -37,10 +37,10 @@ Opcional: coloque um PDF em ./data/ para indexar. Sem PDF, usa texto de exemplo 
 ## Usar Ollama LOCAL (gratuito, FIAP AI Lab)
 
 Por padrão o projeto usa o Ollama Cloud (`https://ollama.com`). Para usar o
-Ollama local do Docker (modelo `qwen3.5:0.8b`, sem custo):
+Ollama local do Docker (modelo `gpt-oss:120b`, sem custo):
 
 1. No `.env`, comente as linhas `OLLAMA_HOST`/`OLLAMA_API_KEY` atuais e descomente as alternativas;
-2. Ajuste `OLLAMA_MODEL` para `qwen3.5:0.8b`;
+2. Ajuste `OLLAMA_MODEL` para `gpt-oss:120b`;
 3. Suba o lab: `cd ../../fiap-ai-lab-complete && make up` (ou `make up-minimum`).
 
 ---

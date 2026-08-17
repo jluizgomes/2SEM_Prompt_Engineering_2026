@@ -33,7 +33,7 @@ Cada pasta é o "projetinho completo" da aula correspondente: tem `.env`,
 - **Configuração:** variáveis de ambiente lidas do `.env` via `python-dotenv`
   (`OLLAMA_HOST`, `OLLAMA_API_KEY`, `OLLAMA_MODEL` e, nas aulas de RAG, `EMBEDDING_MODEL`).
 - **Ollama local (gratuito):** troque no `.env` para `http://localhost:11434`
-  e `qwen3.5:0.8b` (instruções em cada `README.md`).
+  e `gpt-oss:120b` (instruções em cada `README.md`).
 - **Custo zero de API:** a alternativa local usa o Docker do
   [`fiap-ai-lab-complete`](../fiap-ai-lab-complete/README.md).
 
