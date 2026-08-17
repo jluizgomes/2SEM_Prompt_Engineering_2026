@@ -1,8 +1,0 @@
-# Dependências do projeto — Router Chain e Grafo de Estado
-# Instale com:  pip install -r requirements.txt
-
-langchain
-langchain-ollama
-langchain-chroma
-pydantic
-python-dotenv
