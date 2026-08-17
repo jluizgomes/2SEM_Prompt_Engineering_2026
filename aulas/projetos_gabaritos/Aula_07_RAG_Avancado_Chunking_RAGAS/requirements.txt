@@ -1,0 +1,13 @@
+# Dependências do projeto — RAG Avançado: Chunking e RAGAS
+# Instale com:  pip install -r requirements.txt
+
+langchain
+langchain-community
+langchain-ollama
+pymupdf
+chromadb
+ragas
+datasets
+langchain-experimental
+langchain-text-splitters
+python-dotenv

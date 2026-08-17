@@ -1,0 +1,11 @@
+# Dependências do projeto — Integradora: Agente + RAG + Gradio
+# Instale com:  pip install -r requirements.txt
+
+langchain
+langchain-ollama
+langchain-community
+langchain-chroma
+duckduckgo-search
+gradio
+tiktoken
+python-dotenv
