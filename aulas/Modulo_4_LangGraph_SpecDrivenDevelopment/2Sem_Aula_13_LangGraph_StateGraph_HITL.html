@@ -145,6 +145,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -172,7 +174,7 @@
     <div class="cover-meta-item">StateGraph · MemorySaver · HITL · draw_mermaid</div>
     <div class="cover-meta-item">Andaime 60%</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -190,7 +192,7 @@
     <div class="callout-body">Implementar em codigo o modelo mental de grafo da Aula 12. Entender como StateGraph, conditional edges, MemorySaver e HITL se encaixam. Construir um agente pesquisador com loop de avaliacao de qualidade e visualizar o grafo com draw_mermaid().</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -231,7 +233,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -239,7 +241,7 @@
   <div class="section-number">01</div>
   <div class="section-title">Do diagrama ao codigo</div>
   <div class="section-desc">Cada elemento do diagrama mental da Aula 12 tem um equivalente direto na API LangGraph. Estado, nodes, arestas fixas, arestas condicionais, START e END.</div>
-  <div class="slide-number">04 / 29</div>
+  <div class="slide-number">4 / 29</div>
 </div>
 
 
@@ -261,7 +263,7 @@
     <div class="callout-body">O grafo compilado e um Runnable LangChain. Voce pode chamar com app.invoke(), fazer streaming com app.stream() e conectar ao Gradio da Aula 08. LangGraph nao substitui nada — adiciona estrutura ao que ja existe.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -269,7 +271,7 @@
   <div class="section-number">02</div>
   <div class="section-title">StateGraph em codigo</div>
   <div class="section-desc">TypedDict define o contrato do estado. add_node() e add_edge() constroem o grafo. compile() valida e retorna um Runnable.</div>
-  <div class="slide-number">06 / 29</div>
+  <div class="slide-number">6 / 29</div>
 </div>
 
 
@@ -289,7 +291,7 @@
 
 <span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
 <span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
-<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
 
 <span class="cm"># 1. Definir o Estado com TypedDict</span>
 <span class="kw">class</span> <span class="fn">Estado</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
@@ -321,7 +323,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">7 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -329,7 +331,7 @@
   <div class="section-number">03</div>
   <div class="section-title">add_conditional_edges()</div>
   <div class="section-desc">O ponto onde o grafo decide o proximo passo. Uma funcao le o estado e retorna uma string; o dict de mapeamento traduz para o nome do proximo no.</div>
-  <div class="slide-number">08 / 29</div>
+  <div class="slide-number">8 / 29</div>
 </div>
 
 
@@ -380,7 +382,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -613,131 +615,6 @@
 </div>
 
 
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
-  <div class="section-number">07</div>
-  <div class="section-title">Lab — Notebook Aluno<br>(25 min)</div>
-  <div class="section-desc">60% de lacunas — construir o grafo pesquisador para o dominio do grupo. Minimo: 3 nodes + 1 conditional edge + draw_mermaid() mostrando o loop.</div>
-  <div class="slide-number">17 / 29</div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Notebook Aluno — 60% de lacunas</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_13_2Sem_Aluno.ipynb</span></div>
-    <div class="code-body"><pre><span class="op">!</span>pip install langgraph langchain-ollama langchain-community duckduckgo-search <span class="op">-</span>q
-
-<span class="kw">from</span> <span class="va">langgraph.graph</span> <span class="kw">import</span> <span class="va">StateGraph</span><span class="op">,</span> <span class="va">START</span><span class="op">,</span> <span class="va">END</span>
-<span class="kw">from</span> <span class="va">langgraph.graph.message</span> <span class="kw">import</span> <span class="va">add_messages</span>
-<span class="kw">from</span> <span class="va">langgraph.checkpoint.memory</span> <span class="kw">import</span> <span class="va">MemorySaver</span>
-<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">TypedDict</span><span class="op">,</span> <span class="va">Annotated</span>
-<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
-<span class="kw">from</span> <span class="va">langchain_core.messages</span> <span class="kw">import</span> <span class="va">HumanMessage</span>
-<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
-<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
-<span class="kw">from</span> <span class="va">langchain_community.tools</span> <span class="kw">import</span> <span class="va">DuckDuckGoSearchRun</span>
-<span class="kw">from</span> <span class="va">IPython.display</span> <span class="kw">import</span> <span class="va">Image</span><span class="op">,</span> <span class="va">display</span>
-<span class="kw">import</span> <span class="va">os</span>
-<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span><span class="op">=</span><span class="st">"https://ollama.com"</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span><span class="op">=</span><span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
-<span class="va">llm</span><span class="op">=</span><span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span><span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
-
-<span class="cm"># LACUNA 1: Estado com TypedDict</span>
-<span class="kw">class</span> <span class="fn">Estado</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
-    <span class="va">mensagens</span><span class="op">:</span> <span class="va">Annotated</span><span class="op">[</span><span class="nb">list</span><span class="op">,</span> <span class="gap">___</span><span class="op">]</span>  <span class="cm"># usar add_messages</span>
-    <span class="va">resultados_busca</span><span class="op">:</span> <span class="nb">str</span>
-    <span class="va">qualidade</span><span class="op">:</span> <span class="gap">___</span>  <span class="cm"># float</span>
-    <span class="va">iteracoes</span><span class="op">:</span> <span class="gap">___</span>  <span class="cm"># int</span>
-
-<span class="kw">class</span> <span class="fn">Qualidade</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
-    <span class="va">score</span><span class="op">:</span><span class="nb">float</span><span class="op">;</span> <span class="va">suficiente</span><span class="op">:</span><span class="nb">bool</span>
-
-<span class="cm"># LACUNA 2: node_buscar</span>
-<span class="kw">def</span> <span class="fn">node_buscar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>
-    <span class="va">bruto</span><span class="op">=</span><span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="gap">___</span><span class="op">)</span>  <span class="cm"># query = mensagens[0].content</span>
-    <span class="kw">return</span> <span class="op">{</span><span class="st">"resultados_busca"</span><span class="op">:</span><span class="va">bruto</span><span class="op">[:</span><span class="num">1500</span><span class="op">],</span><span class="st">"iteracoes"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span><span class="op">+</span><span class="num">1</span><span class="op">}</span>
-
-<span class="kw">def</span> <span class="fn">node_avaliar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>  <span class="cm"># PRONTO</span>
-    <span class="va">q</span><span class="op">=</span><span class="op">(</span><span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"P:{p}\nR:{r}\nScore:"</span><span class="op">)</span>
-       <span class="op">|</span><span class="va">llm</span><span class="op">.</span><span class="fn">with_structured_output</span><span class="op">(</span><span class="va">Qualidade</span><span class="op">)).</span><span class="fn">invoke</span><span class="op">(</span>
-        <span class="op">{</span><span class="st">"p"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">][</span><span class="num">0</span><span class="op">].</span><span class="va">content</span><span class="op">,</span><span class="st">"r"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"resultados_busca"</span><span class="op">]}</span><span class="op">)</span>
-    <span class="kw">return</span> <span class="op">{</span><span class="st">"qualidade"</span><span class="op">:</span><span class="va">q</span><span class="op">.</span><span class="va">score</span><span class="op">}</span>
-
-<span class="cm"># LACUNA 3: node_responder</span>
-<span class="kw">def</span> <span class="fn">node_responder</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>
-    <span class="va">resp</span><span class="op">=</span><span class="va">llm</span><span class="op">.</span><span class="fn">invoke</span><span class="op">([</span><span class="va">HumanMessage</span><span class="op">(</span>
-        <span class="st">f"P:{state['mensagens'][0].content}\nFonte:{state[</span><span class="gap">___</span><span class="st">]}"</span>
-    <span class="op">)])</span>
-    <span class="kw">return</span> <span class="op">{</span><span class="st">"mensagens"</span><span class="op">:[</span><span class="va">resp</span><span class="op">]}</span>
-
-<span class="cm"># LACUNA 4: decidir_continuar (threshold 0.7, MAX 3)</span>
-<span class="kw">def</span> <span class="fn">decidir_continuar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">str</span><span class="op">:</span>
-    <span class="kw">if</span> <span class="va">state</span><span class="op">[</span><span class="st">"qualidade"</span><span class="op">]</span><span class="op">&gt;=</span><span class="gap">___</span> <span class="kw">or</span> <span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span><span class="op">&gt;=</span><span class="gap">___</span><span class="op">:</span>
-        <span class="kw">return</span> <span class="gap">___</span>  <span class="cm"># "responder"</span>
-    <span class="kw">return</span> <span class="gap">___</span>      <span class="cm"># "buscar"</span>
-
-<span class="cm"># LACUNA 5: montar grafo</span>
-<span class="va">builder</span><span class="op">=</span><span class="va">StateGraph</span><span class="op">(</span><span class="va">Estado</span><span class="op">)</span>
-<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="gap">___</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="gap">___</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="gap">___</span><span class="op">)</span>
-<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="va">START</span><span class="op">,</span><span class="st">"buscar"</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="gap">___</span><span class="op">)</span>  <span class="cm"># → avaliar</span>
-<span class="va">builder</span><span class="op">.</span><span class="fn">add_conditional_edges</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="gap">___</span><span class="op">,</span><span class="op">{</span><span class="st">"buscar"</span><span class="op">:</span><span class="st">"buscar"</span><span class="op">,</span><span class="st">"responder"</span><span class="op">:</span><span class="st">"responder"</span><span class="op">})</span>
-<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="va">END</span><span class="op">)</span>
-<span class="va">pesquisador</span><span class="op">=</span><span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">(</span><span class="va">checkpointer</span><span class="op">=</span><span class="va">MemorySaver</span><span class="op">())</span>
-<span class="kw">try</span><span class="op">:</span> <span class="fn">display</span><span class="op">(</span><span class="va">Image</span><span class="op">(</span><span class="va">pesquisador</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid_png</span><span class="op">()))</span>
-<span class="kw">except</span><span class="op">:</span> <span class="nb">print</span><span class="op">(</span><span class="va">pesquisador</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid</span><span class="op">())</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Sintese da Aula 13</h2>
-  <div style="display:flex;flex-direction:column;gap:9px;margin:14px 0">
-    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:20px;flex-shrink:0">✓</div>
-      <div style="font-size:14px"><strong>StateGraph = TypedDict + Nodes + Edges.</strong> O estado e o dict compartilhado; nodes retornam apenas o que mudou; compile() valida e retorna Runnable.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:20px;flex-shrink:0">✓</div>
-      <div style="font-size:14px"><strong>add_conditional_edges() torna a decisao explicita e visivel.</strong> A funcao de roteamento le o estado; o dict mapeia o retorno para o proximo no. draw_mermaid() mostra o grafo incluindo loops.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:20px;flex-shrink:0">✓</div>
-      <div style="font-size:14px"><strong>MemorySaver habilita estado persistente por thread_id.</strong> Multiplas sessoes paralelas sem interferencia. get_state() inspeciona o estado salvo a qualquer momento.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:20px;flex-shrink:0">✓</div>
-      <div style="font-size:14px"><strong>HITL com interrupt_before</strong> pausa antes de acoes irreversiveis. invoke(None) retoma; update_state() permite editar antes de continuar.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:12px 18px;background:rgba(213,140,46,.06);border:2px solid rgba(213,140,46,.2);border-radius:10px;align-items:flex-start">
-      <div style="font-size:20px;flex-shrink:0">→</div>
-      <div style="font-size:14px"><strong>Aula 14 — Encerramento:</strong> tendencias 2026, LangGraph Platform, proximos passos na carreira e retrospectiva do semestre.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Perguntas frequentes</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"Por que Annotated[list, add_messages] em vez de list simples?"</strong></td><td>Com list simples, cada update de node substitui a lista inteira, perdendo o historico. Annotated[list, add_messages] usa um reducer que acumula: quando um node retorna {"mensagens": [nova_msg]}, o LangGraph faz merge, adicionando a lista existente. Campos sem reducer (int, str, float) sao sempre substituidos pelo ultimo update.</td></tr>
-      <tr><td><strong>"MemorySaver em producao e seguro?"</strong></td><td>Nao — MemorySaver e in-memory e perde tudo ao reiniciar. Para producao usar SqliteSaver (arquivo local) ou PostgresSaver (banco de dados). A API e identica — so troca o checkpointer no compile(). Para CKP e demos, MemorySaver e suficiente.</td></tr>
-      <tr><td><strong>"draw_mermaid_png() deu erro no Colab — como resolver?"</strong></td><td>Requer playwright: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">!pip install playwright &amp;&amp; playwright install chromium</code>. Alternativa sem instalacao: usar draw_mermaid() e colar o output em mermaid.live. Renderiza online instantaneamente.</td></tr>
-      <tr><td><strong>"O grafo pode ter multiplos interrupt_before?"</strong></td><td>Sim — interrupt_before=["no_A", "no_B"] pausa antes de qualquer um dos dois. Tambem existe interrupt_after — pausa depois do no (o no executa, mas o proximo fica suspenso). Para pipelines com multiplos checkpoints de aprovacao, usar lista de nos.</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
 <div class="slide slide-content"><div class="slide-body">
   <h2>Python novo desta aula</h2>
   <div class="code-block">
@@ -772,7 +649,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -796,7 +673,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -826,7 +703,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -856,7 +733,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -864,7 +741,7 @@
   <div class="section-number">06</div>
   <div class="section-title">Demo — Agente pesquisador<br>com loop condicional</div>
   <div class="section-desc">buscar → avaliar qualidade → decidir: buscar mais (loop) ou responder (END). Maximo 3 iteracoes. O loop aparece no draw_mermaid().</div>
-  <div class="slide-number">25 / 29</div>
+  <div class="slide-number">21 / 29</div>
 </div>
 
 
@@ -924,7 +801,87 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">07</div>
+  <div class="section-title">Lab — Notebook Aluno<br>(25 min)</div>
+  <div class="section-desc">60% de lacunas — construir o grafo pesquisador para o dominio do grupo. Minimo: 3 nodes + 1 conditional edge + draw_mermaid() mostrando o loop.</div>
+  <div class="slide-number">23 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Notebook Aluno — 60% de lacunas</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_13_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langgraph langchain-ollama langchain-community duckduckgo-search <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langgraph.graph</span> <span class="kw">import</span> <span class="va">StateGraph</span><span class="op">,</span> <span class="va">START</span><span class="op">,</span> <span class="va">END</span>
+<span class="kw">from</span> <span class="va">langgraph.graph.message</span> <span class="kw">import</span> <span class="va">add_messages</span>
+<span class="kw">from</span> <span class="va">langgraph.checkpoint.memory</span> <span class="kw">import</span> <span class="va">MemorySaver</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">TypedDict</span><span class="op">,</span> <span class="va">Annotated</span>
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
+<span class="kw">from</span> <span class="va">langchain_core.messages</span> <span class="kw">import</span> <span class="va">HumanMessage</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_community.tools</span> <span class="kw">import</span> <span class="va">DuckDuckGoSearchRun</span>
+<span class="kw">from</span> <span class="va">IPython.display</span> <span class="kw">import</span> <span class="va">Image</span><span class="op">,</span> <span class="va">display</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span><span class="op">=</span><span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span><span class="op">=</span><span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+<span class="va">llm</span><span class="op">=</span><span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span><span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+
+<span class="cm"># LACUNA 1: Estado com TypedDict</span>
+<span class="kw">class</span> <span class="fn">Estado</span><span class="op">(</span><span class="va">TypedDict</span><span class="op">):</span>
+    <span class="va">mensagens</span><span class="op">:</span> <span class="va">Annotated</span><span class="op">[</span><span class="nb">list</span><span class="op">,</span> <span class="gap">___</span><span class="op">]</span>  <span class="cm"># usar add_messages</span>
+    <span class="va">resultados_busca</span><span class="op">:</span> <span class="nb">str</span>
+    <span class="va">qualidade</span><span class="op">:</span> <span class="gap">___</span>  <span class="cm"># float</span>
+    <span class="va">iteracoes</span><span class="op">:</span> <span class="gap">___</span>  <span class="cm"># int</span>
+
+<span class="kw">class</span> <span class="fn">Qualidade</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">score</span><span class="op">:</span><span class="nb">float</span><span class="op">;</span> <span class="va">suficiente</span><span class="op">:</span><span class="nb">bool</span>
+
+<span class="cm"># LACUNA 2: node_buscar</span>
+<span class="kw">def</span> <span class="fn">node_buscar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>
+    <span class="va">bruto</span><span class="op">=</span><span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="gap">___</span><span class="op">)</span>  <span class="cm"># query = mensagens[0].content</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"resultados_busca"</span><span class="op">:</span><span class="va">bruto</span><span class="op">[:</span><span class="num">1500</span><span class="op">],</span><span class="st">"iteracoes"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span><span class="op">+</span><span class="num">1</span><span class="op">}</span>
+
+<span class="kw">def</span> <span class="fn">node_avaliar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>  <span class="cm"># PRONTO</span>
+    <span class="va">q</span><span class="op">=</span><span class="op">(</span><span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"P:{p}\nR:{r}\nScore:"</span><span class="op">)</span>
+       <span class="op">|</span><span class="va">llm</span><span class="op">.</span><span class="fn">with_structured_output</span><span class="op">(</span><span class="va">Qualidade</span><span class="op">)).</span><span class="fn">invoke</span><span class="op">(</span>
+        <span class="op">{</span><span class="st">"p"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"mensagens"</span><span class="op">][</span><span class="num">0</span><span class="op">].</span><span class="va">content</span><span class="op">,</span><span class="st">"r"</span><span class="op">:</span><span class="va">state</span><span class="op">[</span><span class="st">"resultados_busca"</span><span class="op">]}</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"qualidade"</span><span class="op">:</span><span class="va">q</span><span class="op">.</span><span class="va">score</span><span class="op">}</span>
+
+<span class="cm"># LACUNA 3: node_responder</span>
+<span class="kw">def</span> <span class="fn">node_responder</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">dict</span><span class="op">:</span>
+    <span class="va">resp</span><span class="op">=</span><span class="va">llm</span><span class="op">.</span><span class="fn">invoke</span><span class="op">([</span><span class="va">HumanMessage</span><span class="op">(</span>
+        <span class="st">f"P:{state['mensagens'][0].content}\nFonte:{state[</span><span class="gap">___</span><span class="st">]}"</span>
+    <span class="op">)])</span>
+    <span class="kw">return</span> <span class="op">{</span><span class="st">"mensagens"</span><span class="op">:[</span><span class="va">resp</span><span class="op">]}</span>
+
+<span class="cm"># LACUNA 4: decidir_continuar (threshold 0.7, MAX 3)</span>
+<span class="kw">def</span> <span class="fn">decidir_continuar</span><span class="op">(</span><span class="va">state</span><span class="op">:</span><span class="va">Estado</span><span class="op">)-&gt;</span><span class="nb">str</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="va">state</span><span class="op">[</span><span class="st">"qualidade"</span><span class="op">]</span><span class="op">&gt;=</span><span class="gap">___</span> <span class="kw">or</span> <span class="va">state</span><span class="op">[</span><span class="st">"iteracoes"</span><span class="op">]</span><span class="op">&gt;=</span><span class="gap">___</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="gap">___</span>  <span class="cm"># "responder"</span>
+    <span class="kw">return</span> <span class="gap">___</span>      <span class="cm"># "buscar"</span>
+
+<span class="cm"># LACUNA 5: montar grafo</span>
+<span class="va">builder</span><span class="op">=</span><span class="va">StateGraph</span><span class="op">(</span><span class="va">Estado</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="gap">___</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="gap">___</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_node</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="gap">___</span><span class="op">)</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="va">START</span><span class="op">,</span><span class="st">"buscar"</span><span class="op">);</span><span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"buscar"</span><span class="op">,</span><span class="gap">___</span><span class="op">)</span>  <span class="cm"># → avaliar</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_conditional_edges</span><span class="op">(</span><span class="st">"avaliar"</span><span class="op">,</span><span class="gap">___</span><span class="op">,</span><span class="op">{</span><span class="st">"buscar"</span><span class="op">:</span><span class="st">"buscar"</span><span class="op">,</span><span class="st">"responder"</span><span class="op">:</span><span class="st">"responder"</span><span class="op">})</span>
+<span class="va">builder</span><span class="op">.</span><span class="fn">add_edge</span><span class="op">(</span><span class="st">"responder"</span><span class="op">,</span><span class="va">END</span><span class="op">)</span>
+<span class="va">pesquisador</span><span class="op">=</span><span class="va">builder</span><span class="op">.</span><span class="fn">compile</span><span class="op">(</span><span class="va">checkpointer</span><span class="op">=</span><span class="va">MemorySaver</span><span class="op">())</span>
+<span class="kw">try</span><span class="op">:</span> <span class="fn">display</span><span class="op">(</span><span class="va">Image</span><span class="op">(</span><span class="va">pesquisador</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid_png</span><span class="op">()))</span>
+<span class="kw">except</span><span class="op">:</span> <span class="nb">print</span><span class="op">(</span><span class="va">pesquisador</span><span class="op">.</span><span class="fn">get_graph</span><span class="op">().</span><span class="fn">draw_mermaid</span><span class="op">())</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -953,6 +910,51 @@
       <strong>Desafio — HITL no pesquisador:</strong> adicionar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">interrupt_before=["responder"]</code> para que o humano aprove antes da resposta final. Testar: o grafo pausa? get_state() mostra o no suspenso? invoke(None) retoma?
     </div>
   </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Sintese da Aula 13</h2>
+  <div style="display:flex;flex-direction:column;gap:9px;margin:14px 0">
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>StateGraph = TypedDict + Nodes + Edges.</strong> O estado e o dict compartilhado; nodes retornam apenas o que mudou; compile() valida e retorna Runnable.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>add_conditional_edges() torna a decisao explicita e visivel.</strong> A funcao de roteamento le o estado; o dict mapeia o retorno para o proximo no. draw_mermaid() mostra o grafo incluindo loops.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>MemorySaver habilita estado persistente por thread_id.</strong> Multiplas sessoes paralelas sem interferencia. get_state() inspeciona o estado salvo a qualquer momento.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">✓</div>
+      <div style="font-size:14px"><strong>HITL com interrupt_before</strong> pausa antes de acoes irreversiveis. invoke(None) retoma; update_state() permite editar antes de continuar.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:12px 18px;background:rgba(213,140,46,.06);border:2px solid rgba(213,140,46,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">→</div>
+      <div style="font-size:14px"><strong>Aula 14 — Encerramento:</strong> tendencias 2026, LangGraph Platform, proximos passos na carreira e retrospectiva do semestre.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Por que Annotated[list, add_messages] em vez de list simples?"</strong></td><td>Com list simples, cada update de node substitui a lista inteira, perdendo o historico. Annotated[list, add_messages] usa um reducer que acumula: quando um node retorna {"mensagens": [nova_msg]}, o LangGraph faz merge, adicionando a lista existente. Campos sem reducer (int, str, float) sao sempre substituidos pelo ultimo update.</td></tr>
+      <tr><td><strong>"MemorySaver em producao e seguro?"</strong></td><td>Nao — MemorySaver e in-memory e perde tudo ao reiniciar. Para producao usar SqliteSaver (arquivo local) ou PostgresSaver (banco de dados). A API e identica — so troca o checkpointer no compile(). Para CKP e demos, MemorySaver e suficiente.</td></tr>
+      <tr><td><strong>"draw_mermaid_png() deu erro no Colab — como resolver?"</strong></td><td>Requer playwright: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">!pip install playwright &amp;&amp; playwright install chromium</code>. Alternativa sem instalacao: usar draw_mermaid() e colar o output em mermaid.live. Renderiza online instantaneamente.</td></tr>
+      <tr><td><strong>"O grafo pode ter multiplos interrupt_before?"</strong></td><td>Sim — interrupt_before=["no_A", "no_B"] pausa antes de qualquer um dos dois. Tambem existe interrupt_after — pausa depois do no (o no executa, mas o proximo fica suspenso). Para pipelines com multiplos checkpoints de aprovacao, usar lista de nos.</td></tr>
+    </tbody>
+  </table>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

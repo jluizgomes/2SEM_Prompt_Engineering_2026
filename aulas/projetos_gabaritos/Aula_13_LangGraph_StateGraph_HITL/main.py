@@ -12,6 +12,7 @@ Como rodar:
     3. python main.py
 """
 import os
+import uuid
 from typing import Annotated, TypedDict
 
 from dotenv import load_dotenv
@@ -49,7 +50,7 @@ busca_web = DuckDuckGoSearchRun(name="busca_na_web",
 # 1. Estado — o que circula entre os nós do grafo
 # ─────────────────────────────────────────────────────────────
 class Estado(TypedDict):
-    mensagens: Annotated[list, add_messages]   # add_messages ACUMULA (não substitui)
+    mensagens: Annotated[list, add_messages]
     resultados_busca: str
 
 
@@ -79,42 +80,97 @@ def decidir_continuar(estado: Estado) -> str:
     return END
 
 
-def main() -> None:
-    print(f"Ollama Cloud | modelo: {OLLAMA_MODEL}\n")
+def mapa_decisao() -> dict[str, str]:
+    return {"responder": "responder", END: END}
 
-    # ─────────────────────────────────────────────────────────
-    # 3. Montar o grafo
-    # ─────────────────────────────────────────────────────────
+
+def criar_grafo(checkpointer: MemorySaver | None = None):
     builder = StateGraph(Estado)
     builder.add_node("buscar", node_buscar)
     builder.add_node("responder", node_responder)
     builder.add_edge(START, "buscar")
-    builder.add_conditional_edges("buscar", decidir_continuar, {"responder": "responder"})
+    builder.add_conditional_edges("buscar", decidir_continuar, mapa_decisao())
     builder.add_edge("responder", END)
+    return builder.compile(
+        checkpointer=checkpointer or MemorySaver(),
+        interrupt_before=["responder"],
+    )
 
-    # HITL: pausa ANTES de "responder" para inspeção/aprovação humana
-    checkpointer = MemorySaver()
-    grafo = builder.compile(checkpointer=checkpointer, interrupt_before=["responder"])
 
+def configuracao_thread(thread_id: str | None = None, prefixo: str = "requisicao"):
+    identificador = (thread_id or "").strip() or f"{prefixo}-{uuid.uuid4()}"
+    return identificador, {"configurable": {"thread_id": identificador}}
+
+
+def aguardando_revisao(estado) -> bool:
+    return tuple(estado.next or ()) == ("responder",)
+
+
+class AprovacaoInvalida(RuntimeError):
+    pass
+
+
+def resposta_revisao(estado, thread_id: str) -> dict:
+    if not aguardando_revisao(estado):
+        raise AprovacaoInvalida("O grafo não está pausado antes de 'responder'.")
+    resultados = str(estado.values.get("resultados_busca") or "").strip()
+    return {
+        "tipo": "texto",
+        "conteudo": (
+            "Resultados da busca para revisão:\n\n"
+            f"{resultados}\n\n"
+            f"Grafo pausado em {list(estado.next)}. Aprovar para gerar a resposta."
+        ),
+        "extra": {
+            "thread_id": thread_id,
+            "proximo": list(estado.next),
+            "resultados_busca": resultados,
+        },
+        "aprovacao_pendente": True,
+        "aprovacao_titulo": "Revisar e aprovar resposta (HITL)",
+    }
+
+
+def retomar_grafo(grafo, config):
+    estado = grafo.get_state(config)
+    if not aguardando_revisao(estado):
+        raise AprovacaoInvalida("Não há uma pausa HITL ativa para esta thread.")
+    grafo.invoke(None, config=config)
+    estado_final = grafo.get_state(config)
+    if aguardando_revisao(estado_final):
+        raise RuntimeError("O grafo permaneceu pausado após a retomada.")
+    mensagens = estado_final.values.get("mensagens", [])
+    if not mensagens:
+        raise RuntimeError("O grafo concluiu sem produzir uma resposta.")
+    return estado_final
+
+
+def main() -> None:
+    print(f"Ollama Cloud | modelo: {OLLAMA_MODEL}\n")
+    grafo = criar_grafo()
     print("== Grafo (mermaid) ==")
     print(grafo.get_graph().draw_mermaid())
 
-    config = {"configurable": {"thread_id": "pesquisa_demo"}}
-
-    # Primeira execução: para antes de "responder" (HITL)
-    grafo.invoke({"mensagens": [HumanMessage(content="Quais são as novidades de IA em 2026?")]},
-                 config=config)
+    thread_id, config = configuracao_thread(prefixo="cli")
+    pergunta = input("Pergunta: ").strip() or "Quais são as novidades de IA em 2026?"
+    grafo.invoke({"mensagens": [HumanMessage(content=pergunta)]}, config=config)
     estado_atual = grafo.get_state(config)
-    print(f"\n== Pausado em: {estado_atual.next} (HITL) ==")
-    print("O grafo aguarda aprovação humana antes de responder.")
+    if not aguardando_revisao(estado_atual):
+        print("A busca terminou sem resultados; não há aprovação pendente.")
+        return
 
-    # Aprovação humana: retoma a execução a partir do ponto pausado
-    print("\n== Aprovando e retomando ==")
-    grafo.invoke(None, config=config)  # None = continua do checkpoint
-    estado_final = grafo.get_state(config)
-    ultima = estado_final.values["mensagens"][-1]
+    print("\n== Resultados para revisão ==")
+    print(estado_atual.values.get("resultados_busca", ""))
+    print(f"\nPausado em {list(estado_atual.next)} (HITL).")
+    aprovacao = input("Aprovar e continuar? [s/N]: ").strip().lower()
+    if aprovacao not in {"s", "sim"}:
+        print("Execução cancelada; a thread foi preservada sem aprovar a resposta.")
+        return
+
+    estado_final = retomar_grafo(grafo, config)
     print("\n== Resposta final ==")
-    print(ultima.content)
+    print(estado_final.values["mensagens"][-1].content)
+    print(f"\nThread: {thread_id}")
 
 
 if __name__ == "__main__":

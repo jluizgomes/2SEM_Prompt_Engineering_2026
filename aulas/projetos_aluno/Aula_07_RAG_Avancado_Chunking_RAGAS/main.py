@@ -36,6 +36,9 @@ load_dotenv()
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
+EMBEDDING_OLLAMA_HOST = os.getenv(
+    "EMBEDDING_OLLAMA_HOST", "http://localhost:11434"
+)
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 
 if not OLLAMA_API_KEY:
@@ -45,8 +48,12 @@ if not OLLAMA_API_KEY:
 
 os.environ["OLLAMA_HOST"] = OLLAMA_HOST
 os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
+os.environ["EMBEDDING_OLLAMA_HOST"] = EMBEDDING_OLLAMA_HOST
 
-embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=OLLAMA_HOST)
+embeddings = OllamaEmbeddings(
+    model=EMBEDDING_MODEL,
+    base_url=EMBEDDING_OLLAMA_HOST,
+)
 
 DOCUMENTOS = [
     Document(page_content="LangChain é um framework para construir aplicações "
@@ -131,7 +138,10 @@ def avaliar_com_ragas() -> None:
 
 
 def main() -> None:
-    print(f"Ollama Cloud | chat: {OLLAMA_MODEL} | embeddings: {EMBEDDING_MODEL}")
+    print(
+        f"Ollama Cloud | chat: {OLLAMA_MODEL} | "
+        f"embeddings locais: {EMBEDDING_MODEL}"
+    )
     # TODO: Chamar demo_semantic_chunker()
     # TODO: Chamar demo_parent_retriever()
     # TODO: Chamar demo_reranker()

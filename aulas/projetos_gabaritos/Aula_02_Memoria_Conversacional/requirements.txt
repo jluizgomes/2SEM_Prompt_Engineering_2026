@@ -4,4 +4,9 @@
 langchain
 langchain-ollama
 langchain-classic
+langchain-core
 python-dotenv
+
+# Interface web
+fastapi
+uvicorn

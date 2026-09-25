@@ -156,6 +156,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -183,7 +185,7 @@
     <div class="cover-meta-item">🔢 nomic-embed-text · ChromaDB</div>
     <div class="cover-meta-item">🔁 Andaime 45%</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -200,7 +202,7 @@
     <div class="callout-body">Entender como texto vira número e como números permitem encontrar documentos por <em>significado</em> — não por palavras-chave. Ao final, o grupo tem uma coleção ChromaDB do domínio pronta para o pipeline RAG da Aula 06.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -243,7 +245,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -251,7 +253,7 @@
   <div class="section-number">01</div>
   <div class="section-title">O que é<br>um embedding</div>
   <div class="section-desc">Texto → vetor de números que codifica significado. Palavras com sentidos parecidos ficam próximas no espaço vetorial — independente das palavras usadas.</div>
-  <div class="slide-number">04 / 29</div>
+  <div class="slide-number">4 / 29</div>
 </div>
 
 
@@ -296,7 +298,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -336,7 +338,7 @@
     <div class="callout-body">cos(θ) = (A · B) / (|A| × |B|) · Vai de −1 (opostos) a 1 (idênticos). Para textos, raramente fica negativo — a faixa prática é 0 (sem relação) a 1 (idêntico). Um threshold de 0.75+ costuma indicar relevância real.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">6 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -344,7 +346,7 @@
   <div class="section-number">02</div>
   <div class="section-title">nomic-embed-text<br>via Ollama Cloud</div>
   <div class="section-desc">274M parâmetros · janela de 8.192 tokens · gratuito via Ollama Cloud · o modelo de embedding padrão do semestre — sem HuggingFace, sem chave de API extra.</div>
-  <div class="slide-number">07 / 29</div>
+  <div class="slide-number">7 / 29</div>
 </div>
 
 
@@ -389,7 +391,7 @@
     <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026, seção 5.4) recomenda escolher modelo de embedding assim: consultar o leaderboard MTEB (Massive Text Embedding Benchmark) no Hugging Face, estabelecer uma baseline com um modelo comprovado e <strong>testar com 50-100 queries reais do seu caso de uso</strong> antes de trocar — benchmarks gerais nem sempre refletem o desempenho em domínios específicos (jurídico, médico, culinário). O autor alerta contra "oversizing": se subir de um modelo pequeno para um maior ganha só 2% de acurácia, raramente compensa dobrar custo e latência — o nomic-embed-text (274M params, local, gratuito via Ollama) é justamente a baseline certa quando não há requisito de compliance que force um modelo comercial. Ele nota ainda que modelos de embedding evoluem mais devagar que LLMs: muitos sistemas RAG em produção ainda usam o antigo text-embedding-ada-002 da OpenAI porque a acurácia permanece suficiente — a escolha do modelo tende a ser decisão única, raramente precisa ser revisitada.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -426,7 +428,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -577,11 +579,278 @@
 </div>
 
 
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Persistência e recarga da coleção</h2>
+  <p>Embeddings são computacionalmente caros — você não quer recalcular a cada sessão. O ChromaDB persiste no disco e recarrega instantaneamente:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">persistencia_reload.py</span></div>
+    <div class="code-body"><pre><span class="cm"># ─── SESSÃO 1: criar e salvar ───────────────────────────────</span>
+<span class="va">db</span> <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span>
+    <span class="va">documents</span><span class="op">=</span><span class="va">documentos</span><span class="op">,</span>
+    <span class="va">embedding</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>
+    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_ckp02"</span><span class="op">,</span>  <span class="cm"># salva automaticamente</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Documentos salvos: {db._collection.count()}"</span><span class="op">)</span>
+
+<span class="cm"># ─── SESSÃO 2: recarregar sem recalcular embeddings ─────────</span>
+<span class="va">db_recarregado</span> <span class="op">=</span> <span class="fn">Chroma</span><span class="op">(</span>
+    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_ckp02"</span><span class="op">,</span>  <span class="cm"># lê do disco</span>
+    <span class="va">embedding_function</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>              <span class="cm"># para gerar embeddings de queries</span>
+<span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Documentos recuperados: {db_recarregado._collection.count()}"</span><span class="op">)</span>
+
+<span class="cm"># Adicionar documentos a uma coleção existente</span>
+<span class="va">novos_docs</span> <span class="op">= [</span><span class="va">Document</span><span class="op">(</span><span class="va">page_content</span><span class="op">=</span><span class="st">"Novo documento do domínio"</span><span class="op">)]</span>
+<span class="va">db_recarregado</span><span class="op">.</span><span class="fn">add_documents</span><span class="op">(</span><span class="va">novos_docs</span><span class="op">)</span>
+<span class="cm"># Só os novos docs têm embeddings computados — os antigos já estão no disco</span>
+
+<span class="cm"># No Google Colab: copiar a pasta para o Drive para persistência entre sessões</span>
+<span class="op">!</span>cp <span class="op">-</span>r <span class="op">/</span>content<span class="op">/</span>chroma_ckp02 <span class="op">/</span>content<span class="op">/</span>drive<span class="op">/</span>MyDrive<span class="op">/</span>chroma_ckp02</pre>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">⚠️ Google Colab não persiste entre sessões</div>
+    <div class="callout-body">O <code style="font-family:'JetBrains Mono',monospace;font-size:12px">/content/</code> do Colab é temporário — se a sessão reiniciar, a pasta some. Para o CKP02, monte o Google Drive e salve a coleção lá, ou reindexe os documentos sempre que precisar.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>similarity_search_with_score — avaliar a qualidade da recuperação</h2>
+  <p>Para o CKP02, você vai precisar saber se os documentos recuperados são de fato relevantes. <code style="font-family:'JetBrains Mono',monospace;font-size:13px">similarity_search_with_score</code> retorna os scores junto com os documentos:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">busca_com_score.py</span></div>
+    <div class="code-body"><pre><span class="cm"># Busca com scores (distância cosseno — menor = mais similar)</span>
+<span class="va">resultados</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">similarity_search_with_score</span><span class="op">(</span>
+    <span class="st">"comida italiana"</span><span class="op">,</span>
+    <span class="va">k</span><span class="op">=</span><span class="num">5</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span><span class="op">:</span>
+    <span class="cm"># score é distância (0 = idêntico, 1 = sem relação)</span>
+    <span class="va">similaridade</span> <span class="op">=</span> <span class="num">1</span> <span class="op">-</span> <span class="va">score</span>  <span class="cm"># converter para similaridade</span>
+    <span class="va">relevante</span>    <span class="op">=</span> <span class="st">"✅"</span> <span class="kw">if</span> <span class="va">similaridade</span> <span class="op">&gt;</span> <span class="num">0.75</span> <span class="kw">else</span> <span class="st">"⚠️"</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"{relevante} [{similaridade:.3f}] {doc.page_content[:60]}"</span><span class="op">)</span>
+
+<span class="cm"># Exemplo de saída:</span>
+<span class="cm"># ✅ [0.943] Pizza margherita com tomate fresco e mozarela</span>
+<span class="cm"># ✅ [0.921] Lasanha bolonhesa com ricota cremosa</span>
+<span class="cm"># ✅ [0.897] Macarrão al dente com pesto de manjericão</span>
+<span class="cm"># ⚠️ [0.623] Frango à parmegiana — clássico brasileiro</span>
+<span class="cm"># ⚠️ [0.412] Tacos com carne temperada</span>
+
+<span class="cm"># Filtrar por threshold de relevância</span>
+<span class="va">THRESHOLD</span> <span class="op">=</span> <span class="num">0.75</span>
+<span class="va">relevantes</span> <span class="op">= [</span><span class="va">doc</span> <span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span> <span class="kw">if</span> <span class="op">(</span><span class="num">1</span><span class="op">-</span><span class="va">score</span><span class="op">) &gt;</span> <span class="va">THRESHOLD</span><span class="op">]</span></pre>
+    </div>
+  </div>
+  <div class="callout callout-green">
+    <div class="callout-title">💡 Threshold 0.75 — uma heurística prática</div>
+    <div class="callout-body">Não existe threshold universal — depende do domínio e do modelo. Para o nomic-embed-text, 0.75+ costuma indicar relevância real. O RAGAS da Aula 07 vai medir isso de forma mais rigorosa com métricas de faithfulness e answer relevancy.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Embeddings e busca semântica no mercado</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Streaming e recomendação</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Recomendação de músicas e vídeos</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Cada faixa ou vídeo vira um vetor baseado em características acústicas, visuais ou de texto. "Itens parecidos" = vizinhos no espaço vetorial. O mesmo princípio do ChromaDB, em escala de dezenas de milhões de itens.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Busca jurídica</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Busca de jurisprudência</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Plataformas de busca em bases de processos judiciais usam embeddings para achar decisões por significado. "Indenização por atraso de voo" encontra decisões que falam em "dano material por cancelamento de aeronave" — sem palavra em comum.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Organização pessoal</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Busca em notas e documentos pessoais</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Ferramentas de anotação indexam cada nota como embedding. "Ideias de projetos de IA" encontra uma nota chamada "Brainstorm de automação com LLMs" — busca semântica sobre o próprio conteúdo do usuário.</div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:16px">
+    <div class="callout-title">🔮 Onde isso aparece no CKP02</div>
+    <div class="callout-body">No CKP02, os PDFs do domínio do grupo serão indexados como embeddings no ChromaDB. Uma pergunta do usuário vira um vetor, os trechos mais similares são recuperados e injetados no contexto do LLM — isso é o RAG que você vai construir nas Aulas 06 e 07.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Erros comuns com embeddings e ChromaDB</h2>
+  <table class="data-table">
+    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ConnectionError</code> ao gerar embedding</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">os.environ["OLLAMA_HOST"]</code> não definido antes de instanciar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">OllamaEmbeddings</code></td>
+        <td>Definir as variáveis de ambiente antes de qualquer instanciação LangChain</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">UniqueConstraintError</code> no <code style="font-family:'JetBrains Mono',monospace;font-size:11px">add()</code></td>
+        <td>ID duplicado — tentou adicionar doc com mesmo id já existente na coleção</td>
+        <td>Usar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">get_or_create_collection</code> e gerar ids únicos com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">str(uuid.uuid4())</code></td>
+      </tr>
+      <tr>
+        <td>Resultados irrelevantes na busca</td>
+        <td>Corpus muito pequeno ou textos genéricos demais para o domínio</td>
+        <td>Indexar textos mais específicos do domínio; usar textos de 1–3 parágrafos (não frases curtas demais)</td>
+      </tr>
+      <tr>
+        <td>Coleção some após reiniciar o Colab</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">/content/</code> é temporário no Colab</td>
+        <td>Montar Google Drive e salvar a pasta lá, ou reindexar ao iniciar a sessão</td>
+      </tr>
+      <tr>
+        <td>Scores todos iguais a 1.0</td>
+        <td>Espaço de distância não configurado como cosine — usando distância Euclidiana padrão</td>
+        <td>Criar coleção com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">metadata={"hnsw:space": "cosine"}</code></td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula05_2sem.py</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> <span class="va">numpy</span> <span class="kw">as</span> <span class="va">np</span>
+<span class="kw">import</span> <span class="va">uuid</span>
+
+<span class="cm"># 1. numpy — dot product e norma vetorial</span>
+<span class="va">a</span> <span class="op">=</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">([</span><span class="num">0.8</span><span class="op">,</span> <span class="num">0.3</span><span class="op">,</span> <span class="num">0.5</span><span class="op">])</span>
+<span class="va">b</span> <span class="op">=</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">([</span><span class="num">0.7</span><span class="op">,</span> <span class="num">0.4</span><span class="op">,</span> <span class="num">0.6</span><span class="op">])</span>
+<span class="va">np</span><span class="op">.</span><span class="fn">dot</span><span class="op">(</span><span class="va">a</span><span class="op">,</span> <span class="va">b</span><span class="op">)</span>           <span class="cm"># produto escalar (dot product)</span>
+<span class="va">np</span><span class="op">.</span><span class="va">linalg</span><span class="op">.</span><span class="fn">norm</span><span class="op">(</span><span class="va">a</span><span class="op">)</span>      <span class="cm"># norma (magnitude) do vetor</span>
+
+<span class="cm"># 2. Dict comprehension com zip — gerar vetores por chave</span>
+<span class="va">nomes</span>   <span class="op">= [</span><span class="st">"pizza"</span><span class="op">,</span> <span class="st">"carro"</span><span class="op">]</span>
+<span class="va">vetores</span> <span class="op">=</span> <span class="op">[</span><span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="kw">for</span> <span class="va">n</span> <span class="kw">in</span> <span class="va">nomes</span><span class="op">]</span>
+<span class="va">mapa</span>    <span class="op">= {</span><span class="va">k</span><span class="op">:</span> <span class="va">v</span> <span class="kw">for</span> <span class="va">k</span><span class="op">,</span> <span class="va">v</span> <span class="kw">in</span> <span class="nb">zip</span><span class="op">(</span><span class="va">nomes</span><span class="op">,</span> <span class="va">vetores</span><span class="op">)}</span>  <span class="cm"># zip e dict comp</span>
+
+<span class="cm"># 3. uuid — gerar IDs únicos para documentos</span>
+<span class="va">doc_id</span> <span class="op">=</span> <span class="nb">str</span><span class="op">(</span><span class="va">uuid</span><span class="op">.</span><span class="fn">uuid4</span><span class="op">())</span>   <span class="cm"># "f47ac10b-58cc-4372-a567-0e02b2c3d479"</span>
+
+<span class="cm"># 4. List comprehension com unpacking de tupla</span>
+<span class="va">resultados</span> <span class="op">= [</span><span class="op">(</span><span class="va">doc</span><span class="op">,</span> <span class="va">score</span><span class="op">)]</span>  <span class="cm"># retorno do similarity_search_with_score</span>
+<span class="va">relevantes</span> <span class="op">= [</span><span class="va">doc</span> <span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span> <span class="kw">if</span> <span class="op">(</span><span class="num">1</span><span class="op">-</span><span class="va">score</span><span class="op">) &gt;</span> <span class="num">0.75</span><span class="op">]</span>
+
+<span class="cm"># 5. f-string com formatação de float</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Score: {score:.3f}"</span><span class="op">)</span>   <span class="cm"># 3 casas decimais</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Texto: {texto[:60]}"</span><span class="op">)</span>  <span class="cm"># cortar string em 60 chars</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Onde estamos no Módulo 2 — RAG</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(61,156,204,.06);border:2px solid rgba(61,156,204,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(61,156,204,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>A05 (hoje):</strong> Embeddings · Similaridade cosseno · nomic-embed-text · ChromaDB · coleção do domínio pronta</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(61,156,204,.08);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-blue)">→</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A06:</strong> Pipeline RAG completo — load PDF · split · embed · store · retrieve · generate · chain LCEL com retriever</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A07:</strong> RAG avançado — chunking estratégico · reranking · RAGAS · <strong>apresentação do CKP02</strong> (entrega até 23:55 do dia da Aula 08, Teams)</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
+      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A08:</strong> Interfaces com Gradio e Streamlit — RAG com URL pública</div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">📌 Para a Aula 06 — trazer os PDFs</div>
+    <div class="callout-body">Trazer 2–3 PDFs do domínio do grupo (mínimo 5 páginas cada). Na Aula 06 você vai carregá-los com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PyPDFLoader</code>, dividir em chunks e indexar no ChromaDB. A coleção de hoje (com textos manuais) vai ser complementada ou substituída pela coleção de PDFs reais.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 06 — Pipeline RAG completo</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-pink">
+        <div class="callout-title">🔮 O que você vai construir</div>
+        <div class="callout-body">Um pipeline completo que transforma PDFs em respostas:<br><br>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PDF</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PyPDFLoader</code> → chunks → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChromaDB</code><br>
+          Pergunta → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">query</code> → contexto → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">LLM</code> → resposta<br><br>
+          Tudo numa chain LCEL: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">retriever | prompt | llm | parser</code>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-green">
+        <div class="callout-title">🧩 O que a coleção de hoje já resolve</div>
+        <div class="callout-body">A coleção ChromaDB construída hoje já tem o <code style="font-family:'JetBrains Mono',monospace;font-size:12px">retriever</code> pronto via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">as_retriever()</code>. Na Aula 06, você só precisa conectar esse retriever à chain LCEL e adicionar o prompt de RAG. O passo pesado (embeddings) já está feito.</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;font-size:13px">
+    <strong>📌 Ação antes da Aula 06:</strong> salve o notebook de hoje com a coleção pronta. Leve os PDFs do domínio. A Aula 06 vai conectar as peças: retriever + prompt RAG + LLM.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Indexar 20 frases sobre temas variados → buscar por "comida italiana" → ver retornar pizza, macarrão e lasanha sem a frase aparecer no corpus.</div>
+  <div class="slide-number">21 / 29</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor indexa ao vivo ~20 frases de temas variados (culinária italiana, culinária brasileira, tecnologia e outros) numa coleção ChromaDB e roda a mesma busca de duas formas: por significado (embedding) e por palavra-chave. A turma compara os resultados lado a lado.</p>
+  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
+    <div class="callout" style="margin:0">
+      <div class="callout-title">1. Indexação</div>
+      <div class="callout-body">20 frases viram vetores de 768 dimensões via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nomic-embed-text</code> e são salvas numa coleção ChromaDB, cada uma com metadado de categoria.</div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">2. Busca semântica</div>
+      <div class="callout-body">Query <strong>"comida italiana"</strong> — que não aparece em nenhuma frase do corpus — retorna pizza, lasanha e macarrão, todas com similaridade acima de <strong>0.89</strong>.</div>
+    </div>
+    <div class="callout callout-orange" style="margin:0">
+      <div class="callout-title">3. Busca por palavra-chave</div>
+      <div class="callout-body">A mesma pergunta filtrada por substring "italiana" retorna <strong>zero resultados</strong> — a palavra literal não existe no corpus. Essa é a diferença que a aula quer mostrar.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
+    <div class="callout-title">🧱 Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nomic-embed-text</code> · ChromaDB</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
   <div class="section-number">05</div>
   <div class="section-title">Lab — Notebook Aluno</div>
   <div class="section-desc">45% de lacunas — criar coleção ChromaDB com textos do domínio do grupo, testar 5 queries semânticas e documentar a qualidade dos resultados.</div>
-  <div class="slide-number">14 / 29</div>
+  <div class="slide-number">23 / 29</div>
 </div>
 
 
@@ -632,148 +901,36 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
 <div class="slide slide-content"><div class="slide-body">
-  <h2>Persistência e recarga da coleção</h2>
-  <p>Embeddings são computacionalmente caros — você não quer recalcular a cada sessão. O ChromaDB persiste no disco e recarrega instantaneamente:</p>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">persistencia_reload.py</span></div>
-    <div class="code-body"><pre><span class="cm"># ─── SESSÃO 1: criar e salvar ───────────────────────────────</span>
-<span class="va">db</span> <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span>
-    <span class="va">documents</span><span class="op">=</span><span class="va">documentos</span><span class="op">,</span>
-    <span class="va">embedding</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>
-    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_ckp02"</span><span class="op">,</span>  <span class="cm"># salva automaticamente</span>
-<span class="op">)</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Documentos salvos: {db._collection.count()}"</span><span class="op">)</span>
-
-<span class="cm"># ─── SESSÃO 2: recarregar sem recalcular embeddings ─────────</span>
-<span class="va">db_recarregado</span> <span class="op">=</span> <span class="fn">Chroma</span><span class="op">(</span>
-    <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/chroma_ckp02"</span><span class="op">,</span>  <span class="cm"># lê do disco</span>
-    <span class="va">embedding_function</span><span class="op">=</span><span class="va">embeddings</span><span class="op">,</span>              <span class="cm"># para gerar embeddings de queries</span>
-<span class="op">)</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Documentos recuperados: {db_recarregado._collection.count()}"</span><span class="op">)</span>
-
-<span class="cm"># Adicionar documentos a uma coleção existente</span>
-<span class="va">novos_docs</span> <span class="op">= [</span><span class="va">Document</span><span class="op">(</span><span class="va">page_content</span><span class="op">=</span><span class="st">"Novo documento do domínio"</span><span class="op">)]</span>
-<span class="va">db_recarregado</span><span class="op">.</span><span class="fn">add_documents</span><span class="op">(</span><span class="va">novos_docs</span><span class="op">)</span>
-<span class="cm"># Só os novos docs têm embeddings computados — os antigos já estão no disco</span>
-
-<span class="cm"># No Google Colab: copiar a pasta para o Drive para persistência entre sessões</span>
-<span class="op">!</span>cp <span class="op">-</span>r <span class="op">/</span>content<span class="op">/</span>chroma_ckp02 <span class="op">/</span>content<span class="op">/</span>drive<span class="op">/</span>MyDrive<span class="op">/</span>chroma_ckp02</pre>
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 05 · 2º Semestre</div>
+    <div class="exercise-title">Coleção ChromaDB do domínio do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 25 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 4 lacunas</strong> — modelo de embedding, 10+ documentos do domínio com metadados, criação do vector store e 5 queries semânticas.</li>
+      <li><strong>Use metadados significativos</strong> para o domínio — ex: em culinária, uma categoria como "sobremesa"; em direito, a lei aplicável como "CDC". Esses metadados serão usados no RAG avançado da Aula 07.</li>
+      <li><strong>Documente a qualidade</strong> de cada query num comentário: o resultado faz sentido? A similaridade reflete o esperado?</li>
+      <li><strong>Desafio:</strong> calcule manualmente a similaridade cosseno entre 2 frases do corpus usando numpy (Slide 08) e compare com o score retornado pelo ChromaDB.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(61,156,204,.06);border-left:3px solid var(--fiap-blue);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12.5px;color:var(--fiap-muted);line-height:1.9">
+        <strong>Lacuna 1:</strong> o nome do modelo de embedding usado no semestre inteiro — o mesmo configurado no Slide 07.<br>
+        <strong>Lacuna 2:</strong> cada documento recebe o texto relevante do domínio do grupo e uma categoria como metadado — repetido para os 10+ documentos da lista.<br>
+        <strong>Lacuna 3:</strong> o vector store recebe a lista de documentos e o objeto de embeddings criados nas lacunas anteriores.<br>
+        <strong>Lacuna 4:</strong> 5 frases que representam perguntas reais de alguém do domínio — quanto mais distantes das palavras exatas do corpus, melhor o teste de busca semântica.
+      </div>
     </div>
-  </div>
-  <div class="callout callout-orange">
-    <div class="callout-title">⚠️ Google Colab não persiste entre sessões</div>
-    <div class="callout-body">O <code style="font-family:'JetBrains Mono',monospace;font-size:12px">/content/</code> do Colab é temporário — se a sessão reiniciar, a pasta some. Para o CKP02, monte o Google Drive e salve a coleção lá, ou reindexe os documentos sempre que precisar.</div>
+    <div style="background:rgba(41,175,140,.08);border:1px solid rgba(41,175,140,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-green)">
+      💡 <strong>Dica de qualidade:</strong> para testar se a busca está boa, use queries que <em>não</em> compartilham palavras com os documentos indexados. Se ainda retornar resultados relevantes, o embedding está funcionando bem para o domínio.
+    </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>similarity_search_with_score — avaliar a qualidade da recuperação</h2>
-  <p>Para o CKP02, você vai precisar saber se os documentos recuperados são de fato relevantes. <code style="font-family:'JetBrains Mono',monospace;font-size:13px">similarity_search_with_score</code> retorna os scores junto com os documentos:</p>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">busca_com_score.py</span></div>
-    <div class="code-body"><pre><span class="cm"># Busca com scores (distância cosseno — menor = mais similar)</span>
-<span class="va">resultados</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">similarity_search_with_score</span><span class="op">(</span>
-    <span class="st">"comida italiana"</span><span class="op">,</span>
-    <span class="va">k</span><span class="op">=</span><span class="num">5</span><span class="op">,</span>
-<span class="op">)</span>
-
-<span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span><span class="op">:</span>
-    <span class="cm"># score é distância (0 = idêntico, 1 = sem relação)</span>
-    <span class="va">similaridade</span> <span class="op">=</span> <span class="num">1</span> <span class="op">-</span> <span class="va">score</span>  <span class="cm"># converter para similaridade</span>
-    <span class="va">relevante</span>    <span class="op">=</span> <span class="st">"✅"</span> <span class="kw">if</span> <span class="va">similaridade</span> <span class="op">&gt;</span> <span class="num">0.75</span> <span class="kw">else</span> <span class="st">"⚠️"</span>
-    <span class="nb">print</span><span class="op">(</span><span class="st">f"{relevante} [{similaridade:.3f}] {doc.page_content[:60]}"</span><span class="op">)</span>
-
-<span class="cm"># Exemplo de saída:</span>
-<span class="cm"># ✅ [0.943] Pizza margherita com tomate fresco e mozarela</span>
-<span class="cm"># ✅ [0.921] Lasanha bolonhesa com ricota cremosa</span>
-<span class="cm"># ✅ [0.897] Macarrão al dente com pesto de manjericão</span>
-<span class="cm"># ⚠️ [0.623] Frango à parmegiana — clássico brasileiro</span>
-<span class="cm"># ⚠️ [0.412] Tacos com carne temperada</span>
-
-<span class="cm"># Filtrar por threshold de relevância</span>
-<span class="va">THRESHOLD</span> <span class="op">=</span> <span class="num">0.75</span>
-<span class="va">relevantes</span> <span class="op">= [</span><span class="va">doc</span> <span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span> <span class="kw">if</span> <span class="op">(</span><span class="num">1</span><span class="op">-</span><span class="va">score</span><span class="op">) &gt;</span> <span class="va">THRESHOLD</span><span class="op">]</span></pre>
-    </div>
-  </div>
-  <div class="callout callout-green">
-    <div class="callout-title">💡 Threshold 0.75 — uma heurística prática</div>
-    <div class="callout-body">Não existe threshold universal — depende do domínio e do modelo. Para o nomic-embed-text, 0.75+ costuma indicar relevância real. O RAGAS da Aula 07 vai medir isso de forma mais rigorosa com métricas de faithfulness e answer relevancy.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Embeddings e busca semântica no mercado</h2>
-  <div class="three-col">
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Streaming e recomendação</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Recomendação de músicas e vídeos</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Cada faixa ou vídeo vira um vetor baseado em características acústicas, visuais ou de texto. "Itens parecidos" = vizinhos no espaço vetorial. O mesmo princípio do ChromaDB, em escala de dezenas de milhões de itens.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Busca jurídica</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Busca de jurisprudência</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Plataformas de busca em bases de processos judiciais usam embeddings para achar decisões por significado. "Indenização por atraso de voo" encontra decisões que falam em "dano material por cancelamento de aeronave" — sem palavra em comum.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Organização pessoal</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Busca em notas e documentos pessoais</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Ferramentas de anotação indexam cada nota como embedding. "Ideias de projetos de IA" encontra uma nota chamada "Brainstorm de automação com LLMs" — busca semântica sobre o próprio conteúdo do usuário.</div>
-    </div>
-  </div>
-  <div class="callout" style="margin-top:16px">
-    <div class="callout-title">🔮 Onde isso aparece no CKP02</div>
-    <div class="callout-body">No CKP02, os PDFs do domínio do grupo serão indexados como embeddings no ChromaDB. Uma pergunta do usuário vira um vetor, os trechos mais similares são recuperados e injetados no contexto do LLM — isso é o RAG que você vai construir nas Aulas 06 e 07.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Erros comuns com embeddings e ChromaDB</h2>
-  <table class="data-table">
-    <thead><tr><th>Erro</th><th>Causa</th><th>Solução</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ConnectionError</code> ao gerar embedding</td>
-        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">os.environ["OLLAMA_HOST"]</code> não definido antes de instanciar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">OllamaEmbeddings</code></td>
-        <td>Definir as variáveis de ambiente antes de qualquer instanciação LangChain</td>
-      </tr>
-      <tr>
-        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">UniqueConstraintError</code> no <code style="font-family:'JetBrains Mono',monospace;font-size:11px">add()</code></td>
-        <td>ID duplicado — tentou adicionar doc com mesmo id já existente na coleção</td>
-        <td>Usar <code style="font-family:'JetBrains Mono',monospace;font-size:11px">get_or_create_collection</code> e gerar ids únicos com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">str(uuid.uuid4())</code></td>
-      </tr>
-      <tr>
-        <td>Resultados irrelevantes na busca</td>
-        <td>Corpus muito pequeno ou textos genéricos demais para o domínio</td>
-        <td>Indexar textos mais específicos do domínio; usar textos de 1–3 parágrafos (não frases curtas demais)</td>
-      </tr>
-      <tr>
-        <td>Coleção some após reiniciar o Colab</td>
-        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">/content/</code> é temporário no Colab</td>
-        <td>Montar Google Drive e salvar a pasta lá, ou reindexar ao iniciar a sessão</td>
-      </tr>
-      <tr>
-        <td>Scores todos iguais a 1.0</td>
-        <td>Espaço de distância não configurado como cosine — usando distância Euclidiana padrão</td>
-        <td>Criar coleção com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">metadata={"hnsw:space": "cosine"}</code></td>
-      </tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -802,7 +959,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -817,161 +974,6 @@
       <tr><td><strong>"O que é FAISS e qual a diferença para o ChromaDB?"</strong></td><td>FAISS (Meta) é uma biblioteca de busca vetorial de alto desempenho — muito rápida, mas sem persistência nativa e sem metadados. ChromaDB é um banco de dados completo com persistência, metadados e API HTTP. Para RAG em produção, ambos são usados — ChromaDB para simplicidade, FAISS para velocidade.</td></tr>
     </tbody>
   </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Python novo desta aula</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula05_2sem.py</span></div>
-    <div class="code-body"><pre><span class="kw">import</span> <span class="va">numpy</span> <span class="kw">as</span> <span class="va">np</span>
-<span class="kw">import</span> <span class="va">uuid</span>
-
-<span class="cm"># 1. numpy — dot product e norma vetorial</span>
-<span class="va">a</span> <span class="op">=</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">([</span><span class="num">0.8</span><span class="op">,</span> <span class="num">0.3</span><span class="op">,</span> <span class="num">0.5</span><span class="op">])</span>
-<span class="va">b</span> <span class="op">=</span> <span class="va">np</span><span class="op">.</span><span class="fn">array</span><span class="op">([</span><span class="num">0.7</span><span class="op">,</span> <span class="num">0.4</span><span class="op">,</span> <span class="num">0.6</span><span class="op">])</span>
-<span class="va">np</span><span class="op">.</span><span class="fn">dot</span><span class="op">(</span><span class="va">a</span><span class="op">,</span> <span class="va">b</span><span class="op">)</span>           <span class="cm"># produto escalar (dot product)</span>
-<span class="va">np</span><span class="op">.</span><span class="va">linalg</span><span class="op">.</span><span class="fn">norm</span><span class="op">(</span><span class="va">a</span><span class="op">)</span>      <span class="cm"># norma (magnitude) do vetor</span>
-
-<span class="cm"># 2. Dict comprehension com zip — gerar vetores por chave</span>
-<span class="va">nomes</span>   <span class="op">= [</span><span class="st">"pizza"</span><span class="op">,</span> <span class="st">"carro"</span><span class="op">]</span>
-<span class="va">vetores</span> <span class="op">=</span> <span class="op">[</span><span class="va">embeddings</span><span class="op">.</span><span class="fn">embed_query</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="kw">for</span> <span class="va">n</span> <span class="kw">in</span> <span class="va">nomes</span><span class="op">]</span>
-<span class="va">mapa</span>    <span class="op">= {</span><span class="va">k</span><span class="op">:</span> <span class="va">v</span> <span class="kw">for</span> <span class="va">k</span><span class="op">,</span> <span class="va">v</span> <span class="kw">in</span> <span class="nb">zip</span><span class="op">(</span><span class="va">nomes</span><span class="op">,</span> <span class="va">vetores</span><span class="op">)}</span>  <span class="cm"># zip e dict comp</span>
-
-<span class="cm"># 3. uuid — gerar IDs únicos para documentos</span>
-<span class="va">doc_id</span> <span class="op">=</span> <span class="nb">str</span><span class="op">(</span><span class="va">uuid</span><span class="op">.</span><span class="fn">uuid4</span><span class="op">())</span>   <span class="cm"># "f47ac10b-58cc-4372-a567-0e02b2c3d479"</span>
-
-<span class="cm"># 4. List comprehension com unpacking de tupla</span>
-<span class="va">resultados</span> <span class="op">= [</span><span class="op">(</span><span class="va">doc</span><span class="op">,</span> <span class="va">score</span><span class="op">)]</span>  <span class="cm"># retorno do similarity_search_with_score</span>
-<span class="va">relevantes</span> <span class="op">= [</span><span class="va">doc</span> <span class="kw">for</span> <span class="va">doc</span><span class="op">,</span> <span class="va">score</span> <span class="kw">in</span> <span class="va">resultados</span> <span class="kw">if</span> <span class="op">(</span><span class="num">1</span><span class="op">-</span><span class="va">score</span><span class="op">) &gt;</span> <span class="num">0.75</span><span class="op">]</span>
-
-<span class="cm"># 5. f-string com formatação de float</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Score: {score:.3f}"</span><span class="op">)</span>   <span class="cm"># 3 casas decimais</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Texto: {texto[:60]}"</span><span class="op">)</span>  <span class="cm"># cortar string em 60 chars</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Onde estamos no Módulo 2 — RAG</h2>
-  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
-    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(61,156,204,.06);border:2px solid rgba(61,156,204,.25);border-radius:8px;align-items:flex-start">
-      <div style="width:28px;height:28px;background:rgba(61,156,204,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
-      <div style="font-size:13px"><strong>A05 (hoje):</strong> Embeddings · Similaridade cosseno · nomic-embed-text · ChromaDB · coleção do domínio pronta</div>
-    </div>
-    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
-      <div style="width:28px;height:28px;background:rgba(61,156,204,.08);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-blue)">→</div>
-      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A06:</strong> Pipeline RAG completo — load PDF · split · embed · store · retrieve · generate · chain LCEL com retriever</div>
-    </div>
-    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
-      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
-      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A07:</strong> RAG avançado — chunking estratégico · reranking · RAGAS · <strong>entrega CKP02</strong></div>
-    </div>
-    <div style="display:flex;gap:12px;padding:14px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
-      <div style="width:28px;height:28px;background:var(--fiap-surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--fiap-muted)">○</div>
-      <div style="font-size:13px;color:var(--fiap-muted)"><strong>A08:</strong> Interfaces com Gradio e Streamlit — RAG com URL pública</div>
-    </div>
-  </div>
-  <div class="callout callout-orange">
-    <div class="callout-title">📌 Para a Aula 06 — trazer os PDFs</div>
-    <div class="callout-body">Trazer 2–3 PDFs do domínio do grupo (mínimo 5 páginas cada). Na Aula 06 você vai carregá-los com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PyPDFLoader</code>, dividir em chunks e indexar no ChromaDB. A coleção de hoje (com textos manuais) vai ser complementada ou substituída pela coleção de PDFs reais.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>O que vem na Aula 06 — Pipeline RAG completo</h2>
-  <div class="two-col">
-    <div>
-      <div class="callout callout-pink">
-        <div class="callout-title">🔮 O que você vai construir</div>
-        <div class="callout-body">Um pipeline completo que transforma PDFs em respostas:<br><br>
-          <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PDF</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">PyPDFLoader</code> → chunks → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChromaDB</code><br>
-          Pergunta → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">embed</code> → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">query</code> → contexto → <code style="font-family:'JetBrains Mono',monospace;font-size:12px">LLM</code> → resposta<br><br>
-          Tudo numa chain LCEL: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">retriever | prompt | llm | parser</code>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="callout callout-green">
-        <div class="callout-title">🧩 O que a coleção de hoje já resolve</div>
-        <div class="callout-body">A coleção ChromaDB construída hoje já tem o <code style="font-family:'JetBrains Mono',monospace;font-size:12px">retriever</code> pronto via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">as_retriever()</code>. Na Aula 06, você só precisa conectar esse retriever à chain LCEL e adicionar o prompt de RAG. O passo pesado (embeddings) já está feito.</div>
-      </div>
-    </div>
-  </div>
-  <div style="margin-top:12px;padding:14px 18px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;font-size:13px">
-    <strong>📌 Ação antes da Aula 06:</strong> salve o notebook de hoje com a coleção pronta. Leve os PDFs do domínio. A Aula 06 vai conectar as peças: retriever + prompt RAG + LLM.
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
-  <div class="section-number">04</div>
-  <div class="section-title">Demo ao vivo</div>
-  <div class="section-desc">Indexar 20 frases sobre temas variados → buscar por "comida italiana" → ver retornar pizza, macarrão e lasanha sem a frase aparecer no corpus.</div>
-  <div class="slide-number">25 / 29</div>
-</div>
-
-
-<div class="slide slide-content" style="align-items:center;text-align:center">
-  <div style="font-size:72px">🚀</div>
-  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
-  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor indexa ao vivo ~20 frases de temas variados (culinária italiana, culinária brasileira, tecnologia e outros) numa coleção ChromaDB e roda a mesma busca de duas formas: por significado (embedding) e por palavra-chave. A turma compara os resultados lado a lado.</p>
-  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
-    <div class="callout" style="margin:0">
-      <div class="callout-title">1. Indexação</div>
-      <div class="callout-body">20 frases viram vetores de 768 dimensões via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nomic-embed-text</code> e são salvas numa coleção ChromaDB, cada uma com metadado de categoria.</div>
-    </div>
-    <div class="callout callout-green" style="margin:0">
-      <div class="callout-title">2. Busca semântica</div>
-      <div class="callout-body">Query <strong>"comida italiana"</strong> — que não aparece em nenhuma frase do corpus — retorna pizza, lasanha e macarrão, todas com similaridade acima de <strong>0.89</strong>.</div>
-    </div>
-    <div class="callout callout-orange" style="margin:0">
-      <div class="callout-title">3. Busca por palavra-chave</div>
-      <div class="callout-body">A mesma pergunta filtrada por substring "italiana" retorna <strong>zero resultados</strong> — a palavra literal não existe no corpus. Essa é a diferença que a aula quer mostrar.</div>
-    </div>
-  </div>
-  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
-    <div class="callout-title">🧱 Stack da demo</div>
-    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">nomic-embed-text</code> · ChromaDB</div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <div class="exercise">
-    <div class="exercise-label">Lab — Aula 05 · 2º Semestre</div>
-    <div class="exercise-title">Coleção ChromaDB do domínio do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
-    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 25 minutos · Google Colab</strong></p>
-    <ol class="exercise-steps">
-      <li><strong>Complete as 4 lacunas</strong> — modelo de embedding, 10+ documentos do domínio com metadados, criação do vector store e 5 queries semânticas.</li>
-      <li><strong>Use metadados significativos</strong> para o domínio — ex: em culinária, uma categoria como "sobremesa"; em direito, a lei aplicável como "CDC". Esses metadados serão usados no RAG avançado da Aula 07.</li>
-      <li><strong>Documente a qualidade</strong> de cada query num comentário: o resultado faz sentido? A similaridade reflete o esperado?</li>
-      <li><strong>Desafio:</strong> calcule manualmente a similaridade cosseno entre 2 frases do corpus usando numpy (Slide 08) e compare com o score retornado pelo ChromaDB.</li>
-    </ol>
-    <div style="padding:12px 16px;background:rgba(61,156,204,.06);border-left:3px solid var(--fiap-blue);border-radius:0 8px 8px 0;margin:12px 0">
-      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">🎯 Gabarito das lacunas</div>
-      <div style="font-size:12.5px;color:var(--fiap-muted);line-height:1.9">
-        <strong>Lacuna 1:</strong> o nome do modelo de embedding usado no semestre inteiro — o mesmo configurado no Slide 07.<br>
-        <strong>Lacuna 2:</strong> cada documento recebe o texto relevante do domínio do grupo e uma categoria como metadado — repetido para os 10+ documentos da lista.<br>
-        <strong>Lacuna 3:</strong> o vector store recebe a lista de documentos e o objeto de embeddings criados nas lacunas anteriores.<br>
-        <strong>Lacuna 4:</strong> 5 frases que representam perguntas reais de alguém do domínio — quanto mais distantes das palavras exatas do corpus, melhor o teste de busca semântica.
-      </div>
-    </div>
-    <div style="background:rgba(41,175,140,.08);border:1px solid rgba(41,175,140,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-green)">
-      💡 <strong>Dica de qualidade:</strong> para testar se a busca está boa, use queries que <em>não</em> compartilham palavras com os documentos indexados. Se ainda retornar resultados relevantes, o embedding está funcionando bem para o domínio.
-    </div>
-  </div>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

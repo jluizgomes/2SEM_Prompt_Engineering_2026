@@ -28,23 +28,19 @@ from langchain_core.documents import Document
 # ─────────────────────────────────────────────────────────────
 load_dotenv()
 
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
-OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
+EMBEDDING_OLLAMA_HOST = os.getenv(
+    "EMBEDDING_OLLAMA_HOST", "http://localhost:11434"
+)
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
-
-if not OLLAMA_API_KEY:
-    raise RuntimeError(
-        "OLLAMA_API_KEY não encontrada. Copie .env.example para .env e preencha a chave."
-    )
-
-os.environ["OLLAMA_HOST"] = OLLAMA_HOST
-os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
+os.environ["EMBEDDING_OLLAMA_HOST"] = EMBEDDING_OLLAMA_HOST
 
 # ─────────────────────────────────────────────────────────────
 # Embeddings — modelo dedicado (não é o de chat)
 # ─────────────────────────────────────────────────────────────
-embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=OLLAMA_HOST)
+embeddings = OllamaEmbeddings(
+    model=EMBEDDING_MODEL,
+    base_url=EMBEDDING_OLLAMA_HOST,
+)
 
 # ─────────────────────────────────────────────────────────────
 # Vector store — ChromaDB local (persistente em disco)
@@ -85,7 +81,7 @@ def buscar(consulta: str, k: int = 2) -> None:
 
 
 def main() -> None:
-    print(f"Ollama Cloud | chat: {OLLAMA_MODEL} | embeddings: {EMBEDDING_MODEL}\n")
+    print(f"Ollama local | embeddings: {EMBEDDING_MODEL}\n")
     # TODO: Chamar indexar()
     # TODO: Chamar buscar() com 3 consultas diferentes (sem palavras-chave exatas)
     pass

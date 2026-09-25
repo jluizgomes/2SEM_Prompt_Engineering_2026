@@ -154,6 +154,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -174,14 +176,14 @@
   <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
   <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
   <div class="cover-title">Context Engineering<br>De prompt para contexto</div>
-  <div class="cover-subtitle">Aula 04/14 — Módulo 1: LangChain Foundations · 🏁 Entrega CKP01</div>
+  <div class="cover-subtitle">Aula 04/14 — Módulo 1: LangChain Foundations · 🏁 Apresentação do CKP01 · Entrega: 23:55 do dia da Aula 05 (Teams)</div>
   <div class="cover-meta">
     <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
     <div class="cover-meta-item">⏱️ 1h40min</div>
     <div class="cover-meta-item">🧠 Context rot · XML tagging · Meta prompting</div>
-    <div class="cover-meta-item">🏁 CKP01 entrega</div>
+    <div class="cover-meta-item">🏁 Apresentação CKP01 · entrega 23:55 A05</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -199,7 +201,7 @@
     <div class="callout-body">Entender que o contexto é um recurso finito e caro — e aprender a preenchê-lo intencionalmente: certas informações no lugar certo, na hora certa, com o mínimo de tokens necessário. Aplicar isso ao CKP01.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -241,7 +243,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -249,7 +251,7 @@
   <div class="section-number">01</div>
   <div class="section-title">De prompt<br>a context engineering</div>
   <div class="section-desc">Anthropic, 2025: "The art of filling the context window with just the right information at the right time in the right format." O paradigma mudou — e o CKP01 é a primeira aplicação.</div>
-  <div class="slide-number">04 / 29</div>
+  <div class="slide-number">4 / 29</div>
 </div>
 
 
@@ -289,7 +291,7 @@
     <div class="callout-body">Gullí propõe uma escala de maturidade de agentes em 4 níveis. No <strong>Level 1</strong> ("Connected Problem-Solver"), o agente já usa tools e RAG — exatamente o card "RAG + Memória" acima. O salto para o <strong>Level 2</strong> ("Strategic Problem-Solver") não vem de mais tokens de janela de contexto, e sim de context engineering como habilidade central: o agente resolve problemas multi-etapa porque cada etapa recebe só o contexto que ela precisa, não todo o histórico disponível. É a diferença entre um agente que <em>tem acesso</em> a RAG e memória (Level 1) e um agente que sabe <em>curar o que passa adiante</em> em cada chamada (Level 2) — a mesma distinção que separa as duas colunas desta linha do tempo.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -328,7 +330,7 @@
     <div class="callout-body">O input do usuário — o que parece ser o mais importante — é uma fração minúscula do contexto. Os outros 95% são controlados por você. Context engineering é a disciplina de usar esses 95% de forma intencional.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">6 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -336,7 +338,7 @@
   <div class="section-number">02</div>
   <div class="section-title">Context rot</div>
   <div class="section-desc">Como a qualidade do modelo degrada com contextos longos — e por que "mais contexto" nem sempre é melhor.</div>
-  <div class="slide-number">07 / 29</div>
+  <div class="slide-number">7 / 29</div>
 </div>
 
 
@@ -392,7 +394,7 @@
     <div class="callout-body">O system prompt deve ter as instruções mais críticas no <strong>início e no final</strong> — não no meio. Informações enterradas no centro do contexto são sub-representadas pelos mecanismos de atenção.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -400,7 +402,7 @@
   <div class="section-number">03</div>
   <div class="section-title">XML tagging<br>e meta prompting</div>
   <div class="section-desc">Estruturar o contexto com tags XML para que o modelo processe seções de forma independente — e usar o modelo para otimizar seus próprios prompts.</div>
-  <div class="slide-number">09 / 29</div>
+  <div class="slide-number">9 / 29</div>
 </div>
 
 
@@ -548,62 +550,47 @@ possível. Cite a região de origem dos pratos quando souber..."""</span>
 </div>
 
 
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
-  <div class="section-number">05</div>
-  <div class="section-title">Lab — Notebook Aluno</div>
-  <div class="section-desc">50% de lacunas — refatorar o system prompt do chatbot do grupo com XML tagging e medir a diferença em tokens.</div>
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,rgba(124,58,237,.08) 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">🏁 Apresentação<br>do CKP01</div>
+  <div class="section-desc">Chatbot Profissional com LangChain — LCEL + memória + Pydantic + context engineering. Grupos de 3–4. Estimativa: 3–4 horas de trabalho total.</div>
   <div class="slide-number">13 / 29</div>
 </div>
 
 
 <div class="slide slide-content"><div class="slide-body">
-  <h2>💻 Notebook Aluno — 50% de lacunas</h2>
-  <p>Refatorar o system prompt do chatbot do grupo. Medir tokens antes e depois. Este notebook é o <strong>R4 do CKP01</strong>.</p>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_04_2Sem_Aluno.ipynb</span></div>
-    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama tiktoken <span class="op">-</span>q
-
-<span class="kw">import</span> <span class="va">tiktoken</span>
-<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
-<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
-<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
-<span class="kw">import</span> <span class="va">os</span>
-<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
-<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">)</span>
-
-<span class="kw">def</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">texto</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">modelo</span><span class="op">:</span> <span class="nb">str</span> <span class="op">=</span> <span class="st">"gpt-4"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">int</span><span class="op">:</span>
-    <span class="kw">return</span> <span class="nb">len</span><span class="op">(</span><span class="va">tiktoken</span><span class="op">.</span><span class="fn">encoding_for_model</span><span class="op">(</span><span class="va">modelo</span><span class="op">).</span><span class="fn">encode</span><span class="op">(</span><span class="va">texto</span><span class="op">))</span>
-
-<span class="cm"># 👉 LACUNA 1: cole aqui o system prompt original do grupo (Aulas 01–03)</span>
-<span class="va">SYSTEM_ORIGINAL</span> <span class="op">=</span> <span class="gap">___</span>
-
-<span class="cm"># 👉 LACUNA 2: reescreva com XML tagging — persona, restricoes, formato</span>
-<span class="va">SYSTEM_OTIMIZADO</span> <span class="op">=</span> <span class="gap">___</span>  <span class="cm"># use &lt;persona&gt;, &lt;restricoes&gt;, &lt;formato&gt;</span>
-
-<span class="cm"># Medição automática</span>
-<span class="va">tok_antes</span>  <span class="op">=</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">SYSTEM_ORIGINAL</span><span class="op">)</span>
-<span class="va">tok_depois</span> <span class="op">=</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">SYSTEM_OTIMIZADO</span><span class="op">)</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Antes:  {tok_antes} tokens"</span><span class="op">)</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Depois: {tok_depois} tokens"</span><span class="op">)</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução: {(1-tok_depois/tok_antes)*100:.1f}%"</span><span class="op">)</span>
-
-<span class="cm"># 👉 LACUNA 3: crie 2 chains (antes e depois) e teste com a mesma pergunta</span>
-<span class="va">chain_antes</span>  <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
-    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="va">SYSTEM_ORIGINAL</span><span class="op">),</span>
-    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="gap">___</span><span class="op">),</span>
-<span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
-
-<span class="va">chain_depois</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
-    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="va">SYSTEM_OTIMIZADO</span><span class="op">),</span>
-    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="gap">___</span><span class="op">),</span>
-<span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
-
-<span class="cm"># 👉 LACUNA 4: invoke com a mesma pergunta de teste para comparar saídas</span>
-<span class="va">pergunta_teste</span> <span class="op">=</span> <span class="gap">___</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">"=== ANTES ===\n"</span><span class="op">,</span> <span class="va">chain_antes</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="gap">___</span><span class="op">:</span> <span class="va">pergunta_teste</span><span class="op">}))</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">"=== DEPOIS ===\n"</span><span class="op">,</span> <span class="va">chain_depois</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="gap">___</span><span class="op">:</span> <span class="va">pergunta_teste</span><span class="op">}))</span></pre>
+  <h2>CKP01 — Chatbot Profissional · Rubrica completa</h2>
+  <div class="ckp-box">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">🏁 CKP01 · Grupo 3–4 · Apresentação nesta aula · Entrega até 23:55 do dia da Aula 05 (Teams, só o líder) · Estimativa: 3–4h</div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R1 — Chain LCEL (30%):</strong> ChatOllama + ChatPromptTemplate + OutputParser. Chain estruturada com operador <code style="font-family:'JetBrains Mono',monospace;font-size:12px">|</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationChain</code> com memória — a arquitetura de 2 chains da Aula 03. Usar exclusivamente <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gemma4:cloud</code>.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R2 — Memória + context rot (25%):</strong> ConversationChain com 1 tipo de memória (Buffer, Summary ou TokenBuffer) escolhido e <em>justificado em comentário</em>. Demonstrar com 5+ turnos de conversa coerente.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R3 — Pydantic (20%):</strong> PydanticOutputParser com schema do domínio (mínimo 4 campos tipados). Demonstrar saída via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.model_dump()</code> e try/except capturando ValidationError.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R4 — System prompt e domínio (15%):</strong> Persona robusta com XML tagging (conteúdo desta aula). README.md do projeto com os nomes e RMs de todos os integrantes + qual domínio, por que e para quem.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
+      <div><strong>R5 — Código e documentação (10%):</strong> Projeto inicia sem erros (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">python -m app.main</code>), comentários em PT-BR, README.md completo.</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📦 Entregável</div>
+      <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">Projeto <strong>local, sem Colab</strong>: pacote Python com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">app/</code> (main, chain, memory_manager, schemas, context_rot, prompts) + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.env.example</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">requirements.txt</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">README.md</code> (nomes e RMs). Entrega <strong>via Teams, até 23:55 do dia da Aula 05, somente o líder</strong>: arquivo compactado <code style="font-family:'JetBrains Mono',monospace;font-size:12px">CKP01_[dominio]_grupo.zip</code> — <strong>o .env não vai no .zip</strong>.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">⭐ Diferencial</div>
+      <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">Context engineering com métricas de tokens (redução ≥15% documentada) · meta prompting (célula que usa o LLM para gerar variações do system prompt). <strong>+0,5 cada; nota limitada a 10,0.</strong></div>
     </div>
   </div>
   </div><!-- slide-body -->
@@ -611,67 +598,23 @@ possível. Cite a região de origem dos pratos quando souber..."""</span>
 </div>
 
 
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,rgba(124,58,237,.08) 100%)">
-  <div class="section-number">06</div>
-  <div class="section-title">🏁 Entrega<br>CKP01</div>
-  <div class="section-desc">Chatbot Profissional com LangChain — LCEL + memória + Pydantic + context engineering. Grupos de 3–4. Estimativa: 3–4 horas de trabalho total.</div>
-  <div class="slide-number">15 / 29</div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>CKP01 — Chatbot Profissional · Rubrica completa</h2>
-  <div class="ckp-box">
-    <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">🏁 CKP01 · Grupo 3–4 · Entrega esta aula · Estimativa: 3–4h</div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
-      <div><strong>R1 — Chain LCEL (30%):</strong> ChatOllama + ChatPromptTemplate + StrOutputParser. Chain funcional que responde sobre o domínio escolhido.</div>
-    </div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
-      <div><strong>R2 — Memória (25%):</strong> ConversationChain com 1 tipo de memória escolhido e <em>justificado em comentário</em>. Demonstrar com 5+ turnos de conversa coerente.</div>
-    </div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
-      <div><strong>R3 — Pydantic (25%):</strong> PydanticOutputParser com schema do domínio (mínimo 4 campos tipados). Demonstrar saída via <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.model_dump()</code> e try/except capturando ValidationError.</div>
-    </div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(41,175,140,.15);border:1px solid rgba(41,175,140,.4);color:var(--fiap-green)">✅</div>
-      <div><strong>R4 — Context Engineering (20%):</strong> System prompt refatorado com XML tagging. Medição de tokens antes/depois documentada. Redução mínima de 15%.</div>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
-      <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📦 Entregável</div>
-      <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">1 notebook <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ipynb</code> com os 4 requisitos integrados. Nome do arquivo: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">CKP01_[dominio]_grupo.ipynb</code>. Link do Colab compartilhado <strong>com permissão de leitura</strong>.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:16px">
-      <div style="font-size:12px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">⭐ Diferencial</div>
-      <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">Adicionar meta prompting: uma célula que usa o LLM para gerar 3 variações do system prompt e compara tokens. Não obrigatório mas conta como ponto extra.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
 <div class="slide slide-content"><div class="slide-body">
   <h2>Checklist do CKP01 — revisar antes de entregar</h2>
   <table class="data-table">
-    <thead><tr><th>Item</th><th>O que verificar</th><th>Onde aparece no notebook</th></tr></thead>
+    <thead><tr><th>Item</th><th>O que verificar</th><th>Onde aparece no projeto</th></tr></thead>
     <tbody>
-      <tr><td>✅ ChatOllama configurado</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">os.environ["OLLAMA_HOST"]</code> definido antes do <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ChatOllama()</code></td><td>Célula de setup</td></tr>
-      <tr><td>✅ Chain LCEL funcionando</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">chain.invoke()</code> retorna string sem erro</td><td>Célula R1</td></tr>
-      <tr><td>✅ Memória implementada</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">chat.predict()</code> com 5+ turnos e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">load_memory_variables({})</code> impresso</td><td>Célula R2</td></tr>
-      <tr><td>✅ Schema Pydantic</td><td>Classe com 4+ campos, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.model_dump()</code> impresso, try/except presente</td><td>Célula R3</td></tr>
-      <tr><td>✅ Context engineering</td><td>SYSTEM_ORIGINAL e SYSTEM_OTIMIZADO definidos, contagem de tokens antes/depois</td><td>Célula R4</td></tr>
-      <tr><td>✅ Domínio documentado</td><td>Célula markdown no início explicando o domínio escolhido e por que</td><td>Célula de introdução</td></tr>
-      <tr><td>✅ Justificativa de memória</td><td>Comentário explicando qual tipo de memória e por que faz sentido para o domínio</td><td>Célula R2</td></tr>
-      <tr><td>✅ Notebook rodável</td><td>Todas as células executam em sequência sem erro em ambiente limpo</td><td>Runtime → Run all</td></tr>
+      <tr><td>✅ ChatOllama configurado</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">os.environ["OLLAMA_HOST"]</code> definido antes do <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ChatOllama()</code></td><td>app/main.py (setup)</td></tr>
+      <tr><td>✅ Chain LCEL funcionando</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">chain.invoke()</code> retorna string sem erro</td><td>app/chain.py</td></tr>
+      <tr><td>✅ Memória implementada</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">chat.predict()</code> com 5+ turnos e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">load_memory_variables({})</code> impresso</td><td>app/memory_manager.py</td></tr>
+      <tr><td>✅ Schema Pydantic</td><td>Classe com 4+ campos, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.model_dump()</code> impresso, try/except presente</td><td>app/schemas.py</td></tr>
+      <tr><td>✅ Context engineering</td><td>SYSTEM_ORIGINAL e SYSTEM_OTIMIZADO definidos, contagem de tokens antes/depois</td><td>app/context_rot.py</td></tr>
+      <tr><td>✅ Domínio documentado</td><td>README.md explicando o domínio escolhido e por quê</td><td>README.md</td></tr>
+      <tr><td>✅ Justificativa de memória</td><td>Justificativa explicando qual tipo de memória e por que faz sentido para o domínio</td><td>README.md</td></tr>
+      <tr><td>✅ Projeto rodável</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">python -m app.main</code> sobe sem erro em ambiente limpo</td><td>Terminal, na raiz do projeto</td></tr>
     </tbody>
   </table>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -706,52 +649,7 @@ possível. Cite a região de origem dos pratos quando souber..."""</span>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Síntese da Aula 04 — e do Módulo 1</h2>
-  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Context engineering é a evolução do prompt engineering.</strong> O contexto é um recurso finito — preenchê-lo com intenção é a diferença entre um protótipo e um produto.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Context rot:</strong> qualidade degrada com janelas longas. Instruções críticas no início e no final — nunca enterradas no meio.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>XML tagging</strong> estrutura o contexto em seções processadas independentemente. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;persona&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;restricoes&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;formato&gt;</code> — e a medição de tokens comprova a eficiência.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Meta prompting:</strong> o LLM pode otimizar seus próprios prompts — uma chain que recebe um prompt ruim e entrega um melhor, com justificativa.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(124,96,198,.05);border:2px solid rgba(124,96,198,.2);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">🏁</div>
-      <div style="font-size:14px"><strong>CKP01 entregue — Módulo 1 concluído.</strong> Você domina LangChain LCEL, memória, structured output e context engineering. O Módulo 2 começa agora: RAG.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Perguntas frequentes</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"Qualquer modelo entende XML? Ou só o Claude?"</strong></td><td>Modelos treinados com RLHF e grandes volumes de dados (GPT-4, Gemini, Claude, Qwen) entendem estrutura XML naturalmente — foi parte do treinamento. A Anthropic é mais explícita na documentação, mas o benefício se aplica a todos. O gpt-oss:120b do semestre responde bem a XML tagging.</td></tr>
-      <tr><td><strong>"Como sei se meu system prompt tem context rot?"</strong></td><td>Teste de aderência: inclua 10 instruções e pergunte ao modelo sobre cada uma depois de uma conversa longa. Se instruções do meio forem ignoradas mais que as do início/fim, há context rot. O teste da demo desta aula mostra isso empiricamente.</td></tr>
-      <tr><td><strong>"Posso usar markdown e XML juntos no mesmo prompt?"</strong></td><td>Sim — use XML para estruturar seções do system prompt e markdown para formatar o conteúdo dentro das seções. A recomendação é não usar markdown para estruturar o prompt em si (headers, bold para instruções) — isso pode confundir o modelo sobre o que é instrução e o que é conteúdo.</td></tr>
-      <tr><td><strong>"tiktoken é do OpenAI — funciona para o Ollama?"</strong></td><td>Tiktoken é baseado em BPE (Byte Pair Encoding), o tokenizador padrão de praticamente todos os LLMs modernos. Os números não serão exatos para o gpt-oss:120b, mas são uma boa aproximação (±15%). Para o objetivo desta aula (comparar antes/depois), a aproximação é suficiente.</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -790,7 +688,7 @@ Reescreva este prompt com XML tagging:
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -827,22 +725,7 @@ Reescreva este prompt com XML tagging:
     <div class="callout-body">Você vai precisar de <strong>PDFs do domínio do grupo</strong> (manuais, artigos, regulamentos, receitas — qualquer documento real). Separe 2–3 PDFs com pelo menos 5 páginas cada. Eles serão a base do CKP02 (RAG sobre documentos do domínio).</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Mais dúvidas frequentes</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"Context engineering se aplica só ao system prompt?"</strong></td><td>Não — aplica-se a todo o contexto: system prompt, os documentos que você injeta via RAG, o histórico que você mantém em memória, e até os exemplos few-shot. Em agentes, inclui a definição das ferramentas. Qualquer token no contexto é recurso a ser gerenciado.</td></tr>
-      <tr><td><strong>"XML tagging melhora para todos os LLMs ou só o Claude?"</strong></td><td>A Anthropic é mais explícita no suporte a XML, mas os benefícios se aplicam a qualquer LLM de grande porte treinado com dados da web (que contém muito XML/HTML). O gpt-oss:120b entende bem XML tagging — a demo confirma empiricamente.</td></tr>
-      <tr><td><strong>"Devo reescrever todos os prompts do semestre com XML tagging?"</strong></td><td>Para prompts simples (1–2 instruções), não vale a pena. Para system prompts do chatbot (5+ instruções) — sim. A regra prática: se o prompt tem mais de 100 tokens e mais de 3 instruções distintas, XML tagging ajuda.</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -873,15 +756,15 @@ Reescreva este prompt com XML tagging:
     <strong>📌 Antes da Aula 05:</strong> separe 2–3 PDFs do domínio do grupo (mínimo 5 páginas cada). Não precisa ser perfeito — qualquer documento real funciona. Ele será o corpus do CKP02.
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
-  <div class="section-number">04</div>
+  <div class="section-number">05</div>
   <div class="section-title">Demo ao vivo</div>
   <div class="section-desc">Medir tokens antes e depois de context engineering. O mesmo modelo, o mesmo comportamento — com 40% menos tokens no contexto.</div>
-  <div class="slide-number">25 / 29</div>
+  <div class="slide-number">20 / 29</div>
 </div>
 
 
@@ -905,9 +788,72 @@ Reescreva este prompt com XML tagging:
   </div>
   <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
     <div class="callout-title">🧱 Stack da demo</div>
-    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gpt-oss:120b</code> · biblioteca <code style="font-family:'JetBrains Mono',monospace;font-size:12px">tiktoken</code> para medir tokens antes/depois</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gemma4:cloud</code> · biblioteca <code style="font-family:'JetBrains Mono',monospace;font-size:12px">tiktoken</code> para medir tokens antes/depois</div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">06</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">50% de lacunas — refatorar o system prompt do chatbot do grupo com XML tagging e medir a diferença em tokens.</div>
+  <div class="slide-number">22 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 50% de lacunas</h2>
+  <p>Refatorar o system prompt do chatbot do grupo. Medir tokens antes e depois. Este notebook é o <strong>R4 do CKP01</strong>.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_04_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama tiktoken <span class="op">-</span>q
+
+<span class="kw">import</span> <span class="va">tiktoken</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">)</span>
+
+<span class="kw">def</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">texto</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">modelo</span><span class="op">:</span> <span class="nb">str</span> <span class="op">=</span> <span class="st">"gpt-4"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">int</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="nb">len</span><span class="op">(</span><span class="va">tiktoken</span><span class="op">.</span><span class="fn">encoding_for_model</span><span class="op">(</span><span class="va">modelo</span><span class="op">).</span><span class="fn">encode</span><span class="op">(</span><span class="va">texto</span><span class="op">))</span>
+
+<span class="cm"># 👉 LACUNA 1: cole aqui o system prompt original do grupo (Aulas 01–03)</span>
+<span class="va">SYSTEM_ORIGINAL</span> <span class="op">=</span> <span class="gap">___</span>
+
+<span class="cm"># 👉 LACUNA 2: reescreva com XML tagging — persona, restricoes, formato</span>
+<span class="va">SYSTEM_OTIMIZADO</span> <span class="op">=</span> <span class="gap">___</span>  <span class="cm"># use &lt;persona&gt;, &lt;restricoes&gt;, &lt;formato&gt;</span>
+
+<span class="cm"># Medição automática</span>
+<span class="va">tok_antes</span>  <span class="op">=</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">SYSTEM_ORIGINAL</span><span class="op">)</span>
+<span class="va">tok_depois</span> <span class="op">=</span> <span class="fn">contar_tokens</span><span class="op">(</span><span class="va">SYSTEM_OTIMIZADO</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Antes:  {tok_antes} tokens"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Depois: {tok_depois} tokens"</span><span class="op">)</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução: {(1-tok_depois/tok_antes)*100:.1f}%"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 3: crie 2 chains (antes e depois) e teste com a mesma pergunta</span>
+<span class="va">chain_antes</span>  <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="va">SYSTEM_ORIGINAL</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="gap">___</span><span class="op">),</span>
+<span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="va">chain_depois</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="va">SYSTEM_OTIMIZADO</span><span class="op">),</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span>  <span class="gap">___</span><span class="op">),</span>
+<span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+
+<span class="cm"># 👉 LACUNA 4: invoke com a mesma pergunta de teste para comparar saídas</span>
+<span class="va">pergunta_teste</span> <span class="op">=</span> <span class="gap">___</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">"=== ANTES ===\n"</span><span class="op">,</span> <span class="va">chain_antes</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="gap">___</span><span class="op">:</span> <span class="va">pergunta_teste</span><span class="op">}))</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">"=== DEPOIS ===\n"</span><span class="op">,</span> <span class="va">chain_depois</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="gap">___</span><span class="op">:</span> <span class="va">pergunta_teste</span><span class="op">}))</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -935,6 +881,66 @@ Reescreva este prompt com XML tagging:
       💡 <strong>Dica de compactação:</strong> instruções na forma imperativa usam menos tokens. "Seja sempre amigável com o usuário" → "Tom amigável". "Não fale sobre assuntos não relacionados" → "Somente [domínio]".
     </div>
   </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 04 — e do Módulo 1</h2>
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Context engineering é a evolução do prompt engineering.</strong> O contexto é um recurso finito — preenchê-lo com intenção é a diferença entre um protótipo e um produto.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Context rot:</strong> qualidade degrada com janelas longas. Instruções críticas no início e no final — nunca enterradas no meio.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>XML tagging</strong> estrutura o contexto em seções processadas independentemente. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;persona&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;restricoes&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;formato&gt;</code> — e a medição de tokens comprova a eficiência.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Meta prompting:</strong> o LLM pode otimizar seus próprios prompts — uma chain que recebe um prompt ruim e entrega um melhor, com justificativa.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(124,96,198,.05);border:2px solid rgba(124,96,198,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🏁</div>
+      <div style="font-size:14px"><strong>CKP01 entregue — Módulo 1 concluído.</strong> Você domina LangChain LCEL, memória, structured output e context engineering. O Módulo 2 começa agora: RAG.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Qualquer modelo entende XML? Ou só o Claude?"</strong></td><td>Modelos treinados com RLHF e grandes volumes de dados (GPT-4, Gemini, Claude, Qwen) entendem estrutura XML naturalmente — foi parte do treinamento. A Anthropic é mais explícita na documentação, mas o benefício se aplica a todos. O gemma4:cloud do semestre responde bem a XML tagging.</td></tr>
+      <tr><td><strong>"Como sei se meu system prompt tem context rot?"</strong></td><td>Teste de aderência: inclua 10 instruções e pergunte ao modelo sobre cada uma depois de uma conversa longa. Se instruções do meio forem ignoradas mais que as do início/fim, há context rot. O teste da demo desta aula mostra isso empiricamente.</td></tr>
+      <tr><td><strong>"Posso usar markdown e XML juntos no mesmo prompt?"</strong></td><td>Sim — use XML para estruturar seções do system prompt e markdown para formatar o conteúdo dentro das seções. A recomendação é não usar markdown para estruturar o prompt em si (headers, bold para instruções) — isso pode confundir o modelo sobre o que é instrução e o que é conteúdo.</td></tr>
+      <tr><td><strong>"tiktoken é do OpenAI — funciona para o Ollama?"</strong></td><td>Tiktoken é baseado em BPE (Byte Pair Encoding), o tokenizador padrão de praticamente todos os LLMs modernos. Os números não serão exatos para o gemma4:cloud, mas são uma boa aproximação (±15%). Para o objetivo desta aula (comparar antes/depois), a aproximação é suficiente.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Mais dúvidas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Context engineering se aplica só ao system prompt?"</strong></td><td>Não — aplica-se a todo o contexto: system prompt, os documentos que você injeta via RAG, o histórico que você mantém em memória, e até os exemplos few-shot. Em agentes, inclui a definição das ferramentas. Qualquer token no contexto é recurso a ser gerenciado.</td></tr>
+      <tr><td><strong>"XML tagging melhora para todos os LLMs ou só o Claude?"</strong></td><td>A Anthropic é mais explícita no suporte a XML, mas os benefícios se aplicam a qualquer LLM de grande porte treinado com dados da web (que contém muito XML/HTML). O gemma4:cloud entende bem XML tagging — a demo confirma empiricamente.</td></tr>
+      <tr><td><strong>"Devo reescrever todos os prompts do semestre com XML tagging?"</strong></td><td>Para prompts simples (1–2 instruções), não vale a pena. Para system prompts do chatbot (5+ instruções) — sim. A regra prática: se o prompt tem mais de 100 tokens e mais de 3 instruções distintas, XML tagging ajuda.</td></tr>
+    </tbody>
+  </table>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

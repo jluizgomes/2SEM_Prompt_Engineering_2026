@@ -11,88 +11,43 @@ Como rodar:
     3. Gradio:    python main.py          -> abre em http://localhost:7860
     4. Streamlit: streamlit run app_streamlit.py
 """
-import os
+import uuid
 
-from dotenv import load_dotenv
-
-import gradio as gr
-
-from langchain_ollama import ChatOllama
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
-
-# ─────────────────────────────────────────────────────────────
-# Configuração via .env
-# ─────────────────────────────────────────────────────────────
-load_dotenv()
-
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
-OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
-
-if not OLLAMA_API_KEY:
-    raise RuntimeError(
-        "OLLAMA_API_KEY não encontrada. Copie .env.example para .env e preencha a chave."
-    )
-
-os.environ["OLLAMA_HOST"] = OLLAMA_HOST
-os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
-
-llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_HOST, temperature=0.5)
-
-# ─────────────────────────────────────────────────────────────
-# Chain base com memória por sessão
-# ─────────────────────────────────────────────────────────────
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "Você é um assistente prestativo. Responda em português do Brasil."),
-    ("human", "{pergunta}"),
-])
-
-chain_base = prompt | llm | StrOutputParser()
-
-# Históricos por session_id (multi-usuário)
-_store: dict[str, ChatMessageHistory] = {}
+from rag import responder
 
 
-def _get_history(session_id: str) -> ChatMessageHistory:
-    if session_id not in _store:
-        _store[session_id] = ChatMessageHistory()
-    return _store[session_id]
-
-
-chain_com_memoria = RunnableWithMessageHistory(
-    chain_base,
-    _get_history,
-    input_messages_key="pergunta",
-)
-
-
-def responder(mensagem: str, history: list) -> list:
-    """Callback da interface Gradio: acumula o histórico e devolve a resposta."""
-    history = history or []
-    session_id = "sessao_demo"
-    resposta = chain_com_memoria.invoke(
-        {"pergunta": mensagem},
-        config={"configurable": {"session_id": session_id}},
-    )
-    history.append((mensagem, resposta))
-    return history
+def responder_gradio(mensagem, historico, session_id, responder_rag=None):
+    """Callback da interface Gradio: mantém o histórico da sessão atual."""
+    mensagens = list(historico or [])
+    sessao = str(session_id or uuid.uuid4().hex)
+    mensagens.append({"role": "user", "content": mensagem})
+    try:
+        executor = responder_rag or responder
+        resposta = executor(mensagem, sessao)
+    except Exception:
+        resposta = "Não foi possível consultar o assistente agora. Verifique o modelo e o corpus local."
+    mensagens.append({"role": "assistant", "content": resposta})
+    return mensagens, sessao
 
 
 def main() -> None:
-    print(f"Ollama Cloud | modelo: {OLLAMA_MODEL}")
+    import gradio as gr
+
     print("Abrindo interface Gradio em http://localhost:7860 ...")
 
-    demo = gr.ChatInterface(
-        fn=responder,
-        title="Assistente FIAP — Aula 08",
-        description="Chat com memória por sessão (LangChain + Gradio).",
-        theme="soft",
-    )
-    demo.launch()
+    with gr.Blocks(title="Assistente FIAP — Aula 08") as demo:
+        session_id = gr.State(value=None)
+        chat = gr.Chatbot(
+            label="Conversa",
+            placeholder="Faça uma pergunta sobre o corpus da aula...",
+        )
+        mensagem = gr.Textbox(label="Mensagem", placeholder="Digite sua mensagem...")
+        enviar = gr.Button("Enviar", variant="primary")
+
+        evento = enviar.click(responder_gradio, [mensagem, chat, session_id], [chat, session_id])
+        evento.then(lambda: "", None, mensagem)
+
+    demo.queue().launch()
 
 
 if __name__ == "__main__":

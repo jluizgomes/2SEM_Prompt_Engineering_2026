@@ -10,113 +10,44 @@ Como rodar:
     2. confirme o .env
     3. python main.py
 
-Para a parte MCP, aponte MCP_SERVER_URL no .env para um servidor MCP
-(stdio ou SSE). Sem servidor, a demonstração é pulada com orientação.
+Para a parte MCP, habilite MCP e configure o transporte no .env.
+Sem servidor, a demonstração local continua e informa como configurar.
 """
-import os
+from langchain.tools import tool
 
-from dotenv import load_dotenv
+from contexto import demo_mcp_tools, mensagens_de_entrada, recortar_mensagens
 
-from langchain_ollama import ChatOllama
-from langchain_core.messages import AIMessage, HumanMessage, trim_messages
-from langchain_core.tools import tool
-from langchain_community.tools import DuckDuckGoSearchRun
-
-# ─────────────────────────────────────────────────────────────
-# Configuração via .env
-# ─────────────────────────────────────────────────────────────
-load_dotenv()
-
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
-OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
-
-if not OLLAMA_API_KEY:
-    raise RuntimeError(
-        "OLLAMA_API_KEY não encontrada. Copie .env.example para .env e preencha a chave."
-    )
-
-os.environ["OLLAMA_HOST"] = OLLAMA_HOST
-os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
-
-llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_HOST, temperature=0)
+trim_messages = recortar_mensagens
 
 
-# ─────────────────────────────────────────────────────────────
-# 1. Context engineering: trim_messages (janela deslizante de tokens)
-# ─────────────────────────────────────────────────────────────
-def demo_trim_messages() -> None:
-    print("\n== trim_messages (controla o tamanho do contexto) ==")
-    mensagens = [
-        HumanMessage(content="Olá!"),
-        AIMessage(content="Oi! Como posso ajudar?"),
-        HumanMessage(content="Me fale sobre LangChain."),
-        AIMessage(content="LangChain é um framework para aplicações com LLMs."),
-        HumanMessage(content="E sobre memória?"),
-    ]
-    recortadas = trim_messages(
-        mensagens,
-        max_tokens=40,
-        strategy="last",
-        token_counter=llm,
-        include_system=True,
-    )
-    print(f"De {len(mensagens)} mensagens -> {len(recortadas)} mantidas:")
-    for m in recortadas:
-        print(f"  [{type(m).__name__}] {str(m.content)[:50]}...")
-
-
-# ─────────────────────────────────────────────────────────────
-# 2. Tools regulares (não precisam de MCP)
-# ─────────────────────────────────────────────────────────────
 @tool
 def contar_palavras(texto: str) -> str:
     """Conta quantas palavras há em um texto."""
     return f"{len(texto.split())} palavras"
 
 
-busca_web = DuckDuckGoSearchRun(name="busca_na_web",
-                                description="Busca na web por informações atuais.")
+def demo_trim_messages(max_tokens: int = 40, output=print) -> list:
+    output("\n== trim_messages (controla o tamanho do contexto) ==")
+    mensagens = mensagens_de_entrada([
+        {"role": "human", "content": "Olá!"},
+        {"role": "ai", "content": "Oi! Como posso ajudar?"},
+        {"role": "human", "content": "Me fale sobre LangChain."},
+        {"role": "ai", "content": "LangChain é um framework para aplicações com LLMs."},
+        {"role": "human", "content": "E sobre memória?"},
+    ])
+    recortadas = recortar_mensagens(mensagens, max_tokens=max_tokens)
+    output(f"De {len(mensagens)} mensagens -> {len(recortadas)} mantidas:")
+    for mensagem in recortadas:
+        output(f"  [{type(mensagem).__name__}] {str(mensagem.content)[:50]}...")
+    return recortadas
 
 
-# ─────────────────────────────────────────────────────────────
-# 3. MCP — carregar tools de um servidor MCP externo
-# ─────────────────────────────────────────────────────────────
-def demo_mcp_tools() -> None:
-    print("\n== MCP (Model Context Protocol) ==")
-    mcp_url = os.getenv("MCP_SERVER_URL", "")
-    if not mcp_url:
-        print("  MCP_SERVER_URL não definida no .env — pulando.")
-        print("  Exemplo: MCP_SERVER_URL=http://localhost:8000/sse")
-        return
-
-    try:
-        from langchain_mcp_adapters.tools import load_mcp_tools
-        from langchain_mcp_adapters.client import MultiServerMCPClient
-
-        async def _carregar():
-            client = MultiServerMCPClient({"mcp": {"url": mcp_url}})
-            tools_mcp = await client.get_tools()
-            return tools_mcp
-
-        import asyncio
-        tools_mcp = asyncio.run(_carregar())
-        print(f"  {len(tools_mcp)} tool(s) carregadas do servidor MCP:")
-        for t in tools_mcp:
-            print(f"    - {t.name}")
-    except ImportError as e:
-        print(f"  (pulando: dependência ausente — {e})")
-        print("  Instale: pip install langchain-mcp-adapters")
-    except Exception as e:  # noqa: BLE001
-        print(f"  (falha ao conectar ao MCP: {e})")
-
-
-def main() -> None:
-    print(f"Ollama Cloud | modelo: {OLLAMA_MODEL}")
-    demo_trim_messages()
-    print("\n== Tool local ==")
-    print(contar_palavras.invoke("LangChain e MCP em uma frase"))
-    demo_mcp_tools()
+def main(environ=None, carregador=None, output=print) -> None:
+    demo_trim_messages(output=output)
+    output("\n== Tool local ==")
+    output(contar_palavras.invoke("LangChain e MCP em uma frase"))
+    output("\n== MCP (Model Context Protocol) ==")
+    demo_mcp_tools(environ=environ, carregador=carregador, output=output)
 
 
 if __name__ == "__main__":

@@ -151,6 +151,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -178,7 +180,7 @@
     <div class="cover-meta-item">📄 PyMuPDF · RecursiveCharacterTextSplitter</div>
     <div class="cover-meta-item">🔁 Andaime 50%</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -195,7 +197,7 @@
     <div class="callout-body">Construir um pipeline RAG completo funcional em ~50 linhas. O LLM responde sobre documentos reais que nunca estiveram no treinamento — com citação de página e trecho. Essa é a fundação do CKP02.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -238,7 +240,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -246,7 +248,7 @@
   <div class="section-number">01</div>
   <div class="section-title">O que é RAG</div>
   <div class="section-desc">Retrieval-Augmented Generation — o LLM não precisa memorizar tudo. Ele busca o que precisa, injeta no contexto e gera a resposta fundamentada na fonte.</div>
-  <div class="slide-number">04 / 29</div>
+  <div class="slide-number">4 / 29</div>
 </div>
 
 
@@ -283,7 +285,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -315,7 +317,7 @@
     <div class="callout-body">O contexto do LLM é o "RAM" — rápido mas finito. O ChromaDB é o "HD" — ilimitado mas precisa de busca. RAG recupera só o trecho relevante do HD e coloca na RAM apenas quando necessário. É por isso que funciona com documentos maiores que a janela de contexto.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">6 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -323,7 +325,7 @@
   <div class="section-number">02</div>
   <div class="section-title">Etapas 1–3<br>Load · Split · Embed</div>
   <div class="section-desc">Carregar PDFs com PyMuPDF, dividir em chunks com RecursiveCharacterTextSplitter, vetorizar com nomic-embed-text. A fase de indexação.</div>
-  <div class="slide-number">07 / 29</div>
+  <div class="slide-number">7 / 29</div>
 </div>
 
 
@@ -365,7 +367,7 @@
     <div class="callout-body">PyMuPDF mantém metadados de página numerada automaticamente (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">metadata["page"]</code>), lida melhor com PDFs escaneados e layouts de duas colunas, e é 3–5× mais rápido. Para citar a fonte da resposta ("página 12"), o metadado de página é essencial.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -403,7 +405,7 @@
     <div class="callout-body">800 chars (~150–200 palavras) é o sweet spot para o nomic-embed-text — captura contexto suficiente sem diluir o significado. Overlap de 100 chars evita que uma informação no final de um chunk e início do próximo seja perdida na busca. Na Aula 07 (RAG avançado) você vai experimentar outros tamanhos e medir o impacto no RAGAS.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -508,7 +510,7 @@ com base EXCLUSIVAMENTE nos documentos fornecidos.
 <span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
 <span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnablePassthrough</span><span class="op">,</span> <span class="va">RunnableLambda</span>
 
-<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>  <span class="cm"># temp=0 para RAG (menos variação)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>  <span class="cm"># temp=0 para RAG (menos variação)</span>
 
 <span class="kw">def</span> <span class="fn">formatar_contexto</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
     <span class="st">"""Formata os docs recuperados com número de página para citação."""</span>
@@ -542,11 +544,303 @@ com base EXCLUSIVAMENTE nos documentos fornecidos.
 </div>
 
 
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Decisões de chunking — o que afeta a qualidade do RAG</h2>
+  <p>O tamanho e a estratégia de chunking é uma das principais alavancas de qualidade de um sistema RAG:</p>
+  <table class="data-table">
+    <thead><tr><th>Parâmetro</th><th>Valor pequeno</th><th>Valor grande</th><th>Recomendação</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>chunk_size</strong></td>
+        <td>200–400 chars<br><em style="color:var(--fiap-muted);font-size:11px">Precisão alta, contexto pobre</em></td>
+        <td>1500–2000 chars<br><em style="color:var(--fiap-muted);font-size:11px">Contexto rico, precisão diluída</em></td>
+        <td><strong>600–1000 chars</strong><br><em style="color:var(--fiap-muted);font-size:11px">sweet spot para nomic</em></td>
+      </tr>
+      <tr>
+        <td><strong>chunk_overlap</strong></td>
+        <td>0 (sem overlap)<br><em style="color:var(--fiap-muted);font-size:11px">Pode perder informação na borda</em></td>
+        <td>50%+ do chunk<br><em style="color:var(--fiap-muted);font-size:11px">Redundância excessiva, mais custo</em></td>
+        <td><strong>10–15% do chunk_size</strong><br><em style="color:var(--fiap-muted);font-size:11px">~100 para chunk de 800</em></td>
+      </tr>
+      <tr>
+        <td><strong>separators</strong></td>
+        <td>[""] — split por char<br><em style="color:var(--fiap-muted);font-size:11px">Quebra no meio de palavras</em></td>
+        <td>["\n\n"] só<br><em style="color:var(--fiap-muted);font-size:11px">Chunks muito irregulares</em></td>
+        <td><strong>["\n\n", "\n", ". ", " ", ""]</strong><br><em style="color:var(--fiap-muted);font-size:11px">hierárquico — parágrafo primeiro</em></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — Por que a ordem dos separators importa</div>
+    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) explica o mecanismo por trás do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RecursiveCharacterTextSplitter</code>: ele tenta os separadores da lista na ordem, do mais estrutural para o mais granular — primeiro quebra em parágrafo (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">\n\n</code>), só recorre a linha, depois frase, e usa espaço ou caractere como último recurso, quando o chunk ainda excede o tamanho máximo. É por isso que a lista recomendada nesta tabela é hierárquica e não arbitrária: cada separador é uma tentativa de preservar a estrutura que um humano usaria para organizar o texto, antes de partir para uma quebra puramente mecânica.</div>
+  </div>
+  <div class="callout callout-purple">
+    <div class="callout-title">🔜 Aula 07 — RAG avançado</div>
+    <div class="callout-body">Na Aula 07 você vai experimentar diferentes valores de chunk_size e medir o impacto com RAGAS (faithfulness e answer relevancy). Guarde os resultados da chain de hoje como baseline para comparação.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">14 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Pipeline completo em bloco único (~50 linhas)</h2>
+  <p>Visão consolidada do pipeline inteiro para referência rápida:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">rag_pipeline_completo.py</span></div>
+    <div class="code-body"><pre><span class="cm"># ── 1. SETUP ────────────────────────────────────────────────</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># ── 2. INDEXAÇÃO (uma vez) ───────────────────────────────────</span>
+<span class="va">paginas</span>  <span class="op">=</span> <span class="va">PyMuPDFLoader</span><span class="op">(</span><span class="st">"documento.pdf"</span><span class="op">).</span><span class="fn">load</span><span class="op">()</span>
+<span class="va">chunks</span>   <span class="op">=</span> <span class="va">RecursiveCharacterTextSplitter</span><span class="op">(</span><span class="num">800</span><span class="op">,</span> <span class="num">100</span><span class="op">).</span><span class="fn">split_documents</span><span class="op">(</span><span class="va">paginas</span><span class="op">)</span>
+<span class="va">db</span>       <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span><span class="va">chunks</span><span class="op">,</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">),</span>
+                               <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/rag"</span><span class="op">)</span>
+<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span><span class="num">3</span><span class="op">})</span>
+
+<span class="cm"># ── 3. CHAIN LCEL ───────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">fmt</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="st">"\n\n---\n\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span>
+        <span class="st">f"[{d.metadata.get('source','?')}, pág.{d.metadata.get('page',0)+1}]\n{d.page_content}"</span>
+        <span class="kw">for</span> <span class="va">d</span> <span class="kw">in</span> <span class="va">docs</span>
+    <span class="op">)</span>
+
+<span class="va">chain</span> <span class="op">=</span> <span class="op">(</span>
+    <span class="op">{</span><span class="st">"contexto"</span><span class="op">:</span> <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">fmt</span><span class="op">),</span>
+     <span class="st">"pergunta"</span><span class="op">:</span> <span class="va">RunnablePassthrough</span><span class="op">(),</span>
+     <span class="st">"nome_doc"</span><span class="op">:</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span><span class="st">"documento.pdf"</span><span class="op">)}</span>
+    <span class="op">|</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+<span class="op">)</span>
+
+<span class="cm"># ── 4. USAR ─────────────────────────────────────────────────</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="st">"Qual é o prazo de garantia?"</span><span class="op">))</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>RunnablePassthrough e RunnableLambda — as peças de cola</h2>
+  <p>A chain RAG usa dois Runnables especiais para montar o dicionário de variáveis do prompt:</p>
+  <div class="two-col">
+    <div class="callout" style="margin:0">
+      <div class="callout-title">⚡ RunnablePassthrough</div>
+      <div class="callout-body"><strong>Passa o input sem transformar.</strong> Quando a chain recebe a string da pergunta, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RunnablePassthrough()</code> encaminha essa mesma string para o slot <code style="font-family:'JetBrains Mono',monospace;font-size:12px">"pergunta"</code> do prompt — sem modificação.<br><br>
+      Equivalente a: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">lambda x: x</code></div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">🔧 RunnableLambda</div>
+      <div class="callout-body"><strong>Envolve qualquer função Python em um Runnable.</strong> Usado para:<br>
+      1. Formatar os docs em string (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">formatar_contexto</code>)<br>
+      2. Injetar valores constantes (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">lambda _: "nome_doc"</code>)<br>
+      3. Qualquer transformação customizada<br><br>
+      Qualquer função <code style="font-family:'JetBrains Mono',monospace;font-size:12px">def f(x): return y</code> vira um Runnable composável com o pipe <code style="font-family:'JetBrains Mono',monospace;font-size:12px">|</code>.</div>
+    </div>
+  </div>
+  <div class="code-block" style="margin-top:16px">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">runnable_anatomia.py</span></div>
+    <div class="code-body"><pre><span class="cm"># O que acontece quando chain.invoke("Qual é o prazo?"):</span>
+<span class="cm">#</span>
+<span class="cm"># Input: "Qual é o prazo?"</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># retriever.invoke("Qual é o prazo?") → [Doc1, Doc2, Doc3]</span>
+<span class="cm"># formatar_contexto([Doc1, Doc2, Doc3]) → "[pág.8]\n...\n---\n[pág.12]\n..."</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># contexto = "[pág.8]\n..."       ← resultado do retriever | lambda</span>
+<span class="cm"># pergunta = "Qual é o prazo?"    ← RunnablePassthrough() — mesma string</span>
+<span class="cm"># nome_doc = "documento.pdf"      ← RunnableLambda(lambda _: "...")</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># prompt.format(contexto=..., pergunta=..., nome_doc=...) → mensagens</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># llm(mensagens) → AIMessage</span>
+<span class="cm">#   ↓</span>
+<span class="cm"># StrOutputParser() → string final com citação de página</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Erros comuns no pipeline RAG</h2>
+  <table class="data-table">
+    <thead><tr><th>Erro</th><th>Causa provável</th><th>Solução</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ModuleNotFoundError: fitz</code></td>
+        <td>PyMuPDF não instalado</td>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">!pip install pymupdf</code> — o pacote PyPI chama-se <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pymupdf</code>, mas o import é <code style="font-family:'JetBrains Mono',monospace;font-size:11px">fitz</code></td>
+      </tr>
+      <tr>
+        <td>Resposta vazia ou <em>"Não encontrei"</em> para pergunta que deveria ter resposta</td>
+        <td>chunk_size muito pequeno ou k=1 recuperando poucos chunks</td>
+        <td>Aumentar chunk_size para 1000+ ou k para 5; verificar se o PDF tem texto extraível (não é scaneado)</td>
+      </tr>
+      <tr>
+        <td>LLM ainda alucina mesmo com RAG</td>
+        <td>Prompt sem instrução de grounding explícita; temperature &gt; 0</td>
+        <td>Usar o prompt com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">&lt;instrucoes&gt;</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">temperature=0</code></td>
+      </tr>
+      <tr>
+        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">KeyError: "contexto"</code> na chain</td>
+        <td>Variável no prompt não corresponde à chave no dicionário da chain</td>
+        <td>Verificar que <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{contexto}</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{pergunta}</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{nome_doc}</code> no template correspondem exatamente às chaves do dict da chain</td>
+      </tr>
+      <tr>
+        <td>Chunks com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">page_content</code> vazio</td>
+        <td>PDF é uma imagem escaneada sem OCR</td>
+        <td>Usar OCR antes de indexar — <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pytesseract</code> ou Adobe Acrobat. Para o CKP02, usar PDFs com texto selecionável.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula06_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. extend() — adicionar todos os itens de uma lista em outra</span>
+<span class="va">lista_a</span> <span class="op">= [</span><span class="num">1</span><span class="op">,</span> <span class="num">2</span><span class="op">]</span>
+<span class="va">lista_a</span><span class="op">.</span><span class="fn">extend</span><span class="op">([</span><span class="num">3</span><span class="op">,</span> <span class="num">4</span><span class="op">])</span>  <span class="cm"># [1, 2, 3, 4] — diferente de append([3, 4]) = [1, 2, [3, 4]]</span>
+
+<span class="cm"># 2. enumerate() — iterar com índice</span>
+<span class="kw">for</span> <span class="va">i</span><span class="op">,</span> <span class="va">doc</span> <span class="kw">in</span> <span class="nb">enumerate</span><span class="op">(</span><span class="va">docs</span><span class="op">,</span> <span class="num">1</span><span class="op">):</span>  <span class="cm"># começa em 1 — i=1,2,3...</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"Trecho {i}: {doc.page_content}"</span><span class="op">)</span>
+
+<span class="cm"># 3. .get() em dict com valor padrão</span>
+<span class="va">pg</span> <span class="op">=</span> <span class="va">doc</span><span class="op">.</span><span class="va">metadata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"page"</span><span class="op">,</span> <span class="st">"?"</span><span class="op">)</span>  <span class="cm"># retorna "?" se "page" não existir</span>
+
+<span class="cm"># 4. join() com separador multilinha</span>
+<span class="va">separador</span> <span class="op">=</span> <span class="st">"\n\n---\n\n"</span>
+<span class="va">texto</span>     <span class="op">=</span> <span class="va">separador</span><span class="op">.</span><span class="fn">join</span><span class="op">([</span><span class="st">"Trecho A"</span><span class="op">,</span> <span class="st">"Trecho B"</span><span class="op">])</span>
+
+<span class="cm"># 5. RunnablePassthrough e RunnableLambda — LCEL avançado</span>
+<span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnablePassthrough</span><span class="op">,</span> <span class="va">RunnableLambda</span>
+
+<span class="va">passthrough</span> <span class="op">=</span> <span class="va">RunnablePassthrough</span><span class="op">()</span>        <span class="cm"># x → x (identidade)</span>
+<span class="va">constante</span>   <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span> <span class="st">"doc.pdf"</span><span class="op">)</span>  <span class="cm"># ignora input, retorna constante</span>
+<span class="va">transformar</span> <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">minha_funcao</span><span class="op">)</span>    <span class="cm"># qualquer função vira Runnable</span>
+
+<span class="cm"># 6. statistics.mean() — média de uma lista</span>
+<span class="kw">import</span> <span class="va">statistics</span>
+<span class="va">media</span> <span class="op">=</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">([</span><span class="num">100</span><span class="op">,</span> <span class="num">200</span><span class="op">,</span> <span class="num">150</span><span class="op">])</span>  <span class="cm"># 150.0</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>RAG em produção — onde o padrão aparece</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Setor financeiro e jurídico</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Assistente de compliance</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">RAG sobre milhares de páginas de regulamentos e normas internas. Analistas perguntam sobre regras específicas e recebem a resposta com citação exata do parágrafo da norma — o mesmo padrão de grounding construído nesta aula.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Assistentes de código</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Ferramentas de IA para programação indexam o repositório do usuário em embeddings. Ao perguntar "como essa função é usada?", recuperam os arquivos relevantes e respondem com base no código real do projeto — não em conhecimento genérico sobre a linguagem.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Suporte ao cliente</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Base de conhecimento indexada como embeddings. Quando um cliente abre um chamado, o sistema recupera os artigos de suporte mais relevantes e sugere a resolução ao atendente — com link para a fonte.</div>
+    </div>
+  </div>
+  <div class="callout callout-orange" style="margin-top:16px">
+    <div class="callout-title">📌 Padrão de mercado</div>
+    <div class="callout-body">Praticamente todo produto de IA empresarial lançado em 2024–2026 tem RAG por baixo. O diferencial não é ter RAG — é ter RAG com boa qualidade de chunking, retrieval preciso e grounding robusto. Isso é o que a Aula 07 (RAGAS) vai ensinar a medir e otimizar.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 07 — RAG avançado e RAGAS</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-pink">
+        <div class="callout-title">🔮 O que você vai aprender</div>
+        <div class="callout-body">
+          <strong>Chunking estratégico:</strong> como tamanho e overlap afetam a qualidade<br><br>
+          <strong>Reranking:</strong> reordenar os chunks recuperados por relevância antes de gerar<br><br>
+          <strong>RAGAS:</strong> medir a qualidade do RAG com duas métricas objetivas:<br>
+          · <em>faithfulness</em> — a resposta está ancorada no contexto?<br>
+          · <em>answer relevancy</em> — a resposta responde à pergunta?<br><br>
+          <strong>Apresentação do CKP02</strong> na Aula 07 — entrega até 23:55 do dia da Aula 08 via Teams.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-green">
+        <div class="callout-title">🧩 O que guardar para a Aula 07</div>
+        <div class="callout-body">
+          · Notebook da Aula 06 com pipeline RAG funcionando<br>
+          · Os mesmos 3+ PDFs do domínio (para comparar métricas)<br>
+          · 5 pares de (pergunta, resposta esperada) do domínio — serão o dataset de avaliação do RAGAS<br><br>
+          A entrega CKP02 vai incluir as métricas RAGAS documentadas no notebook. Apresentação na Aula 07; prazo de entrega até 23:55 do dia da Aula 08, via Teams.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;font-size:13px">
+    <strong>📌 Ação antes da Aula 07:</strong> prepare 5 pares (pergunta, resposta-esperada) sobre os documentos do domínio. Ex: ("Qual é o prazo de entrega?", "30 dias conforme cláusula 7.3"). Esses pares são o dataset de avaliação do RAGAS.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">RAG sobre 3 PDFs reais. A mesma pergunta, o mesmo modelo — sem RAG alucina, com RAG cita a fonte exata.</div>
+  <div class="slide-number">21 / 29</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor roda a mesma pergunta sobre um manual técnico antes e depois de configurar o RAG. Sem RAG, o modelo preenche a lacuna com uma resposta plausível mas inventada. Com RAG, a mesma pergunta retorna a cláusula exata, com página citada.</p>
+  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
+    <div class="callout callout-red" style="margin:0">
+      <div class="callout-title">1. Sem RAG</div>
+      <div class="callout-body">Pergunta: <strong>"Qual o prazo de garantia do produto X?"</strong> — o modelo puro responde "12 meses conforme a legislação brasileira", um número plausível mas inventado, sem qualquer relação com o manual real.</div>
+    </div>
+    <div class="callout" style="margin:0">
+      <div class="callout-title">2. Indexação ao vivo</div>
+      <div class="callout-body">3 PDFs (manual técnico, regulamento, FAQ) são carregados, divididos em chunks e indexados no ChromaDB — o pipeline completo roda em ~2 minutos diante da turma.</div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">3. Com RAG</div>
+      <div class="callout-body">A mesma pergunta agora retorna: <strong>"Conforme o manual, página 15, o prazo de garantia é de 24 meses, cláusula 8.2"</strong> — resposta real, extraída do documento, com fonte citada.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
+    <div class="callout-title">🧱 Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · PyMuPDF · nomic-embed-text · ChromaDB · gemma4:cloud</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
   <div class="section-number">05</div>
   <div class="section-title">Lab — Notebook Aluno</div>
   <div class="section-desc">50% de lacunas — pipeline RAG completo sobre os PDFs do domínio do grupo. Ao final: chain funcionando, respondendo com citação de página.</div>
-  <div class="slide-number">14 / 29</div>
+  <div class="slide-number">23 / 29</div>
 </div>
 
 
@@ -594,173 +888,42 @@ com base EXCLUSIVAMENTE nos documentos fornecidos.
     <span class="op">{</span><span class="st">"contexto"</span><span class="op">:</span> <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">formatar_contexto</span><span class="op">),</span>
      <span class="st">"pergunta"</span><span class="op">:</span> <span class="gap">___</span><span class="op">,</span>
      <span class="st">"nome_doc"</span><span class="op">:</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span> <span class="st">"PDFs do domínio"</span><span class="op">)}</span>
-    <span class="op">|</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+    <span class="op">|</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
 <span class="op">)</span>
 <span class="nb">print</span><span class="op">(</span><span class="va">chain_rag</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="gap">___</span><span class="op">))</span>  <span class="cm"># sua pergunta sobre o domínio</span></pre>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
 <div class="slide slide-content"><div class="slide-body">
-  <h2>Decisões de chunking — o que afeta a qualidade do RAG</h2>
-  <p>O tamanho e a estratégia de chunking é uma das principais alavancas de qualidade de um sistema RAG:</p>
-  <table class="data-table">
-    <thead><tr><th>Parâmetro</th><th>Valor pequeno</th><th>Valor grande</th><th>Recomendação</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><strong>chunk_size</strong></td>
-        <td>200–400 chars<br><em style="color:var(--fiap-muted);font-size:11px">Precisão alta, contexto pobre</em></td>
-        <td>1500–2000 chars<br><em style="color:var(--fiap-muted);font-size:11px">Contexto rico, precisão diluída</em></td>
-        <td><strong>600–1000 chars</strong><br><em style="color:var(--fiap-muted);font-size:11px">sweet spot para nomic</em></td>
-      </tr>
-      <tr>
-        <td><strong>chunk_overlap</strong></td>
-        <td>0 (sem overlap)<br><em style="color:var(--fiap-muted);font-size:11px">Pode perder informação na borda</em></td>
-        <td>50%+ do chunk<br><em style="color:var(--fiap-muted);font-size:11px">Redundância excessiva, mais custo</em></td>
-        <td><strong>10–15% do chunk_size</strong><br><em style="color:var(--fiap-muted);font-size:11px">~100 para chunk de 800</em></td>
-      </tr>
-      <tr>
-        <td><strong>separators</strong></td>
-        <td>[""] — split por char<br><em style="color:var(--fiap-muted);font-size:11px">Quebra no meio de palavras</em></td>
-        <td>["\n\n"] só<br><em style="color:var(--fiap-muted);font-size:11px">Chunks muito irregulares</em></td>
-        <td><strong>["\n\n", "\n", ". ", " ", ""]</strong><br><em style="color:var(--fiap-muted);font-size:11px">hierárquico — parágrafo primeiro</em></td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="callout callout-purple" style="margin-top:16px">
-    <div class="callout-title">📖 Fundamentação — Por que a ordem dos separators importa</div>
-    <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) explica o mecanismo por trás do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RecursiveCharacterTextSplitter</code>: ele tenta os separadores da lista na ordem, do mais estrutural para o mais granular — primeiro quebra em parágrafo (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">\n\n</code>), só recorre a linha, depois frase, e usa espaço ou caractere como último recurso, quando o chunk ainda excede o tamanho máximo. É por isso que a lista recomendada nesta tabela é hierárquica e não arbitrária: cada separador é uma tentativa de preservar a estrutura que um humano usaria para organizar o texto, antes de partir para uma quebra puramente mecânica.</div>
-  </div>
-  <div class="callout callout-purple">
-    <div class="callout-title">🔜 Aula 07 — RAG avançado</div>
-    <div class="callout-body">Na Aula 07 você vai experimentar diferentes valores de chunk_size e medir o impacto com RAGAS (faithfulness e answer relevancy). Guarde os resultados da chain de hoje como baseline para comparação.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Pipeline completo em bloco único (~50 linhas)</h2>
-  <p>Visão consolidada do pipeline inteiro para referência rápida:</p>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">rag_pipeline_completo.py</span></div>
-    <div class="code-body"><pre><span class="cm"># ── 1. SETUP ────────────────────────────────────────────────</span>
-<span class="kw">import</span> <span class="va">os</span>
-<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
-
-<span class="cm"># ── 2. INDEXAÇÃO (uma vez) ───────────────────────────────────</span>
-<span class="va">paginas</span>  <span class="op">=</span> <span class="va">PyMuPDFLoader</span><span class="op">(</span><span class="st">"documento.pdf"</span><span class="op">).</span><span class="fn">load</span><span class="op">()</span>
-<span class="va">chunks</span>   <span class="op">=</span> <span class="va">RecursiveCharacterTextSplitter</span><span class="op">(</span><span class="num">800</span><span class="op">,</span> <span class="num">100</span><span class="op">).</span><span class="fn">split_documents</span><span class="op">(</span><span class="va">paginas</span><span class="op">)</span>
-<span class="va">db</span>       <span class="op">=</span> <span class="va">Chroma</span><span class="op">.</span><span class="fn">from_documents</span><span class="op">(</span><span class="va">chunks</span><span class="op">,</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">),</span>
-                               <span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/rag"</span><span class="op">)</span>
-<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span><span class="num">3</span><span class="op">})</span>
-
-<span class="cm"># ── 3. CHAIN LCEL ───────────────────────────────────────────</span>
-<span class="kw">def</span> <span class="fn">fmt</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span><span class="op">:</span>
-    <span class="kw">return</span> <span class="st">"\n\n---\n\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span>
-        <span class="st">f"[{d.metadata.get('source','?')}, pág.{d.metadata.get('page',0)+1}]\n{d.page_content}"</span>
-        <span class="kw">for</span> <span class="va">d</span> <span class="kw">in</span> <span class="va">docs</span>
-    <span class="op">)</span>
-
-<span class="va">chain</span> <span class="op">=</span> <span class="op">(</span>
-    <span class="op">{</span><span class="st">"contexto"</span><span class="op">:</span> <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">fmt</span><span class="op">),</span>
-     <span class="st">"pergunta"</span><span class="op">:</span> <span class="va">RunnablePassthrough</span><span class="op">(),</span>
-     <span class="st">"nome_doc"</span><span class="op">:</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span><span class="st">"documento.pdf"</span><span class="op">)}</span>
-    <span class="op">|</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
-<span class="op">)</span>
-
-<span class="cm"># ── 4. USAR ─────────────────────────────────────────────────</span>
-<span class="nb">print</span><span class="op">(</span><span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">(</span><span class="st">"Qual é o prazo de garantia?"</span><span class="op">))</span></pre>
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 06 · 2º Semestre</div>
+    <div class="exercise-title">Pipeline RAG completo sobre os PDFs do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab · PDFs do domínio obrigatórios</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 4 lacunas</strong> — caminhos dos PDFs, parâmetros do splitter, criação do vector store, montagem e invocação da chain.</li>
+      <li><strong>Teste com 3 perguntas reais</strong> do domínio — perguntas que teriam respostas concretas nos documentos.</li>
+      <li><strong>Compare sem vs. com RAG:</strong> faça a mesma pergunta ao <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatOllama</code> direto e à <code style="font-family:'JetBrains Mono',monospace;font-size:12px">chain_rag</code>. Documente a diferença.</li>
+      <li><strong>Verifique o grounding:</strong> faça uma pergunta que NÃO está nos documentos. A chain deve responder "Não encontrei essa informação" — não alucinar.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(61,156,204,.06);border-left:3px solid var(--fiap-blue);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12.5px;color:var(--fiap-muted);line-height:1.9">
+        <strong>Lacuna 1:</strong> os caminhos dos arquivos que acabaram de ser enviados pelo upload, usados para carregar cada PDF no loader.<br>
+        <strong>Lacuna 2:</strong> o tamanho de cada chunk e a sobreposição entre eles — os mesmos valores usados na aula (800 e 100) — aplicados sobre a lista de páginas carregadas.<br>
+        <strong>Lacuna 3:</strong> o nome do modelo de embedding do semestre, e os chunks e embeddings passados ao vector store na criação da coleção.<br>
+        <strong>Lacuna 4:</strong> a pergunta repassada sem transformação para o prompt, e a pergunta real do domínio ao invocar a chain.
+      </div>
+    </div>
+    <div style="background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-pink)">
+      🚀 <strong>Desafio:</strong> adicionar <code style="font-family:'JetBrains Mono',monospace;font-size:12px">similarity_search_with_score</code> para mostrar o score de cada chunk recuperado antes de gerar a resposta. Isso vira insumo para o RAGAS da Aula 07.
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>RunnablePassthrough e RunnableLambda — as peças de cola</h2>
-  <p>A chain RAG usa dois Runnables especiais para montar o dicionário de variáveis do prompt:</p>
-  <div class="two-col">
-    <div class="callout" style="margin:0">
-      <div class="callout-title">⚡ RunnablePassthrough</div>
-      <div class="callout-body"><strong>Passa o input sem transformar.</strong> Quando a chain recebe a string da pergunta, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RunnablePassthrough()</code> encaminha essa mesma string para o slot <code style="font-family:'JetBrains Mono',monospace;font-size:12px">"pergunta"</code> do prompt — sem modificação.<br><br>
-      Equivalente a: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">lambda x: x</code></div>
-    </div>
-    <div class="callout callout-green" style="margin:0">
-      <div class="callout-title">🔧 RunnableLambda</div>
-      <div class="callout-body"><strong>Envolve qualquer função Python em um Runnable.</strong> Usado para:<br>
-      1. Formatar os docs em string (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">formatar_contexto</code>)<br>
-      2. Injetar valores constantes (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">lambda _: "nome_doc"</code>)<br>
-      3. Qualquer transformação customizada<br><br>
-      Qualquer função <code style="font-family:'JetBrains Mono',monospace;font-size:12px">def f(x): return y</code> vira um Runnable composável com o pipe <code style="font-family:'JetBrains Mono',monospace;font-size:12px">|</code>.</div>
-    </div>
-  </div>
-  <div class="code-block" style="margin-top:16px">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">runnable_anatomia.py</span></div>
-    <div class="code-body"><pre><span class="cm"># O que acontece quando chain.invoke("Qual é o prazo?"):</span>
-<span class="cm">#</span>
-<span class="cm"># Input: "Qual é o prazo?"</span>
-<span class="cm">#   ↓</span>
-<span class="cm"># retriever.invoke("Qual é o prazo?") → [Doc1, Doc2, Doc3]</span>
-<span class="cm"># formatar_contexto([Doc1, Doc2, Doc3]) → "[pág.8]\n...\n---\n[pág.12]\n..."</span>
-<span class="cm">#   ↓</span>
-<span class="cm"># contexto = "[pág.8]\n..."       ← resultado do retriever | lambda</span>
-<span class="cm"># pergunta = "Qual é o prazo?"    ← RunnablePassthrough() — mesma string</span>
-<span class="cm"># nome_doc = "documento.pdf"      ← RunnableLambda(lambda _: "...")</span>
-<span class="cm">#   ↓</span>
-<span class="cm"># prompt.format(contexto=..., pergunta=..., nome_doc=...) → mensagens</span>
-<span class="cm">#   ↓</span>
-<span class="cm"># llm(mensagens) → AIMessage</span>
-<span class="cm">#   ↓</span>
-<span class="cm"># StrOutputParser() → string final com citação de página</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Erros comuns no pipeline RAG</h2>
-  <table class="data-table">
-    <thead><tr><th>Erro</th><th>Causa provável</th><th>Solução</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">ModuleNotFoundError: fitz</code></td>
-        <td>PyMuPDF não instalado</td>
-        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">!pip install pymupdf</code> — o pacote PyPI chama-se <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pymupdf</code>, mas o import é <code style="font-family:'JetBrains Mono',monospace;font-size:11px">fitz</code></td>
-      </tr>
-      <tr>
-        <td>Resposta vazia ou <em>"Não encontrei"</em> para pergunta que deveria ter resposta</td>
-        <td>chunk_size muito pequeno ou k=1 recuperando poucos chunks</td>
-        <td>Aumentar chunk_size para 1000+ ou k para 5; verificar se o PDF tem texto extraível (não é scaneado)</td>
-      </tr>
-      <tr>
-        <td>LLM ainda alucina mesmo com RAG</td>
-        <td>Prompt sem instrução de grounding explícita; temperature &gt; 0</td>
-        <td>Usar o prompt com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">&lt;instrucoes&gt;</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">temperature=0</code></td>
-      </tr>
-      <tr>
-        <td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">KeyError: "contexto"</code> na chain</td>
-        <td>Variável no prompt não corresponde à chave no dicionário da chain</td>
-        <td>Verificar que <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{contexto}</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{pergunta}</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{nome_doc}</code> no template correspondem exatamente às chaves do dict da chain</td>
-      </tr>
-      <tr>
-        <td>Chunks com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">page_content</code> vazio</td>
-        <td>PDF é uma imagem escaneada sem OCR</td>
-        <td>Usar OCR antes de indexar — <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pytesseract</code> ou Adobe Acrobat. Para o CKP02, usar PDFs com texto selecionável.</td>
-      </tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -789,7 +952,7 @@ com base EXCLUSIVAMENTE nos documentos fornecidos.
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -804,167 +967,6 @@ com base EXCLUSIVAMENTE nos documentos fornecidos.
       <tr><td><strong>"A chain RAG tem memória entre perguntas?"</strong></td><td>Não — a chain RAG desta aula é stateless (sem memória). Cada invoke é independente. Na Aula 08 você vai combinar RAG com RunnableWithMessageHistory para ter um RAG com memória de conversa — o chatbot vai lembrar da pergunta anterior ao responder.</td></tr>
     </tbody>
   </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Python novo desta aula</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula06_2sem.py</span></div>
-    <div class="code-body"><pre><span class="cm"># 1. extend() — adicionar todos os itens de uma lista em outra</span>
-<span class="va">lista_a</span> <span class="op">= [</span><span class="num">1</span><span class="op">,</span> <span class="num">2</span><span class="op">]</span>
-<span class="va">lista_a</span><span class="op">.</span><span class="fn">extend</span><span class="op">([</span><span class="num">3</span><span class="op">,</span> <span class="num">4</span><span class="op">])</span>  <span class="cm"># [1, 2, 3, 4] — diferente de append([3, 4]) = [1, 2, [3, 4]]</span>
-
-<span class="cm"># 2. enumerate() — iterar com índice</span>
-<span class="kw">for</span> <span class="va">i</span><span class="op">,</span> <span class="va">doc</span> <span class="kw">in</span> <span class="nb">enumerate</span><span class="op">(</span><span class="va">docs</span><span class="op">,</span> <span class="num">1</span><span class="op">):</span>  <span class="cm"># começa em 1 — i=1,2,3...</span>
-    <span class="nb">print</span><span class="op">(</span><span class="st">f"Trecho {i}: {doc.page_content}"</span><span class="op">)</span>
-
-<span class="cm"># 3. .get() em dict com valor padrão</span>
-<span class="va">pg</span> <span class="op">=</span> <span class="va">doc</span><span class="op">.</span><span class="va">metadata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"page"</span><span class="op">,</span> <span class="st">"?"</span><span class="op">)</span>  <span class="cm"># retorna "?" se "page" não existir</span>
-
-<span class="cm"># 4. join() com separador multilinha</span>
-<span class="va">separador</span> <span class="op">=</span> <span class="st">"\n\n---\n\n"</span>
-<span class="va">texto</span>     <span class="op">=</span> <span class="va">separador</span><span class="op">.</span><span class="fn">join</span><span class="op">([</span><span class="st">"Trecho A"</span><span class="op">,</span> <span class="st">"Trecho B"</span><span class="op">])</span>
-
-<span class="cm"># 5. RunnablePassthrough e RunnableLambda — LCEL avançado</span>
-<span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnablePassthrough</span><span class="op">,</span> <span class="va">RunnableLambda</span>
-
-<span class="va">passthrough</span> <span class="op">=</span> <span class="va">RunnablePassthrough</span><span class="op">()</span>        <span class="cm"># x → x (identidade)</span>
-<span class="va">constante</span>   <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">_</span><span class="op">:</span> <span class="st">"doc.pdf"</span><span class="op">)</span>  <span class="cm"># ignora input, retorna constante</span>
-<span class="va">transformar</span> <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="va">minha_funcao</span><span class="op">)</span>    <span class="cm"># qualquer função vira Runnable</span>
-
-<span class="cm"># 6. statistics.mean() — média de uma lista</span>
-<span class="kw">import</span> <span class="va">statistics</span>
-<span class="va">media</span> <span class="op">=</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">([</span><span class="num">100</span><span class="op">,</span> <span class="num">200</span><span class="op">,</span> <span class="num">150</span><span class="op">])</span>  <span class="cm"># 150.0</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>RAG em produção — onde o padrão aparece</h2>
-  <div class="three-col">
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Setor financeiro e jurídico</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Assistente de compliance</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">RAG sobre milhares de páginas de regulamentos e normas internas. Analistas perguntam sobre regras específicas e recebem a resposta com citação exata do parágrafo da norma — o mesmo padrão de grounding construído nesta aula.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Assistentes de código</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Ferramentas de IA para programação indexam o repositório do usuário em embeddings. Ao perguntar "como essa função é usada?", recuperam os arquivos relevantes e respondem com base no código real do projeto — não em conhecimento genérico sobre a linguagem.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Suporte ao cliente</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Base de conhecimento indexada como embeddings. Quando um cliente abre um chamado, o sistema recupera os artigos de suporte mais relevantes e sugere a resolução ao atendente — com link para a fonte.</div>
-    </div>
-  </div>
-  <div class="callout callout-orange" style="margin-top:16px">
-    <div class="callout-title">📌 Padrão de mercado</div>
-    <div class="callout-body">Praticamente todo produto de IA empresarial lançado em 2024–2026 tem RAG por baixo. O diferencial não é ter RAG — é ter RAG com boa qualidade de chunking, retrieval preciso e grounding robusto. Isso é o que a Aula 07 (RAGAS) vai ensinar a medir e otimizar.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>O que vem na Aula 07 — RAG avançado e RAGAS</h2>
-  <div class="two-col">
-    <div>
-      <div class="callout callout-pink">
-        <div class="callout-title">🔮 O que você vai aprender</div>
-        <div class="callout-body">
-          <strong>Chunking estratégico:</strong> como tamanho e overlap afetam a qualidade<br><br>
-          <strong>Reranking:</strong> reordenar os chunks recuperados por relevância antes de gerar<br><br>
-          <strong>RAGAS:</strong> medir a qualidade do RAG com duas métricas objetivas:<br>
-          · <em>faithfulness</em> — a resposta está ancorada no contexto?<br>
-          · <em>answer relevancy</em> — a resposta responde à pergunta?<br><br>
-          <strong>Entrega CKP02</strong> ao final da Aula 07.
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="callout callout-green">
-        <div class="callout-title">🧩 O que guardar para a Aula 07</div>
-        <div class="callout-body">
-          · Notebook da Aula 06 com pipeline RAG funcionando<br>
-          · Os mesmos 3+ PDFs do domínio (para comparar métricas)<br>
-          · 5 pares de (pergunta, resposta esperada) do domínio — serão o dataset de avaliação do RAGAS<br><br>
-          A entrega CKP02 vai incluir as métricas RAGAS documentadas no notebook.
-        </div>
-      </div>
-    </div>
-  </div>
-  <div style="margin-top:12px;padding:14px 18px;background:rgba(61,156,204,.06);border:1px solid rgba(61,156,204,.2);border-radius:10px;font-size:13px">
-    <strong>📌 Ação antes da Aula 07:</strong> prepare 5 pares (pergunta, resposta-esperada) sobre os documentos do domínio. Ex: ("Qual é o prazo de entrega?", "30 dias conforme cláusula 7.3"). Esses pares são o dataset de avaliação do RAGAS.
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
-  <div class="section-number">04</div>
-  <div class="section-title">Demo ao vivo</div>
-  <div class="section-desc">RAG sobre 3 PDFs reais. A mesma pergunta, o mesmo modelo — sem RAG alucina, com RAG cita a fonte exata.</div>
-  <div class="slide-number">25 / 29</div>
-</div>
-
-
-<div class="slide slide-content" style="align-items:center;text-align:center">
-  <div style="font-size:72px">🚀</div>
-  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
-  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor roda a mesma pergunta sobre um manual técnico antes e depois de configurar o RAG. Sem RAG, o modelo preenche a lacuna com uma resposta plausível mas inventada. Com RAG, a mesma pergunta retorna a cláusula exata, com página citada.</p>
-  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
-    <div class="callout callout-red" style="margin:0">
-      <div class="callout-title">1. Sem RAG</div>
-      <div class="callout-body">Pergunta: <strong>"Qual o prazo de garantia do produto X?"</strong> — o modelo puro responde "12 meses conforme a legislação brasileira", um número plausível mas inventado, sem qualquer relação com o manual real.</div>
-    </div>
-    <div class="callout" style="margin:0">
-      <div class="callout-title">2. Indexação ao vivo</div>
-      <div class="callout-body">3 PDFs (manual técnico, regulamento, FAQ) são carregados, divididos em chunks e indexados no ChromaDB — o pipeline completo roda em ~2 minutos diante da turma.</div>
-    </div>
-    <div class="callout callout-green" style="margin:0">
-      <div class="callout-title">3. Com RAG</div>
-      <div class="callout-body">A mesma pergunta agora retorna: <strong>"Conforme o manual, página 15, o prazo de garantia é de 24 meses, cláusula 8.2"</strong> — resposta real, extraída do documento, com fonte citada.</div>
-    </div>
-  </div>
-  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
-    <div class="callout-title">🧱 Stack da demo</div>
-    <div class="callout-body">Google Colab · Ollama Cloud API · PyMuPDF · nomic-embed-text · ChromaDB · gpt-oss:120b</div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <div class="exercise">
-    <div class="exercise-label">Lab — Aula 06 · 2º Semestre</div>
-    <div class="exercise-title">Pipeline RAG completo sobre os PDFs do grupo <span style="font-size:14px;color:var(--fiap-orange)">★★</span></div>
-    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab · PDFs do domínio obrigatórios</strong></p>
-    <ol class="exercise-steps">
-      <li><strong>Complete as 4 lacunas</strong> — caminhos dos PDFs, parâmetros do splitter, criação do vector store, montagem e invocação da chain.</li>
-      <li><strong>Teste com 3 perguntas reais</strong> do domínio — perguntas que teriam respostas concretas nos documentos.</li>
-      <li><strong>Compare sem vs. com RAG:</strong> faça a mesma pergunta ao <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatOllama</code> direto e à <code style="font-family:'JetBrains Mono',monospace;font-size:12px">chain_rag</code>. Documente a diferença.</li>
-      <li><strong>Verifique o grounding:</strong> faça uma pergunta que NÃO está nos documentos. A chain deve responder "Não encontrei essa informação" — não alucinar.</li>
-    </ol>
-    <div style="padding:12px 16px;background:rgba(61,156,204,.06);border-left:3px solid var(--fiap-blue);border-radius:0 8px 8px 0;margin:12px 0">
-      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);margin-bottom:4px">🎯 Gabarito das lacunas</div>
-      <div style="font-size:12.5px;color:var(--fiap-muted);line-height:1.9">
-        <strong>Lacuna 1:</strong> os caminhos dos arquivos que acabaram de ser enviados pelo upload, usados para carregar cada PDF no loader.<br>
-        <strong>Lacuna 2:</strong> o tamanho de cada chunk e a sobreposição entre eles — os mesmos valores usados na aula (800 e 100) — aplicados sobre a lista de páginas carregadas.<br>
-        <strong>Lacuna 3:</strong> o nome do modelo de embedding do semestre, e os chunks e embeddings passados ao vector store na criação da coleção.<br>
-        <strong>Lacuna 4:</strong> a pergunta repassada sem transformação para o prompt, e a pergunta real do domínio ao invocar a chain.
-      </div>
-    </div>
-    <div style="background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-pink)">
-      🚀 <strong>Desafio:</strong> adicionar <code style="font-family:'JetBrains Mono',monospace;font-size:12px">similarity_search_with_score</code> para mostrar o score de cada chunk recuperado antes de gerar a resposta. Isso vira insumo para o RAGAS da Aula 07.
-    </div>
-  </div>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

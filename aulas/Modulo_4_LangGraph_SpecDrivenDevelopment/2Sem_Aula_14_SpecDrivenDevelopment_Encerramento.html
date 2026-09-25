@@ -81,6 +81,14 @@
   .gl-item.gl-orange{border-left-color:var(--fiap-orange)}
   .gl-term{font-size:14px;font-weight:800;color:var(--fiap-white);margin-bottom:4px}
   .gl-def{font-size:12.5px;color:var(--fiap-muted);line-height:1.55}
+
+
+
+  /* Correção: texto claro dentro do bloco escuro de código */
+  .code-body,
+  .code-body pre,
+  .code-body code { color: #e2e8f0; }
+
 </style>
 
 <style id="slide-nav-style">
@@ -109,7 +117,7 @@
     <div class="cover-meta-item">A fronteira atual do código assistido por IA</div>
     <div class="cover-meta-item" style="background:rgba(213,140,46,.12);border-color:rgba(213,140,46,.35);color:var(--fiap-orange)">Sem notebook — aula conceitual e demonstrativa</div>
   </div>
-  <div class="slide-number">01 / 28</div>
+  <div class="slide-number">1 / 28</div>
 </div>
 
 <!-- S02 AGENDA -->
@@ -131,7 +139,7 @@
     <div class="callout-body">Encerrar o semestre com a fronteira mais atual do desenvolvimento assistido por IA. Não há entrega avaliada — a aula é conceitual e demonstrativa. O conteúdo crítico da disciplina foi todo coberto nas aulas 01–13.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 
@@ -172,7 +180,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S03 SECAO 01 RETROSPECTIVA -->
@@ -182,7 +190,7 @@
   <div class="section-number">01</div>
   <div class="section-title">Retrospectiva<br>do semestre</div>
   <div class="section-desc">Do primeiro chain de 5 linhas ao agente com StateGraph, checkpointing e HITL. A progressão não foi linear — foi deliberada.</div>
-  <div class="slide-number">04 / 28</div>
+  <div class="slide-number">4 / 28</div>
 </div>
 
 <!-- S04 RETRO MODULOS -->
@@ -221,7 +229,7 @@
     <div class="callout-body">Cada módulo resolveu a limitação do anterior. Chain não busca documentos → RAG. RAG não decide qual ferramenta usar → Agente. Agente não tem estado persistente nem pausa para humano → LangGraph. Cada passo foi motivado por um problema real.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S05 LINHA DO TEMPO CONCEITUAL -->
@@ -260,7 +268,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">06 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">6 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S06 SECAO 02 SDD FUNDAMENTOS -->
@@ -270,7 +278,7 @@
   <div class="section-number">02</div>
   <div class="section-title">Spec-Driven Development<br>— Fundamentos</div>
   <div class="section-desc">A especificação estruturada — não o prompt solto, não o código direto — como artefato central do desenvolvimento assistido por agentes.</div>
-  <div class="slide-number">07 / 28</div>
+  <div class="slide-number">7 / 28</div>
 </div>
 
 <!-- S07 O QUE E SDD -->
@@ -294,7 +302,7 @@
     <div class="callout-body">Em SDD, o código é derivável da spec — se o agente errar, você corrige a spec e regenera, em vez de remendar o código. Isso muda o que se revisa, o que se versiona e o que se discute em code review.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S08 SDD VS VIBE VS PE -->
@@ -315,7 +323,7 @@
     <div class="callout-body">SDD não descarta o que vocês aprenderam sobre prompt engineering — a spec bem escrita <em>é</em> um exercício de context engineering aplicado a código. A diferença é o nível de estrutura e o fato de a spec virar um artefato persistente, revisável e versionado — não só uma mensagem de chat que desaparece.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S09 FLUXO SDD -->
@@ -525,24 +533,6 @@
 
 
 <div class="slide slide-content"><div class="slide-body">
-  <h2>Perguntas frequentes sobre carreira em IA</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta honesta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"Preciso saber matemática avançada para trabalhar com IA?"</strong></td><td>Para usar modelos (90% do mercado): não. Para pesquisa e treinamento de modelos do zero: sim (álgebra linear, cálculo, probabilidade). A maioria das vagas de engenharia de IA em 2026 exige saber usar e integrar modelos — não construir.</td></tr>
-      <tr><td><strong>"Python é suficiente?"</strong></td><td>Para IA generativa, sim. Para MLOps e infra: adicionar Docker, Kubernetes, cloud (AWS/GCP/Azure). Para data engineering que alimenta sistemas de IA: SQL é tão importante quanto Python.</td></tr>
-      <tr><td><strong>"O LangChain vai ser substituído?"</strong></td><td>Frameworks surgem e somem. O que não muda: entender os primitivos (chain, retriever, agent, graph). Quem entende os conceitos aprende o próximo framework em dias. Quem só decorou a API fica perdido quando o framework muda.</td></tr>
-      <tr><td><strong>"Vale mais o portfólio ou o diploma?"</strong></td><td>Os dois. O diploma abre a porta; o portfólio no GitHub demonstra o que você sabe fazer. Os CKPs deste semestre, bem documentados com README e exemplos rodando, já são um portfólio inicial sólido.</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">17 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
-</div>
-
-<!-- S18 CKPS COMO PORTFOLIO -->
-
-
-<div class="slide slide-content"><div class="slide-body">
   <h2>Seus CKPs como portfólio — como apresentar no GitHub</h2>
   <div class="two-col">
     <div>
@@ -583,7 +573,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">17 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S19 SECAO 05 ENCERRAMENTO SEMESTRE -->
@@ -593,7 +583,7 @@
   <div class="section-number">05</div>
   <div class="section-title">Encerramento<br>do semestre</div>
   <div class="section-desc">O arco completo de 2026, o stack que você domina, e o que fica depois que a última aula terminar.</div>
-  <div class="slide-number">19 / 28</div>
+  <div class="slide-number">18 / 28</div>
 </div>
 
 <!-- S20 O ANO COMPLETO -->
@@ -633,7 +623,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">19 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S21 LINHA DO TEMPO IA GENERATIVA -->
@@ -662,7 +652,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">20 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S22 STACK COMPLETO -->
@@ -674,7 +664,7 @@
     <div style="display:flex;flex-direction:column;gap:12px">
       <div style="display:flex;gap:14px;align-items:flex-start">
         <div style="background:rgba(237,20,91,.1);border:1px solid rgba(237,20,91,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-pink);flex-shrink:0;min-width:90px;text-align:center">LLM<br>RUNTIME</div>
-        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>ChatOllama</strong> via Ollama Cloud API · gpt-oss:120b · gpt-oss:120b · nomic-embed-text · temperature, top_p, num_predict</div>
+        <div style="font-size:13px;color:var(--fiap-text);padding-top:4px"><strong>ChatOllama</strong> via Ollama Cloud API · gemma4:cloud · gemma4:cloud · nomic-embed-text · temperature, top_p, num_predict</div>
       </div>
       <div style="display:flex;gap:14px;align-items:flex-start">
         <div style="background:rgba(61,156,204,.1);border:1px solid rgba(61,156,204,.3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--fiap-blue);flex-shrink:0;min-width:90px;text-align:center">LCEL<br>CHAINS</div>
@@ -699,7 +689,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">21 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S23 DEBATE FINAL -->
@@ -726,7 +716,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">22 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S24 EXERCICIO -->
@@ -760,7 +750,7 @@
       <a href="mailto:profjorge.gomes@fiap.com.br" style="color:var(--fiap-purple);font-weight:700">profjorge.gomes@fiap.com.br</a>
     </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">23 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S27 REFERENCIAS -->
@@ -788,7 +778,7 @@
     <div class="callout-title">Stack da demo</div>
     <div class="callout-body">Editor de texto simples para a spec · agente de código gratuito disponível (Claude Code ou equivalente) · repositório de exemplo já preparado</div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">25 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">24 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S13 ADOCAO MERCADO -->
@@ -808,10 +798,28 @@
     <div class="exercise-hint">💡 Não existe spec perfeita na primeira versão — o ganho está em achar a ambiguidade antes de um agente (ou colega) interpretá-la do jeito errado.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+<div class="slide-bottom"><div class="slide-number">25 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
 </div>
 
 <!-- S26 AGRADECIMENTO -->
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes sobre carreira em IA</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta honesta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Preciso saber matemática avançada para trabalhar com IA?"</strong></td><td>Para usar modelos (90% do mercado): não. Para pesquisa e treinamento de modelos do zero: sim (álgebra linear, cálculo, probabilidade). A maioria das vagas de engenharia de IA em 2026 exige saber usar e integrar modelos — não construir.</td></tr>
+      <tr><td><strong>"Python é suficiente?"</strong></td><td>Para IA generativa, sim. Para MLOps e infra: adicionar Docker, Kubernetes, cloud (AWS/GCP/Azure). Para data engineering que alimenta sistemas de IA: SQL é tão importante quanto Python.</td></tr>
+      <tr><td><strong>"O LangChain vai ser substituído?"</strong></td><td>Frameworks surgem e somem. O que não muda: entender os primitivos (chain, retriever, agent, graph). Quem entende os conceitos aprende o próximo framework em dias. Quem só decorou a API fica perdido quando o framework muda.</td></tr>
+      <tr><td><strong>"Vale mais o portfólio ou o diploma?"</strong></td><td>Os dois. O diploma abre a porta; o portfólio no GitHub demonstra o que você sabe fazer. Os CKPs deste semestre, bem documentados com README e exemplos rodando, já são um portfólio inicial sólido.</td></tr>
+    </tbody>
+  </table>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 28</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026 · 2º Semestre</div></div>
+</div>
+
+<!-- S18 CKPS COMO PORTFOLIO -->
 
 
 <div class="slide slide-content"><div class="slide-body">

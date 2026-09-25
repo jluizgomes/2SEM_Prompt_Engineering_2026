@@ -5,3 +5,8 @@ langchain-ollama
 langchain-core
 langchain-classic
 python-dotenv
+pydantic>=2,<3
+
+# Interface web
+fastapi
+uvicorn

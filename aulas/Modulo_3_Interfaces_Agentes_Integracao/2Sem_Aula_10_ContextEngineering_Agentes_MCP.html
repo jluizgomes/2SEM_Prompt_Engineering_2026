@@ -153,6 +153,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -180,7 +182,7 @@
     <div class="cover-meta-item">🧠 Scratchpad · Context rot · MCP</div>
     <div class="cover-meta-item">🔁 Andaime 55%</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -198,7 +200,7 @@
     <div class="callout-body">Entender por que o contexto em agentes é um recurso ainda mais crítico que em chats simples — e dominar as estratégias de curadoria que mantêm a qualidade do agente em loops longos. Preparar o agente para a integração final da Aula 11.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -239,7 +241,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -247,7 +249,7 @@
   <div class="section-number">01</div>
   <div class="section-title">Context em agentes<br>≠ context em chat</div>
   <div class="section-desc">Em chat, o contexto cresce linear e previsível. Em agentes, o loop gera Thought + Action + Observation a cada iteração — o crescimento é multiplicado e imprevisível.</div>
-  <div class="slide-number">04 / 29</div>
+  <div class="slide-number">4 / 29</div>
 </div>
 
 
@@ -283,7 +285,7 @@
     <div style="font-size:10px;color:var(--fiap-muted);margin-top:8px">*Estimativa para agente com tools de busca retornando ~800 chars por Observation</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -291,7 +293,7 @@
   <div class="section-number">02</div>
   <div class="section-title">3 tipos de memória<br>agêntica</div>
   <div class="section-desc">In-context (scratchpad) · External (ChromaDB) · Episódica (histórico de sessões passadas). Cada uma resolve um problema diferente de persistência e custo.</div>
-  <div class="slide-number">06 / 29</div>
+  <div class="slide-number">6 / 29</div>
 </div>
 
 
@@ -322,7 +324,7 @@
     <div class="callout-body">Scratchpad = RAM (rápido, volátil, finito). ChromaDB externo = HD (persistente, barato, requer busca). Memória episódica = cache de sessão (seleciona o mais relevante para carregar na RAM). Um agente bem projetado minimiza o uso de RAM e maximiza a eficiência de busca no HD.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">7 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -364,7 +366,7 @@ Observation: 720
     <div class="callout-body">Gullí (<em>Agentic Design Patterns</em>, O'Reilly, 2025, cap. 8 — Memory Management) distingue memória de agente em duas categorias fundamentais: <strong>Short-Term/Contextual</strong> — o que cabe na janela de contexto, existe só durante a chamada atual — e <strong>Long-Term/Persistent</strong> — armazenada fora do processo do agente e recuperada por busca semântica quando necessário. O ponto do autor que vale reforçar aqui: um modelo com janela de contexto maior não substitui memória de longo prazo, ele só aumenta o tamanho do scratchpad acima — que continua efêmero e caro de reprocessar a cada chamada, como os ~3.500–5.000 tokens por invocação que você acabou de ver. É por isso que os Tipos 2 e 3 do slide anterior (ChromaDB externo e memória episódica) existem mesmo em modelos com contexto grande: não é economia de espaço, é persistência real entre sessões.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -372,7 +374,7 @@ Observation: 720
   <div class="section-number">03</div>
   <div class="section-title">Context rot<br>em loop</div>
   <div class="section-desc">Qualidade degrada com o crescimento do scratchpad — o mesmo fenômeno da Aula 04, mas amplificado pela natureza iterativa do loop agêntico.</div>
-  <div class="slide-number">09 / 29</div>
+  <div class="slide-number">9 / 29</div>
 </div>
 
 
@@ -479,7 +481,7 @@ Observation: 720
 <span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
 <span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
 
-<span class="va">llm_mini</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+<span class="va">llm_mini</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
 
 <span class="va">chain_resumir</span> <span class="op">=</span> <span class="op">(</span>
     <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span>
@@ -674,6 +676,141 @@ Observation: 720
 
 
 <div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula10_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. ax.twinx() — segundo eixo Y no mesmo gráfico matplotlib</span>
+<span class="va">fig</span><span class="op">,</span> <span class="va">ax1</span> <span class="op">=</span> <span class="va">plt</span><span class="op">.</span><span class="fn">subplots</span><span class="op">()</span>
+<span class="va">ax2</span> <span class="op">=</span> <span class="va">ax1</span><span class="op">.</span><span class="fn">twinx</span><span class="op">()</span>          <span class="cm"># eixo direito — mesmo x, y diferente</span>
+<span class="va">ax1</span><span class="op">.</span><span class="fn">bar</span><span class="op">(</span><span class="va">x</span><span class="op">,</span> <span class="va">tokens</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"steelblue"</span><span class="op">,</span> <span class="va">alpha</span><span class="op">=</span><span class="num">.5</span><span class="op">)</span>  <span class="cm"># barras no eixo esquerdo</span>
+<span class="va">ax2</span><span class="op">.</span><span class="fn">plot</span><span class="op">(</span><span class="va">qualidade</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"#ED145B"</span><span class="op">,</span> <span class="va">marker</span><span class="op">=</span><span class="st">"o"</span><span class="op">)</span>  <span class="cm"># linha no eixo direito</span>
+
+<span class="cm"># 2. list slice negativo — últimas N iterações</span>
+<span class="va">steps</span>   <span class="op">= [</span><span class="st">"a"</span><span class="op">,</span><span class="st">"b"</span><span class="op">,</span><span class="st">"c"</span><span class="op">,</span><span class="st">"d"</span><span class="op">,</span><span class="st">"e"</span><span class="op">]</span>
+<span class="va">recentes</span> <span class="op">=</span> <span class="va">steps</span><span class="op">[-</span><span class="num">3</span><span class="op">:]</span>   <span class="cm"># → ["c", "d", "e"] (últimas 3)</span>
+<span class="va">antigas</span>  <span class="op">=</span> <span class="va">steps</span><span class="op">[:-</span><span class="num">3</span><span class="op">]</span>   <span class="cm"># → ["a", "b"] (exceto as últimas 3)</span>
+
+<span class="cm"># 3. datetime.now().isoformat() — timestamp para metadados</span>
+<span class="kw">from</span> <span class="va">datetime</span> <span class="kw">import</span> <span class="va">datetime</span>
+<span class="va">ts</span> <span class="op">=</span> <span class="va">datetime</span><span class="op">.</span><span class="fn">now</span><span class="op">().</span><span class="fn">isoformat</span><span class="op">()</span>  <span class="cm"># → "2026-07-13T14:35:22.123456"</span>
+
+<span class="cm"># 4. plt.bar com offset para barras lado a lado</span>
+<span class="va">x</span>     <span class="op">=</span> <span class="nb">range</span><span class="op">(</span><span class="num">5</span><span class="op">)</span>       <span class="cm"># posições 0, 1, 2, 3, 4</span>
+<span class="va">width</span> <span class="op">=</span> <span class="num">0.4</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">-</span><span class="va">width</span><span class="op">/</span><span class="num">2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="va">vals_a</span><span class="op">,</span> <span class="va">width</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"A"</span><span class="op">)</span>  <span class="cm"># deslocado -0.2</span>
+<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">+</span><span class="va">width</span><span class="op">/</span><span class="num">2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="va">vals_b</span><span class="op">,</span> <span class="va">width</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"B"</span><span class="op">)</span>  <span class="cm"># deslocado +0.2</span>
+
+<span class="cm"># 5. statistics.mean() para calcular redução média</span>
+<span class="kw">import</span> <span class="va">statistics</span>
+<span class="va">reducao_pct</span> <span class="op">=</span> <span class="op">(</span><span class="num">1</span> <span class="op">-</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">(</span><span class="va">tok_com</span><span class="op">)</span> <span class="op">/</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">(</span><span class="va">tok_sem</span><span class="op">))</span> <span class="op">*</span> <span class="num">100</span>
+<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução média: {reducao_pct:.1f}%"</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Context engineering para agentes em produção</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Agentes de visão de tela</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Screenshots como memória</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Agentes que operam por captura de tela veem cada passo como imagem (Observation). Para não acumular dezenas de screenshots no contexto, extraem apenas texto relevante antes de inserir no scratchpad — compressão visual de Observations.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">IDEs com agente embutido</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">MCP para contexto de código</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">IDEs com agente de código embutido usam MCP para conectar o agente ao repositório, ao terminal e ao rastreador de issues. Cada ferramenta é um servidor MCP independente — o agente decide qual usar baseado na tarefa, sem acumular o repositório inteiro no contexto.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-orange);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Plataformas no-code de agentes</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Memória externa no nó</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Plataformas no-code de automação oferecem nó nativo de memória vetorial (bancos como Pinecone, Qdrant, pgvector). O agente recupera contexto de execuções anteriores a partir dessa memória externa — o mesmo padrão episódico desta aula, aplicado a workflows no-code.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 11 — Integradora + CKP03</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-pink">
+        <div class="callout-title">🎯 A "vitória visível" do semestre</div>
+        <div class="callout-body">A Aula 11 é a aula integradora — tudo que foi construído de A08 a A10 junto pela primeira vez:<br><br>
+        <strong>Agente completo:</strong> RAG do grupo como tool + DuckDuckGo + calculadora + memória episódica<br>
+        <strong>+ Compressão de Observations</strong> (esta aula)<br>
+        <strong>+ Interface Gradio ao vivo</strong> (Aula 08)<br>
+        <strong>= CKP03 entregue</strong>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-orange">
+        <div class="callout-title">📦 O que preparar</div>
+        <div class="callout-body">
+          · Notebook desta aula com compressão funcionando<br>
+          · Retriever do CKP02 disponível (ChromaDB indexado)<br>
+          · Notebook da Aula 08 com Gradio + ngrok<br>
+          · 5 perguntas de teste do domínio para validar o agente integrado<br><br>
+          A Aula 11 é 100% lab — sem slides de teoria. Todo o tempo dedicado a integrar e publicar.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;font-size:13px">
+    <strong>🏁 CKP03 apresentado na Aula 11:</strong> Agente inteligente com RAG do domínio como tool, DuckDuckGo para dados em tempo real, calculadora, compressão de Observations e interface Gradio com URL pública. Entrega até 23:55 do dia da Aula 12 via Teams (somente o líder; README.md com nomes e RMs). Estimativa: 4–5h de trabalho de grupo.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">06</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Instrumentar o agente da Aula 09 para medir tokens e qualidade por turno. O gráfico de context rot aparece em tempo real.</div>
+  <div class="slide-number">22 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>🚀 Demo Prática ao Vivo — gráfico de context rot ao vivo</h2>
+  <p>O professor roda o agente com 10 perguntas em sequência, plota tokens vs. qualidade e mostra o efeito da compressão de Observations:</p>
+  <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:16px 0">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;margin-bottom:14px">Resultado típico da demo (ilustrativo)</div>
+    <div style="display:flex;gap:16px;margin-bottom:12px">
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-red);margin-bottom:8px">SEM compressão de Observations</div>
+        <div class="qbar-row"><div class="qbar-label">Turno 2</div><div class="qbar-bg"><div class="qbar-fill" style="width:95%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.95</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 5</div><div class="qbar-bg"><div class="qbar-fill" style="width:80%;background:var(--fiap-blue)"></div></div><div class="qbar-val" style="color:var(--fiap-blue)">0.80</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 8</div><div class="qbar-bg"><div class="qbar-fill" style="width:62%;background:var(--fiap-orange)"></div></div><div class="qbar-val" style="color:var(--fiap-orange)">0.62</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 10</div><div class="qbar-bg"><div class="qbar-fill" style="width:45%;background:var(--fiap-red)"></div></div><div class="qbar-val" style="color:var(--fiap-red)">0.45</div></div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;color:var(--fiap-green);margin-bottom:8px">COM compressão de Observations</div>
+        <div class="qbar-row"><div class="qbar-label">Turno 2</div><div class="qbar-bg"><div class="qbar-fill" style="width:93%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.93</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 5</div><div class="qbar-bg"><div class="qbar-fill" style="width:91%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.91</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 8</div><div class="qbar-bg"><div class="qbar-fill" style="width:88%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.88</div></div>
+        <div class="qbar-row"><div class="qbar-label">Turno 10</div><div class="qbar-bg"><div class="qbar-fill" style="width:85%;background:var(--fiap-blue)"></div></div><div class="qbar-val" style="color:var(--fiap-blue)">0.85</div></div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--fiap-muted)">*Valores ilustrativos. A demo real usa o corpus do domínio do professor com 10 perguntas padronizadas.</div>
+  </div>
+  <div class="callout callout-pink">
+    <div class="callout-title">🎯 O que a demo prova</div>
+    <div class="callout-body">Sem compressão: qualidade cai de 0.95 para 0.45 em 10 turnos (-53%). Com compressão: qualidade se mantém acima de 0.85 mesmo em 10 turnos (-9%). A diferença é resultado de menos tokens de Observation no scratchpad — context rot reduzido.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
   <h2>💻 Notebook Aluno — 55% de lacunas</h2>
   <div class="code-block">
     <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_10_2Sem_Aluno.ipynb</span></div>
@@ -721,7 +858,35 @@ Observation: 720
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <div class="exercise">
+    <div class="exercise-label">Lab — Aula 10 · 2º Semestre</div>
+    <div class="exercise-title">Compressão do scratchpad e medição de impacto <span style="font-size:14px;color:var(--fiap-orange)">★★★</span></div>
+    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab</strong></p>
+    <ol class="exercise-steps">
+      <li><strong>Complete as 4 lacunas</strong> — contar_tokens_scratchpad (concatenar action.log + obs), buscar_na_web_comprimida (invocar chain_resumir com a chave correta), 5 perguntas do domínio e os dois argumentos do plt.bar.</li>
+      <li><strong>Analise o gráfico</strong> — em qual pergunta a diferença de tokens foi maior? Por quê? (Dica: resultado de busca web é maior que resultado do RAG)</li>
+      <li><strong>Calcule a redução média</strong> em % de tokens usando a fórmula <code style="font-family:'JetBrains Mono',monospace;font-size:12px">(1 - mean(tok_com)/mean(tok_sem)) * 100</code>. Documente em célula markdown.</li>
+    </ol>
+    <div style="padding:12px 16px;background:rgba(41,175,140,.06);border-left:3px solid var(--fiap-green);border-radius:0 8px 8px 0;margin:12px 0">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-green);margin-bottom:4px">🎯 Gabarito das lacunas</div>
+      <div style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--fiap-muted);line-height:1.9">
+        Lacuna 1: texto += f"{action.log}\n{obs}\n" ; enc.encode(texto)<br>
+        Lacuna 2: chain_resumir.invoke({"texto": bruto})<br>
+        Lacuna 3: 5 perguntas reais do domínio do grupo<br>
+        Lacuna 4: tok_sem (1º bar) ; tok_com (2º bar)
+      </div>
+    </div>
+    <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-purple)">
+      🚀 <strong>Desafio — memória episódica:</strong> implementar <code style="font-family:'JetBrains Mono',monospace;font-size:12px">salvar_sessao()</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">lembrar_sessoes_anteriores</code> como 4ª tool do agente. Salvar as 5 respostas do lab e depois perguntar ao agente "o que discutimos antes sobre [tema]?" — ele deve recuperar do ChromaDB episódico.
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -750,7 +915,7 @@ Observation: 720
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -764,169 +929,6 @@ Observation: 720
       <tr><td><strong>"Memória episódica vs. ConversationBufferMemory — qual a diferença?"</strong></td><td>ConversationBufferMemory (Aula 02) mantém o histórico da conversa corrente no contexto. Memória episódica mantém um banco de sessões passadas no ChromaDB — persistente entre reinicializações. Para um agente comercial, você usaria ambas: buffer para a sessão atual + episódica para personalização entre sessões de dias diferentes.</td></tr>
     </tbody>
   </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Python novo desta aula</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula10_2sem.py</span></div>
-    <div class="code-body"><pre><span class="cm"># 1. ax.twinx() — segundo eixo Y no mesmo gráfico matplotlib</span>
-<span class="va">fig</span><span class="op">,</span> <span class="va">ax1</span> <span class="op">=</span> <span class="va">plt</span><span class="op">.</span><span class="fn">subplots</span><span class="op">()</span>
-<span class="va">ax2</span> <span class="op">=</span> <span class="va">ax1</span><span class="op">.</span><span class="fn">twinx</span><span class="op">()</span>          <span class="cm"># eixo direito — mesmo x, y diferente</span>
-<span class="va">ax1</span><span class="op">.</span><span class="fn">bar</span><span class="op">(</span><span class="va">x</span><span class="op">,</span> <span class="va">tokens</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"steelblue"</span><span class="op">,</span> <span class="va">alpha</span><span class="op">=</span><span class="num">.5</span><span class="op">)</span>  <span class="cm"># barras no eixo esquerdo</span>
-<span class="va">ax2</span><span class="op">.</span><span class="fn">plot</span><span class="op">(</span><span class="va">qualidade</span><span class="op">,</span> <span class="va">color</span><span class="op">=</span><span class="st">"#ED145B"</span><span class="op">,</span> <span class="va">marker</span><span class="op">=</span><span class="st">"o"</span><span class="op">)</span>  <span class="cm"># linha no eixo direito</span>
-
-<span class="cm"># 2. list slice negativo — últimas N iterações</span>
-<span class="va">steps</span>   <span class="op">= [</span><span class="st">"a"</span><span class="op">,</span><span class="st">"b"</span><span class="op">,</span><span class="st">"c"</span><span class="op">,</span><span class="st">"d"</span><span class="op">,</span><span class="st">"e"</span><span class="op">]</span>
-<span class="va">recentes</span> <span class="op">=</span> <span class="va">steps</span><span class="op">[-</span><span class="num">3</span><span class="op">:]</span>   <span class="cm"># → ["c", "d", "e"] (últimas 3)</span>
-<span class="va">antigas</span>  <span class="op">=</span> <span class="va">steps</span><span class="op">[:-</span><span class="num">3</span><span class="op">]</span>   <span class="cm"># → ["a", "b"] (exceto as últimas 3)</span>
-
-<span class="cm"># 3. datetime.now().isoformat() — timestamp para metadados</span>
-<span class="kw">from</span> <span class="va">datetime</span> <span class="kw">import</span> <span class="va">datetime</span>
-<span class="va">ts</span> <span class="op">=</span> <span class="va">datetime</span><span class="op">.</span><span class="fn">now</span><span class="op">().</span><span class="fn">isoformat</span><span class="op">()</span>  <span class="cm"># → "2026-07-13T14:35:22.123456"</span>
-
-<span class="cm"># 4. plt.bar com offset para barras lado a lado</span>
-<span class="va">x</span>     <span class="op">=</span> <span class="nb">range</span><span class="op">(</span><span class="num">5</span><span class="op">)</span>       <span class="cm"># posições 0, 1, 2, 3, 4</span>
-<span class="va">width</span> <span class="op">=</span> <span class="num">0.4</span>
-<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">-</span><span class="va">width</span><span class="op">/</span><span class="num">2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="va">vals_a</span><span class="op">,</span> <span class="va">width</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"A"</span><span class="op">)</span>  <span class="cm"># deslocado -0.2</span>
-<span class="va">plt</span><span class="op">.</span><span class="fn">bar</span><span class="op">([</span><span class="va">i</span><span class="op">+</span><span class="va">width</span><span class="op">/</span><span class="num">2</span> <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="va">x</span><span class="op">],</span> <span class="va">vals_b</span><span class="op">,</span> <span class="va">width</span><span class="op">,</span> <span class="va">label</span><span class="op">=</span><span class="st">"B"</span><span class="op">)</span>  <span class="cm"># deslocado +0.2</span>
-
-<span class="cm"># 5. statistics.mean() para calcular redução média</span>
-<span class="kw">import</span> <span class="va">statistics</span>
-<span class="va">reducao_pct</span> <span class="op">=</span> <span class="op">(</span><span class="num">1</span> <span class="op">-</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">(</span><span class="va">tok_com</span><span class="op">)</span> <span class="op">/</span> <span class="va">statistics</span><span class="op">.</span><span class="fn">mean</span><span class="op">(</span><span class="va">tok_sem</span><span class="op">))</span> <span class="op">*</span> <span class="num">100</span>
-<span class="nb">print</span><span class="op">(</span><span class="st">f"Redução média: {reducao_pct:.1f}%"</span><span class="op">)</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Context engineering para agentes em produção</h2>
-  <div class="three-col">
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Agentes de visão de tela</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Screenshots como memória</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Agentes que operam por captura de tela veem cada passo como imagem (Observation). Para não acumular dezenas de screenshots no contexto, extraem apenas texto relevante antes de inserir no scratchpad — compressão visual de Observations.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">IDEs com agente embutido</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">MCP para contexto de código</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">IDEs com agente de código embutido usam MCP para conectar o agente ao repositório, ao terminal e ao rastreador de issues. Cada ferramenta é um servidor MCP independente — o agente decide qual usar baseado na tarefa, sem acumular o repositório inteiro no contexto.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-orange);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Plataformas no-code de agentes</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Memória externa no nó</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Plataformas no-code de automação oferecem nó nativo de memória vetorial (bancos como Pinecone, Qdrant, pgvector). O agente recupera contexto de execuções anteriores a partir dessa memória externa — o mesmo padrão episódico desta aula, aplicado a workflows no-code.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>O que vem na Aula 11 — Integradora + CKP03</h2>
-  <div class="two-col">
-    <div>
-      <div class="callout callout-pink">
-        <div class="callout-title">🎯 A "vitória visível" do semestre</div>
-        <div class="callout-body">A Aula 11 é a aula integradora — tudo que foi construído de A08 a A10 junto pela primeira vez:<br><br>
-        <strong>Agente completo:</strong> RAG do grupo como tool + DuckDuckGo + calculadora + memória episódica<br>
-        <strong>+ Compressão de Observations</strong> (esta aula)<br>
-        <strong>+ Interface Gradio ao vivo</strong> (Aula 08)<br>
-        <strong>= CKP03 entregue</strong>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="callout callout-orange">
-        <div class="callout-title">📦 O que preparar</div>
-        <div class="callout-body">
-          · Notebook desta aula com compressão funcionando<br>
-          · Retriever do CKP02 disponível (ChromaDB indexado)<br>
-          · Notebook da Aula 08 com Gradio + ngrok<br>
-          · 5 perguntas de teste do domínio para validar o agente integrado<br><br>
-          A Aula 11 é 100% lab — sem slides de teoria. Todo o tempo dedicado a integrar e publicar.
-        </div>
-      </div>
-    </div>
-  </div>
-  <div style="margin-top:12px;padding:14px 18px;background:rgba(237,20,91,.06);border:1px solid rgba(237,20,91,.2);border-radius:10px;font-size:13px">
-    <strong>🏁 CKP03 entrega na Aula 11:</strong> Agente inteligente com RAG do domínio como tool, DuckDuckGo para dados em tempo real, calculadora, compressão de Observations e interface Gradio com URL pública. Estimativa: 4–5h de trabalho de grupo.
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
-  <div class="section-number">06</div>
-  <div class="section-title">Demo ao vivo</div>
-  <div class="section-desc">Instrumentar o agente da Aula 09 para medir tokens e qualidade por turno. O gráfico de context rot aparece em tempo real.</div>
-  <div class="slide-number">25 / 29</div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>🚀 Demo Prática ao Vivo — gráfico de context rot ao vivo</h2>
-  <p>O professor roda o agente com 10 perguntas em sequência, plota tokens vs. qualidade e mostra o efeito da compressão de Observations:</p>
-  <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:16px 0">
-    <div style="font-size:12px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;margin-bottom:14px">Resultado típico da demo (ilustrativo)</div>
-    <div style="display:flex;gap:16px;margin-bottom:12px">
-      <div style="flex:1">
-        <div style="font-size:11px;font-weight:700;color:var(--fiap-red);margin-bottom:8px">SEM compressão de Observations</div>
-        <div class="qbar-row"><div class="qbar-label">Turno 2</div><div class="qbar-bg"><div class="qbar-fill" style="width:95%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.95</div></div>
-        <div class="qbar-row"><div class="qbar-label">Turno 5</div><div class="qbar-bg"><div class="qbar-fill" style="width:80%;background:var(--fiap-blue)"></div></div><div class="qbar-val" style="color:var(--fiap-blue)">0.80</div></div>
-        <div class="qbar-row"><div class="qbar-label">Turno 8</div><div class="qbar-bg"><div class="qbar-fill" style="width:62%;background:var(--fiap-orange)"></div></div><div class="qbar-val" style="color:var(--fiap-orange)">0.62</div></div>
-        <div class="qbar-row"><div class="qbar-label">Turno 10</div><div class="qbar-bg"><div class="qbar-fill" style="width:45%;background:var(--fiap-red)"></div></div><div class="qbar-val" style="color:var(--fiap-red)">0.45</div></div>
-      </div>
-      <div style="flex:1">
-        <div style="font-size:11px;font-weight:700;color:var(--fiap-green);margin-bottom:8px">COM compressão de Observations</div>
-        <div class="qbar-row"><div class="qbar-label">Turno 2</div><div class="qbar-bg"><div class="qbar-fill" style="width:93%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.93</div></div>
-        <div class="qbar-row"><div class="qbar-label">Turno 5</div><div class="qbar-bg"><div class="qbar-fill" style="width:91%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.91</div></div>
-        <div class="qbar-row"><div class="qbar-label">Turno 8</div><div class="qbar-bg"><div class="qbar-fill" style="width:88%;background:var(--fiap-green)"></div></div><div class="qbar-val" style="color:var(--fiap-green)">0.88</div></div>
-        <div class="qbar-row"><div class="qbar-label">Turno 10</div><div class="qbar-bg"><div class="qbar-fill" style="width:85%;background:var(--fiap-blue)"></div></div><div class="qbar-val" style="color:var(--fiap-blue)">0.85</div></div>
-      </div>
-    </div>
-    <div style="font-size:11px;color:var(--fiap-muted)">*Valores ilustrativos. A demo real usa o corpus do domínio do professor com 10 perguntas padronizadas.</div>
-  </div>
-  <div class="callout callout-pink">
-    <div class="callout-title">🎯 O que a demo prova</div>
-    <div class="callout-body">Sem compressão: qualidade cai de 0.95 para 0.45 em 10 turnos (-53%). Com compressão: qualidade se mantém acima de 0.85 mesmo em 10 turnos (-9%). A diferença é resultado de menos tokens de Observation no scratchpad — context rot reduzido.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <div class="exercise">
-    <div class="exercise-label">Lab — Aula 10 · 2º Semestre</div>
-    <div class="exercise-title">Compressão do scratchpad e medição de impacto <span style="font-size:14px;color:var(--fiap-orange)">★★★</span></div>
-    <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px"><strong>Grupo 3–4 · 20 minutos · Google Colab</strong></p>
-    <ol class="exercise-steps">
-      <li><strong>Complete as 4 lacunas</strong> — contar_tokens_scratchpad (concatenar action.log + obs), buscar_na_web_comprimida (invocar chain_resumir com a chave correta), 5 perguntas do domínio e os dois argumentos do plt.bar.</li>
-      <li><strong>Analise o gráfico</strong> — em qual pergunta a diferença de tokens foi maior? Por quê? (Dica: resultado de busca web é maior que resultado do RAG)</li>
-      <li><strong>Calcule a redução média</strong> em % de tokens usando a fórmula <code style="font-family:'JetBrains Mono',monospace;font-size:12px">(1 - mean(tok_com)/mean(tok_sem)) * 100</code>. Documente em célula markdown.</li>
-    </ol>
-    <div style="padding:12px 16px;background:rgba(41,175,140,.06);border-left:3px solid var(--fiap-green);border-radius:0 8px 8px 0;margin:12px 0">
-      <div style="font-size:12px;font-weight:700;color:var(--fiap-green);margin-bottom:4px">🎯 Gabarito das lacunas</div>
-      <div style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--fiap-muted);line-height:1.9">
-        Lacuna 1: texto += f"{action.log}\n{obs}\n" ; enc.encode(texto)<br>
-        Lacuna 2: chain_resumir.invoke({"texto": bruto})<br>
-        Lacuna 3: 5 perguntas reais do domínio do grupo<br>
-        Lacuna 4: tok_sem (1º bar) ; tok_com (2º bar)
-      </div>
-    </div>
-    <div style="background:rgba(124,96,198,.06);border:1px solid rgba(124,96,198,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--fiap-purple)">
-      🚀 <strong>Desafio — memória episódica:</strong> implementar <code style="font-family:'JetBrains Mono',monospace;font-size:12px">salvar_sessao()</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">lembrar_sessoes_anteriores</code> como 4ª tool do agente. Salvar as 5 respostas do lab e depois perguntar ao agente "o que discutimos antes sobre [tema]?" — ele deve recuperar do ChromaDB episódico.
-    </div>
-  </div>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

@@ -5,3 +5,7 @@ langchain
 langchain-ollama
 tiktoken
 python-dotenv
+
+# Interface web
+fastapi
+uvicorn

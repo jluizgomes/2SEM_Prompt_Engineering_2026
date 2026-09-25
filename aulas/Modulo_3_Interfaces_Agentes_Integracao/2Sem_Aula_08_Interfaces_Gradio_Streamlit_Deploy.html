@@ -154,6 +154,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -181,7 +183,7 @@
     <div class="cover-meta-item">🌐 Gradio · ngrok · streaming</div>
     <div class="cover-meta-item">🔁 Andaime 45%</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -199,7 +201,7 @@
     <div class="callout-body">Ao final da aula, o RAG do CKP02 está acessível via URL pública — qualquer pessoa com o link consegue fazer perguntas aos documentos do domínio pelo celular ou computador, sem abrir o Colab.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -241,7 +243,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -249,7 +251,7 @@
   <div class="section-number">01</div>
   <div class="section-title">De notebook<br>a produto</div>
   <div class="section-desc">Um notebook funciona para o desenvolvedor. Uma interface funciona para qualquer pessoa. Essa diferença é a diferença entre um protótipo e um produto.</div>
-  <div class="slide-number">04 / 29</div>
+  <div class="slide-number">4 / 29</div>
 </div>
 
 
@@ -289,7 +291,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -297,7 +299,7 @@
   <div class="section-number">02</div>
   <div class="section-title">Gradio</div>
   <div class="section-desc">gr.Interface para funções simples · gr.ChatInterface para chatbots · gr.Blocks para layouts customizados. Streaming com yield.</div>
-  <div class="slide-number">06 / 29</div>
+  <div class="slide-number">6 / 29</div>
 </div>
 
 
@@ -348,7 +350,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">7 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -387,7 +389,7 @@
     <div class="callout-body">O parâmetro <code style="font-family:'JetBrains Mono',monospace;font-size:12px">type="messages"</code> usa o formato OpenAI com lista de dicionários <code style="font-family:'JetBrains Mono',monospace;font-size:12px">[{"role": "user", "content": "..."}]</code> — o mesmo formato do <code style="font-family:'JetBrains Mono',monospace;font-size:12px">RunnableWithMessageHistory</code>. Facilita a integração com a memória do LangChain.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -440,7 +442,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -649,11 +651,176 @@
 </div>
 
 
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Boas práticas de deploy e segurança</h2>
+  <table class="data-table">
+    <thead><tr><th>Prática</th><th>Como implementar</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Nunca expor API keys</strong></td><td>Sempre via <code style="font-family:'JetBrains Mono',monospace;font-size:11px">userdata.get()</code> — jamais como texto na interface</td><td>A URL ngrok é pública — qualquer usuário pode inspecionar o código-fonte da página</td></tr>
+      <tr><td><strong>Timeout handling</strong></td><td>Envolver <code style="font-family:'JetBrains Mono',monospace;font-size:11px">chain.stream()</code> em try/except e fazer yield de mensagem de erro</td><td>O Ollama Cloud pode ter latência variável — o usuário não deve ver um app travado</td></tr>
+      <tr><td><strong>Limitar o input</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">gr.Textbox(max_lines=5)</code> ou truncar a string antes de invocar</td><td>Inputs muito longos consomem tokens e podem causar erros no modelo</td></tr>
+      <tr><td><strong>Resetar sessão</strong></td><td>Adicionar botão que limpa o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">store[session_id]</code></td><td>Memória crescente degrada a qualidade (context rot) — permitir ao usuário recomeçar</td></tr>
+      <tr><td><strong>Mensagem de carregamento</strong></td><td>Primeira yield com "⏳ Buscando nos documentos..."</td><td>RAG tem latência de retrieval — o usuário precisa saber que o app está trabalhando</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-purple" style="margin-top:16px">
+    <div class="callout-title">📖 Fundamentação — o padrão "Blue and Gold" para deploy seguro</div>
+    <div class="callout-body">Avila (<em>Architecting AI Software Systems</em>, Packt, 2025) descreve o padrão "Blue and Gold" usado em MLOps para atualizar pipelines de IA em produção sem interromper quem já está usando: a versão <strong>Blue</strong> continua servindo os usuários normalmente enquanto uma versão <strong>Gold</strong> é testada em paralelo com os mesmos dados; só depois que as métricas da Gold são validadas contra a Blue é que ela assume o lugar de produção — e a versão anterior fica disponível como rollback imediato caso algo dê errado. Na prática do CKP02/CKP03: nunca sobrescreva a URL <code style="font-family:'JetBrains Mono',monospace;font-size:12px">share=True</code> que o grupo já divulgou para testar uma mudança arriscada no notebook — rode a versão nova em uma segunda sessão do Colab, valide que as respostas continuam corretas, e só então troque o link compartilhado com a turma.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Python novo desta aula</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula08_2sem.py</span></div>
+    <div class="code-body"><pre><span class="cm"># 1. yield — transforma função em gerador (streaming)</span>
+<span class="kw">def</span> <span class="fn">gerar_numeros</span><span class="op">():</span>
+    <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="nb">range</span><span class="op">(</span><span class="num">5</span><span class="op">):</span>
+        <span class="kw">yield</span> <span class="va">i</span>        <span class="cm"># pausa aqui, retorna i, retoma na próxima iteração</span>
+<span class="nb">list</span><span class="op">(</span><span class="fn">gerar_numeros</span><span class="op">())</span>  <span class="cm"># → [0, 1, 2, 3, 4]</span>
+
+<span class="cm"># 2. Walrus operator := — atribuição dentro de if</span>
+<span class="kw">if</span> <span class="va">pergunta</span> <span class="op">:=</span> <span class="va">st</span><span class="op">.</span><span class="fn">chat_input</span><span class="op">(</span><span class="st">"..."</span><span class="op">):</span>  <span class="cm"># atribui E testa ao mesmo tempo</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">pergunta</span><span class="op">)</span>  <span class="cm"># só entra se pergunta não for None/vazio</span>
+
+<span class="cm"># 3. lambda sem argumento — gr.State usa para valor inicial por sessão</span>
+<span class="va">uuid_factory</span> <span class="op">=</span> <span class="kw">lambda</span><span class="op">:</span> <span class="nb">str</span><span class="op">(</span><span class="va">uuid</span><span class="op">.</span><span class="fn">uuid4</span><span class="op">())</span>  <span class="cm"># chamada a cada nova sessão</span>
+<span class="va">estado</span>       <span class="op">=</span> <span class="va">gr</span><span class="op">.</span><span class="va">State</span><span class="op">(</span><span class="va">uuid_factory</span><span class="op">)</span>       <span class="cm"># sem () — passa a função, não o resultado</span>
+
+<span class="cm"># 4. += em string (acumular streaming)</span>
+<span class="va">parcial</span> <span class="op">=</span> <span class="st">""</span>
+<span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="op">[</span><span class="st">"Conf"</span><span class="op">,</span> <span class="st">"orme"</span><span class="op">,</span> <span class="st">" a p"</span><span class="op">,</span> <span class="st">"ágina"</span><span class="op">]:</span>
+    <span class="va">parcial</span> <span class="op">+=</span> <span class="va">chunk</span>   <span class="cm"># acumula: "Conf" → "Conforme" → "Conforme a p" → ...</span>
+    <span class="kw">yield</span> <span class="va">parcial</span>      <span class="cm"># envia o estado acumulado a cada passo</span>
+
+<span class="cm"># 5. Dict aninhado como config do LangChain</span>
+<span class="va">config</span> <span class="op">= {</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"session_id"</span><span class="op">:</span> <span class="va">meu_session_id</span><span class="op">}}</span>
+<span class="va">chain</span><span class="op">.</span><span class="fn">stream</span><span class="op">(</span><span class="va">input</span><span class="op">,</span> <span class="va">config</span><span class="op">=</span><span class="va">config</span><span class="op">)</span>  <span class="cm"># config é kw-only, sempre nomeado</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Interfaces de IA em produção</h2>
+  <div class="three-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Hubs de modelos abertos</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Milhares de demos com Gradio</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Comunidades de machine learning mantêm repositórios públicos com milhares de demonstrações de modelos, boa parte construída com Gradio — o mesmo <code style="font-family:'JetBrains Mono',monospace;font-size:11px">gr.Interface</code>/<code style="font-family:'JetBrains Mono',monospace;font-size:11px">gr.ChatInterface</code> que você usou hoje, publicado em escala.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Assistentes conversacionais</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Streaming como padrão de mercado</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Assistentes de IA conversacional amplamente usados hoje entregam a resposta token a token — o mesmo mecanismo de <code style="font-family:'JetBrains Mono',monospace;font-size:11px">yield</code> implementado nesta aula. A diferença entre uma resposta que só aparece após 15 segundos e uma que começa a aparecer em milissegundos é inteiramente de streaming, não do modelo em si.</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
+      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Startups BR</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Gradio como MVP</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Startups brasileiras de LegalTech, HealthTech e EdTech usam Gradio para lançar MVPs em semanas. O RAG + Gradio + ngrok é exatamente o stack de MVP mais rápido disponível em 2026.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>O que vem na Aula 09 — Agentes ReAct e tools</h2>
+  <div class="two-col">
+    <div>
+      <div class="callout callout-teal">
+        <div class="callout-title">🤖 A diferença entre chain e agente</div>
+        <div class="callout-body">
+          <strong>Chain (o que você tem hoje):</strong><br>
+          Pergunta → retriever → prompt → LLM → resposta<br>
+          Fluxo fixo, pré-determinado.<br><br>
+          <strong>Agente (o que vem na Aula 09):</strong><br>
+          Pergunta → LLM <em>decide</em> qual tool usar → executa → observa → LLM decide próximo passo → ... → resposta<br>
+          Fluxo dinâmico, guiado pelo raciocínio do modelo.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="callout callout-orange">
+        <div class="callout-title">🛠️ O que você vai implementar</div>
+        <div class="callout-body">
+          Agente ReAct com 3 tools:<br>
+          · <strong>RAG tool</strong> — busca nos documentos do grupo (CKP02)<br>
+          · <strong>DuckDuckGo tool</strong> — pesquisa na web quando o doc não tem a resposta<br>
+          · <strong>Calculadora</strong> — para perguntas numéricas<br><br>
+          O agente decide qual usar para cada pergunta — autonomamente.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:14px 18px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:10px;font-size:13px">
+    <strong>📌 Antes da Aula 09:</strong> mantenha o notebook desta aula salvo com a interface funcionando. A Aula 09 vai trocar a chain pelo agente — mas a interface Gradio permanece a mesma.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">RAG do grupo em app Gradio. 15 linhas adicionais além do pipeline da Aula 06. URL pública via share=True. Acesso pelo celular em sala.</div>
+  <div class="slide-number">21 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>🚀 Demo Prática ao Vivo — RAG do grupo em 15 linhas extras</h2>
+  <p>O professor abre o notebook do CKP02, adiciona as células abaixo e a interface vai ao ar:</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">demo_deploy_ao_vivo.py</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install gradio <span class="op">-</span>q  <span class="cm"># já deve estar instalado</span>
+
+<span class="kw">import</span> <span class="va">gradio</span> <span class="kw">as</span> <span class="va">gr</span><span class="op">,</span> <span class="va">uuid</span>
+
+<span class="cm"># ── Memória por sessão ──────────────────────────────────────────────</span>
+<span class="va">store</span> <span class="op">= {}</span>
+<span class="kw">def</span> <span class="fn">obter_hist</span><span class="op">(</span><span class="va">sid</span><span class="op">):</span>
+    <span class="kw">if</span> <span class="va">sid</span> <span class="kw">not</span> <span class="kw">in</span> <span class="va">store</span><span class="op">:</span> <span class="va">store</span><span class="op">[</span><span class="va">sid</span><span class="op">]</span> <span class="op">=</span> <span class="va">ChatMessageHistory</span><span class="op">()</span>
+    <span class="kw">return</span> <span class="va">store</span><span class="op">[</span><span class="va">sid</span><span class="op">]</span>
+
+<span class="cm"># ── Chat com streaming + memória ────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">chat</span><span class="op">(</span><span class="va">msg</span><span class="op">,</span> <span class="va">hist</span><span class="op">,</span> <span class="va">sid</span><span class="op">):</span>
+    <span class="va">parcial</span> <span class="op">=</span> <span class="st">""</span>
+    <span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">chain_rag_memoria</span><span class="op">.</span><span class="fn">stream</span><span class="op">(</span>
+        <span class="op">{</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="va">msg</span><span class="op">},</span>
+        <span class="va">config</span><span class="op">={</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"session_id"</span><span class="op">:</span> <span class="va">sid</span><span class="op">}},</span>
+    <span class="op">):</span>
+        <span class="va">parcial</span> <span class="op">+=</span> <span class="va">chunk</span>
+        <span class="kw">yield</span> <span class="va">parcial</span>
+
+<span class="cm"># ── Interface ────────────────────────────────────────────────────────</span>
+<span class="kw">with</span> <span class="va">gr</span><span class="op">.</span><span class="va">Blocks</span><span class="op">(</span><span class="va">title</span><span class="op">=</span><span class="st">"DocMind RAG"</span><span class="op">)</span> <span class="kw">as</span> <span class="va">demo</span><span class="op">:</span>
+    <span class="va">sid</span>  <span class="op">=</span> <span class="va">gr</span><span class="op">.</span><span class="va">State</span><span class="op">(</span><span class="kw">lambda</span><span class="op">:</span> <span class="nb">str</span><span class="op">(</span><span class="va">uuid</span><span class="op">.</span><span class="fn">uuid4</span><span class="op">()))</span>
+    <span class="va">gr</span><span class="op">.</span><span class="va">Markdown</span><span class="op">(</span><span class="st">"# 📄 DocMind — Assistente do Domínio\nPergunte sobre os documentos do grupo."</span><span class="op">)</span>
+    <span class="va">gr</span><span class="op">.</span><span class="va">ChatInterface</span><span class="op">(</span><span class="va">fn</span><span class="op">=</span><span class="va">chat</span><span class="op">,</span> <span class="va">type</span><span class="op">=</span><span class="st">"messages"</span><span class="op">,</span> <span class="va">additional_inputs</span><span class="op">=[</span><span class="va">sid</span><span class="op">])</span>
+
+<span class="va">demo</span><span class="op">.</span><span class="fn">launch</span><span class="op">(</span><span class="va">share</span><span class="op">=</span><span class="kw">True</span><span class="op">)</span>
+<span class="cm"># → "Running on public URL: https://abc123.gradio.live"</span>
+<span class="cm"># → professor projeta o QR Code — alunos acessam pelo celular</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
   <div class="section-number">06</div>
   <div class="section-title">Lab — Notebook Aluno</div>
   <div class="section-desc">45% de lacunas — cada grupo publica sua própria URL ao vivo. URL compartilhada no grupo da turma ao final.</div>
-  <div class="slide-number">17 / 29</div>
+  <div class="slide-number">23 / 29</div>
 </div>
 
 
@@ -714,213 +881,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Boas práticas de deploy e segurança</h2>
-  <table class="data-table">
-    <thead><tr><th>Prática</th><th>Como implementar</th><th>Por quê</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Nunca expor API keys</strong></td><td>Sempre via <code style="font-family:'JetBrains Mono',monospace;font-size:11px">userdata.get()</code> — jamais como texto na interface</td><td>A URL ngrok é pública — qualquer usuário pode inspecionar o código-fonte da página</td></tr>
-      <tr><td><strong>Timeout handling</strong></td><td>Envolver <code style="font-family:'JetBrains Mono',monospace;font-size:11px">chain.stream()</code> em try/except e fazer yield de mensagem de erro</td><td>O Ollama Cloud pode ter latência variável — o usuário não deve ver um app travado</td></tr>
-      <tr><td><strong>Limitar o input</strong></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:11px">gr.Textbox(max_lines=5)</code> ou truncar a string antes de invocar</td><td>Inputs muito longos consomem tokens e podem causar erros no modelo</td></tr>
-      <tr><td><strong>Resetar sessão</strong></td><td>Adicionar botão que limpa o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">store[session_id]</code></td><td>Memória crescente degrada a qualidade (context rot) — permitir ao usuário recomeçar</td></tr>
-      <tr><td><strong>Mensagem de carregamento</strong></td><td>Primeira yield com "⏳ Buscando nos documentos..."</td><td>RAG tem latência de retrieval — o usuário precisa saber que o app está trabalhando</td></tr>
-    </tbody>
-  </table>
-  <div class="callout callout-purple" style="margin-top:16px">
-    <div class="callout-title">📖 Fundamentação — o padrão "Blue and Gold" para deploy seguro</div>
-    <div class="callout-body">Avila (<em>Architecting AI Software Systems</em>, Packt, 2025) descreve o padrão "Blue and Gold" usado em MLOps para atualizar pipelines de IA em produção sem interromper quem já está usando: a versão <strong>Blue</strong> continua servindo os usuários normalmente enquanto uma versão <strong>Gold</strong> é testada em paralelo com os mesmos dados; só depois que as métricas da Gold são validadas contra a Blue é que ela assume o lugar de produção — e a versão anterior fica disponível como rollback imediato caso algo dê errado. Na prática do CKP02/CKP03: nunca sobrescreva a URL <code style="font-family:'JetBrains Mono',monospace;font-size:12px">share=True</code> que o grupo já divulgou para testar uma mudança arriscada no notebook — rode a versão nova em uma segunda sessão do Colab, valide que as respostas continuam corretas, e só então troque o link compartilhado com a turma.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Síntese da Aula 08</h2>
-  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Interface = produto.</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gr.ChatInterface</code> transforma o pipeline RAG em app utilizável por qualquer pessoa em 15 linhas. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">share=True</code> gera a URL.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Streaming com yield</strong> muda a experiência: o usuário vê tokens chegando em tempo real em vez de esperar o bloco completo por 15 segundos.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>RunnableWithMessageHistory</strong> adiciona memória por session_id — múltiplos usuários simultâneos, cada um com seu próprio histórico isolado.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(41,175,140,.05);border:2px solid rgba(41,175,140,.2);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">🔜</div>
-      <div style="font-size:14px"><strong>Aula 09:</strong> o chatbot vira um agente. Em vez de apenas buscar no RAG, o agente vai decidir quando usar o RAG, quando pesquisar na web e quando usar uma calculadora — autonomamente.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Perguntas frequentes</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"A URL ngrok expira? Quanto tempo dura?"</strong></td><td>No plano gratuito, a URL expira quando a sessão do Colab termina (timeout de ~90 min de inatividade ou 12h máximas). Para demos ao vivo em sala, é suficiente. Para demonstrações mais longas, usar ngrok pago ou hospedar no HuggingFace Spaces (gratuito, URL permanente).</td></tr>
-      <tr><td><strong>"Posso usar gr.Blocks para adicionar upload de PDF na interface?"</strong></td><td>Sim — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gr.File(file_types=[".pdf"])</code> retorna o caminho temporário do arquivo enviado. Na função de upload: carregar com PyMuPDF, dividir, embedar e adicionar ao ChromaDB com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">db.add_documents()</code>. O desafio do lab pede exatamente isso.</td></tr>
-      <tr><td><strong>"HuggingFace Spaces é uma alternativa ao ngrok?"</strong></td><td>Sim, e melhor para URLs permanentes. O Spaces suporta Gradio nativamente — você faz push de um repositório com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">app.py</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">requirements.txt</code> e a URL fica no ar permanentemente. O desafio: as API keys precisam ser configuradas nas variáveis de ambiente do Space (não via Colab Secrets).</td></tr>
-      <tr><td><strong>"O histórico cresce infinitamente? Precisa limitar?"</strong></td><td>Sim — sem limite, o histórico sofre context rot. Na produção, use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationTokenBufferMemory</code> (aprendida na Aula 02) para limitar por tokens. Para o lab desta aula, o histórico ilimitado é aceitável em demo.</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Python novo desta aula</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula08_2sem.py</span></div>
-    <div class="code-body"><pre><span class="cm"># 1. yield — transforma função em gerador (streaming)</span>
-<span class="kw">def</span> <span class="fn">gerar_numeros</span><span class="op">():</span>
-    <span class="kw">for</span> <span class="va">i</span> <span class="kw">in</span> <span class="nb">range</span><span class="op">(</span><span class="num">5</span><span class="op">):</span>
-        <span class="kw">yield</span> <span class="va">i</span>        <span class="cm"># pausa aqui, retorna i, retoma na próxima iteração</span>
-<span class="nb">list</span><span class="op">(</span><span class="fn">gerar_numeros</span><span class="op">())</span>  <span class="cm"># → [0, 1, 2, 3, 4]</span>
-
-<span class="cm"># 2. Walrus operator := — atribuição dentro de if</span>
-<span class="kw">if</span> <span class="va">pergunta</span> <span class="op">:=</span> <span class="va">st</span><span class="op">.</span><span class="fn">chat_input</span><span class="op">(</span><span class="st">"..."</span><span class="op">):</span>  <span class="cm"># atribui E testa ao mesmo tempo</span>
-    <span class="nb">print</span><span class="op">(</span><span class="va">pergunta</span><span class="op">)</span>  <span class="cm"># só entra se pergunta não for None/vazio</span>
-
-<span class="cm"># 3. lambda sem argumento — gr.State usa para valor inicial por sessão</span>
-<span class="va">uuid_factory</span> <span class="op">=</span> <span class="kw">lambda</span><span class="op">:</span> <span class="nb">str</span><span class="op">(</span><span class="va">uuid</span><span class="op">.</span><span class="fn">uuid4</span><span class="op">())</span>  <span class="cm"># chamada a cada nova sessão</span>
-<span class="va">estado</span>       <span class="op">=</span> <span class="va">gr</span><span class="op">.</span><span class="va">State</span><span class="op">(</span><span class="va">uuid_factory</span><span class="op">)</span>       <span class="cm"># sem () — passa a função, não o resultado</span>
-
-<span class="cm"># 4. += em string (acumular streaming)</span>
-<span class="va">parcial</span> <span class="op">=</span> <span class="st">""</span>
-<span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="op">[</span><span class="st">"Conf"</span><span class="op">,</span> <span class="st">"orme"</span><span class="op">,</span> <span class="st">" a p"</span><span class="op">,</span> <span class="st">"ágina"</span><span class="op">]:</span>
-    <span class="va">parcial</span> <span class="op">+=</span> <span class="va">chunk</span>   <span class="cm"># acumula: "Conf" → "Conforme" → "Conforme a p" → ...</span>
-    <span class="kw">yield</span> <span class="va">parcial</span>      <span class="cm"># envia o estado acumulado a cada passo</span>
-
-<span class="cm"># 5. Dict aninhado como config do LangChain</span>
-<span class="va">config</span> <span class="op">= {</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"session_id"</span><span class="op">:</span> <span class="va">meu_session_id</span><span class="op">}}</span>
-<span class="va">chain</span><span class="op">.</span><span class="fn">stream</span><span class="op">(</span><span class="va">input</span><span class="op">,</span> <span class="va">config</span><span class="op">=</span><span class="va">config</span><span class="op">)</span>  <span class="cm"># config é kw-only, sempre nomeado</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Interfaces de IA em produção</h2>
-  <div class="three-col">
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-green);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Hubs de modelos abertos</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Milhares de demos com Gradio</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Comunidades de machine learning mantêm repositórios públicos com milhares de demonstrações de modelos, boa parte construída com Gradio — o mesmo <code style="font-family:'JetBrains Mono',monospace;font-size:11px">gr.Interface</code>/<code style="font-family:'JetBrains Mono',monospace;font-size:11px">gr.ChatInterface</code> que você usou hoje, publicado em escala.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-blue);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Assistentes conversacionais</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Streaming como padrão de mercado</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Assistentes de IA conversacional amplamente usados hoje entregam a resposta token a token — o mesmo mecanismo de <code style="font-family:'JetBrains Mono',monospace;font-size:11px">yield</code> implementado nesta aula. A diferença entre uma resposta que só aparece após 15 segundos e uma que começa a aparecer em milissegundos é inteiramente de streaming, não do modelo em si.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-top:3px solid var(--fiap-purple);border-radius:12px;padding:18px">
-      <div style="font-size:11px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Startups BR</div>
-      <div style="font-size:14px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Gradio como MVP</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.7">Startups brasileiras de LegalTech, HealthTech e EdTech usam Gradio para lançar MVPs em semanas. O RAG + Gradio + ngrok é exatamente o stack de MVP mais rápido disponível em 2026.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>O que vem na Aula 09 — Agentes ReAct e tools</h2>
-  <div class="two-col">
-    <div>
-      <div class="callout callout-teal">
-        <div class="callout-title">🤖 A diferença entre chain e agente</div>
-        <div class="callout-body">
-          <strong>Chain (o que você tem hoje):</strong><br>
-          Pergunta → retriever → prompt → LLM → resposta<br>
-          Fluxo fixo, pré-determinado.<br><br>
-          <strong>Agente (o que vem na Aula 09):</strong><br>
-          Pergunta → LLM <em>decide</em> qual tool usar → executa → observa → LLM decide próximo passo → ... → resposta<br>
-          Fluxo dinâmico, guiado pelo raciocínio do modelo.
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="callout callout-orange">
-        <div class="callout-title">🛠️ O que você vai implementar</div>
-        <div class="callout-body">
-          Agente ReAct com 3 tools:<br>
-          · <strong>RAG tool</strong> — busca nos documentos do grupo (CKP02)<br>
-          · <strong>DuckDuckGo tool</strong> — pesquisa na web quando o doc não tem a resposta<br>
-          · <strong>Calculadora</strong> — para perguntas numéricas<br><br>
-          O agente decide qual usar para cada pergunta — autonomamente.
-        </div>
-      </div>
-    </div>
-  </div>
-  <div style="margin-top:12px;padding:14px 18px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:10px;font-size:13px">
-    <strong>📌 Antes da Aula 09:</strong> mantenha o notebook desta aula salvo com a interface funcionando. A Aula 09 vai trocar a chain pelo agente — mas a interface Gradio permanece a mesma.
-  </div>
-  </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
-  <div class="section-number">05</div>
-  <div class="section-title">Demo ao vivo</div>
-  <div class="section-desc">RAG do grupo em app Gradio. 15 linhas adicionais além do pipeline da Aula 06. URL pública via share=True. Acesso pelo celular em sala.</div>
-  <div class="slide-number">25 / 29</div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>🚀 Demo Prática ao Vivo — RAG do grupo em 15 linhas extras</h2>
-  <p>O professor abre o notebook do CKP02, adiciona as células abaixo e a interface vai ao ar:</p>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">demo_deploy_ao_vivo.py</span></div>
-    <div class="code-body"><pre><span class="op">!</span>pip install gradio <span class="op">-</span>q  <span class="cm"># já deve estar instalado</span>
-
-<span class="kw">import</span> <span class="va">gradio</span> <span class="kw">as</span> <span class="va">gr</span><span class="op">,</span> <span class="va">uuid</span>
-
-<span class="cm"># ── Memória por sessão ──────────────────────────────────────────────</span>
-<span class="va">store</span> <span class="op">= {}</span>
-<span class="kw">def</span> <span class="fn">obter_hist</span><span class="op">(</span><span class="va">sid</span><span class="op">):</span>
-    <span class="kw">if</span> <span class="va">sid</span> <span class="kw">not</span> <span class="kw">in</span> <span class="va">store</span><span class="op">:</span> <span class="va">store</span><span class="op">[</span><span class="va">sid</span><span class="op">]</span> <span class="op">=</span> <span class="va">ChatMessageHistory</span><span class="op">()</span>
-    <span class="kw">return</span> <span class="va">store</span><span class="op">[</span><span class="va">sid</span><span class="op">]</span>
-
-<span class="cm"># ── Chat com streaming + memória ────────────────────────────────────</span>
-<span class="kw">def</span> <span class="fn">chat</span><span class="op">(</span><span class="va">msg</span><span class="op">,</span> <span class="va">hist</span><span class="op">,</span> <span class="va">sid</span><span class="op">):</span>
-    <span class="va">parcial</span> <span class="op">=</span> <span class="st">""</span>
-    <span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">chain_rag_memoria</span><span class="op">.</span><span class="fn">stream</span><span class="op">(</span>
-        <span class="op">{</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="va">msg</span><span class="op">},</span>
-        <span class="va">config</span><span class="op">={</span><span class="st">"configurable"</span><span class="op">: {</span><span class="st">"session_id"</span><span class="op">:</span> <span class="va">sid</span><span class="op">}},</span>
-    <span class="op">):</span>
-        <span class="va">parcial</span> <span class="op">+=</span> <span class="va">chunk</span>
-        <span class="kw">yield</span> <span class="va">parcial</span>
-
-<span class="cm"># ── Interface ────────────────────────────────────────────────────────</span>
-<span class="kw">with</span> <span class="va">gr</span><span class="op">.</span><span class="va">Blocks</span><span class="op">(</span><span class="va">title</span><span class="op">=</span><span class="st">"DocMind RAG"</span><span class="op">)</span> <span class="kw">as</span> <span class="va">demo</span><span class="op">:</span>
-    <span class="va">sid</span>  <span class="op">=</span> <span class="va">gr</span><span class="op">.</span><span class="va">State</span><span class="op">(</span><span class="kw">lambda</span><span class="op">:</span> <span class="nb">str</span><span class="op">(</span><span class="va">uuid</span><span class="op">.</span><span class="fn">uuid4</span><span class="op">()))</span>
-    <span class="va">gr</span><span class="op">.</span><span class="va">Markdown</span><span class="op">(</span><span class="st">"# 📄 DocMind — Assistente do Domínio\nPergunte sobre os documentos do grupo."</span><span class="op">)</span>
-    <span class="va">gr</span><span class="op">.</span><span class="va">ChatInterface</span><span class="op">(</span><span class="va">fn</span><span class="op">=</span><span class="va">chat</span><span class="op">,</span> <span class="va">type</span><span class="op">=</span><span class="st">"messages"</span><span class="op">,</span> <span class="va">additional_inputs</span><span class="op">=[</span><span class="va">sid</span><span class="op">])</span>
-
-<span class="va">demo</span><span class="op">.</span><span class="fn">launch</span><span class="op">(</span><span class="va">share</span><span class="op">=</span><span class="kw">True</span><span class="op">)</span>
-<span class="cm"># → "Running on public URL: https://abc123.gradio.live"</span>
-<span class="cm"># → professor projeta o QR Code — alunos acessam pelo celular</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -948,6 +909,47 @@
       🚀 <strong>Desafio:</strong> adicionar um <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gr.Blocks</code> com aba para upload de novo PDF e reindexação ao vivo — sem reiniciar o app.
     </div>
   </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 08</h2>
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Interface = produto.</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gr.ChatInterface</code> transforma o pipeline RAG em app utilizável por qualquer pessoa em 15 linhas. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">share=True</code> gera a URL.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Streaming com yield</strong> muda a experiência: o usuário vê tokens chegando em tempo real em vez de esperar o bloco completo por 15 segundos.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>RunnableWithMessageHistory</strong> adiciona memória por session_id — múltiplos usuários simultâneos, cada um com seu próprio histórico isolado.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(41,175,140,.05);border:2px solid rgba(41,175,140,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🔜</div>
+      <div style="font-size:14px"><strong>Aula 09:</strong> o chatbot vira um agente. Em vez de apenas buscar no RAG, o agente vai decidir quando usar o RAG, quando pesquisar na web e quando usar uma calculadora — autonomamente.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"A URL ngrok expira? Quanto tempo dura?"</strong></td><td>No plano gratuito, a URL expira quando a sessão do Colab termina (timeout de ~90 min de inatividade ou 12h máximas). Para demos ao vivo em sala, é suficiente. Para demonstrações mais longas, usar ngrok pago ou hospedar no HuggingFace Spaces (gratuito, URL permanente).</td></tr>
+      <tr><td><strong>"Posso usar gr.Blocks para adicionar upload de PDF na interface?"</strong></td><td>Sim — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">gr.File(file_types=[".pdf"])</code> retorna o caminho temporário do arquivo enviado. Na função de upload: carregar com PyMuPDF, dividir, embedar e adicionar ao ChromaDB com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">db.add_documents()</code>. O desafio do lab pede exatamente isso.</td></tr>
+      <tr><td><strong>"HuggingFace Spaces é uma alternativa ao ngrok?"</strong></td><td>Sim, e melhor para URLs permanentes. O Spaces suporta Gradio nativamente — você faz push de um repositório com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">app.py</code> e <code style="font-family:'JetBrains Mono',monospace;font-size:12px">requirements.txt</code> e a URL fica no ar permanentemente. O desafio: as API keys precisam ser configuradas nas variáveis de ambiente do Space (não via Colab Secrets).</td></tr>
+      <tr><td><strong>"O histórico cresce infinitamente? Precisa limitar?"</strong></td><td>Sim — sem limite, o histórico sofre context rot. Na produção, use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ConversationTokenBufferMemory</code> (aprendida na Aula 02) para limitar por tokens. Para o lab desta aula, o histórico ilimitado é aceitável em demo.</td></tr>
+    </tbody>
+  </table>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

@@ -45,3 +45,21 @@ Ollama local do Docker (modelo `gpt-oss:120b`, sem custo):
 ---
 
 *Copyright © 2026 Prof. Jorge Luiz Gomes · FIAP · Todos os direitos reservados.*
+
+## Interface web (React + FastAPI)
+
+Além do CLI, este projeto tem uma interface web mínima:
+
+```bash
+./rodar.sh          # prepara o ambiente e sobe em http://127.0.0.1:8002
+# (Windows: .\rodar.ps1) — passo a passo manual:
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+#   cd frontend && npm install && npm run build
+#   python -m uvicorn server:app --port 8002
+```
+
+- `server.py` — backend FastAPI: expõe a lógica do exercício em `/api/*` e serve o frontend React (`frontend/dist`).
+- `rodar.sh` / `rodar.ps1` — na primeira execução preparam o ambiente (criam o `.venv`, instalam as libs Python, compilam o frontend e criam o `.env` se faltar) e sobem o servidor.
+- `frontend/` — app React mínimo (Vite); hot reload com `cd frontend && npm install && npm run dev`.
+- 📘 **Manual completo** (portas, notas de ambiente, solução de problemas): veja `../README.md`.

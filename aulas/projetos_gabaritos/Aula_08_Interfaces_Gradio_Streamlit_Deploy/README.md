@@ -3,14 +3,14 @@
 **Disciplina:** Prompt Engineering and Artificial Intelligence — FIAP · 2º Semestre 2026
 **Professor:** Jorge Luiz Gomes
 
-Expõe uma chain com memória por sessão em Gradio (main.py) e Streamlit (app_streamlit.py).
+Expõe uma chain RAG com corpus local e memória isolada por sessão em Gradio (main.py) e Streamlit (app_streamlit.py).
 
 ---
 
 ## Requisitos
 
 - Python 3.10+
-- Chave da Ollama Cloud (`OLLAMA_API_KEY`)
+- Ollama local em `http://localhost:11434` (modelo `gpt-oss:120b`; embeddings: `nomic-embed-text`)
 
 ## Como rodar
 
@@ -19,30 +19,33 @@ cd Aula_08_Interfaces_Gradio_Streamlit_Deploy
 python -m venv .venv && source .venv/bin/activate   # recomendado (macOS/Linux)
 pip install -r requirements.txt
 cp .env.example .env                                 # se ainda não tiver .env
-# edite .env e preencha OLLAMA_API_KEY (a mesma chave já está no .env da pasta 2SEM)
 python main.py
 ```
 
 
 Gradio: python main.py (porta 7860). Streamlit: streamlit run app_streamlit.py.
 
+Na primeira pergunta, o projeto carrega o corpus de `data/corpus.txt`, cria a coleção local em `chroma_db/` e inicializa o modelo. Os imports das interfaces não inicializam o LLM nem fazem chamadas externas. Cada navegador recebe um identificador de sessão próprio para o histórico do RAG.
+
 ## Arquivos
 
-- `main.py` — código principal da aula
-- `app_streamlit.py` — variante da interface
+- `main.py` — interface Gradio com estado isolado por sessão
+- `app_streamlit.py` — variante da interface Streamlit
+- `rag.py` — corpus, vector store, chain RAG e memória por sessão
+- `data/corpus.txt` — corpus local usado na recuperação
+- `tests/test_rag.py` — testes focados com doubles, sem rede
 - `requirements.txt` — dependências do projeto
-- `.env` — variáveis de ambiente (chave da API; NÃO versionar)
+- `.env` — configuração local; não versionar
 - `.env.example` — modelo do `.env`
-- `.gitignore` — ignora `.env`, `chroma_db/`, `data/`, venv, etc.
+- `.gitignore` — ignora `.env`, `chroma_db/`, artefatos locais e venv
 
-## Usar Ollama LOCAL (gratuito, FIAP AI Lab)
+## Ollama local
 
-Por padrão o projeto usa o Ollama Cloud (`https://ollama.com`). Para usar o
-Ollama local do Docker (modelo `gpt-oss:120b`, sem custo):
+O `.env.example` aponta para `http://localhost:11434` e define `OLLAMA_API_KEY=ollama`.
 
-1. No `.env`, comente as linhas `OLLAMA_HOST`/`OLLAMA_API_KEY` atuais e descomente as alternativas;
-2. Ajuste `OLLAMA_MODEL` para `gpt-oss:120b`;
-3. Suba o lab: `cd ../../fiap-ai-lab-complete && make up` (ou `make up-minimum`).
+1. Inicie o serviço com `ollama serve`.
+2. Baixe o modelo com `ollama pull gpt-oss:120b`.
+3. Baixe `nomic-embed-text` para os embeddings do RAG.
 
 ---
 

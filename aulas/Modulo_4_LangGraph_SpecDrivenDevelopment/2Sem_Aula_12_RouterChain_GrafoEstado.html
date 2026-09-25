@@ -149,6 +149,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -176,7 +178,7 @@
     <div class="cover-meta-item">🔀 Router Chain · StateGraph mental · LangGraph motivação</div>
     <div class="cover-meta-item">🔁 Andaime 50%</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -202,7 +204,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -243,7 +245,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -251,7 +253,7 @@
   <div class="section-number">01</div>
   <div class="section-title">Por que chains lineares<br>não bastam</div>
   <div class="section-desc">Toda chain que você construiu até hoje executa em linha reta: A → B → C. Quando o fluxo precisa decidir entre caminhos diferentes com base no input, você precisa de branches.</div>
-  <div class="slide-number">04 / 29</div>
+  <div class="slide-number">4 / 29</div>
 </div>
 
 
@@ -304,7 +306,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -312,7 +314,7 @@
   <div class="section-number">02</div>
   <div class="section-title">Router Chain</div>
   <div class="section-desc">Um classificador de intenção que decide qual handler executar. O classificador é um LLM com structured output — retorna a rota como string, não texto livre.</div>
-  <div class="slide-number">06 / 29</div>
+  <div class="slide-number">6 / 29</div>
 </div>
 
 
@@ -327,7 +329,7 @@
 <span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
 <span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">Literal</span>
 
-<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
 
 <span class="cm"># Schema Pydantic para a saída do classificador</span>
 <span class="kw">class</span> <span class="fn">Rota</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
@@ -362,7 +364,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) chama atenção para um custo que o classificador acima introduz silenciosamente: cada chamada de roteamento via LLM soma de 500ms a 2 segundos de latência antes mesmo de a rota escolhida começar a trabalhar — em um chat interativo, isso é atraso perceptível somado em cima da resposta final. O autor recomenda começar exatamente como esta aula faz, com um classificador LLM, para validar a lógica de roteamento; se a latência virar problema e as rotas forem bem distintas entre si, a alternativa é treinar um classificador leve sobre embeddings da pergunta (10-50ms, uma fração do custo). Vale usar roteamento quando existem fontes de dados claramente distintas e o custo de buscar na fonte errada supera o overhead do roteamento — exatamente o caso de rag vs. calculadora vs. conversa desta aula.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">7 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -410,7 +412,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -450,7 +452,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     <div class="callout-body">Sempre use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">HANDLERS.get(destino, HANDLERS["conversa"])</code> — nunca <code style="font-family:'JetBrains Mono',monospace;font-size:12px">HANDLERS[destino]</code> diretamente. Se o LLM retornar um destino inesperado (raro com structured_output, mas possível), o sistema cai no handler de conversa em vez de levantar KeyError em produção.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -600,78 +602,6 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
 </div>
 
 
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f9eee0 100%)">
-  <div class="section-number">06</div>
-  <div class="section-title">Lab — Notebook Aluno<br>(30 min)</div>
-  <div class="section-desc">50% de lacunas — o aluno escreve o prompt do classificador, o handler de conversa e a função de despacho. Depois adapta para o domínio do grupo.</div>
-  <div class="slide-number">15 / 29</div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>💻 Notebook Aluno — 50% de lacunas</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_12_2Sem_Aluno.ipynb</span></div>
-    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama langchain-chroma pydantic <span class="op">-</span>q
-
-<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span><span class="op">,</span> <span class="va">OllamaEmbeddings</span>
-<span class="kw">from</span> <span class="va">langchain_chroma</span> <span class="kw">import</span> <span class="va">Chroma</span>
-<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
-<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
-<span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnableLambda</span>
-<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
-<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">Literal</span>
-<span class="kw">import</span> <span class="va">os</span>
-<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
-
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
-<span class="va">llm</span>        <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
-<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">)</span>
-<span class="va">retriever</span>  <span class="op">=</span> <span class="va">Chroma</span><span class="op">(</span><span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/ckp02"</span><span class="op">,</span>
-                    <span class="va">embedding_function</span><span class="op">=</span><span class="va">embeddings</span><span class="op">).</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span><span class="num">3</span><span class="op">})</span>
-
-<span class="cm"># 👉 LACUNA 1: Rota com Literal — adicionar os destinos do domínio do grupo</span>
-<span class="kw">class</span> <span class="fn">Rota</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
-    <span class="va">destino</span><span class="op">:</span> <span class="va">Literal</span><span class="op">[</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">]</span>  <span class="cm"># ex: "rag", "calculadora", "conversa"</span>
-
-<span class="cm"># 👉 LACUNA 2: prompt do classificador — descrever cada destino do domínio</span>
-<span class="va">prompt_clf</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
-    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="gap">"""___"""</span><span class="op">),</span>  <span class="cm"># descrever cada rota com exemplos do domínio</span>
-    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span> <span class="st">"{input}"</span><span class="op">),</span>
-<span class="op">])</span>
-<span class="va">chain_clf</span> <span class="op">=</span> <span class="va">prompt_clf</span> <span class="op">|</span> <span class="va">llm</span><span class="op">.</span><span class="fn">with_structured_output</span><span class="op">(</span><span class="va">Rota</span><span class="op">)</span>
-
-<span class="cm"># Handler RAG (pronto)</span>
-<span class="va">handler_rag</span> <span class="op">= ({</span><span class="st">"contexto"</span><span class="op">:</span> <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">d</span><span class="op">:</span> <span class="st">"\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span><span class="va">x</span><span class="op">.</span><span class="va">page_content</span> <span class="kw">for</span> <span class="va">x</span> <span class="kw">in</span> <span class="va">d</span><span class="op">)),</span>
-                <span class="st">"input"</span><span class="op">:</span> <span class="kw">lambda</span> <span class="va">x</span><span class="op">:</span> <span class="va">x</span><span class="op">[</span><span class="st">"input"</span><span class="op">]}</span>
-               <span class="op">|</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"Contexto:\n{contexto}\n\nPergunta: {input}"</span><span class="op">)</span>
-               <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">())</span>
-
-<span class="cm"># 👉 LACUNA 3: implementar handler_conversa (chain simples com system prompt amigável)</span>
-<span class="va">handler_conversa</span> <span class="op">=</span> <span class="op">(</span>
-    <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
-        <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># persona do assistente do domínio do grupo</span>
-        <span class="op">(</span><span class="st">"human"</span><span class="op">,</span> <span class="st">"{input}"</span><span class="op">),</span>
-    <span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
-<span class="op">)</span>
-
-<span class="va">HANDLERS</span> <span class="op">= {</span><span class="st">"rag"</span><span class="op">:</span> <span class="va">handler_rag</span><span class="op">,</span> <span class="st">"calculadora"</span><span class="op">:</span> <span class="va">handler_calculadora</span><span class="op">,</span> <span class="st">"conversa"</span><span class="op">:</span> <span class="va">handler_conversa</span><span class="op">}</span>
-
-<span class="cm"># 👉 LACUNA 4: implementar a função rotear(dados) e montar router_chain</span>
-<span class="kw">def</span> <span class="fn">rotear</span><span class="op">(</span><span class="va">dados</span><span class="op">:</span> <span class="nb">dict</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
-    <span class="va">rota</span> <span class="op">=</span> <span class="va">chain_clf</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span> <span class="va">dados</span><span class="op">[</span><span class="gap">___</span><span class="op">]})</span>
-    <span class="nb">print</span><span class="op">(</span><span class="st">f"[ROUTER] {rota.destino}"</span><span class="op">)</span>
-    <span class="kw">return</span> <span class="va">HANDLERS</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="va">HANDLERS</span><span class="op">[</span><span class="st">"conversa"</span><span class="op">]).</span><span class="fn">invoke</span><span class="op">(</span><span class="va">dados</span><span class="op">)</span>
-
-<span class="va">router_chain</span> <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="gap">___</span><span class="op">)</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
 <div class="slide slide-content"><div class="slide-body">
   <h2>with_structured_output() — structured output revisitado</h2>
   <p>Já vimos <code style="font-family:'JetBrains Mono',monospace;font-size:13px">with_structured_output()</code> na Aula 03 com Pydantic v2. No classificador, ele tem um papel crítico de segurança:</p>
@@ -709,51 +639,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     <div class="callout-body">Na Aula 03 usamos Pydantic para garantir que a extração de dados retornasse campos tipados. Aqui usamos o mesmo padrão para garantir que o classificador retorne sempre um destino válido. Pydantic não é só para extração — é o mecanismo de contrato entre o LLM e o código Python em qualquer contexto.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Síntese da Aula 12</h2>
-  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Chains lineares têm limite.</strong> Quando perguntas diferentes precisam de fluxos diferentes, é necessário branching. O Router Chain resolve isso sem LangGraph para casos simples.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Router = classificador + handlers + despacho.</strong> O classificador usa <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Literal</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">with_structured_output()</code> para garantir retorno válido. Fallback no <code style="font-family:'JetBrains Mono',monospace;font-size:12px">get()</code> evita KeyError em produção.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Grafo de estado = State + Nodes + Edges + START/END.</strong> O Router desta aula já É um grafo — falta apenas a formalização em LangGraph (Aula 13).</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>LangGraph resolve o que Router e AgentExecutor não resolvem:</strong> estado persistente, checkpointing, revisão humana (HITL) e paralelismo.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(213,140,46,.06);border:2px solid rgba(213,140,46,.2);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">🔜</div>
-      <div style="font-size:14px"><strong>Aula 13:</strong> implementar este grafo em código com StateGraph, add_node(), add_conditional_edges(), MemorySaver e HITL. O diagrama desta aula vira código Python.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Perguntas frequentes</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"Router Chain ou AgentExecutor — qual a diferença real na prática?"</strong></td><td>No AgentExecutor, o LLM decide a cada turno qual tool usar — decisão implícita no Thought. No Router Chain, o LLM classifica a intenção uma vez e o código despacha — decisão explícita e rastreável. Para logs de auditoria ("por que o sistema tomou essa decisão?"), o Router é mais fácil de explicar. Para tarefas que precisam de múltiplas tools em sequência imprevisível, o AgentExecutor é mais flexível.</td></tr>
-      <tr><td><strong>"Posso ter mais de 3 rotas no Router?"</strong></td><td>Sim — basta adicionar mais valores no Literal e mais handlers no dict. Na prática, acima de 5–6 rotas o prompt do classificador fica complexo e a acurácia cai. Se você precisar de muitas rotas, considere hierarquia: um router principal que despacha para sub-routers mais especializados. Ou migrar para LangGraph com conditional_edges — mais robusto para grafos complexos.</td></tr>
-      <tr><td><strong>"O classificador pode errar a rota?"</strong></td><td>Sim — e por isso o fallback para "conversa" existe. Com temperature=0 e Literal, o erro é raro mas possível para perguntas ambíguas. Monitorar a distribuição de rotas em produção (logar rota.destino) para detectar erros sistemáticos. Se a rota "rag" estiver sendo escolhida para cálculos, o prompt do classificador precisa de exemplos negativos ("NÃO use para cálculos matemáticos").</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -799,7 +685,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -823,7 +709,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -852,7 +738,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     <div class="callout-body">Desenhar (em papel ou markdown) o grafo do Router desta aula com os 4 elementos: State TypedDict com os campos, 4 nodes (classificar + 3 handlers), conditional edge saindo do classificador, END. Esse diagrama será a base do código LangGraph da Aula 13.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -882,7 +768,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -910,7 +796,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -918,7 +804,7 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
   <div class="section-number">05</div>
   <div class="section-title">Demo ao vivo<br>(20 min)</div>
   <div class="section-desc">Router Chain com 3 rotas — classificador, handlers e função de despacho. O professor mostra o roteamento sendo impresso a cada invocação.</div>
-  <div class="slide-number">25 / 29</div>
+  <div class="slide-number">21 / 29</div>
 </div>
 
 
@@ -959,7 +845,79 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
     <div class="callout-body">O último exemplo expõe a limitação do Router: perguntas multi-parte (RAG + cálculo) precisam de 2 rotas — mas o Router só escolhe 1. Em LangGraph, a aresta condicional pode ativar <em>dois nós</em> em paralelo ou sequência. Essa é a motivação concreta para a Aula 13.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f9eee0 100%)">
+  <div class="section-number">06</div>
+  <div class="section-title">Lab — Notebook Aluno<br>(30 min)</div>
+  <div class="section-desc">50% de lacunas — o aluno escreve o prompt do classificador, o handler de conversa e a função de despacho. Depois adapta para o domínio do grupo.</div>
+  <div class="slide-number">23 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 50% de lacunas</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_12_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama langchain-chroma pydantic <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span><span class="op">,</span> <span class="va">OllamaEmbeddings</span>
+<span class="kw">from</span> <span class="va">langchain_chroma</span> <span class="kw">import</span> <span class="va">Chroma</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">from</span> <span class="va">langchain_core.runnables</span> <span class="kw">import</span> <span class="va">RunnableLambda</span>
+<span class="kw">from</span> <span class="va">pydantic</span> <span class="kw">import</span> <span class="va">BaseModel</span>
+<span class="kw">from</span> <span class="va">typing</span> <span class="kw">import</span> <span class="va">Literal</span>
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+<span class="va">llm</span>        <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">)</span>
+<span class="va">retriever</span>  <span class="op">=</span> <span class="va">Chroma</span><span class="op">(</span><span class="va">persist_directory</span><span class="op">=</span><span class="st">"/content/ckp02"</span><span class="op">,</span>
+                    <span class="va">embedding_function</span><span class="op">=</span><span class="va">embeddings</span><span class="op">).</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span><span class="num">3</span><span class="op">})</span>
+
+<span class="cm"># 👉 LACUNA 1: Rota com Literal — adicionar os destinos do domínio do grupo</span>
+<span class="kw">class</span> <span class="fn">Rota</span><span class="op">(</span><span class="va">BaseModel</span><span class="op">):</span>
+    <span class="va">destino</span><span class="op">:</span> <span class="va">Literal</span><span class="op">[</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">]</span>  <span class="cm"># ex: "rag", "calculadora", "conversa"</span>
+
+<span class="cm"># 👉 LACUNA 2: prompt do classificador — descrever cada destino do domínio</span>
+<span class="va">prompt_clf</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="gap">"""___"""</span><span class="op">),</span>  <span class="cm"># descrever cada rota com exemplos do domínio</span>
+    <span class="op">(</span><span class="st">"human"</span><span class="op">,</span> <span class="st">"{input}"</span><span class="op">),</span>
+<span class="op">])</span>
+<span class="va">chain_clf</span> <span class="op">=</span> <span class="va">prompt_clf</span> <span class="op">|</span> <span class="va">llm</span><span class="op">.</span><span class="fn">with_structured_output</span><span class="op">(</span><span class="va">Rota</span><span class="op">)</span>
+
+<span class="cm"># Handler RAG (pronto)</span>
+<span class="va">handler_rag</span> <span class="op">= ({</span><span class="st">"contexto"</span><span class="op">:</span> <span class="va">retriever</span> <span class="op">|</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="kw">lambda</span> <span class="va">d</span><span class="op">:</span> <span class="st">"\n"</span><span class="op">.</span><span class="fn">join</span><span class="op">(</span><span class="va">x</span><span class="op">.</span><span class="va">page_content</span> <span class="kw">for</span> <span class="va">x</span> <span class="kw">in</span> <span class="va">d</span><span class="op">)),</span>
+                <span class="st">"input"</span><span class="op">:</span> <span class="kw">lambda</span> <span class="va">x</span><span class="op">:</span> <span class="va">x</span><span class="op">[</span><span class="st">"input"</span><span class="op">]}</span>
+               <span class="op">|</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"Contexto:\n{contexto}\n\nPergunta: {input}"</span><span class="op">)</span>
+               <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">())</span>
+
+<span class="cm"># 👉 LACUNA 3: implementar handler_conversa (chain simples com system prompt amigável)</span>
+<span class="va">handler_conversa</span> <span class="op">=</span> <span class="op">(</span>
+    <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+        <span class="op">(</span><span class="st">"system"</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># persona do assistente do domínio do grupo</span>
+        <span class="op">(</span><span class="st">"human"</span><span class="op">,</span> <span class="st">"{input}"</span><span class="op">),</span>
+    <span class="op">])</span> <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+<span class="op">)</span>
+
+<span class="va">HANDLERS</span> <span class="op">= {</span><span class="st">"rag"</span><span class="op">:</span> <span class="va">handler_rag</span><span class="op">,</span> <span class="st">"calculadora"</span><span class="op">:</span> <span class="va">handler_calculadora</span><span class="op">,</span> <span class="st">"conversa"</span><span class="op">:</span> <span class="va">handler_conversa</span><span class="op">}</span>
+
+<span class="cm"># 👉 LACUNA 4: implementar a função rotear(dados) e montar router_chain</span>
+<span class="kw">def</span> <span class="fn">rotear</span><span class="op">(</span><span class="va">dados</span><span class="op">:</span> <span class="nb">dict</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="va">rota</span> <span class="op">=</span> <span class="va">chain_clf</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span> <span class="va">dados</span><span class="op">[</span><span class="gap">___</span><span class="op">]})</span>
+    <span class="nb">print</span><span class="op">(</span><span class="st">f"[ROUTER] {rota.destino}"</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="va">HANDLERS</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="va">HANDLERS</span><span class="op">[</span><span class="st">"conversa"</span><span class="op">]).</span><span class="fn">invoke</span><span class="op">(</span><span class="va">dados</span><span class="op">)</span>
+
+<span class="va">router_chain</span> <span class="op">=</span> <span class="va">RunnableLambda</span><span class="op">(</span><span class="gap">___</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -986,6 +944,50 @@ Retorne apenas o JSON com o campo 'destino'."""</span><span class="op">),</span>
       🚀 <strong>Desafio — desenhar o grafo desta aula como StateGraph:</strong> em papel (ou célula markdown), mapear: quais seriam os nodes? Quais as edges? Qual a conditional edge? O estado TypedDict teria quais campos? Isso é o exercício de preparação para a Aula 13.
     </div>
   </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 12</h2>
+  <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Chains lineares têm limite.</strong> Quando perguntas diferentes precisam de fluxos diferentes, é necessário branching. O Router Chain resolve isso sem LangGraph para casos simples.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Router = classificador + handlers + despacho.</strong> O classificador usa <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Literal</code> + <code style="font-family:'JetBrains Mono',monospace;font-size:12px">with_structured_output()</code> para garantir retorno válido. Fallback no <code style="font-family:'JetBrains Mono',monospace;font-size:12px">get()</code> evita KeyError em produção.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Grafo de estado = State + Nodes + Edges + START/END.</strong> O Router desta aula já É um grafo — falta apenas a formalização em LangGraph (Aula 13).</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>LangGraph resolve o que Router e AgentExecutor não resolvem:</strong> estado persistente, checkpointing, revisão humana (HITL) e paralelismo.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:14px 20px;background:rgba(213,140,46,.06);border:2px solid rgba(213,140,46,.2);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🔜</div>
+      <div style="font-size:14px"><strong>Aula 13:</strong> implementar este grafo em código com StateGraph, add_node(), add_conditional_edges(), MemorySaver e HITL. O diagrama desta aula vira código Python.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Router Chain ou AgentExecutor — qual a diferença real na prática?"</strong></td><td>No AgentExecutor, o LLM decide a cada turno qual tool usar — decisão implícita no Thought. No Router Chain, o LLM classifica a intenção uma vez e o código despacha — decisão explícita e rastreável. Para logs de auditoria ("por que o sistema tomou essa decisão?"), o Router é mais fácil de explicar. Para tarefas que precisam de múltiplas tools em sequência imprevisível, o AgentExecutor é mais flexível.</td></tr>
+      <tr><td><strong>"Posso ter mais de 3 rotas no Router?"</strong></td><td>Sim — basta adicionar mais valores no Literal e mais handlers no dict. Na prática, acima de 5–6 rotas o prompt do classificador fica complexo e a acurácia cai. Se você precisar de muitas rotas, considere hierarquia: um router principal que despacha para sub-routers mais especializados. Ou migrar para LangGraph com conditional_edges — mais robusto para grafos complexos.</td></tr>
+      <tr><td><strong>"O classificador pode errar a rota?"</strong></td><td>Sim — e por isso o fallback para "conversa" existe. Com temperature=0 e Literal, o erro é raro mas possível para perguntas ambíguas. Monitorar a distribuição de rotas em produção (logar rota.destino) para detectar erros sistemáticos. Se a rota "rag" estiver sendo escolhida para cálculos, o prompt do classificador precisa de exemplos negativos ("NÃO use para cálculos matemáticos").</td></tr>
+    </tbody>
+  </table>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

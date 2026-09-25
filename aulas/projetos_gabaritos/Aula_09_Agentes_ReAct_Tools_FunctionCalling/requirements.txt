@@ -1,8 +1,14 @@
 # Dependências do projeto — Agentes ReAct, Tools e Function Calling
 # Instale com:  pip install -r requirements.txt
 
-langchain
-langchain-ollama
-langchain-community
-duckduckgo-search
-python-dotenv
+langchain>=1.3,<2
+langchain-core>=1.6,<2
+langgraph>=1.2,<2
+langchain-ollama>=1.0,<2
+ddgs>=9.16,<10
+python-dotenv>=1,<2
+
+# Interface web
+fastapi>=0.115,<1
+pydantic>=2.9,<3
+uvicorn>=0.30,<1

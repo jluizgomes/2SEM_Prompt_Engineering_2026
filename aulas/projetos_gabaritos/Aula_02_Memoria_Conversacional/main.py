@@ -23,6 +23,8 @@ from langchain_classic.memory import (
 from langchain_classic.chains import ConversationChain
 from langchain_core.prompts import PromptTemplate
 
+from memory import criar_contador_tokens, ids_tokens
+
 # ─────────────────────────────────────────────────────────────
 # Configuração via .env
 # ─────────────────────────────────────────────────────────────
@@ -40,7 +42,12 @@ if not OLLAMA_API_KEY:
 os.environ["OLLAMA_HOST"] = OLLAMA_HOST
 os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
 
-llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_HOST, temperature=0.7)
+llm = ChatOllama(
+    model=OLLAMA_MODEL,
+    base_url=OLLAMA_HOST,
+    temperature=0.7,
+    custom_get_token_ids=ids_tokens,
+)
 
 
 def demo_buffer() -> None:
@@ -69,7 +76,7 @@ def demo_token_buffer() -> None:
     """ConversationTokenBufferMemory: limite explícito de tokens (janela deslizante)."""
     print("\n== ConversationTokenBufferMemory (max_token_limit=500) ==")
     memoria = ConversationTokenBufferMemory(
-        llm=llm, max_token_limit=500, memory_key="history", return_messages=True,
+        llm=criar_contador_tokens(), max_token_limit=500, memory_key="history", return_messages=True,
     )
     chat = ConversationChain(llm=llm, memory=memoria, verbose=False)
     chat.predict(input="Primeiro turno de exemplo.")
@@ -93,7 +100,7 @@ Assistente:"""
     prompt = PromptTemplate(input_variables=["history", "input"], template=template)
     chat = ConversationChain(
         llm=llm,
-        memory=ConversationTokenBufferMemory(llm=llm, max_token_limit=800),
+        memory=ConversationTokenBufferMemory(llm=criar_contador_tokens(), max_token_limit=800),
         prompt=prompt,
         verbose=False,
     )

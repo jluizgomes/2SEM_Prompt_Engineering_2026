@@ -148,6 +148,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -168,14 +170,14 @@
   <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
   <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
   <div class="cover-title">🎯 Aula Integradora<br>Agente + RAG como tool + Gradio ao vivo</div>
-  <div class="cover-subtitle">Aula 11/14 — Lab 100% · Sem conceito novo · CKP03 entrega</div>
+  <div class="cover-subtitle">Aula 11/14 — Lab 100% · Sem conceito novo · 🏁 Apresentação do CKP03 · Entrega: 23:55 do dia da Aula 12 (Teams)</div>
   <div class="cover-meta">
     <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
     <div class="cover-meta-item">⏱️ 1h40min · 100% Lab</div>
     <div class="cover-meta-item">🏁 CKP03 · create_retriever_tool · ngrok</div>
     <div class="cover-meta-item">🔁 Andaime 60%</div>
   </div>
-  <div class="slide-number">01 / 29</div>
+  <div class="slide-number">1 / 29</div>
 </div>
 
 
@@ -185,14 +187,14 @@
   <div class="step-item agenda-item"><div class="step-num">2</div><div class="step-body"><strong>Demo Prática ao vivo — professor (25 min):</strong> do zero ao deploy. create_retriever_tool() → 3 tools → AgentExecutor → Gradio → ngrok → URL pública</div><div class="step-time">25 min</div></div>
   <div class="step-item agenda-item"><div class="step-num">3</div><div class="step-body"><strong>Lab — grupos (25 min):</strong> notebook 60% lacunas. Cada grupo adapta para o próprio domínio e publica</div><div class="step-time">25 min</div></div>
   <div class="step-item agenda-item"><div class="step-num">4</div><div class="step-body"><strong>Demo cruzada (10 min):</strong> cada grupo testa a app do grupo vizinho. URL compartilhada com a turma</div><div class="step-time">10 min</div></div>
-  <div class="step-item agenda-item"><div class="step-num">5</div><div class="step-body"><strong>Entrega CKP03 (10 min):</strong> link do notebook + URL Gradio + 3 exemplos de interação documentados</div><div class="step-time">10 min</div></div>
+  <div class="step-item agenda-item"><div class="step-num">5</div><div class="step-body"><strong>Apresentação do CKP03 (10 min):</strong> requisitos finais e dúvidas · Entrega: até 23:55 do dia da Aula 12, via Teams, somente o líder — link do notebook + URL Gradio + README.md (nomes e RMs)</div><div class="step-time">10 min</div></div>
   <div class="step-item agenda-item"><div class="step-num">6</div><div class="step-body"><strong>Check-in anônimo + preview Módulo 4 (5 min):</strong> QR code no slide. 2 perguntas. Resultados na Aula 12.</div><div class="step-time">5 min</div></div>
   <div class="callout callout-orange" style="margin-top:10px">
     <div class="callout-title">⚠️ Tempo é curto — preparar antes</div>
     <div class="callout-body">Trazer: (1) retriever do CKP02 indexado e funcionando no Colab; (2) notebooks de A08, A09 e A10 abertos; (3) OLLAMA_API_KEY configurada nos secrets. Quem não tiver o ChromaDB pronto: usar os PDFs do domínio — a demo vai indexar ao vivo em ~3 min.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -233,7 +235,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -262,7 +264,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">04 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">4 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -300,7 +302,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -320,7 +322,7 @@
 <span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
 <span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
 
-<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
 <span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">)</span>
 
 <span class="cm"># Carregar ChromaDB do CKP02 (já indexado)</span>
@@ -352,7 +354,7 @@
     <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026) dá duas orientações de design que se aplicam à tool acima: manter cada tool focada em uma única responsabilidade — exatamente o que a <code style="font-family:'JetBrains Mono',monospace;font-size:12px">description</code> faz ao dizer explicitamente o que ela NÃO cobre (busca na web, cálculos) — e evitar criar tool para o que uma solução pronta já resolve, algo que este agente também respeita ao delegar essas duas tarefas a tools separadas no Passo 2. O autor ainda destaca um ponto que vale para produção: toda tool que depende de um serviço externo precisa de tratamento de erro para timeout, limite de taxa e falha de conexão — sem isso, uma exceção dentro da tool propaga e derruba o loop inteiro do AgentExecutor, não apenas aquela chamada específica.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">06 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">6 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -399,7 +401,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">07 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">7 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -452,7 +454,7 @@ Responda SEMPRE em português brasileiro.
     <div class="callout-body">Gullí (<em>Agentic Design Patterns</em>, O'Reilly, 2025, cap. 13 — Human-in-the-Loop) descreve vários papéis possíveis para o humano num sistema agêntico — validador, corretor em tempo real, parceiro de decisão — e nomeia especificamente as <strong>Escalation Policies</strong>: protocolos que definem quando um agente deve escalar uma tarefa para um humano em vez de decidir sozinho. O <code style="font-family:'JetBrains Mono',monospace;font-size:12px">TOPICOS_PROIBIDOS</code> acima é a versão mais simples desse princípio — um bloqueio automático, sem meio-termo. Numa versão mais robusta, uma pergunta ambígua (nem claramente maliciosa nem claramente seguindo o escopo) seria escalada para revisão humana em vez de silenciosamente bloqueada ou executada. O autor também nomeia o trade-off central do padrão: HITL não escala — funciona bem no volume de um CKP03 ou de um domínio de alto risco (financeiro, jurídico), mas não em milhões de chamadas; por isso produção real combina automação (o guardrail do prompt + o bloqueio de tópicos acima) com humano só nos casos que o automático não resolve sozinho.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">08 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">8 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -508,121 +510,7 @@ Responda SEMPRE em português brasileiro.
     <div class="callout-body"><code style="font-family:'JetBrains Mono',monospace;font-size:12px">share=True</code> usa o ngrok interno do Gradio — mais simples, mas expira em 72h. Para URLs persistentes em projetos reais: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ngrok.connect(7860)</code> manual com conta gratuita do ngrok (expira em 8h mas pode recriar). Para o CKP03, share=True é suficiente — a URL dura o tempo necessário para a demonstração.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
-  <div class="section-number">02</div>
-  <div class="section-title">Lab — Grupos<br>(25 min)</div>
-  <div class="section-desc">Notebook 60% lacunas. Adaptar para o domínio do grupo, completar, publicar URL ao vivo. Demo cruzada em seguida.</div>
-  <div class="slide-number">10 / 29</div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>💻 Notebook Aluno — setup e tools (60% lacunas)</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_11_2Sem_Aluno.ipynb — Bloco 1</span></div>
-    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama langchain-community langchain-chroma duckduckgo-search gradio tiktoken <span class="op">-</span>q
-
-<span class="kw">import</span> <span class="va">os</span>
-<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
-<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span><span class="op">,</span> <span class="va">OllamaEmbeddings</span>
-<span class="kw">from</span> <span class="va">langchain_chroma</span> <span class="kw">import</span> <span class="va">Chroma</span>
-<span class="kw">from</span> <span class="va">langchain.tools.retriever</span> <span class="kw">import</span> <span class="va">create_retriever_tool</span>
-<span class="kw">from</span> <span class="va">langchain_core.tools</span> <span class="kw">import</span> <span class="va">tool</span>
-<span class="kw">from</span> <span class="va">langchain_community.tools</span> <span class="kw">import</span> <span class="va">DuckDuckGoSearchRun</span>
-<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
-<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
-<span class="kw">from</span> <span class="va">langchain.agents</span> <span class="kw">import</span> <span class="va">AgentExecutor</span><span class="op">,</span> <span class="va">create_react_agent</span>
-<span class="kw">from</span> <span class="va">langchain</span> <span class="kw">import</span> <span class="va">hub</span>
-<span class="kw">import</span> <span class="va">gradio</span> <span class="kw">as</span> <span class="va">gr</span>
-
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
-<span class="va">llm</span>        <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
-<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">)</span>
-
-<span class="cm"># 👉 LACUNA 1: carregar o ChromaDB do CKP02 e criar o retriever</span>
-<span class="va">db</span>        <span class="op">=</span> <span class="va">Chroma</span><span class="op">(</span><span class="va">persist_directory</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">embedding_function</span><span class="op">=</span><span class="va">embeddings</span><span class="op">)</span>
-<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span> <span class="gap">___</span><span class="op">})</span>  <span class="cm"># k=3 recomendado</span>
-
-<span class="cm"># 👉 LACUNA 2: criar a tool RAG com create_retriever_tool()</span>
-<span class="cm"># Substituir [DOMINIO] pelo domínio real do grupo</span>
-<span class="va">tool_rag</span> <span class="op">=</span> <span class="fn">create_retriever_tool</span><span class="op">(</span>
-    <span class="va">retriever</span><span class="op">,</span>
-    <span class="va">name</span><span class="op">=</span><span class="st">"buscar_no_dominio"</span><span class="op">,</span>
-    <span class="va">description</span><span class="op">=</span><span class="gap">"""___"""</span><span class="op">,</span>  <span class="cm"># quando usar, quando NÃO usar, o que retorna</span>
-<span class="op">)</span>
-
-<span class="cm"># Chain de compressão (copiada da Aula 10)</span>
-<span class="va">chain_resumir</span> <span class="op">=</span> <span class="op">(</span>
-    <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"Resuma em 3 frases:\n\n{texto}"</span><span class="op">)</span>
-    <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
-<span class="op">)</span>
-
-<span class="cm"># 👉 LACUNA 3: implementar buscar_na_web com compressão</span>
-<span class="op">@</span><span class="va">tool</span>
-<span class="kw">def</span> <span class="fn">buscar_na_web</span><span class="op">(</span><span class="va">query</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
-    <span class="gap">"""___"""</span>  <span class="cm"># escrever description (quando usar, quando NÃO usar)</span>
-    <span class="va">bruto</span> <span class="op">=</span> <span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="va">query</span><span class="op">)</span>
-    <span class="kw">return</span> <span class="va">chain_resumir</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"texto"</span><span class="op">:</span> <span class="va">bruto</span><span class="op">})</span> <span class="kw">if</span> <span class="nb">len</span><span class="op">(</span><span class="va">bruto</span><span class="op">)</span> <span class="op">&gt;</span> <span class="num">400</span> <span class="kw">else</span> <span class="va">bruto</span>
-
-<span class="op">@</span><span class="va">tool</span>
-<span class="kw">def</span> <span class="fn">calcular</span><span class="op">(</span><span class="va">expressao</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
-    <span class="st">"""Use para cálculos matemáticos com expressão Python. NÃO use para busca."""</span>
-    <span class="kw">try</span><span class="op">:</span> <span class="kw">return</span> <span class="nb">str</span><span class="op">(</span><span class="nb">eval</span><span class="op">(</span><span class="va">expressao</span><span class="op">,{</span><span class="st">"__builtins__"</span><span class="op">:{}},{}))</span>
-    <span class="kw">except</span> <span class="va">Exception</span> <span class="kw">as</span> <span class="va">e</span><span class="op">:</span> <span class="kw">return</span> <span class="st">f"Erro: {e}"</span>
-
-<span class="va">tools</span> <span class="op">= [</span><span class="va">tool_rag</span><span class="op">,</span> <span class="va">buscar_na_web</span><span class="op">,</span> <span class="va">calcular</span><span class="op">]</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">11 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>💻 Notebook Aluno — agente + deploy (60% lacunas)</h2>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_11_2Sem_Aluno.ipynb — Bloco 2</span></div>
-    <div class="code-body"><pre><span class="cm"># 👉 LACUNA 4: montar o AgentExecutor</span>
-<span class="va">agente</span>   <span class="op">=</span> <span class="fn">create_react_agent</span><span class="op">(</span><span class="va">llm</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="va">hub</span><span class="op">.</span><span class="fn">pull</span><span class="op">(</span><span class="st">"hwchase17/react"</span><span class="op">))</span>
-<span class="va">executor</span> <span class="op">=</span> <span class="va">AgentExecutor</span><span class="op">(</span>
-    <span class="va">agent</span><span class="op">=</span><span class="va">agente</span><span class="op">,</span>  <span class="va">tools</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>
-    <span class="va">verbose</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>  <span class="va">max_iterations</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>  <span class="va">max_execution_time</span><span class="op">=</span><span class="num">120</span><span class="op">,</span>
-    <span class="va">handle_parsing_errors</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
-<span class="op">)</span>
-
-<span class="cm"># Guardrail de input</span>
-<span class="va">TOPICOS_PROIBIDOS</span> <span class="op">= [</span><span class="st">"ignore"</span><span class="op">,</span> <span class="st">"instrução"</span><span class="op">,</span> <span class="st">"esqueça"</span><span class="op">,</span> <span class="st">"system:"</span><span class="op">,</span> <span class="st">"forget"</span><span class="op">]</span>
-
-<span class="cm"># 👉 LACUNA 5: implementar a função chat_stream para o Gradio</span>
-<span class="kw">def</span> <span class="fn">chat_stream</span><span class="op">(</span><span class="va">mensagem</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">historico</span><span class="op">:</span> <span class="nb">list</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">str</span><span class="op">:</span>
-    <span class="st">"""Integra agente + guardrail com ChatInterface."""</span>
-    <span class="kw">if</span> <span class="nb">any</span><span class="op">(</span><span class="va">t</span> <span class="kw">in</span> <span class="va">mensagem</span><span class="op">.</span><span class="fn">lower</span><span class="op">()</span> <span class="kw">for</span> <span class="va">t</span> <span class="kw">in</span> <span class="va">TOPICOS_PROIBIDOS</span><span class="op">):</span>
-        <span class="kw">yield</span> <span class="gap">___</span>  <span class="cm"># mensagem de bloqueio</span>
-        <span class="kw">return</span>
-    <span class="va">resp</span> <span class="op">=</span> <span class="st">""</span>
-    <span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">executor</span><span class="op">.</span><span class="fn">stream</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span> <span class="va">mensagem</span><span class="op">}):</span>
-        <span class="kw">if</span> <span class="st">"output"</span> <span class="kw">in</span> <span class="va">chunk</span><span class="op">:</span>
-            <span class="va">resp</span> <span class="op">+=</span> <span class="va">chunk</span><span class="op">[</span><span class="st">"output"</span><span class="op">]</span>
-            <span class="kw">yield</span> <span class="gap">___</span>  <span class="cm"># fazer streaming acumulado</span>
-
-<span class="cm"># 👉 LACUNA 6: configurar e lançar a interface Gradio</span>
-<span class="va">demo</span> <span class="op">=</span> <span class="va">gr</span><span class="op">.</span><span class="va">ChatInterface</span><span class="op">(</span>
-    <span class="va">fn</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>
-    <span class="va">type</span><span class="op">=</span><span class="st">"messages"</span><span class="op">,</span>
-    <span class="va">title</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>       <span class="cm"># título com nome do domínio do grupo</span>
-    <span class="va">examples</span><span class="op">=[</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">],</span>  <span class="cm"># 3 exemplos do domínio</span>
-    <span class="va">theme</span><span class="op">=</span><span class="st">"soft"</span><span class="op">,</span>
-<span class="op">)</span>
-<span class="va">demo</span><span class="op">.</span><span class="fn">launch</span><span class="op">(</span><span class="va">share</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">server_port</span><span class="op">=</span><span class="num">7860</span><span class="op">)</span>  <span class="cm"># share=True para URL pública</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -631,39 +519,39 @@ Responda SEMPRE em português brasileiro.
   <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:20px;margin:12px 0">
     <div style="font-size:11px;font-weight:700;color:var(--fiap-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Requisito mínimo (necessário para nota base) + Diferencial (nota máxima)</div>
     <div class="rubric-row">
-      <div class="rubric-badge" style="background:rgba(41,175,140,.12);color:var(--fiap-green)">30%</div>
-      <div style="font-size:13px"><strong>3 tools funcionando</strong> — tool_rag via create_retriever_tool() + buscar_na_web + calcular. Cada tool testada isoladamente com invoke() antes do agente. Logs verbose mostrando roteamento correto.</div>
+      <div class="rubric-badge" style="background:rgba(41,175,140,.12);color:var(--fiap-green)">40%</div>
+      <div style="font-size:13px"><strong>Agente funcional com tools (40%)</strong> — 3+ tools funcionando, roteamento correto nos 6 testes do professor (2 exigem RAG, 2 outra tool, 2 sem tool) e os 3 exemplos documentados cobrindo RAG, outra tool e o caso sem tool. Logs do scratchpad no notebook.</div>
     </div>
     <div class="rubric-row">
       <div class="rubric-badge" style="background:rgba(41,175,140,.12);color:var(--fiap-green)">25%</div>
-      <div style="font-size:13px"><strong>Descriptions bem escritas</strong> — description da tool_rag menciona explicitamente o domínio, quando usar e quando NÃO usar. O agente escolhe a tool correta nos 4 cenários de teste (RAG, web, calc, multi-step).</div>
-    </div>
-    <div class="rubric-row">
-      <div class="rubric-badge" style="background:rgba(41,175,140,.12);color:var(--fiap-green)">25%</div>
-      <div style="font-size:13px"><strong>Interface Gradio com URL pública</strong> — ChatInterface com streaming, 3 exemplos do domínio, URL compartilhada com a turma. Interface acessível de qualquer dispositivo sem Colab aberto.</div>
+      <div style="font-size:13px"><strong>RAG como tool (25%)</strong> — pipeline do CKP02 encapsulado com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">create_retriever_tool()</code>; description menciona o domínio, quando usar e quando NÃO usar.</div>
     </div>
     <div class="rubric-row">
       <div class="rubric-badge" style="background:rgba(41,175,140,.12);color:var(--fiap-green)">20%</div>
-      <div style="font-size:13px"><strong>3 exemplos documentados</strong> — célula markdown com: (1) pergunta → tool usada → resposta do agente → avaliação da qualidade (0.0–1.0). Mostrar pelo menos 1 caso multi-step.</div>
+      <div style="font-size:13px"><strong>Interface Gradio com URL pública (20%)</strong> — ChatInterface com streaming, histórico por sessão, URL <strong>ativa no momento da entrega</strong> com print/vídeo no README. Acessível de qualquer dispositivo.</div>
+    </div>
+    <div class="rubric-row">
+      <div class="rubric-badge" style="background:rgba(41,175,140,.12);color:var(--fiap-green)">15%</div>
+      <div style="font-size:13px"><strong>Descriptions + documentação (15%)</strong> — descriptions específicas e informativas (o agente não erra o roteamento por ambiguidade) + README.md com os <strong>nomes e RMs de todos os integrantes</strong>.</div>
     </div>
   </div>
   <div style="background:rgba(124,96,198,.05);border:1px solid rgba(124,96,198,.2);border-radius:10px;padding:14px 18px;font-size:13px;margin-top:8px">
-    <strong style="color:var(--fiap-purple)">🚀 Diferencial (bônus na rubrica):</strong><br>
+    <strong style="color:var(--fiap-purple)">🚀 Diferencial (bônus na rubrica — +0,5 cada, nota limitada a 10,0):</strong><br>
     · Guardrail de input implementado e testado com tentativa de injection<br>
     · Compressão de Observations (buscar_na_web_comprimida da Aula 10)<br>
     · 4ª ou 5ª tool customizada do domínio específico do grupo<br>
     · Memória episódica (lembrar_sessoes_anteriores da Aula 10)
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">13 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">10 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
-  <div class="section-number">04</div>
+  <div class="section-number">01</div>
   <div class="section-title">Entrega do<br>CKP03</div>
   <div class="section-desc">Agente Inteligente — o produto final do Módulo 3. Encerra o arco CKP01 (chatbot) → CKP02 (RAG) → CKP03 (agente).</div>
-  <div class="slide-number">14 / 29</div>
+  <div class="slide-number">11 / 29</div>
 </div>
 
 
@@ -709,7 +597,7 @@ Responda SEMPRE em português brasileiro.
     <div class="callout-body">CKP01 = chatbot (conversa com contexto) · CKP02 = RAG (conversa com documentos) · CKP03 = agente (escolhe autonomamente o que fazer com cada pergunta). O mesmo domínio do grupo atravessou os 3 checkpoints — a progressão é proposital e demonstra domínio crescente.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">12 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -746,15 +634,15 @@ Responda SEMPRE em português brasileiro.
     </tbody>
   </table>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">13 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
-  <div class="section-number">05</div>
+  <div class="section-number">02</div>
   <div class="section-title">Check-in anônimo<br>+ preview Módulo 4</div>
   <div class="section-desc">2 perguntas · QR code · respostas anônimas · lidas ao vivo na Aula 12. LangGraph: quando o AgentExecutor não é suficiente.</div>
-  <div class="slide-number">17 / 29</div>
+  <div class="slide-number">14 / 29</div>
 </div>
 
 
@@ -779,15 +667,15 @@ Responda SEMPRE em português brasileiro.
         <div style="font-size:12px;font-weight:700;color:#D58C2E;text-transform:uppercase;margin-bottom:10px">🔜 Módulo 4 — LangGraph (Aulas 12–14)</div>
         <div style="font-size:13px;color:var(--fiap-text);line-height:1.8">
           <div style="margin-bottom:8px"><strong>Por que LangGraph?</strong><br><span style="font-size:12px;color:var(--fiap-muted)">AgentExecutor é ótimo para loops simples. Quando você precisa de ramificação condicional, múltiplos agentes em paralelo ou revisão humana antes de continuar — você precisa de grafos.</span></div>
-          <div style="margin-bottom:6px">⚙️ <strong>Aula 12:</strong> StateGraph, nodes e edges — o grafo de estado</div>
-          <div style="margin-bottom:6px">🔀 <strong>Aula 13:</strong> Router chains, conditional edges, HITL</div>
-          <div>🎓 <strong>Aula 14:</strong> Tendências 2026 e encerramento do semestre</div>
+          <div style="margin-bottom:6px">⚙️ <strong>Aula 12:</strong> Router Chain e introdução a grafos de estado</div>
+          <div style="margin-bottom:6px">🔀 <strong>Aula 13:</strong> LangGraph — StateGraph, nodes, edges e HITL</div>
+          <div>🎓 <strong>Aula 14:</strong> Spec-Driven Development e encerramento do semestre</div>
         </div>
       </div>
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">15 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -809,51 +697,7 @@ Responda SEMPRE em português brasileiro.
     <div class="callout-body">Use <code style="font-family:'JetBrains Mono',monospace;font-size:12px">create_retriever_tool()</code> para encapsular qualquer retriever como tool de agente — é mais robusto e menos código. Reserve o @tool manual para tools com lógica que não é busca vetorial (calculadora, API externa, banco de dados relacional).</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Síntese do Módulo 3 — Aulas 08 a 11</h2>
-  <div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">
-    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
-      <div style="font-size:15px;flex-shrink:0">A08</div>
-      <div style="font-size:13px"><strong>Gradio + streaming + ngrok.</strong> Interface para expor qualquer chain ou agente com URL pública. gr.ChatInterface, yield, share=True.</div>
-    </div>
-    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
-      <div style="font-size:15px;flex-shrink:0">A09</div>
-      <div style="font-size:13px"><strong>ReAct + @tool + AgentExecutor.</strong> Loop Thought→Action→Observation. A description é o roteador — 80% do trabalho. verbose=True é o debugger.</div>
-    </div>
-    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
-      <div style="font-size:15px;flex-shrink:0">A10</div>
-      <div style="font-size:13px"><strong>Context rot + compressão.</strong> Tokens crescem em loop. Comprimir Observations antes de inserir no scratchpad mantém qualidade em 0.85+ por 10+ turnos. MCP: N+M integrações.</div>
-    </div>
-    <div style="display:flex;gap:12px;padding:12px 16px;background:rgba(237,20,91,.05);border:2px solid rgba(237,20,91,.2);border-radius:8px;align-items:flex-start">
-      <div style="font-size:15px;flex-shrink:0">A11</div>
-      <div style="font-size:13px"><strong>Integração total.</strong> create_retriever_tool() + 3 tools + AgentExecutor + Gradio + ngrok = produto demonstrável. CKP03 entregue.</div>
-    </div>
-  </div>
-  <div style="padding:14px 20px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:10px;font-size:13px;margin-top:8px">
-    <strong>O que o grupo construiu:</strong> em 11 aulas, partiu de um chain LCEL de 5 linhas (A01) e chegou a um agente inteligente com base de conhecimento vetorial, busca web em tempo real, capacidade de cálculo, interface pública e guardrails de segurança. Isso é engenharia de IA aplicada.
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Perguntas frequentes</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"Posso usar um ChromaDB novo em vez do CKP02?"</strong></td><td>Sim — se o CKP02 não estiver disponível, indexar os PDFs do domínio ao vivo (PyMuPDFLoader + RecursiveCharacterTextSplitter + Chroma.from_documents). Leva ~3–5 min. Usar os mesmos parâmetros da Aula 06: chunk_size=800, overlap=100, k=3.</td></tr>
-      <tr><td><strong>"O agente pode funcionar sem a busca web?"</strong></td><td>Sim — o requisito mínimo é 3 tools, sendo 1 o RAG. Se DuckDuckGo der problema, substitua por WikipediaQueryRun (mais estável, sem rate limit agressivo). A tool de calculadora é confiável — nunca faz chamada externa.</td></tr>
-      <tr><td><strong>"A URL Gradio expira durante a avaliação?"</strong></td><td>share=True via Gradio expira em 72h — suficiente para a avaliação. Se quiser garantia maior: criar conta gratuita no ngrok (ngrok.com), obter token, usar pyngrok.connect() que tem sessão mais durável. Para avaliações futuras, considerar deploy em HuggingFace Spaces (gratuito, permanente).</td></tr>
-      <tr><td><strong>"O que é executor.stream() vs. executor.invoke()?"</strong></td><td>invoke() retorna o resultado completo ao final. stream() é um gerador que yield dicts a cada etapa do loop — permite mostrar tokens ao usuário em tempo real via Gradio. Para o ChatInterface, stream() é obrigatório para a experiência de streaming. O dict final contém a chave "output" com a resposta do agente.</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">16 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -894,7 +738,7 @@ Responda SEMPRE em português brasileiro.
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">17 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -923,23 +767,23 @@ Responda SEMPRE em português brasileiro.
     <div class="callout-body">O AgentExecutor executa um loop linear: Thought→Action→Observation→repeat. Para fluxos com <em>ramificação condicional</em> ("se a resposta do RAG for insuficiente, ir para a web"), <em>múltiplos agentes em paralelo</em> ou <em>ponto de revisão humana</em> antes de continuar — você precisa de grafos. LangGraph torna o fluxo explícito e auditável.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">18 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
-  <div class="section-number">01</div>
+  <div class="section-number">03</div>
   <div class="section-title">Demo Prática ao Vivo<br>(25 min)</div>
   <div class="section-desc">Professor constrói do zero ao deploy: create_retriever_tool() → 3 tools → AgentExecutor → Gradio → ngrok. URL pública ao fim dos 25 minutos.</div>
-  <div class="slide-number">24 / 29</div>
+  <div class="slide-number">19 / 29</div>
 </div>
 
 
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#f3e8ff 100%)">
-  <div class="section-number">03</div>
+  <div class="section-number">04</div>
   <div class="section-title">Demo cruzada<br>(10 min)</div>
   <div class="section-desc">Cada grupo testa a app do grupo vizinho. A URL é o produto — demonstrável para qualquer pessoa, de qualquer celular, sem abrir o Colab.</div>
-  <div class="slide-number">25 / 29</div>
+  <div class="slide-number">20 / 29</div>
 </div>
 
 
@@ -965,7 +809,121 @@ Responda SEMPRE em português brasileiro.
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">21 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#eff6ff 100%)">
+  <div class="section-number">05</div>
+  <div class="section-title">Lab — Grupos<br>(25 min)</div>
+  <div class="section-desc">Notebook 60% lacunas. Adaptar para o domínio do grupo, completar, publicar URL ao vivo. Demo cruzada em seguida.</div>
+  <div class="slide-number">22 / 29</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — setup e tools (60% lacunas)</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_11_2Sem_Aluno.ipynb — Bloco 1</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain langchain-ollama langchain-community langchain-chroma duckduckgo-search gradio tiktoken <span class="op">-</span>q
+
+<span class="kw">import</span> <span class="va">os</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span><span class="op">,</span> <span class="va">OllamaEmbeddings</span>
+<span class="kw">from</span> <span class="va">langchain_chroma</span> <span class="kw">import</span> <span class="va">Chroma</span>
+<span class="kw">from</span> <span class="va">langchain.tools.retriever</span> <span class="kw">import</span> <span class="va">create_retriever_tool</span>
+<span class="kw">from</span> <span class="va">langchain_core.tools</span> <span class="kw">import</span> <span class="va">tool</span>
+<span class="kw">from</span> <span class="va">langchain_community.tools</span> <span class="kw">import</span> <span class="va">DuckDuckGoSearchRun</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">from</span> <span class="va">langchain.agents</span> <span class="kw">import</span> <span class="va">AgentExecutor</span><span class="op">,</span> <span class="va">create_react_agent</span>
+<span class="kw">from</span> <span class="va">langchain</span> <span class="kw">import</span> <span class="va">hub</span>
+<span class="kw">import</span> <span class="va">gradio</span> <span class="kw">as</span> <span class="va">gr</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+<span class="va">llm</span>        <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+<span class="va">embeddings</span> <span class="op">=</span> <span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: carregar o ChromaDB do CKP02 e criar o retriever</span>
+<span class="va">db</span>        <span class="op">=</span> <span class="va">Chroma</span><span class="op">(</span><span class="va">persist_directory</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">embedding_function</span><span class="op">=</span><span class="va">embeddings</span><span class="op">)</span>
+<span class="va">retriever</span> <span class="op">=</span> <span class="va">db</span><span class="op">.</span><span class="fn">as_retriever</span><span class="op">(</span><span class="va">search_kwargs</span><span class="op">={</span><span class="st">"k"</span><span class="op">:</span> <span class="gap">___</span><span class="op">})</span>  <span class="cm"># k=3 recomendado</span>
+
+<span class="cm"># 👉 LACUNA 2: criar a tool RAG com create_retriever_tool()</span>
+<span class="cm"># Substituir [DOMINIO] pelo domínio real do grupo</span>
+<span class="va">tool_rag</span> <span class="op">=</span> <span class="fn">create_retriever_tool</span><span class="op">(</span>
+    <span class="va">retriever</span><span class="op">,</span>
+    <span class="va">name</span><span class="op">=</span><span class="st">"buscar_no_dominio"</span><span class="op">,</span>
+    <span class="va">description</span><span class="op">=</span><span class="gap">"""___"""</span><span class="op">,</span>  <span class="cm"># quando usar, quando NÃO usar, o que retorna</span>
+<span class="op">)</span>
+
+<span class="cm"># Chain de compressão (copiada da Aula 10)</span>
+<span class="va">chain_resumir</span> <span class="op">=</span> <span class="op">(</span>
+    <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="st">"Resuma em 3 frases:\n\n{texto}"</span><span class="op">)</span>
+    <span class="op">|</span> <span class="va">llm</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
+<span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 3: implementar buscar_na_web com compressão</span>
+<span class="op">@</span><span class="va">tool</span>
+<span class="kw">def</span> <span class="fn">buscar_na_web</span><span class="op">(</span><span class="va">query</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="gap">"""___"""</span>  <span class="cm"># escrever description (quando usar, quando NÃO usar)</span>
+    <span class="va">bruto</span> <span class="op">=</span> <span class="va">DuckDuckGoSearchRun</span><span class="op">().</span><span class="fn">run</span><span class="op">(</span><span class="va">query</span><span class="op">)</span>
+    <span class="kw">return</span> <span class="va">chain_resumir</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"texto"</span><span class="op">:</span> <span class="va">bruto</span><span class="op">})</span> <span class="kw">if</span> <span class="nb">len</span><span class="op">(</span><span class="va">bruto</span><span class="op">)</span> <span class="op">&gt;</span> <span class="num">400</span> <span class="kw">else</span> <span class="va">bruto</span>
+
+<span class="op">@</span><span class="va">tool</span>
+<span class="kw">def</span> <span class="fn">calcular</span><span class="op">(</span><span class="va">expressao</span><span class="op">:</span> <span class="nb">str</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">str</span><span class="op">:</span>
+    <span class="st">"""Use para cálculos matemáticos com expressão Python. NÃO use para busca."""</span>
+    <span class="kw">try</span><span class="op">:</span> <span class="kw">return</span> <span class="nb">str</span><span class="op">(</span><span class="nb">eval</span><span class="op">(</span><span class="va">expressao</span><span class="op">,{</span><span class="st">"__builtins__"</span><span class="op">:{}},{}))</span>
+    <span class="kw">except</span> <span class="va">Exception</span> <span class="kw">as</span> <span class="va">e</span><span class="op">:</span> <span class="kw">return</span> <span class="st">f"Erro: {e}"</span>
+
+<span class="va">tools</span> <span class="op">= [</span><span class="va">tool_rag</span><span class="op">,</span> <span class="va">buscar_na_web</span><span class="op">,</span> <span class="va">calcular</span><span class="op">]</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">23 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — agente + deploy (60% lacunas)</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_11_2Sem_Aluno.ipynb — Bloco 2</span></div>
+    <div class="code-body"><pre><span class="cm"># 👉 LACUNA 4: montar o AgentExecutor</span>
+<span class="va">agente</span>   <span class="op">=</span> <span class="fn">create_react_agent</span><span class="op">(</span><span class="va">llm</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="va">hub</span><span class="op">.</span><span class="fn">pull</span><span class="op">(</span><span class="st">"hwchase17/react"</span><span class="op">))</span>
+<span class="va">executor</span> <span class="op">=</span> <span class="va">AgentExecutor</span><span class="op">(</span>
+    <span class="va">agent</span><span class="op">=</span><span class="va">agente</span><span class="op">,</span>  <span class="va">tools</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>
+    <span class="va">verbose</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>  <span class="va">max_iterations</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>  <span class="va">max_execution_time</span><span class="op">=</span><span class="num">120</span><span class="op">,</span>
+    <span class="va">handle_parsing_errors</span><span class="op">=</span><span class="kw">True</span><span class="op">,</span>
+<span class="op">)</span>
+
+<span class="cm"># Guardrail de input</span>
+<span class="va">TOPICOS_PROIBIDOS</span> <span class="op">= [</span><span class="st">"ignore"</span><span class="op">,</span> <span class="st">"instrução"</span><span class="op">,</span> <span class="st">"esqueça"</span><span class="op">,</span> <span class="st">"system:"</span><span class="op">,</span> <span class="st">"forget"</span><span class="op">]</span>
+
+<span class="cm"># 👉 LACUNA 5: implementar a função chat_stream para o Gradio</span>
+<span class="kw">def</span> <span class="fn">chat_stream</span><span class="op">(</span><span class="va">mensagem</span><span class="op">:</span> <span class="nb">str</span><span class="op">,</span> <span class="va">historico</span><span class="op">:</span> <span class="nb">list</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">str</span><span class="op">:</span>
+    <span class="st">"""Integra agente + guardrail com ChatInterface."""</span>
+    <span class="kw">if</span> <span class="nb">any</span><span class="op">(</span><span class="va">t</span> <span class="kw">in</span> <span class="va">mensagem</span><span class="op">.</span><span class="fn">lower</span><span class="op">()</span> <span class="kw">for</span> <span class="va">t</span> <span class="kw">in</span> <span class="va">TOPICOS_PROIBIDOS</span><span class="op">):</span>
+        <span class="kw">yield</span> <span class="gap">___</span>  <span class="cm"># mensagem de bloqueio</span>
+        <span class="kw">return</span>
+    <span class="va">resp</span> <span class="op">=</span> <span class="st">""</span>
+    <span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">executor</span><span class="op">.</span><span class="fn">stream</span><span class="op">({</span><span class="st">"input"</span><span class="op">:</span> <span class="va">mensagem</span><span class="op">}):</span>
+        <span class="kw">if</span> <span class="st">"output"</span> <span class="kw">in</span> <span class="va">chunk</span><span class="op">:</span>
+            <span class="va">resp</span> <span class="op">+=</span> <span class="va">chunk</span><span class="op">[</span><span class="st">"output"</span><span class="op">]</span>
+            <span class="kw">yield</span> <span class="gap">___</span>  <span class="cm"># fazer streaming acumulado</span>
+
+<span class="cm"># 👉 LACUNA 6: configurar e lançar a interface Gradio</span>
+<span class="va">demo</span> <span class="op">=</span> <span class="va">gr</span><span class="op">.</span><span class="va">ChatInterface</span><span class="op">(</span>
+    <span class="va">fn</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>
+    <span class="va">type</span><span class="op">=</span><span class="st">"messages"</span><span class="op">,</span>
+    <span class="va">title</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span>       <span class="cm"># título com nome do domínio do grupo</span>
+    <span class="va">examples</span><span class="op">=[</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">],</span>  <span class="cm"># 3 exemplos do domínio</span>
+    <span class="va">theme</span><span class="op">=</span><span class="st">"soft"</span><span class="op">,</span>
+<span class="op">)</span>
+<span class="va">demo</span><span class="op">.</span><span class="fn">launch</span><span class="op">(</span><span class="va">share</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">server_port</span><span class="op">=</span><span class="num">7860</span><span class="op">)</span>  <span class="cm"># share=True para URL pública</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">24 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -996,6 +954,50 @@ Responda SEMPRE em português brasileiro.
       🚀 <strong>Diferencial CKP03:</strong> adicionar 4ª tool customizada do domínio (ex: culinária → calcular_porcoes(receita, pessoas), direito → buscar_legislacao(artigo), saúde → calcular_imc(peso, altura)).
     </div>
   </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese do Módulo 3 — Aulas 08 a 11</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="font-size:15px;flex-shrink:0">A08</div>
+      <div style="font-size:13px"><strong>Gradio + streaming + ngrok.</strong> Interface para expor qualquer chain ou agente com URL pública. gr.ChatInterface, yield, share=True.</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="font-size:15px;flex-shrink:0">A09</div>
+      <div style="font-size:13px"><strong>ReAct + @tool + AgentExecutor.</strong> Loop Thought→Action→Observation. A description é o roteador — 80% do trabalho. verbose=True é o debugger.</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:8px;align-items:flex-start">
+      <div style="font-size:15px;flex-shrink:0">A10</div>
+      <div style="font-size:13px"><strong>Context rot + compressão.</strong> Tokens crescem em loop. Comprimir Observations antes de inserir no scratchpad mantém qualidade em 0.85+ por 10+ turnos. MCP: N+M integrações.</div>
+    </div>
+    <div style="display:flex;gap:12px;padding:12px 16px;background:rgba(237,20,91,.05);border:2px solid rgba(237,20,91,.2);border-radius:8px;align-items:flex-start">
+      <div style="font-size:15px;flex-shrink:0">A11</div>
+      <div style="font-size:13px"><strong>Integração total.</strong> create_retriever_tool() + 3 tools + AgentExecutor + Gradio + ngrok = produto demonstrável. CKP03 entregue.</div>
+    </div>
+  </div>
+  <div style="padding:14px 20px;background:rgba(41,175,140,.06);border:1px solid rgba(41,175,140,.2);border-radius:10px;font-size:13px;margin-top:8px">
+    <strong>O que o grupo construiu:</strong> em 11 aulas, partiu de um chain LCEL de 5 linhas (A01) e chegou a um agente inteligente com base de conhecimento vetorial, busca web em tempo real, capacidade de cálculo, interface pública e guardrails de segurança. Isso é engenharia de IA aplicada.
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Posso usar um ChromaDB novo em vez do CKP02?"</strong></td><td>Sim — se o CKP02 não estiver disponível, indexar os PDFs do domínio ao vivo (PyMuPDFLoader + RecursiveCharacterTextSplitter + Chroma.from_documents). Leva ~3–5 min. Usar os mesmos parâmetros da Aula 06: chunk_size=800, overlap=100, k=3.</td></tr>
+      <tr><td><strong>"O agente pode funcionar sem a busca web?"</strong></td><td>Sim — o requisito mínimo é 3 tools, sendo 1 o RAG. Se DuckDuckGo der problema, substitua por WikipediaQueryRun (mais estável, sem rate limit agressivo). A tool de calculadora é confiável — nunca faz chamada externa.</td></tr>
+      <tr><td><strong>"A URL Gradio expira durante a avaliação?"</strong></td><td>share=True via Gradio expira em 72h — suficiente para a avaliação. Se quiser garantia maior: criar conta gratuita no ngrok (ngrok.com), obter token, usar pyngrok.connect() que tem sessão mais durável. Para avaliações futuras, considerar deploy em HuggingFace Spaces (gratuito, permanente).</td></tr>
+      <tr><td><strong>"O que é executor.stream() vs. executor.invoke()?"</strong></td><td>invoke() retorna o resultado completo ao final. stream() é um gerador que yield dicts a cada etapa do loop — permite mostrar tokens ao usuário em tempo real via Gradio. Para o ChatInterface, stream() é obrigatório para a experiência de streaming. O dict final contém a chave "output" com a resposta do agente.</td></tr>
+    </tbody>
+  </table>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">27 / 29</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

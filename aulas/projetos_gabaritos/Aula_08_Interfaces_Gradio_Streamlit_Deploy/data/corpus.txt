@@ -1,0 +1,11 @@
+RAG é um padrão de geração aumentada por recuperação. Ele busca passages relevantes em uma base de conhecimento antes de chamar o modelo de linguagem e usa esses passages como contexto para responder.
+
+O corpus local desta demonstração está no arquivo data/corpus.txt. Na primeira pergunta, o projeto transforma os trechos em embeddings, grava a coleção no diretório chroma_db e cria um retriever local. Esse corpus não é uma fonte de notícias em tempo real.
+
+Memória por sessão significa associar um identificador único a cada navegador ou sessão de interface. O histórico de uma sessão não deve aparecer para outra. Tanto Gradio quanto Streamlit usam o mesmo mecanismo isolado, com um UUID persistente apenas durante a sessão da interface.
+
+Gradio permite expor um callback Python como chat web. Neste projeto, o estado da sessão é um identificador privado criado no primeiro envio, e o histórico visual do chat é mantido separadamente da memória usada pelo modelo.
+
+Streamlit guarda o estado da sessão no servidor associado à sessão do navegador. A chave memoria_session_id identifica essa sessão no backend RAG. O modelo recebe as mensagens anteriores por meio de MessagesPlaceholder e a nova pergunta após a recuperação dos documentos.
+
+O corpus explica conceitos de RAG, memória, Gradio, Streamlit, LangChain e Ollama. Perguntas sobre fatos fora desse escopo devem receber uma resposta indicando que o corpus local não contém a informação necessária.

@@ -5,59 +5,53 @@ Aula 08 — Interfaces: variante Streamlit
 Rode com:
     streamlit run app_streamlit.py
 """
-import os
+import uuid
 
-from dotenv import load_dotenv
+from rag import responder
 
-import streamlit as st
 
-from langchain_ollama import ChatOllama
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+def garantir_session_id(estado) -> str:
+    session_id = estado.get("memoria_session_id")
+    if not session_id:
+        session_id = uuid.uuid4().hex
+        estado["memoria_session_id"] = session_id
+    return session_id
 
-# ─────────────────────────────────────────────────────────────
-# Configuração via .env
-# ─────────────────────────────────────────────────────────────
-load_dotenv()
 
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
-OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
+def responder_streamlit(mensagem, session_id, responder_rag=None):
+    executor = responder_rag or responder
+    return executor(mensagem, session_id)
 
-if not OLLAMA_API_KEY:
-    st.error("OLLAMA_API_KEY não encontrada. Copie .env.example para .env.")
-    st.stop()
 
-os.environ["OLLAMA_HOST"] = OLLAMA_HOST
-os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
+def main() -> None:
+    import streamlit as st
 
-llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_HOST, temperature=0.5)
+    st.set_page_config(page_title="Assistente FIAP — Aula 08", page_icon="🤖")
+    st.title("Assistente FIAP — Aula 08 (Streamlit)")
+    st.caption("RAG local com memória isolada por sessão")
 
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "Você é um assistente prestativo. Responda em português do Brasil."),
-    ("human", "{pergunta}"),
-])
-chain = prompt | llm | StrOutputParser()
+    session_id = garantir_session_id(st.session_state)
+    if "mensagens" not in st.session_state:
+        st.session_state.mensagens = []
 
-st.set_page_config(page_title="Assistente FIAP — Aula 08", page_icon="🤖")
-st.title("Assistente FIAP — Aula 08 (Streamlit)")
-st.caption(f"Modelo: {OLLAMA_MODEL}")
+    for msg in st.session_state.mensagens:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-# Histórico na sessão do Streamlit
-if "mensagens" not in st.session_state:
-    st.session_state.mensagens = []
+    if pergunta := st.chat_input("Digite sua mensagem..."):
+        st.session_state.mensagens.append({"role": "user", "content": pergunta})
+        with st.chat_message("user"):
+            st.markdown(pergunta)
 
-for msg in st.session_state.mensagens:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+        with st.chat_message("assistant"):
+            try:
+                resposta = responder_streamlit(pergunta, session_id)
+            except Exception:
+                resposta = "Não foi possível consultar o assistente agora. Verifique o modelo e o corpus local."
+            st.markdown(resposta)
 
-if pergunta := st.chat_input("Digite sua mensagem..."):
-    st.session_state.mensagens.append({"role": "user", "content": pergunta})
-    with st.chat_message("user"):
-        st.markdown(pergunta)
+        st.session_state.mensagens.append({"role": "assistant", "content": resposta})
 
-    with st.chat_message("assistant"):
-        resposta = chain.invoke({"pergunta": pergunta})
-        st.markdown(resposta)
 
-    st.session_state.mensagens.append({"role": "assistant", "content": resposta})
+if __name__ == "__main__":
+    main()

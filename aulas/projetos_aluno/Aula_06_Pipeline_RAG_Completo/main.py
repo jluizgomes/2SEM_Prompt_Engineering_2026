@@ -38,6 +38,9 @@ load_dotenv()
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
+EMBEDDING_OLLAMA_HOST = os.getenv(
+    "EMBEDDING_OLLAMA_HOST", "http://localhost:11434"
+)
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 
 if not OLLAMA_API_KEY:
@@ -47,6 +50,7 @@ if not OLLAMA_API_KEY:
 
 os.environ["OLLAMA_HOST"] = OLLAMA_HOST
 os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
+os.environ["EMBEDDING_OLLAMA_HOST"] = EMBEDDING_OLLAMA_HOST
 
 DATA_DIR = Path("./data")
 
@@ -91,7 +95,10 @@ def montar_chain(vectorstore: Chroma):
 
 
 def main() -> None:
-    print(f"Ollama Cloud | chat: {OLLAMA_MODEL} | embeddings: {EMBEDDING_MODEL}\n")
+    print(
+        f"Ollama Cloud | chat: {OLLAMA_MODEL} | "
+        f"embeddings locais: {EMBEDDING_MODEL}\n"
+    )
     # TODO: Chamar carregar_documentos()
     # TODO: Chamar dividir()
     # TODO: Chamar indexar()

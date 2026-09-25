@@ -6,3 +6,7 @@ langchain-ollama
 langchain-chroma
 pydantic
 python-dotenv
+
+# Interface web
+fastapi
+uvicorn

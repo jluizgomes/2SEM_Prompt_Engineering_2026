@@ -6,3 +6,7 @@ langchain-community
 chromadb
 numpy
 python-dotenv
+
+# Interface web
+fastapi
+uvicorn

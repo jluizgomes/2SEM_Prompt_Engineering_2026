@@ -11,6 +11,7 @@ RAG como tool nativa (create_retriever_tool) + busca web + calculadora, tudo num
 
 - Python 3.10+
 - Chave da Ollama Cloud (`OLLAMA_API_KEY`)
+- Ollama local com `nomic-embed-text`
 
 ## Como rodar
 
@@ -19,7 +20,7 @@ cd Aula_11_Integradora_Agente_RAG_Gradio
 python -m venv .venv && source .venv/bin/activate   # recomendado (macOS/Linux)
 pip install -r requirements.txt
 cp .env.example .env                                 # se ainda não tiver .env
-# edite .env e preencha OLLAMA_API_KEY (a mesma chave já está no .env da pasta 2SEM)
+# preencha OLLAMA_API_KEY e suba o Ollama local para embeddings
 python main.py
 ```
 
@@ -30,18 +31,16 @@ Gradio: python main.py (porta 7860).
 
 - `main.py` — código principal da aula
 - `requirements.txt` — dependências do projeto
-- `.env` — variáveis de ambiente (chave da API; NÃO versionar)
+- `.env` — configuração (NÃO versionar)
 - `.env.example` — modelo do `.env`
 - `.gitignore` — ignora `.env`, `chroma_db/`, `data/`, venv, etc.
 
-## Usar Ollama LOCAL (gratuito, FIAP AI Lab)
+## Ollama Cloud + embeddings locais
 
-Por padrão o projeto usa o Ollama Cloud (`https://ollama.com`). Para usar o
-Ollama local do Docker (modelo `gpt-oss:120b`, sem custo):
-
-1. No `.env`, comente as linhas `OLLAMA_HOST`/`OLLAMA_API_KEY` atuais e descomente as alternativas;
-2. Ajuste `OLLAMA_MODEL` para `gpt-oss:120b`;
-3. Suba o lab: `cd ../../fiap-ai-lab-complete && make up` (ou `make up-minimum`).
+O chat usa Ollama Cloud (`OLLAMA_HOST` e `OLLAMA_MODEL`). Os embeddings usam
+`EMBEDDING_OLLAMA_HOST=http://localhost:11434` e
+`EMBEDDING_MODEL=nomic-embed-text`. Suba o FIAP AI Lab e garanta que o modelo
+de embeddings esteja disponível no Ollama local.
 
 ---
 

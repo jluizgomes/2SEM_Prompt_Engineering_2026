@@ -1,45 +1,32 @@
-#!/bin/bash
-# ============================================================
-# Setup — Projeto de Aula (FIAP Prompt Engineering & AI)
-# Configura o ambiente virtual e instala as dependências.
-#
-# Uso:
-#   chmod +x setup.sh
-#   ./setup.sh
-#
-# Após executar, ative o ambiente:
-#   source .venv/bin/activate
-# ============================================================
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
-set -e  # Encerra se qualquer comando falhar
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
-echo "🔧 Configurando ambiente virtual..."
+PYTHON_BIN="${PYTHON_BIN:-python3}"
 
-# Cria o venv
-python3 -m venv .venv
+falhar() {
+  printf '[falha] %s\n' "$*" >&2
+  exit 1
+}
 
-# Ativa o venv
-source .venv/bin/activate
+[ -f "requirements.txt" ] || falhar "requirements.txt nao encontrado."
+command -v "$PYTHON_BIN" >/dev/null 2>&1 || falhar "Python nao encontrado."
+"$PYTHON_BIN" --version >/dev/null 2>&1 || falhar "Falha ao validar o Python."
 
-# Atualiza pip
-pip install --upgrade pip --quiet
-
-# Instala as dependências
-echo "📦 Instalando dependências..."
-pip install -r requirements.txt
-
-# Copia .env.example → .env (se .env ainda não existir)
-if [ ! -f .env ] && [ -f .env.example ]; then
-    cp .env.example .env
-    echo "📋 Arquivo .env criado a partir do .env.example"
-    echo "   ⚠️  Edite o .env e preencha OLLAMA_API_KEY antes de rodar."
+if [ ! -f ".env" ]; then
+  [ -f ".env.example" ] || falhar ".env.example nao encontrado."
+  cp .env.example .env || falhar "Falha ao criar .env."
 fi
 
-echo ""
-echo "✅ Ambiente configurado com sucesso!"
-echo ""
-echo "Para ativar o ambiente virtual:"
-echo "  source .venv/bin/activate"
-echo ""
-echo "Para rodar o projeto:"
-echo "  python main.py"
+if [ ! -x ".venv/bin/python" ]; then
+  "$PYTHON_BIN" -m venv .venv || falhar "Falha ao criar o .venv."
+fi
+[ -x ".venv/bin/python" ] || falhar ".venv criado sem Python."
+
+.venv/bin/python -m pip install --upgrade pip || falhar "Falha ao atualizar o pip."
+.venv/bin/python -m pip install -r requirements.txt || falhar "Falha ao instalar as dependencias Python."
+
+printf '[ok] ambiente pronto em %s\n' "$SCRIPT_DIR"
+printf 'Execute python main.py para iniciar a interface Gradio.\n'

@@ -31,18 +31,15 @@ Gradio: python main.py (porta 7860). Streamlit: streamlit run app_streamlit.py.
 - `main.py` — código principal da aula
 - `app_streamlit.py` — variante da interface
 - `requirements.txt` — dependências do projeto
-- `.env` — variáveis de ambiente (chave da API; NÃO versionar)
+- `.env` — configuração (NÃO versionar)
 - `.env.example` — modelo do `.env`
 - `.gitignore` — ignora `.env`, `chroma_db/`, `data/`, venv, etc.
 
-## Usar Ollama LOCAL (gratuito, FIAP AI Lab)
+## Backend do chat
 
-Por padrão o projeto usa o Ollama Cloud (`https://ollama.com`). Para usar o
-Ollama local do Docker (modelo `gpt-oss:120b`, sem custo):
-
-1. No `.env`, comente as linhas `OLLAMA_HOST`/`OLLAMA_API_KEY` atuais e descomente as alternativas;
-2. Ajuste `OLLAMA_MODEL` para `gpt-oss:120b`;
-3. Suba o lab: `cd ../../fiap-ai-lab-complete && make up` (ou `make up-minimum`).
+O chat usa Ollama Cloud. O `.env.example` também separa a configuração de
+embeddings em `EMBEDDING_OLLAMA_HOST` para as atividades de RAG, que devem usar
+o Ollama local com `nomic-embed-text`.
 
 ---
 

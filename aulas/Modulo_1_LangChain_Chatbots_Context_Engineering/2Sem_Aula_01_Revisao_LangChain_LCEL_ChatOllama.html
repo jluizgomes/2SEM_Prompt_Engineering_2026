@@ -159,6 +159,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 
@@ -188,7 +190,7 @@
     <div class="cover-meta-item">🐍 LCEL · ChatOllama · OutputParser</div>
     <div class="cover-meta-item">🔁 Andaime 40%</div>
   </div>
-  <div class="slide-number">01 / 30</div>
+  <div class="slide-number">1 / 30</div>
 </div>
 
 
@@ -205,7 +207,7 @@
     <div class="callout-body">Construir uma chain LangChain com LCEL que substitui o <code style="font-family:'JetBrains Mono',monospace;font-size:12px">chamar_llm()</code> manual do 1º semestre — com menos código, mais composição e pronto para escalar com memória e RAG nas próximas aulas.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -218,7 +220,7 @@
     <div class="gl-item gl-blue"><div class="gl-term">LCEL</div><div class="gl-def">LangChain Expression Language — linguagem declarativa que compõe componentes com o operador <code style="font-family:'JetBrains Mono',monospace;font-size:11px">|</code> (pipe). A chain descreve o fluxo, não o código que o executa.</div></div>
     <div class="gl-item gl-green"><div class="gl-term">Runnable <span class="gl-pron">/rʌnəbəl/</span></div><div class="gl-def">Interface padrão que toda chain herda: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.invoke()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.stream()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.batch()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.ainvoke()</code>. É o "contrato" único para executar qualquer pipeline.</div></div>
     <div class="gl-item gl-purple"><div class="gl-term">ChatPromptTemplate</div><div class="gl-def">Template de prompt com roles (system/human/ai) e variáveis <code style="font-family:'JetBrains Mono',monospace;font-size:11px">{var}</code> validadas em runtime — evolução da função <code style="font-family:'JetBrains Mono',monospace;font-size:11px">montar_prompt()</code> do 1º semestre.</div></div>
-    <div class="gl-item gl-orange"><div class="gl-term">ChatOllama</div><div class="gl-def">Integração oficial do LangChain com o Ollama (local ou Cloud): conecta o modelo (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">gpt-oss:120b</code>) como componente de chat dentro de uma chain.</div></div>
+    <div class="gl-item gl-orange"><div class="gl-term">ChatOllama</div><div class="gl-def">Integração oficial do LangChain com o Ollama (local ou Cloud): conecta o modelo (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">gemma4:cloud</code>) como componente de chat dentro de uma chain.</div></div>
     <div class="gl-item"><div class="gl-term">OutputParser</div><div class="gl-def">Componente que transforma a resposta bruta do modelo (AIMessage) em um formato útil para o seu código: texto, dict, ou objeto Pydantic validado.</div></div>
     <div class="gl-item gl-blue"><div class="gl-term">StrOutputParser</div><div class="gl-def">Parser mais simples: extrai apenas o conteúdo textual da resposta. Elimina o <code style="font-family:'JetBrains Mono',monospace;font-size:11px">resp["message"]["content"]</code> do 1º semestre.</div></div>
     <div class="gl-item gl-green"><div class="gl-term">JsonOutputParser</div><div class="gl-def">Parser que converte a resposta em dict Python. Exige que o prompt peça JSON explicitamente — sem schema garantido (isso vem na Aula 03 com Pydantic).</div></div>
@@ -232,7 +234,7 @@
     <div class="callout-body">LangChain é o framework de orquestração de LLMs mais usado em produção — a base de pipelines de geração de código, escrita assistida e automação de workflows em empresas de tecnologia. Domine o vocabulário de hoje (<em>chain</em>, <em>parser</em>, <em>Runnable</em>) e você fala a mesma língua das vagas de <strong>AI Engineer</strong> em 2026.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -268,7 +270,7 @@
     <div class="callout-body">Token · temperatura · top-p · janela de contexto · prompt injection · jailbreak · guardrail · structured output. Toda chain que você construir com LangChain herda os mesmos riscos do 1º semestre — um <code style="font-family:'JetBrains Mono',monospace;font-size:12px">ChatPromptTemplate</code> mal desenhado é tão vulnerável a prompt injection quanto o system prompt manual. A defesa em camadas continua sendo sua responsabilidade; Context Engineering chega com mais profundidade nas Aulas 04 e 10 deste semestre.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">04 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">4 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -320,7 +322,7 @@
     </tbody>
   </table>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -355,7 +357,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">06 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">6 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -370,7 +372,7 @@
         + historico + [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: pergunta}]
 
 <span class="kw">def</span> <span class="fn">chamar_llm</span>(messages):
-    resp = ollama.chat(model=<span class="st">"gpt-oss:120b"</span>, messages=messages)
+    resp = ollama.chat(model=<span class="st">"gemma4:cloud"</span>, messages=messages)
     <span class="kw">return</span> resp[<span class="st">"message"</span>][<span class="st">"content"</span>]
 
 <span class="kw">def</span> <span class="fn">iniciar_chat</span>():
@@ -393,7 +395,7 @@
     <div class="callout-body">Três funções, gerenciamento manual de <code style="font-family:'JetBrains Mono',monospace;font-size:12px">historico</code>, acesso direto a <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp["message"]["content"]</code>. Funciona — mas não escala, não compõe e não tem memória além do que você programar à mão. Esse chatbot manual (~40 linhas) é o problema que o LangChain resolve: hoje você reescreve isso em 15 linhas usando LCEL.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">07 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">7 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -401,7 +403,7 @@
   <div class="section-number">01</div>
   <div class="section-title">Por que LangChain</div>
   <div class="section-desc">O problema de escalar orquestração manual — e como o framework resolve com composição declarativa.</div>
-  <div class="slide-number">08 / 30</div>
+  <div class="slide-number">8 / 30</div>
 </div>
 
 
@@ -456,7 +458,7 @@
     <div class="callout-body">LangChain não faz nada que você não poderia fazer manualmente. O valor é a <strong>composição declarativa</strong> — você descreve o que quer acontecer, não como fazer cada passo. O framework cuida da orquestração.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -493,10 +495,10 @@
       <text x="95" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="11" fill="#f3e8ff">ChatPromptTemplate</text>
       <text x="95" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#e9d5ff">{"persona","pergunta"}</text>
       <line x1="175" y1="58" x2="215" y2="58" stroke="#ED145B" stroke-width="3" marker-end="url(#arrow)"/>
-      <rect x="220" y="20" width="150" height="76" rx="12" fill="url(#gBlue)" data-info="Envia as mensagens para o modelo (gpt-oss:120b no Ollama Cloud) e devolve uma AIMessage com a resposta gerada e metadados." data-title="2 · Modelo"/>
+      <rect x="220" y="20" width="150" height="76" rx="12" fill="url(#gBlue)" data-info="Envia as mensagens para o modelo (gemma4:cloud no Ollama Cloud) e devolve uma AIMessage com a resposta gerada e metadados." data-title="2 · Modelo"/>
       <text x="295" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">LLM</text>
       <text x="295" y="66" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="11" fill="#eaf6fb">ChatOllama</text>
-      <text x="295" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#d6ecf7">gpt-oss:120b</text>
+      <text x="295" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#d6ecf7">gemma4:cloud</text>
       <line x1="375" y1="58" x2="415" y2="58" stroke="#ED145B" stroke-width="3" marker-end="url(#arrow)"/>
       <rect x="420" y="20" width="150" height="76" rx="12" fill="url(#gGreen)" data-info="Transforma a AIMessage em texto puro (StrOutputParser) ou em dict (JsonOutputParser). É o que elimina o resp[message][content]." data-title="3 · Output Parser"/>
       <text x="495" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">PARSER</text>
@@ -526,7 +528,7 @@
 
 <span class="cm"># 2. Modelo: conecta ao Ollama Cloud</span>
 <span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span>
-    <span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span>
+    <span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span>
     <span class="va">base_url</span><span class="op">=</span><span class="st">"https://ollama.com"</span><span class="op">,</span>
 <span class="op">)</span>
 
@@ -666,7 +668,7 @@
 
 <span class="cm"># Instanciar o modelo — parâmetros declarativos</span>
 <span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span>
-    <span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span>          <span class="cm"># modelo padrão do semestre</span>
+    <span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span>          <span class="cm"># modelo padrão do semestre</span>
     <span class="va">temperature</span><span class="op">=</span><span class="num">0.7</span><span class="op">,</span>               <span class="cm"># mesmo parâmetro do 1º sem</span>
     <span class="va">num_predict</span><span class="op">=</span><span class="num">512</span><span class="op">,</span>               <span class="cm"># equivalente a max_tokens</span>
 <span class="op">)</span>
@@ -723,58 +725,6 @@
 </div>
 
 
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
-  <div class="section-number">04</div>
-  <div class="section-title">Lab — Notebook Aluno</div>
-  <div class="section-desc">40% de lacunas — componentes da chain e chamada final com o domínio que o grupo vai usar no semestre inteiro.</div>
-  <div class="slide-number">16 / 30</div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>💻 Notebook Aluno — 40% de lacunas</h2>
-  <p>Complete as lacunas. Esta chain é a base de todo o semestre — o domínio escolhido hoje será usado nos CKPs 01, 02 e 03.</p>
-  <div class="code-block">
-    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_01_2Sem_Aluno.ipynb</span></div>
-    <div class="code-body"><pre><span class="op">!</span>pip install langchain-ollama langchain-core <span class="op">-</span>q
-
-<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
-<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
-<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
-<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
-<span class="kw">import</span> <span class="va">os</span>
-
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
-<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
-
-<span class="cm"># 👉 LACUNA 1: instancie o ChatOllama com o modelo certo</span>
-<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
-
-<span class="cm"># 👉 LACUNA 2: crie o ChatPromptTemplate com 2 roles</span>
-<span class="cm"># system: persona + especialidade do grupo</span>
-<span class="cm"># human: a pergunta do usuário</span>
-<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
-    <span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># system com persona do grupo</span>
-    <span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># human com {pergunta}</span>
-<span class="op">])</span>
-
-<span class="cm"># 👉 LACUNA 3: componha a chain com os 3 componentes</span>
-<span class="va">chain</span> <span class="op">=</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span>
-
-<span class="cm"># 👉 LACUNA 4: invoque com uma pergunta do domínio do grupo</span>
-<span class="va">resposta</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="gap">___</span><span class="op">})</span>
-<span class="nb">print</span><span class="op">(</span><span class="va">resposta</span><span class="op">)</span>
-
-<span class="cm"># Bônus: testar .stream() — observe os tokens chegando</span>
-<span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">chain</span><span class="op">.</span><span class="fn">stream</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="st">"Me dê um exemplo rápido."</span><span class="op">}):</span>
-    <span class="nb">print</span><span class="op">(</span><span class="va">chunk</span><span class="op">,</span> <span class="va">end</span><span class="op">=</span><span class="st">""</span><span class="op">,</span> <span class="va">flush</span><span class="op">=</span><span class="kw">True</span><span class="op">)</span></pre>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">17 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
 <div class="slide slide-content"><div class="slide-body">
   <h2>Como esta chain cresce ao longo do semestre</h2>
   <p>A chain de hoje é a base. Cada aula adiciona uma peça:</p>
@@ -824,14 +774,14 @@
     <div class="callout-body">Gullí (<em>Agentic Design Patterns</em>, 2025) descreve <strong>Prompt Chaining</strong> como o padrão fundacional de todo sistema agêntico: decompor uma tarefa complexa em etapas menores, cada uma processada por um componente especializado, com o output de uma etapa alimentando a próxima. A chain LCEL de hoje — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | parser</code> — é a versão mais simples desse padrão. Os agentes das Aulas 09–10 aplicam a mesma ideia, com decisões condicionais entre os elos.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">18 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">16 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
 <div class="slide slide-content"><div class="slide-body">
   <h2>CKP01 — preview do que o grupo vai construir</h2>
   <div style="background:rgba(237,20,91,.04);border:2px solid rgba(237,20,91,.2);border-radius:14px;padding:24px;margin:16px 0">
-    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🏁 CKP01 — Chatbot LangChain · Grupo 3–4 · Entrega Aula 04</div>
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-pink);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🏁 CKP01 — Chatbot LangChain · Grupo 3–4 · Apresentação na Aula 04 · Entrega até 23:55 do dia da Aula 05 (Teams)</div>
     <div style="font-size:14px;color:var(--fiap-text);line-height:1.8;margin-bottom:14px">Reescrever o chatbot manual do 1º semestre usando LangChain. <strong>Requisito mínimo:</strong> ConversationChain com 1 tipo de memória + schema Pydantic validando a saída + system prompt com persona + domínio real documentado.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
       <div style="padding:10px 12px;background:var(--fiap-surface);border-radius:8px;border:1px solid var(--fiap-border)">✅ <strong>R1:</strong> ChatOllama + ChatPromptTemplate + StrOutputParser</div>
@@ -839,14 +789,14 @@
       <div style="padding:10px 12px;background:var(--fiap-surface);border-radius:8px;border:1px solid var(--fiap-border)">✅ <strong>R3:</strong> PydanticOutputParser com schema definido</div>
       <div style="padding:10px 12px;background:var(--fiap-surface);border-radius:8px;border:1px solid var(--fiap-border)">✅ <strong>R4:</strong> Domínio documentado + 5 turnos de conversa</div>
     </div>
-    <div style="margin-top:12px;font-size:12px;color:var(--fiap-muted)">Rubrica: 30% chain LCEL · 25% memória · 25% Pydantic · 20% código/comentários</div>
+    <div style="margin-top:12px;font-size:12px;color:var(--fiap-muted)">Rubrica: 30% chain LCEL · 25% memória + context rot · 20% Pydantic · 15% system prompt + domínio · 10% código e docs</div>
   </div>
   <div class="callout callout-blue">
     <div class="callout-title">💡 Decisão de hoje importa para o semestre inteiro</div>
     <div class="callout-body">O domínio escolhido na Aula 01 será mantido pelo semestre: CKP01 (chatbot), CKP02 (RAG sobre documentos do domínio), CKP03 (agente com tools do domínio). Escolha um domínio rico em documentos disponíveis publicamente — você vai precisar de PDFs na Aula 06.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">17 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -880,7 +830,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">18 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -917,55 +867,7 @@
     </tbody>
   </table>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Síntese da Aula 01</h2>
-  <div style="display:flex;flex-direction:column;gap:12px;margin:20px 0">
-    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>LangChain não faz nada que você não poderia fazer manualmente</strong> — o valor é a composição declarativa. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | parser</code> descreve o fluxo; o framework cuida da orquestração.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>ChatPromptTemplate substitui <code style="font-family:'JetBrains Mono',monospace;font-size:12px">montar_prompt()</code></strong> com validação automática de variáveis e separação limpa de roles (system/human/ai).</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>StrOutputParser e JsonOutputParser</strong> eliminam o acesso manual a <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp["message"]["content"]</code> — o output já chega no tipo certo.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">✅</div>
-      <div style="font-size:14px"><strong>Toda chain herda <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Runnable</code></strong> — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.invoke()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.stream()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.batch()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ainvoke()</code> sem código adicional.</div>
-    </div>
-    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
-      <div style="font-size:22px;flex-shrink:0">🎯</div>
-      <div style="font-size:14px"><strong>O domínio escolhido hoje é o fio condutor do semestre</strong> — CKP01 (chatbot), CKP02 (RAG), CKP03 (agente) todos usam o mesmo domínio.</div>
-    </div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Perguntas frequentes</h2>
-  <table class="data-table">
-    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
-    <tbody>
-      <tr><td><strong>"Preciso desinstalar o pacote ollama do 1º semestre?"</strong></td><td>Não — eles coexistem sem conflito. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ollama</code> (cliente original) e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain-ollama</code> (integração LangChain) são pacotes diferentes. Você pode ter os dois instalados simultaneamente.</td></tr>
-      <tr><td><strong>"O | é o operador OR do Python?"</strong></td><td>Em Python puro, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">|</code> é OR bitwise e union de dicts (Python 3.9+). No LangChain, a classe <code style="font-family:'JetBrains Mono',monospace;font-size:11px">Runnable</code> sobrescreve o método <code style="font-family:'JetBrains Mono',monospace;font-size:11px">__or__</code> para retornar uma chain composta em vez de OR.</td></tr>
-      <tr><td><strong>"Por que usar ChatPromptTemplate se f-string também funciona?"</strong></td><td>Para projetos simples, f-string funciona. A vantagem do template aparece na escala: validação de variáveis em tempo de execução, reutilização com valores diferentes, integração automática com chains mais complexas (memória, RAG, agentes).</td></tr>
-      <tr><td><strong>"Preciso de conta no LangSmith para usar LangChain?"</strong></td><td>Não — LangSmith é a plataforma de rastreamento (opcional). Todo o código do semestre roda sem LangSmith. Se quiser ativar, é gratuito para uso pessoal e adiciona observabilidade automática.</td></tr>
-      <tr><td><strong>"A versão do LangChain importa?"</strong></td><td>Muito — o LangChain teve mudanças de API significativas entre versões. O semestre usa LangChain 0.3+ (LCEL estável). Sempre instale com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pip install langchain-core langchain-ollama</code> para pegar a versão atual.</td></tr>
-      <tr><td><strong>"Posso usar outros modelos além de gpt-oss:120b?"</strong></td><td>Sim — o semestre usa gpt-oss:120b como padrão, mas qualquer modelo disponível no Ollama Cloud funciona. Outros modelos como llama4:scout ou deepseek-r2 também funcionam bem, dependendo da tarefa.</td></tr>
-      <tr><td><strong>"LCEL vai mudar? Vale aprender agora?"</strong></td><td>LCEL foi estabilizado na versão 0.3 e é a API de longo prazo do LangChain. O padrão <code style="font-family:'JetBrains Mono',monospace;font-size:11px">prompt | llm | parser</code> é o que a documentação oficial recomenda e o que toda a comunidade adotou.</td></tr>
-    </tbody>
-  </table>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">23 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">19 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -974,7 +876,7 @@
   <div class="code-block">
     <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">conceitos_python_aula01_2sem.py</span></div>
     <div class="code-body"><pre><span class="cm"># 1. Instância declarativa com keyword arguments</span>
-<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0.7</span><span class="op">)</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0.7</span><span class="op">)</span>
 
 <span class="cm"># 2. Método de classe com lista de tuplas</span>
 <span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
@@ -999,7 +901,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">24 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">20 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -1012,7 +914,7 @@
     </div>
     <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px;text-align:center;border-top:3px solid var(--fiap-blue)">
       <div style="font-size:11px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:8px">M2 — RAG</div>
-      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.8">Aulas 05–08<br>Embeddings<br>ChromaDB<br>Gradio<br>CKP02</div>
+      <div style="font-size:12px;color:var(--fiap-muted);line-height:1.8">Aulas 05–07<br>Embeddings<br>ChromaDB<br>RAGAS<br>CKP02</div>
     </div>
     <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px;text-align:center;border-top:3px solid var(--fiap-green)">
       <div style="font-size:11px;font-weight:700;color:var(--fiap-green);text-transform:uppercase;margin-bottom:8px">M3 — Agentes</div>
@@ -1028,7 +930,7 @@
     <div class="callout-body">Um agente com interface Gradio pública que usa RAG sobre documentos do seu domínio + busca web + executa código Python — orquestrado com LangGraph. Isso é o CKP03. O CKP01 (hoje) é o primeiro passo.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">25 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">21 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -1036,7 +938,7 @@
   <div class="section-number">03</div>
   <div class="section-title">Demo ao vivo</div>
   <div class="section-desc">Reescrever um chatbot manual de 40 linhas para 15 linhas LCEL — mesmo comportamento, menos código.</div>
-  <div class="slide-number">26 / 30</div>
+  <div class="slide-number">22 / 30</div>
 </div>
 
 
@@ -1068,9 +970,61 @@
   </div>
   <div class="callout callout-blue" style="text-align:left;max-width:700px;margin:20px auto 0">
     <div class="callout-title">🛠️ Stack usado na demo</div>
-    <div class="callout-body">Google Colab · Ollama Cloud API · gpt-oss:120b · langchain-core + langchain-ollama</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · gemma4:cloud · langchain-core + langchain-ollama</div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">27 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">23 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Lab — Notebook Aluno</div>
+  <div class="section-desc">40% de lacunas — componentes da chain e chamada final com o domínio que o grupo vai usar no semestre inteiro.</div>
+  <div class="slide-number">24 / 30</div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>💻 Notebook Aluno — 40% de lacunas</h2>
+  <p>Complete as lacunas. Esta chain é a base de todo o semestre — o domínio escolhido hoje será usado nos CKPs 01, 02 e 03.</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dot red"></div><div class="code-dot yellow"></div><div class="code-dot green"></div><span class="code-filename">Aula_01_2Sem_Aluno.ipynb</span></div>
+    <div class="code-body"><pre><span class="op">!</span>pip install langchain-ollama langchain-core <span class="op">-</span>q
+
+<span class="kw">from</span> <span class="va">langchain_ollama</span> <span class="kw">import</span> <span class="va">ChatOllama</span>
+<span class="kw">from</span> <span class="va">langchain_core.prompts</span> <span class="kw">import</span> <span class="va">ChatPromptTemplate</span>
+<span class="kw">from</span> <span class="va">langchain_core.output_parsers</span> <span class="kw">import</span> <span class="va">StrOutputParser</span>
+<span class="kw">from</span> <span class="va">google.colab</span> <span class="kw">import</span> <span class="va">userdata</span>
+<span class="kw">import</span> <span class="va">os</span>
+
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_HOST"</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"https://ollama.com"</span>
+<span class="va">os</span><span class="op">.</span><span class="va">environ</span><span class="op">[</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">]</span> <span class="op">=</span> <span class="va">userdata</span><span class="op">.</span><span class="fn">get</span><span class="op">(</span><span class="st">"OLLAMA_API_KEY"</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 1: instancie o ChatOllama com o modelo certo</span>
+<span class="va">llm</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="gap">___</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="gap">___</span><span class="op">)</span>
+
+<span class="cm"># 👉 LACUNA 2: crie o ChatPromptTemplate com 2 roles</span>
+<span class="cm"># system: persona + especialidade do grupo</span>
+<span class="cm"># human: a pergunta do usuário</span>
+<span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_messages</span><span class="op">([</span>
+    <span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># system com persona do grupo</span>
+    <span class="op">(</span><span class="gap">___</span><span class="op">,</span> <span class="gap">___</span><span class="op">),</span>  <span class="cm"># human com {pergunta}</span>
+<span class="op">])</span>
+
+<span class="cm"># 👉 LACUNA 3: componha a chain com os 3 componentes</span>
+<span class="va">chain</span> <span class="op">=</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span> <span class="op">|</span> <span class="gap">___</span>
+
+<span class="cm"># 👉 LACUNA 4: invoque com uma pergunta do domínio do grupo</span>
+<span class="va">resposta</span> <span class="op">=</span> <span class="va">chain</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="gap">___</span><span class="op">})</span>
+<span class="nb">print</span><span class="op">(</span><span class="va">resposta</span><span class="op">)</span>
+
+<span class="cm"># Bônus: testar .stream() — observe os tokens chegando</span>
+<span class="kw">for</span> <span class="va">chunk</span> <span class="kw">in</span> <span class="va">chain</span><span class="op">.</span><span class="fn">stream</span><span class="op">({</span><span class="st">"pergunta"</span><span class="op">:</span> <span class="st">"Me dê um exemplo rápido."</span><span class="op">}):</span>
+    <span class="nb">print</span><span class="op">(</span><span class="va">chunk</span><span class="op">,</span> <span class="va">end</span><span class="op">=</span><span class="st">""</span><span class="op">,</span> <span class="va">flush</span><span class="op">=</span><span class="kw">True</span><span class="op">)</span></pre>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">25 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -1105,6 +1059,54 @@
       💡 <strong>Dica para o desafio:</strong> no prompt, adicione: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">"Responda SOMENTE em JSON no formato: {\"resposta\": \"...\", \"confianca\": N}"</code>. O modelo precisa da instrução explícita para gerar JSON válido.
     </div>
   </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">26 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Síntese da Aula 01</h2>
+  <div style="display:flex;flex-direction:column;gap:12px;margin:20px 0">
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>LangChain não faz nada que você não poderia fazer manualmente</strong> — o valor é a composição declarativa. <code style="font-family:'JetBrains Mono',monospace;font-size:12px">prompt | llm | parser</code> descreve o fluxo; o framework cuida da orquestração.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>ChatPromptTemplate substitui <code style="font-family:'JetBrains Mono',monospace;font-size:12px">montar_prompt()</code></strong> com validação automática de variáveis e separação limpa de roles (system/human/ai).</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>StrOutputParser e JsonOutputParser</strong> eliminam o acesso manual a <code style="font-family:'JetBrains Mono',monospace;font-size:12px">resp["message"]["content"]</code> — o output já chega no tipo certo.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">✅</div>
+      <div style="font-size:14px"><strong>Toda chain herda <code style="font-family:'JetBrains Mono',monospace;font-size:12px">Runnable</code></strong> — <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.invoke()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.stream()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.batch()</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ainvoke()</code> sem código adicional.</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:16px 20px;background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;align-items:flex-start">
+      <div style="font-size:22px;flex-shrink:0">🎯</div>
+      <div style="font-size:14px"><strong>O domínio escolhido hoje é o fio condutor do semestre</strong> — CKP01 (chatbot), CKP02 (RAG), CKP03 (agente) todos usam o mesmo domínio.</div>
+    </div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">27 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Perguntas frequentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>"Preciso desinstalar o pacote ollama do 1º semestre?"</strong></td><td>Não — eles coexistem sem conflito. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">ollama</code> (cliente original) e <code style="font-family:'JetBrains Mono',monospace;font-size:11px">langchain-ollama</code> (integração LangChain) são pacotes diferentes. Você pode ter os dois instalados simultaneamente.</td></tr>
+      <tr><td><strong>"O | é o operador OR do Python?"</strong></td><td>Em Python puro, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">|</code> é OR bitwise e union de dicts (Python 3.9+). No LangChain, a classe <code style="font-family:'JetBrains Mono',monospace;font-size:11px">Runnable</code> sobrescreve o método <code style="font-family:'JetBrains Mono',monospace;font-size:11px">__or__</code> para retornar uma chain composta em vez de OR.</td></tr>
+      <tr><td><strong>"Por que usar ChatPromptTemplate se f-string também funciona?"</strong></td><td>Para projetos simples, f-string funciona. A vantagem do template aparece na escala: validação de variáveis em tempo de execução, reutilização com valores diferentes, integração automática com chains mais complexas (memória, RAG, agentes).</td></tr>
+      <tr><td><strong>"Preciso de conta no LangSmith para usar LangChain?"</strong></td><td>Não — LangSmith é a plataforma de rastreamento (opcional). Todo o código do semestre roda sem LangSmith. Se quiser ativar, é gratuito para uso pessoal e adiciona observabilidade automática.</td></tr>
+      <tr><td><strong>"A versão do LangChain importa?"</strong></td><td>Muito — o LangChain teve mudanças de API significativas entre versões. O semestre usa LangChain 0.3+ (LCEL estável). Sempre instale com <code style="font-family:'JetBrains Mono',monospace;font-size:11px">pip install langchain-core langchain-ollama</code> para pegar a versão atual.</td></tr>
+      <tr><td><strong>"Posso usar outros modelos além de gemma4:cloud?"</strong></td><td>Sim — o semestre usa gemma4:cloud como padrão, mas qualquer modelo disponível no Ollama Cloud funciona. Outros modelos como llama4:scout ou deepseek-r2 também funcionam bem, dependendo da tarefa.</td></tr>
+      <tr><td><strong>"LCEL vai mudar? Vale aprender agora?"</strong></td><td>LCEL foi estabilizado na versão 0.3 e é a API de longo prazo do LangChain. O padrão <code style="font-family:'JetBrains Mono',monospace;font-size:11px">prompt | llm | parser</code> é o que a documentação oficial recomenda e o que toda a comunidade adotou.</td></tr>
+    </tbody>
+  </table>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">28 / 30</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

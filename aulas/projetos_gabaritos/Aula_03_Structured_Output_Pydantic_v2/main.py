@@ -13,16 +13,12 @@ Como rodar:
 import os
 
 from dotenv import load_dotenv
-
-from pydantic import BaseModel, Field
-
 from langchain_ollama import ChatOllama
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.prompts import ChatPromptTemplate
 
-# ─────────────────────────────────────────────────────────────
-# Configuração via .env
-# ─────────────────────────────────────────────────────────────
+from structured_output import Receita, executar_com_retry
+
 load_dotenv()
 
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
@@ -37,23 +33,13 @@ if not OLLAMA_API_KEY:
 os.environ["OLLAMA_HOST"] = OLLAMA_HOST
 os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
 
-llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_HOST, temperature=0.2)
-
-
-# ─────────────────────────────────────────────────────────────
-# 1. Schema — contrato de saída com Pydantic v2
-# ─────────────────────────────────────────────────────────────
-class Receita(BaseModel):
-    """Saída estruturada de uma receita."""
-    nome: str = Field(description="Nome do prato")
-    ingredientes: list[str] = Field(description="Lista de ingredientes")
-    modo_preparo: str = Field(description="Passo a passo resumido")
-    tempo_minutos: int = Field(description="Tempo total de preparo em minutos")
-
-
-# ─────────────────────────────────────────────────────────────
-# 2. Parser — gera as instruções de formato e converte a resposta
-# ─────────────────────────────────────────────────────────────
+schema = Receita.model_json_schema()
+llm = ChatOllama(
+    model=OLLAMA_MODEL,
+    base_url=OLLAMA_HOST,
+    temperature=0.2,
+    format=schema,
+)
 parser = PydanticOutputParser(pydantic_object=Receita)
 
 prompt = ChatPromptTemplate.from_messages([
@@ -61,7 +47,11 @@ prompt = ChatPromptTemplate.from_messages([
     ("human", "Me dê a receita de {prato}.\n\n{instrucoes_formato}"),
 ]).partial(instrucoes_formato=parser.get_format_instructions())
 
-chain = prompt | llm | parser
+chain = prompt | llm.with_structured_output(Receita, method="json_schema")
+
+
+def gerar_receita(prato: str, runnable=None) -> Receita:
+    return executar_com_retry(prato, runnable or chain, modelo=Receita)
 
 
 def main() -> None:
@@ -69,14 +59,12 @@ def main() -> None:
     print("== Instruções de formato injetadas no prompt ==\n")
     print(parser.get_format_instructions())
 
-    resultado = chain.invoke({"prato": "bolo de cenoura"})
-    print("\n== Resultado parseado (objeto Pydantic) ==")
+    resultado = gerar_receita("bolo de cenoura")
+    print("\n== Resultado validado com Pydantic v2 ==")
     print("tipo:", type(resultado).__name__)
     print("nome:", resultado.nome)
     print("ingredientes:", resultado.ingredientes)
     print("tempo_minutos:", resultado.tempo_minutos)
-
-    # Volta para dict/JSON — pronto para serializar ou gravar
     print("\n== Como dict/JSON ==")
     print(resultado.model_dump_json(indent=2))
 

@@ -6,3 +6,10 @@ langchain-ollama
 langchain-community
 duckduckgo-search
 python-dotenv
+
+# Interface web
+fastapi
+uvicorn
+
+# Busca web (duckduckgo_search 8+ exige o backend ddgs)
+ddgs

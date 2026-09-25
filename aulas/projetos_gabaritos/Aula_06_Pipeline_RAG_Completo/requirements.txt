@@ -8,3 +8,7 @@ pymupdf
 chromadb
 langchain-text-splitters
 python-dotenv
+
+# Interface web
+fastapi
+uvicorn

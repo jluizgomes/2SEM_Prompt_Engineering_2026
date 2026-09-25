@@ -5,3 +5,10 @@ langchain
 langchain-ollama
 langchain-classic
 python-dotenv
+
+# Interface web
+fastapi
+uvicorn
+
+# Contagem de tokens (fallback sem transformers)
+tiktoken

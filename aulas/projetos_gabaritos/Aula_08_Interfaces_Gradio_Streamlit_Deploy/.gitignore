@@ -9,7 +9,8 @@ venv/
 
 # Dados locais / artefatos de execução
 chroma_db/
-data/
+data/*
+!data/corpus.txt
 *.pdf
 *.db
 

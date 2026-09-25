@@ -154,6 +154,8 @@
   .tab-panel{display:none}
   .tab-panel.on{display:block}
 
+
+
 </style>
 
 <style id="slide-nav-style">
@@ -175,14 +177,14 @@
   <svg width="160" height="40" viewBox="0 0 493 120" fill="none"><text x="0" y="95" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="120" fill="#ED145B">FIAP</text></svg>
   <div style="margin-top:40px" class="cover-course">PROMPT ENGINEERING AND ARTIFICIAL INTELLIGENCE · 2º SEMESTRE</div>
   <div class="cover-title">RAG avançado — chunking estratégico,<br>reranking e RAGAS</div>
-  <div class="cover-subtitle">Aula 07/14 — Módulo 2: RAG · 🏁 Entrega CKP02</div>
+  <div class="cover-subtitle">Aula 07/14 — Módulo 2: RAG · 🏁 Apresentação do CKP02 · Entrega: 23:55 do dia da Aula 08 (Teams)</div>
   <div class="cover-meta">
     <div class="cover-meta-item">👨‍🏫 Prof. Jorge Luiz Gomes</div>
     <div class="cover-meta-item">⏱️ 1h40min</div>
     <div class="cover-meta-item">📊 faithfulness · answer_relevancy</div>
-    <div class="cover-meta-item">🏁 CKP02 entrega</div>
+    <div class="cover-meta-item">🏁 Apresentação CKP02 · entrega 23:55 A08</div>
   </div>
-  <div class="slide-number">01 / 27</div>
+  <div class="slide-number">1 / 27</div>
 </div>
 
 
@@ -200,7 +202,7 @@
     <div class="callout-body">Sair da fase "funciona" para a fase "funciona bem". Medir objetivamente a qualidade do RAG com RAGAS, experimentar duas estratégias de chunking e documentar qual configuração entrega melhores resultados para o domínio do grupo. Isso é o CKP02.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">02 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">2 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -243,7 +245,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">03 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">3 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -251,7 +253,7 @@
   <div class="section-number">01</div>
   <div class="section-title">Chunking estratégico</div>
   <div class="section-desc">chunk_size muito pequeno perde contexto. Muito grande dilui o significado. Três estratégias — cada uma para um caso de uso diferente.</div>
-  <div class="slide-number">04 / 27</div>
+  <div class="slide-number">4 / 27</div>
 </div>
 
 
@@ -286,7 +288,7 @@
     <div class="callout-body">Não existe chunk_size universal. Para o CKP02: teste 256, 512 e 1024 com o seu corpus, meça o RAGAS de cada configuração e escolha a melhor. A demo desta aula mostra exatamente esse processo.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">05 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">5 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -327,7 +329,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">06 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">6 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -366,7 +368,7 @@
     </div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">07 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">7 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -374,7 +376,7 @@
   <div class="section-number">02</div>
   <div class="section-title">Reranking com<br>cross-encoder</div>
   <div class="section-desc">O retriever recupera candidatos por similaridade cosseno. O cross-encoder avalia cada par (query, chunk) individualmente — mais lento, mas mais preciso.</div>
-  <div class="slide-number">08 / 27</div>
+  <div class="slide-number">8 / 27</div>
 </div>
 
 
@@ -432,7 +434,7 @@
     <div class="callout-body">Polzer (<em>RAG with Python Cookbook</em>, O'Reilly, 2026, seção 7.7) descreve uma segunda forma de reranking, sem cross-encoder: usar o próprio LLM como avaliador de relevância. A técnica pede ao LLM, via prompt estruturado que retorna um schema Pydantic — o mesmo padrão de <em>structured output</em> da Aula 03 — para atribuir uma nota de 1 a 5 a cada chunk recuperado em relação à pergunta do usuário, e então reordena pelos scores retornados. O autor recomenda essa abordagem sobretudo quando os resultados vêm de <strong>múltiplas fontes heterogêneas</strong> (busca vetorial, SQL, APIs externas) que precisam ser fundidas num único ranking: o cross-encoder acima é ótimo para um único vector store, mas exige que tudo esteja no mesmo espaço de embedding — o reranker via LLM julga relevância semântica diretamente do texto, sem essa exigência.</div>
   </div>
   </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">09 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+<div class="slide-bottom"><div class="slide-number">9 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>
 
 
@@ -490,7 +492,7 @@
 <span class="kw">from</span> <span class="va">datasets</span> <span class="kw">import</span> <span class="va">Dataset</span>
 
 <span class="cm"># Configurar o RAGAS para usar o Ollama (sem custo)</span>
-<span class="va">ragas_llm</span>  <span class="op">=</span> <span class="va">LangchainLLMWrapper</span><span class="op">(</span><span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">))</span>
+<span class="va">ragas_llm</span>  <span class="op">=</span> <span class="va">LangchainLLMWrapper</span><span class="op">(</span><span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">))</span>
 <span class="va">ragas_embs</span> <span class="op">=</span> <span class="va">LangchainEmbeddingsWrapper</span><span class="op">(</span><span class="va">OllamaEmbeddings</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"nomic-embed-text"</span><span class="op">))</span>
 
 <span class="va">faithfulness</span><span class="op">.</span><span class="va">llm</span>       <span class="op">=</span> <span class="va">ragas_llm</span>
@@ -598,7 +600,7 @@ Responda APENAS com um número de 0 a 1:
 Resposta (só o número):"""</span>
 
 <span class="kw">def</span> <span class="fn">faithfulness_manual</span><span class="op">(</span><span class="va">pergunta</span><span class="op">,</span> <span class="va">resposta</span><span class="op">,</span> <span class="va">contexto</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="nb">float</span><span class="op">:</span>
-    <span class="va">juiz</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gpt-oss:120b"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
+    <span class="va">juiz</span> <span class="op">=</span> <span class="va">ChatOllama</span><span class="op">(</span><span class="va">model</span><span class="op">=</span><span class="st">"gemma4:cloud"</span><span class="op">,</span> <span class="va">temperature</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>
     <span class="va">prompt</span> <span class="op">=</span> <span class="va">ChatPromptTemplate</span><span class="op">.</span><span class="fn">from_template</span><span class="op">(</span><span class="va">PROMPT_JUIZ</span><span class="op">)</span>
     <span class="va">chain_juiz</span> <span class="op">=</span> <span class="va">prompt</span> <span class="op">|</span> <span class="va">juiz</span> <span class="op">|</span> <span class="va">StrOutputParser</span><span class="op">()</span>
     <span class="va">resultado</span> <span class="op">=</span> <span class="va">chain_juiz</span><span class="op">.</span><span class="fn">invoke</span><span class="op">({</span>
@@ -726,11 +728,133 @@ Resposta (só o número):"""</span>
 </div>
 
 
+<div class="slide slide-content"><div class="slide-body">
+  <h2>🏁 CKP02 — DocMind RAG · Rubrica completa</h2>
+  <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px">RAG funcional sobre base de conhecimento real do domínio — 2 estratégias de chunking comparadas com RAGAS. Grupo 3–4. Estimativa: 3–4h.</p>
+  <div class="ckp-box">
+    <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">🏁 CKP02 · Grupo 3–4 · Apresentação nesta aula · Entrega até 23:55 do dia da Aula 08 (Teams, só o líder) · Estimativa: 3–4h</div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R1</div>
+      <div><strong>Pipeline completo (35%):</strong> load (PyMuPDF) → split → embed (nomic-embed-text) → store (ChromaDB) → retrieve → generate (gemma4:cloud, temperature=0). Responde com citação de página e fonte. <em>Baseline da Aula 06.</em></div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R2</div>
+      <div><strong>Comparação de chunking + RAGAS (30%):</strong> ≥2 configurações de chunk_size (a demo da aula usa 256, 512 e 1024), cada uma com seu próprio vector store e retriever, comparadas com RAGAS — <strong>faithfulness e answer_relevancy</strong>, mínimo de 5 perguntas. Célula markdown explicando qual ganhou e por quê.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R3</div>
+      <div><strong>Base de conhecimento real (20%):</strong> ≥5 documentos reais do domínio com fontes citadas — pode começar com 2–3 na Aula 05 e completar até a entrega. Links de origem no notebook.</div>
+    </div>
+    <div class="ckp-req">
+      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R4</div>
+      <div><strong>Código e documentação (15%):</strong> Notebook executado do zero (Run All, sem erros), comentários em PT-BR, README.md com nomes e RMs de todos os integrantes + instruções para adicionar novos documentos.</div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:8px">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:6px">📦 Entregável</div>
+      <div style="font-size:13px;color:var(--fiap-text)">1 notebook <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ipynb</code> com os requisitos.<br>Nome: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">CKP02_[dominio]_grupo.ipynb</code><br>Entrega <strong>via Teams até 23:55 do dia da Aula 08, somente o líder</strong>: link Colab com permissão de leitura + export <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ipynb</code> + README.md (nomes e RMs).</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;margin-bottom:6px">⭐ Diferencial</div>
+      <div style="font-size:13px;color:var(--fiap-text)">Metadata filtering com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">where={}</code> + reranking com cross-encoder + interface Gradio com campo de pergunta e exibição dos chunks recuperados. <strong>+0,5 cada; nota limitada a 10,0.</strong></div>
+    </div>
+  </div>
+  
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">18 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>Próximo: Módulo 3 — Interfaces, Agentes e Integração</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
+    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(61,156,204,.06);border:2px solid rgba(61,156,204,.25);border-radius:8px;align-items:flex-start">
+      <div style="width:28px;height:28px;background:rgba(61,156,204,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
+      <div style="font-size:13px"><strong>Módulo 2 concluído:</strong> Embeddings · ChromaDB · Pipeline RAG · Chunking · Reranking · RAGAS · CKP02 entregue</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;background:rgba(41,175,140,.05);border:2px solid rgba(41,175,140,.2);border-radius:8px;padding:16px;margin-top:8px">
+      <div style="font-size:14px;font-weight:700;color:#29AF8C;margin-bottom:8px">Módulo 3 — Interfaces · Agentes · Integração (Aulas 08–11)</div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A8</div> Gradio + Streamlit — RAG com URL pública. RunnableWithMessageHistory para memória.</div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A9</div> Agentes ReAct — tools, function calling, planner-executor.</div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A10</div> RAG como tool — agente que usa o ChromaDB do grupo como ferramenta.</div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A11</div> Aula integradora — agente completo + Gradio URL pública. <strong>CKP03.</strong></div>
+    </div>
+  </div>
+  <div class="callout callout-orange">
+    <div class="callout-title">📌 Prepare-se para a Aula 08</div>
+    <div class="callout-body">A Aula 08 coloca o RAG ao vivo com Gradio. O notebook do CKP02 (funcionando no Colab) é o ponto de partida. Salve o link do Colab e mantenha as permissões de acesso abertas.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">19 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-content"><div class="slide-body">
+  <h2>📊 Check-in intermediário — metade do semestre</h2>
+  <p>Aula 07 marca a metade do semestre (Módulos 1 e 2 concluídos). O professor faz 2 perguntas anônimas rápidas — resultados lidos ao vivo na Aula 08:</p>
+  <div class="two-col">
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:24px;text-align:center">
+      <div style="font-size:40px;margin-bottom:12px">📝</div>
+      <div style="font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Pergunta 1</div>
+      <div style="font-size:14px;color:var(--fiap-muted)">Qual conceito do semestre até agora foi mais difícil de entender?</div>
+      <div style="margin-top:16px;padding:12px;background:var(--fiap-surface2);border-radius:8px;font-size:12px;color:var(--fiap-muted)">(resposta anônima via QR Code ou link)</div>
+    </div>
+    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:24px;text-align:center">
+      <div style="font-size:40px;margin-bottom:12px">🔮</div>
+      <div style="font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Pergunta 2</div>
+      <div style="font-size:14px;color:var(--fiap-muted)">O que você mais quer aprender nos Módulos 3 e 4 (agentes, LangGraph, tendências)?</div>
+      <div style="margin-top:16px;padding:12px;background:var(--fiap-surface2);border-radius:8px;font-size:12px;color:var(--fiap-muted)">(resposta anônima via QR Code ou link)</div>
+    </div>
+  </div>
+  <div class="callout callout-green" style="margin-top:16px">
+    <div class="callout-title">💡 Por que o check-in importa</div>
+    <div class="callout-body">O feedback anônimo permite ajustar a velocidade e profundidade dos Módulos 3 e 4. Se a maioria teve dificuldade com LCEL (Módulo 1), a Aula 08 reforça antes de avançar. Se todos querem ver mais agentes, o Módulo 3 ganha mais tempo.</div>
+  </div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">20 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
+<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
+  <div class="section-number">04</div>
+  <div class="section-title">Demo ao vivo</div>
+  <div class="section-desc">Mesmo RAG, mesmo corpus, mesmo prompt — três configurações de chunk_size: 256, 512 e 1024. Medir RAGAS e mostrar qual ganhou.</div>
+  <div class="slide-number">21 / 27</div>
+</div>
+
+
+<div class="slide slide-content" style="align-items:center;text-align:center">
+  <div style="font-size:72px">🚀</div>
+  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
+  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor roda o mesmo pipeline RAG sobre o mesmo corpus e as mesmas perguntas, variando apenas o chunk_size — 256, 512 e 1024 — e mede faithfulness e answer_relevancy com RAGAS ao vivo para revelar qual configuração realmente venceu.</p>
+  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
+    <div class="callout" style="margin:0">
+      <div class="callout-title">1. Três pipelines, um corpus</div>
+      <div class="callout-body">O mesmo conjunto de PDFs é indexado três vezes — uma para cada chunk_size — gerando três vector stores independentes no ChromaDB.</div>
+    </div>
+    <div class="callout callout-orange" style="margin:0">
+      <div class="callout-title">2. RAGAS mede cada um</div>
+      <div class="callout-body">As mesmas perguntas de avaliação rodam contra os três pipelines. RAGAS calcula faithfulness e answer_relevancy para cada chunk_size.</div>
+    </div>
+    <div class="callout callout-green" style="margin:0">
+      <div class="callout-title">3. O placar decide</div>
+      <div class="callout-body">Os três scores aparecem lado a lado — a turma vê ao vivo qual chunk_size teve o melhor equilíbrio entre contexto e precisão para este corpus.</div>
+    </div>
+  </div>
+  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
+    <div class="callout-title">🧱 Stack da demo</div>
+    <div class="callout-body">Google Colab · Ollama Cloud API · ChromaDB · RAGAS · gemma4:cloud</div>
+  </div><!-- slide-body -->
+<div class="slide-bottom"><div class="slide-number">22 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
+</div>
+
+
 <div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
   <div class="section-number">05</div>
   <div class="section-title">Lab — Notebook Aluno</div>
   <div class="section-desc">55% de lacunas — otimizar o RAG do grupo com 2 estratégias de chunking, calcular RAGAS e documentar qual configuração foi melhor. Este notebook é o CKP02.</div>
-  <div class="slide-number">18 / 27</div>
+  <div class="slide-number">23 / 27</div>
 </div>
 
 
@@ -783,128 +907,6 @@ Resposta (só o número):"""</span>
     <span class="nb">print</span><span class="op">(</span><span class="st">f"{nome}: faith={res['faithfulness']:.3f} · rel={res['answer_relevancy']:.3f}"</span><span class="op">)</span></pre>
     </div>
   </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">19 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>🏁 CKP02 — DocMind RAG · Rubrica completa</h2>
-  <p style="color:var(--fiap-muted);font-size:14px;margin-bottom:14px">RAG funcional sobre base de conhecimento real do domínio — 2 estratégias de chunking comparadas com RAGAS. Grupo 3–4. Estimativa: 3–4h.</p>
-  <div class="ckp-box">
-    <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">🏁 CKP02 · Grupo 3–4 · Entrega esta aula · Estimativa: 3–4h</div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R1</div>
-      <div><strong>Pipeline completo (30%):</strong> load (PyMuPDF) → split → embed (nomic) → store (ChromaDB) → retrieve → generate (gpt-oss:120b). Responde com citação de página e fonte. <em>Baseline da Aula 06.</em></div>
-    </div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R2</div>
-      <div><strong>2 estratégias de chunking (30%):</strong> Recursive em pelo menos 2 chunk_sizes diferentes (ex: 512 e 1024) OU Recursive vs. SemanticChunker. Cada estratégia deve ter seu próprio vector store e retriever.</div>
-    </div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R3</div>
-      <div><strong>RAGAS documentado (25%):</strong> faithfulness e answer_relevancy medidos para as 2 estratégias com mínimo de 5 perguntas. Célula markdown explicando qual estratégia ganhou e por que.</div>
-    </div>
-    <div class="ckp-req">
-      <div class="ckp-check" style="background:rgba(61,156,204,.15);border:1px solid rgba(61,156,204,.4);color:var(--fiap-blue)">R4</div>
-      <div><strong>Análise crítica (15%):</strong> identificar 1 pergunta onde o pipeline falhou (score baixo). Mostrar os chunks recuperados e hipótese do grupo sobre a causa da falha. Propor uma melhoria.</div>
-    </div>
-  </div>
-  <div class="two-col" style="margin-top:8px">
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px">
-      <div style="font-size:12px;font-weight:700;color:var(--fiap-blue);text-transform:uppercase;margin-bottom:6px">📦 Entregável</div>
-      <div style="font-size:13px;color:var(--fiap-text)">1 notebook <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.ipynb</code> com os 4 requisitos.<br>Nome: <code style="font-family:'JetBrains Mono',monospace;font-size:12px">CKP02_[dominio]_grupo.ipynb</code><br>Link Colab com permissão de leitura.</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:10px;padding:14px">
-      <div style="font-size:12px;font-weight:700;color:var(--fiap-purple);text-transform:uppercase;margin-bottom:6px">⭐ Diferencial</div>
-      <div style="font-size:13px;color:var(--fiap-text)">Metadata filtering com <code style="font-family:'JetBrains Mono',monospace;font-size:12px">where={}</code> + reranking com cross-encoder + interface Gradio com campo de pergunta e exibição dos chunks recuperados.</div>
-    </div>
-  </div>
-  
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">20 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>Próximo: Módulo 3 — Interfaces, Agentes e Integração</h2>
-  <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0">
-    <div style="display:flex;gap:12px;padding:14px 16px;background:rgba(61,156,204,.06);border:2px solid rgba(61,156,204,.25);border-radius:8px;align-items:flex-start">
-      <div style="width:28px;height:28px;background:rgba(61,156,204,.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✅</div>
-      <div style="font-size:13px"><strong>Módulo 2 concluído:</strong> Embeddings · ChromaDB · Pipeline RAG · Chunking · Reranking · RAGAS · CKP02 entregue</div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:6px;background:rgba(41,175,140,.05);border:2px solid rgba(41,175,140,.2);border-radius:8px;padding:16px;margin-top:8px">
-      <div style="font-size:14px;font-weight:700;color:#29AF8C;margin-bottom:8px">Módulo 3 — Interfaces · Agentes · Integração (Aulas 08–11)</div>
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A8</div> Gradio + Streamlit — RAG com URL pública. RunnableWithMessageHistory para memória.</div>
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A9</div> Agentes ReAct — tools, function calling, planner-executor.</div>
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A10</div> RAG como tool — agente que usa o ChromaDB do grupo como ferramenta.</div>
-      <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fiap-muted)"><div style="width:22px;height:22px;background:rgba(41,175,140,.1);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#29AF8C;flex-shrink:0">A11</div> Aula integradora — agente completo + Gradio URL pública. <strong>CKP03.</strong></div>
-    </div>
-  </div>
-  <div class="callout callout-orange">
-    <div class="callout-title">📌 Prepare-se para a Aula 08</div>
-    <div class="callout-body">A Aula 08 coloca o RAG ao vivo com Gradio. O notebook do CKP02 (funcionando no Colab) é o ponto de partida. Salve o link do Colab e mantenha as permissões de acesso abertas.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">21 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-content"><div class="slide-body">
-  <h2>📊 Check-in intermediário — metade do semestre</h2>
-  <p>Aula 07 marca a metade do semestre (Módulos 1 e 2 concluídos). O professor faz 2 perguntas anônimas rápidas — resultados lidos ao vivo na Aula 08:</p>
-  <div class="two-col">
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:24px;text-align:center">
-      <div style="font-size:40px;margin-bottom:12px">📝</div>
-      <div style="font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Pergunta 1</div>
-      <div style="font-size:14px;color:var(--fiap-muted)">Qual conceito do semestre até agora foi mais difícil de entender?</div>
-      <div style="margin-top:16px;padding:12px;background:var(--fiap-surface2);border-radius:8px;font-size:12px;color:var(--fiap-muted)">(resposta anônima via QR Code ou link)</div>
-    </div>
-    <div style="background:var(--fiap-surface);border:1px solid var(--fiap-border);border-radius:12px;padding:24px;text-align:center">
-      <div style="font-size:40px;margin-bottom:12px">🔮</div>
-      <div style="font-size:15px;font-weight:700;color:var(--fiap-white);margin-bottom:8px">Pergunta 2</div>
-      <div style="font-size:14px;color:var(--fiap-muted)">O que você mais quer aprender nos Módulos 3 e 4 (agentes, LangGraph, tendências)?</div>
-      <div style="margin-top:16px;padding:12px;background:var(--fiap-surface2);border-radius:8px;font-size:12px;color:var(--fiap-muted)">(resposta anônima via QR Code ou link)</div>
-    </div>
-  </div>
-  <div class="callout callout-green" style="margin-top:16px">
-    <div class="callout-title">💡 Por que o check-in importa</div>
-    <div class="callout-body">O feedback anônimo permite ajustar a velocidade e profundidade dos Módulos 3 e 4. Se a maioria teve dificuldade com LCEL (Módulo 1), a Aula 08 reforça antes de avançar. Se todos querem ver mais agentes, o Módulo 3 ganha mais tempo.</div>
-  </div>
-  </div><!-- slide-body -->
-<div class="slide-bottom"><div class="slide-number">22 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
-</div>
-
-
-<div class="slide slide-section" style="background:linear-gradient(135deg,#f5f6fa 0%,#ecfdf5 100%)">
-  <div class="section-number">04</div>
-  <div class="section-title">Demo ao vivo</div>
-  <div class="section-desc">Mesmo RAG, mesmo corpus, mesmo prompt — três configurações de chunk_size: 256, 512 e 1024. Medir RAGAS e mostrar qual ganhou.</div>
-  <div class="slide-number">23 / 27</div>
-</div>
-
-
-<div class="slide slide-content" style="align-items:center;text-align:center">
-  <div style="font-size:72px">🚀</div>
-  <h2 style="border-bottom:none;text-align:center">Demo Prática ao Vivo</h2>
-  <p style="text-align:center;max-width:700px;margin:0 auto 24px">O professor roda o mesmo pipeline RAG sobre o mesmo corpus e as mesmas perguntas, variando apenas o chunk_size — 256, 512 e 1024 — e mede faithfulness e answer_relevancy com RAGAS ao vivo para revelar qual configuração realmente venceu.</p>
-  <div class="three-col" style="text-align:left;max-width:980px;margin:0 auto">
-    <div class="callout" style="margin:0">
-      <div class="callout-title">1. Três pipelines, um corpus</div>
-      <div class="callout-body">O mesmo conjunto de PDFs é indexado três vezes — uma para cada chunk_size — gerando três vector stores independentes no ChromaDB.</div>
-    </div>
-    <div class="callout callout-orange" style="margin:0">
-      <div class="callout-title">2. RAGAS mede cada um</div>
-      <div class="callout-body">As mesmas perguntas de avaliação rodam contra os três pipelines. RAGAS calcula faithfulness e answer_relevancy para cada chunk_size.</div>
-    </div>
-    <div class="callout callout-green" style="margin:0">
-      <div class="callout-title">3. O placar decide</div>
-      <div class="callout-body">Os três scores aparecem lado a lado — a turma vê ao vivo qual chunk_size teve o melhor equilíbrio entre contexto e precisão para este corpus.</div>
-    </div>
-  </div>
-  <div class="callout callout-purple" style="text-align:left;max-width:700px;margin:24px auto 0">
-    <div class="callout-title">🧱 Stack da demo</div>
-    <div class="callout-body">Google Colab · Ollama Cloud API · ChromaDB · RAGAS · gpt-oss:120b</div>
   </div><!-- slide-body -->
 <div class="slide-bottom"><div class="slide-number">24 / 27</div><div class="slide-footer">FIAP · Prompt Engineering and AI · 2026</div></div>
 </div>

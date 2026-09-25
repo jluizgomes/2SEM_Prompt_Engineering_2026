@@ -35,6 +35,9 @@ load_dotenv()
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.com")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
+EMBEDDING_OLLAMA_HOST = os.getenv(
+    "EMBEDDING_OLLAMA_HOST", "http://localhost:11434"
+)
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 
 if not OLLAMA_API_KEY:
@@ -44,13 +47,17 @@ if not OLLAMA_API_KEY:
 
 os.environ["OLLAMA_HOST"] = OLLAMA_HOST
 os.environ["OLLAMA_API_KEY"] = OLLAMA_API_KEY
+os.environ["EMBEDDING_OLLAMA_HOST"] = EMBEDDING_OLLAMA_HOST
 
 llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_HOST, temperature=0)
 
 # ─────────────────────────────────────────────────────────────
 # 1. RAG como tool nativa (create_retriever_tool)
 # ─────────────────────────────────────────────────────────────
-embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL, base_url=OLLAMA_HOST)
+embeddings = OllamaEmbeddings(
+    model=EMBEDDING_MODEL,
+    base_url=EMBEDDING_OLLAMA_HOST,
+)
 client = chromadb.PersistentClient(path="./chroma_db")
 vectorstore = Chroma(
     client=client,
@@ -106,7 +113,10 @@ def responder(mensagem: str, history: list) -> list:
 
 
 def main() -> None:
-    print(f"Ollama Cloud | modelo: {OLLAMA_MODEL} | embeddings: {EMBEDDING_MODEL}")
+    print(
+        f"Ollama Cloud | modelo: {OLLAMA_MODEL} | "
+        f"embeddings locais: {EMBEDDING_MODEL}"
+    )
     print("Abrindo interface Gradio em http://localhost:7860 ...")
 
     demo = gr.ChatInterface(
