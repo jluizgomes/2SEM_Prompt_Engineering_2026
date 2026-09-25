@@ -1,0 +1,13 @@
+# Arquivos de modelo baixados manualmente — nunca versionar
+*.gguf
+*.gguf.part
+*.gguf.incomplete
+
+# Ambiente local
+.env
+.env.teste
+.env.*
+
+# Bytecode Python
+__pycache__/
+*.pyc

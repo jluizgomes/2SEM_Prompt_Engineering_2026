@@ -1,0 +1,201 @@
+# =========================================================
+# FIAP AI Lab - Open WebUI + Ollama
+# Prompt Engineering & AI - 2o Semestre 2026
+# ---------------------------------------------------------
+# PROFILE MAP
+#
+#   (sem profile)   ollama              -> servidor Ollama CPU
+#   (sem profile)   ollama + open-webui -> stack CPU completa (docker compose up -d)
+#   webui           open-webui          -> interface + Ollama CPU
+#   webui-gpu       open-webui-gpu      -> interface + Ollama com GPU
+#   webui-external  open-webui-external -> interface + Ollama fora do Docker
+#   gpu             ollama-gpu          -> somente o servidor Ollama com GPU
+#
+# Regra: ollama e ollama-gpu sao MUTUAMENTE EXCLUSIVOS (mesmo volume de modelos).
+# Cada um usa uma porta diferente no host (11434 e 11435).
+#
+# NOMES DOS RECURSOS
+# Nao fixamos container_name/volume/network: o Docker Compose prefixa tudo com
+# COMPOSE_PROJECT_NAME (.env). Isso evita que esta stack e outra (ex.: fiap-ai-lab)
+# briguem pelos mesmos nomes ou removam a rede uma da outra.
+# Com COMPOSE_PROJECT_NAME=fiap-openwebui-ollama os recursos ficam:
+#   fiap-openwebui-ollama-ollama-1, fiap-openwebui-ollama-open-webui-1,
+#   fiap-openwebui-ollama_ollama_data, fiap-openwebui-ollama_fiap-ai-net
+#
+# MODELOS GGUF LOCAIS
+# A pasta ./models e montada em /models (read-only) no container do Ollama.
+# No start, o entrypoint importa o .gguf encontrado com `ollama create` e ele
+# passa a ficar disponivel como qualquer outro modelo. GGUF_FILE escolhe o
+# arquivo e GGUF_MODEL o nome do modelo (padrao: nome do arquivo sem .gguf).
+#
+# Uso rapido: prefira os alvos do Makefile (veja `make help`).
+# =========================================================
+
+# ---------------------------------------------------------
+# Ollama em CPU - modelo base dos dois servidores
+# ---------------------------------------------------------
+x-ollama-common: &ollama-common
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      OLLAMA_BASE_IMAGE: ${OLLAMA_BASE_IMAGE:-ollama/ollama:latest}
+  restart: unless-stopped
+  volumes:
+    - ollama_data:/root/.ollama
+    # Pasta com arquivos .gguf baixados a mao. O entrypoint importa o
+    # arquivo como modelo do Ollama no start (read-only).
+    - ${MODELS_DIR:-./models}:/models:ro
+  environment: &ollama-env
+    OLLAMA_HOST: 0.0.0.0
+    OLLAMA_MODELS: /root/.ollama/models
+    # -1 = modelo nunca descarrega da memoria. Sem isso, cada pausa entre
+    # perguntas faz o Ollama recarregar o modelo do disco (~1,3 s no MiniCPM5).
+    OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:--1}
+    # Threads de inferencia. Em CPU hibrida (P-cores + E-cores) o ideal e o
+    # numero de P-cores. Vazio = detecta automaticamente no entrypoint.
+    OLLAMA_NUM_THREADS: ${OLLAMA_NUM_THREADS:-}
+    # 1 = um unico usuario monopoliza os nucleos (melhor latencia).
+    # Aumente para atender varias pessoas ao mesmo tempo.
+    OLLAMA_NUM_PARALLEL: ${OLLAMA_NUM_PARALLEL:-1}
+    # 2 = mantem o modelo de chat e o de embeddings residentes ao mesmo tempo,
+    # evitando recarregar o de embeddings a cada busca do RAG.
+    OLLAMA_MAX_LOADED_MODELS: ${OLLAMA_MAX_LOADED_MODELS:-2}
+    # Janela de contexto do servidor inteiro. Precisa ser >= ao n_ctx pedido.
+    OLLAMA_CONTEXT_LENGTH: ${OLLAMA_CONTEXT_LENGTH:-8192}
+    CHAT_MODEL: ${CHAT_MODEL:-qwen3.5:0.8b}
+    # Modelo de reserva quando o .gguf de CHAT_MODEL nao esta em /models.
+    # Vazio = o entrypoint apenas avisa e nao baixa nada.
+    CHAT_MODEL_FALLBACK: ${CHAT_MODEL_FALLBACK:-}
+    EMBEDDING_MODEL: ${EMBEDDING_MODEL:-qwen3-embedding:0.6b}
+    # Contexto da variante enxuta de embeddings criada pelo entrypoint
+    # (<EMBEDDING_MODEL>-ctx<EMBEDDING_CONTEXT>). Menor = menos RAM/VRAM.
+    EMBEDDING_CONTEXT: ${EMBEDDING_CONTEXT:-512}
+    # Guardrails didaticos, escolhidos para rodar bem sem GPU.
+    # Llama Guard 3 1B Q4_K_M (~955 MB) + Granite Guardian 3 2B (~2,7 GB).
+    GUARDRAIL_MODELS: ${GUARDRAIL_MODELS:-llama-guard3:1b-q4_K_M,granite3-guardian:2b}
+    # Modelos extras separados por virgula (vazio = nao baixa nada extra).
+    EXTRA_MODELS: ${EXTRA_MODELS:-}
+    GGUF_DIR: /models
+    GGUF_FILE: ${GGUF_FILE:-}
+    GGUF_MODEL: ${GGUF_MODEL:-}
+    GGUF_LICENSE: ${GGUF_LICENSE:-}
+  healthcheck:
+    test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+    interval: 10s
+    timeout: 5s
+    retries: 12
+    start_period: 30s
+  networks:
+    - fiap-ai-net
+
+# ---------------------------------------------------------
+# Open WebUI - modelo do servico de interface
+# ---------------------------------------------------------
+x-webui-common: &webui-common
+  image: ghcr.io/open-webui/open-webui:main
+  restart: unless-stopped
+  ports:
+    - "${WEBUI_PORT:-3000}:8080"
+  volumes:
+    - openwebui_data:/app/backend/data
+  environment: &webui-env
+    OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+    WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:-changeme_super_secret}
+    WEBUI_NAME: ${WEBUI_NAME:-FIAP AI Lab}
+    ENABLE_SIGNUP: ${ENABLE_SIGNUP:-true}
+    DEFAULT_MODELS: ${CHAT_MODEL:-qwen3.5:0.8b}
+    RAG_EMBEDDING_ENGINE: ollama
+    # Usa a variante enxuta criada pelo entrypoint do Ollama (-ctx<contexto>),
+    # que mantem a memoria folgada no RAG. Para usar o modelo original,
+    # defina RAG_EMBEDDING_MODEL no .env.
+    RAG_EMBEDDING_MODEL: ${RAG_EMBEDDING_MODEL:-${EMBEDDING_MODEL:-qwen3-embedding:0.6b}-ctx${EMBEDDING_CONTEXT:-512}}
+    RAG_OLLAMA_BASE_URL: ${RAG_OLLAMA_BASE_URL:-${OLLAMA_BASE_URL:-http://ollama:11434}}
+  networks:
+    - fiap-ai-net
+
+services:
+
+  # -------------------------------------------------------
+  # Ollama em CPU - servico padrao, SEM PROFILE
+  # Fica sempre disponivel (inclusive como dependencia dos
+  # outros servicos) e mantem `docker compose up -d` funcionando.
+  # -------------------------------------------------------
+  ollama:
+    <<: *ollama-common
+    image: ${OLLAMA_CPU_IMAGE:-fiap-ollama-cpu:latest}
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+
+  # -------------------------------------------------------
+  # Ollama com GPU NVIDIA - profiles: gpu | webui-gpu
+  # Requer NVIDIA Container Toolkit configurado no host.
+  # NUNCA sobe junto com o servico `ollama` (CPU): o profile
+  # webui-gpu existe justamente para nao ativar os dois.
+  # -------------------------------------------------------
+  ollama-gpu:
+    <<: *ollama-common
+    image: ${OLLAMA_GPU_IMAGE:-fiap-ollama-gpu:latest}
+    profiles: ["gpu", "webui-gpu"]
+    ports:
+      - "${OLLAMA_GPU_PORT:-11435}:11434"
+    environment:
+      <<: *ollama-env
+      NVIDIA_VISIBLE_DEVICES: "${NVIDIA_VISIBLE_DEVICES:-all}"
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: ${OLLAMA_GPU_COUNT:-all}
+              capabilities: [gpu]
+
+  # -------------------------------------------------------
+  # Open WebUI ligada ao Ollama CPU
+  # -------------------------------------------------------
+  open-webui:
+    <<: *webui-common
+    profiles: ["webui"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  # -------------------------------------------------------
+  # Open WebUI ligada ao Ollama GPU
+  # Nao tem depends_on: usar `ollama` (CPU) junto com `ollama-gpu`
+  # seria conflito, pois os dois compartilham o volume de modelos.
+  # O profile webui-gpu sobe open-webui-gpu + ollama-gpu apenas.
+  # -------------------------------------------------------
+  open-webui-gpu:
+    <<: *webui-common
+    profiles: ["webui-gpu"]
+    environment:
+      <<: *webui-env
+      OLLAMA_BASE_URL: ${OLLAMA_GPU_URL:-http://ollama-gpu:11434}
+      RAG_OLLAMA_BASE_URL: ${OLLAMA_GPU_URL:-http://ollama-gpu:11434}
+
+  # -------------------------------------------------------
+  # Open WebUI ligada a um Ollama FORA do Docker
+  # (Ollama nativo no host, outra maquina ou Ollama Cloud)
+  # -------------------------------------------------------
+  open-webui-external:
+    <<: *webui-common
+    profiles: ["webui-external"]
+    ports:
+      - "${WEBUI_EXTERNAL_PORT:-3001}:8080"
+    environment:
+      <<: *webui-env
+      OLLAMA_BASE_URL: ${OLLAMA_EXTERNAL_URL:-http://host.docker.internal:11434}
+      RAG_OLLAMA_BASE_URL: ${OLLAMA_EXTERNAL_URL:-http://host.docker.internal:11434}
+    extra_hosts:
+      # Necessario no Linux para host.docker.internal resolver
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  ollama_data:
+  openwebui_data:
+
+networks:
+  fiap-ai-net:
+    driver: bridge
